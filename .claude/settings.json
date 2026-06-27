@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Read(//Users/gregoriomartocci/Documents/Projects/iPhone Purple/**)",
-      "Bash(npx create-next-app@latest iphone-purple --typescript --tailwind --eslint --app --src-dir=false --import-alias=\"@/*\" --yes)"
+      "Bash(npx create-next-app@latest iphone-purple --typescript --tailwind --eslint --app --src-dir=false --import-alias=\"@/*\" --yes)",
+      "Bash(npm install *)",
+      "Bash(npx shadcn@latest init --defaults --yes)",
+      "Bash(npx shadcn@latest add card badge input textarea select separator toast dialog sheet tabs progress avatar skeleton --yes)",
+      "Bash(npx shadcn@latest add sonner dropdown-menu checkbox label slider --yes)"
     ]
   }
 }
