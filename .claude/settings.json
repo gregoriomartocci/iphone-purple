@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/gregoriomartocci/Documents/Projects/iPhone Purple/**)",
+      "Bash(npx create-next-app@latest iphone-purple --typescript --tailwind --eslint --app --src-dir=false --import-alias=\"@/*\" --yes)"
+    ]
+  }
+}
