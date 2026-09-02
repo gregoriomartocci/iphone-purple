@@ -77,6 +77,40 @@ describe("helpers de catálogo", () => {
     expect(leadVariant(p)?.id).toBe("barata");
   });
 
+  it("respeta el estado filtrado al elegir qué variante mostrar", () => {
+    // Si alguien filtró por "sellado", la tarjeta no puede mostrarle el precio
+    // de una usada más barata: sería ofrecerle algo distinto de lo que pidió.
+    const p = product({
+      variants: [
+        variant({ id: "usada", condition: "bueno", priceArs: 500_000, stock: 5 }),
+        variant({ id: "sellada", condition: "nuevo", priceArs: 900_000, stock: 5 }),
+      ],
+    });
+    expect(leadVariant(p, { condition: "nuevo" })?.id).toBe("sellada");
+    expect(leadVariant(p, { condition: "bueno" })?.id).toBe("usada");
+    // Sin filtro vuelve a mandar el precio.
+    expect(leadVariant(p)?.id).toBe("usada");
+  });
+
+  it("respeta la capacidad filtrada", () => {
+    const p = product({
+      variants: [
+        variant({ id: "chica", storage: "128GB", priceArs: 500_000, stock: 3 }),
+        variant({ id: "grande", storage: "512GB", priceArs: 800_000, stock: 3 }),
+      ],
+    });
+    expect(leadVariant(p, { storage: "512GB" })?.id).toBe("grande");
+  });
+
+  it("si el filtro no deja ninguna variante, no devuelve vacío", () => {
+    // Puede pasar cuando el producto entra por otro criterio: mejor mostrar
+    // algo que dejar la tarjeta sin precio.
+    const p = product({
+      variants: [variant({ id: "unica", condition: "bueno", stock: 2 })],
+    });
+    expect(leadVariant(p, { condition: "nuevo" })?.id).toBe("unica");
+  });
+
   it("no rompe con un producto sin variantes", () => {
     const p = product({ variants: [] });
     expect(leadVariant(p)).toBeUndefined();
@@ -204,7 +238,10 @@ describe("getProduct", () => {
 describe("getCatalogFacets", () => {
   it("ordena las capacidades numéricamente, no alfabéticamente", async () => {
     const { storages } = await getCatalogFacets();
-    const numeric = storages.filter((s) => /^\d+GB$/.test(s)).map((s) => parseInt(s, 10));
+    const numeric = storages
+      .map((f) => f.value)
+      .filter((s) => /^\d+GB$/.test(s))
+      .map((s) => parseInt(s, 10));
     // Alfabéticamente "512GB" iría antes que "64GB"; acá no debe pasar.
     for (let i = 1; i < numeric.length; i++) {
       expect(numeric[i]).toBeGreaterThanOrEqual(numeric[i - 1]);
@@ -213,8 +250,41 @@ describe("getCatalogFacets", () => {
 
   it("no repite valores", async () => {
     const facets = await getCatalogFacets();
-    expect(new Set(facets.brands).size).toBe(facets.brands.length);
-    expect(new Set(facets.models).size).toBe(facets.models.length);
-    expect(new Set(facets.storages).size).toBe(facets.storages.length);
+    const values = (list: { value: string }[]) => list.map((f) => f.value);
+    expect(new Set(values(facets.models)).size).toBe(facets.models.length);
+    expect(new Set(values(facets.storages)).size).toBe(facets.storages.length);
+  });
+
+  it("el contador de cada opción coincide con lo que devuelve filtrar por ella", async () => {
+    // Es la promesa que le hacemos al usuario: si dice 4, al tildarlo ve 4.
+    const facets = await getCatalogFacets();
+    for (const facet of facets.models.slice(0, 5)) {
+      const filtered = await getProducts({ model: facet.value });
+      expect(filtered.length).toBe(facet.count);
+    }
+  });
+
+  it("los contadores respetan los filtros ya aplicados", async () => {
+    // Con un filtro activo, cada opción cuenta la intersección, no el total.
+    const withStock = await getCatalogFacets({ inStockOnly: true });
+    for (const facet of withStock.storages) {
+      const filtered = await getProducts({ inStockOnly: true, storage: facet.value });
+      expect(filtered.length).toBe(facet.count);
+    }
+  });
+
+  it("descarta las opciones que no dejarían ningún resultado", async () => {
+    const facets = await getCatalogFacets({ model: "iPhone 16" });
+    for (const list of [facets.models, facets.storages, facets.conditions]) {
+      for (const facet of list) {
+        expect(facet.count).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it("informa el rango de precios del catálogo", async () => {
+    const { priceRange } = await getCatalogFacets();
+    expect(priceRange.min).toBeGreaterThan(0);
+    expect(priceRange.max).toBeGreaterThanOrEqual(priceRange.min);
   });
 });

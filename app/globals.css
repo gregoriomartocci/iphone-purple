@@ -8,10 +8,14 @@
   gris medio deja respirar los equipos y mantiene la identidad oscura del logo.
 
   Cuatro niveles de profundidad, de más hondo a más claro:
-    ink       #101014  hero y footer
-    fondo     #1a1a20  la página
-    surface   #23232b  tarjetas y bandas — lo que "sube"
-    elevated  #2d2d36  inputs y estados activos
+    ink       #16161b  hero y footer
+    fondo     #1f1f26  la página
+    surface   #2b2b34  bandas y superficies que "suben"
+    elevated  #363641  inputs y estados activos
+
+  Las tarjetas de producto van en BLANCO sobre este fondo: es lo que hace que
+  las fotos y los precios se lean de un saque, y le da el aire comercial que
+  un catálogo necesita.
 
   Una sola tipografía (Inter) en todo el sitio: la jerarquía la dan el tamaño
   y el peso, no mezclar familias.
@@ -45,35 +49,35 @@
   --radius-2xl: calc(var(--radius) * 1.8);
 
   /* Escala de la marca */
-  --color-ink: #101014;
-  --color-line: #383842;
-  --color-surface: #23232b;
-  --color-elevated: #2d2d36;
-  --color-purple: #7c3aed;
-  --color-purple-deep: #6d1fe0;
+  --color-ink: #16161b;
+  --color-line: #43434f;
+  --color-surface: #2b2b34;
+  --color-elevated: #363641;
+  --color-purple: #5e16eb;
+  --color-purple-deep: #4a0fc0;
   --color-purple-light: #a97bf5;
 }
 
 :root {
-  --background: #1a1a20;
-  --foreground: #f4f4f6;
-  --card: #23232b;
-  --card-foreground: #f4f4f6;
-  --popover: #23232b;
-  --popover-foreground: #f4f4f6;
+  --background: #1f1f26;
+  --foreground: #f7f7f9;
+  --card: #2b2b34;
+  --card-foreground: #f7f7f9;
+  --popover: #2b2b34;
+  --popover-foreground: #f7f7f9;
   /* El violeta es el color de acción: botones primarios, foco, estados activos. */
-  --primary: #7c3aed;
+  --primary: #5e16eb;
   --primary-foreground: #ffffff;
-  --secondary: #2d2d36;
-  --secondary-foreground: #f4f4f6;
-  --muted: #23232b;
-  --muted-foreground: #adadb8;
-  --accent: #2d2d36;
-  --accent-foreground: #f4f4f6;
+  --secondary: #363641;
+  --secondary-foreground: #f7f7f9;
+  --muted: #2b2b34;
+  --muted-foreground: #bcbcc6;
+  --accent: #363641;
+  --accent-foreground: #f7f7f9;
   --destructive: #f87171;
-  --border: #383842;
-  --input: #383842;
-  --ring: #7c3aed;
+  --border: #43434f;
+  --input: #43434f;
+  --ring: #5e16eb;
   --radius: 0.625rem;
 }
 
@@ -105,7 +109,7 @@
   }
 
   ::selection {
-    background: #7c3aed;
+    background: #5e16eb;
     color: #fff;
   }
 }
@@ -119,6 +123,12 @@
   /* Ritmo vertical entre secciones */
   .band {
     @apply py-20 sm:py-28;
+  }
+
+  /* Antetítulos: mayúsculas con tracking abierto, el recurso que usan las
+     piezas de Instagram de la marca. */
+  .eyebrow {
+    @apply text-xs font-medium tracking-[0.22em] uppercase;
   }
 
   /* Cifras de ancho fijo, para que las columnas de precios no bailen. */
@@ -144,7 +154,7 @@
     pointer-events: none;
     background: radial-gradient(
       ellipse 60% 50% at 50% 0%,
-      rgba(124, 58, 237, 0.16),
+      rgba(94, 22, 235, 0.13),
       transparent 70%
     );
   }

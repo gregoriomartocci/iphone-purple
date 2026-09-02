@@ -290,7 +290,7 @@ export function ImportWizard({
                             updateRow(row.key, { include: e.target.checked })
                           }
                           aria-label="Incluir esta fila"
-                          className="size-4 accent-[#6d1fe0]"
+                          className="size-4 accent-[#5e16eb]"
                         />
                       </td>
                       <td className="p-3">

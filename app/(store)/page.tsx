@@ -107,7 +107,7 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-3">
+          <div className="mt-10 grid grid-cols-2 gap-5 lg:grid-cols-3">
             {featured.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -129,7 +129,7 @@ export default async function HomePage() {
         <div className="shell py-20 sm:py-24">
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div>
-              <p className="text-purple-light text-sm font-medium">Plan Canje</p>
+              <p className="eyebrow text-purple-light">Plan Canje</p>
               <h2 className="mt-3 text-3xl leading-[1.1] font-semibold sm:text-4xl">
                 Tu equipo usado vale más
                 <br />

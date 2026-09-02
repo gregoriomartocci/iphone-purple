@@ -1,0 +1,137 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { Search, X } from "lucide-react";
+import { CONDITION_LABELS, type CatalogFilters, type Condition } from "@/types";
+import { cn } from "@/lib/utils";
+
+const SORTS = [
+  { value: "relevancia", label: "Más relevantes" },
+  { value: "precio-asc", label: "Menor precio" },
+  { value: "precio-desc", label: "Mayor precio" },
+  { value: "nuevo", label: "Ingresos recientes" },
+] as const;
+
+/**
+ * Búsqueda, orden y filtros aplicados.
+ *
+ * Los chips de lo aplicado son lo que evita el "¿por qué veo tan pocos
+ * resultados?": siempre se ve qué está activo y se saca de a uno.
+ */
+export function CatalogToolbar({
+  filters,
+  resultCount,
+  totalCount,
+}: {
+  filters: CatalogFilters;
+  resultCount: number;
+  totalCount: number;
+}) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [query, setQuery] = useState(filters.q ?? "");
+
+  function navigate(next: CatalogFilters) {
+    const params = new URLSearchParams();
+    if (next.q) params.set("q", next.q);
+    if (next.model) params.set("model", next.model);
+    if (next.storage) params.set("storage", next.storage);
+    if (next.condition) params.set("condition", next.condition);
+    if (next.sort && next.sort !== "relevancia") params.set("sort", next.sort);
+    if (next.inStockOnly) params.set("stock", "1");
+
+    const qs = params.toString();
+    startTransition(() => router.push(qs ? `/catalogo?${qs}` : "/catalogo"));
+  }
+
+  const chips = [
+    filters.q && { label: `"${filters.q}"`, clear: { q: undefined } },
+    filters.model && { label: filters.model, clear: { model: undefined } },
+    filters.condition && {
+      label: CONDITION_LABELS[filters.condition as Condition],
+      clear: { condition: undefined },
+    },
+    filters.storage && { label: filters.storage, clear: { storage: undefined } },
+    filters.inStockOnly && { label: "Con stock", clear: { inStockOnly: undefined } },
+  ].filter(Boolean) as { label: string; clear: Partial<CatalogFilters> }[];
+
+  return (
+    <div className={cn("transition-opacity", pending && "opacity-60")}>
+      <form
+        action="/catalogo"
+        method="get"
+        onSubmit={(e) => {
+          e.preventDefault();
+          navigate({ ...filters, q: query.trim() || undefined });
+        }}
+        className="relative"
+      >
+        <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2" />
+        <input
+          type="search"
+          name="q"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Buscar: iPhone 15, 256GB, sellado…"
+          aria-label="Buscar en el catálogo"
+          className="border-line bg-surface text-foreground placeholder:text-muted-foreground focus-visible:border-purple h-12 w-full rounded-xl border pr-4 pl-11 text-[15px] transition-colors outline-none"
+        />
+      </form>
+
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
+        <p className="text-muted-foreground text-sm">
+          Mostrando <span className="text-foreground font-medium">{resultCount}</span> de{" "}
+          {totalCount} equipos
+        </p>
+
+        <label className="flex items-center gap-2 text-sm">
+          <span className="text-muted-foreground">Ordenar por</span>
+          <select
+            value={filters.sort ?? "relevancia"}
+            onChange={(e) =>
+              navigate({ ...filters, sort: e.target.value as CatalogFilters["sort"] })
+            }
+            className="border-line bg-surface text-foreground focus-visible:border-purple h-10 rounded-xl border px-3 transition-colors outline-none"
+          >
+            {SORTS.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      {chips.length > 0 && (
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <span className="text-muted-foreground text-xs">Filtros aplicados</span>
+          {chips.map((chip) => (
+            <button
+              key={chip.label}
+              type="button"
+              onClick={() => {
+                if ("q" in chip.clear) setQuery("");
+                navigate({ ...filters, ...chip.clear });
+              }}
+              className="border-line bg-surface text-foreground hover:border-purple inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors"
+            >
+              {chip.label}
+              <X className="size-3" />
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => {
+              setQuery("");
+              startTransition(() => router.push("/catalogo"));
+            }}
+            className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-2"
+          >
+            Limpiar todo
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

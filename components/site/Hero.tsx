@@ -45,9 +45,7 @@ export function Hero() {
       />
 
       <div className="shell w-full pt-32 pb-20 sm:pb-24">
-        <p className="text-sm font-medium tracking-wide text-white/70">
-          Equipos Apple · CABA
-        </p>
+        <p className="eyebrow text-white/70">Equipos Apple · La Plata</p>
 
         <h1 className="mt-4 max-w-3xl text-4xl leading-[1.05] font-semibold text-white sm:text-6xl">
           El iPhone que buscás,

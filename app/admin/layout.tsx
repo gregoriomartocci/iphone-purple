@@ -38,7 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <nav className="flex h-full flex-col">
       <div className="border-line border-b px-5 py-5">
         <Link href="/" aria-label="iPhone Purple — inicio">
-          <Logo className="text-[13px]" />
+          <Logo className="h-6" />
         </Link>
         <p className="text-muted-foreground mt-0.5 text-xs">Panel interno</p>
       </div>

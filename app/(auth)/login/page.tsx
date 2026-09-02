@@ -59,7 +59,7 @@ function LoginContent() {
           className="flex justify-center"
           aria-label="iPhone Purple — inicio"
         >
-          <Logo className="text-[17px]" />
+          <Logo className="h-9" />
         </Link>
 
         <div className="border-line bg-surface mt-6 rounded-2xl border p-8">

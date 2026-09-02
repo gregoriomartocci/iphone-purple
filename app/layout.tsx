@@ -1,16 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Geist_Mono } from "next/font/google";
+import { Jost, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 
 /**
  * Una sola familia para todo el sitio.
  *
- * Inter es neutra, muy legible en tamaños chicos y tiene cifras tabulares
- * buenas para los precios. Tener una sola tipografía —en vez de una para
- * títulos y otra para texto— es lo que da coherencia.
+ * Jost es una geométrica inspirada en Futura, que es la que usan las piezas de
+ * Instagram de la marca. Mantener la misma tipografía entre el feed y la web
+ * hace que se reconozcan como lo mismo.
  */
-const inter = Inter({
+const jost = Jost({
   variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
@@ -61,14 +61,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1a1a20",
+  themeColor: "#1f1f26",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${inter.variable} ${geistMono.variable}`}>
+    <html lang="es" className={`${jost.variable} ${geistMono.variable}`}>
       <body className="bg-background text-foreground flex min-h-dvh flex-col">
         <Providers>{children}</Providers>
       </body>

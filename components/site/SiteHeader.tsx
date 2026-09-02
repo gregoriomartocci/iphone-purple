@@ -25,7 +25,7 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
     <header className="border-line bg-background/80 sticky top-0 z-50 border-b backdrop-blur-xl">
       <div className="shell flex h-16 items-center justify-between gap-4">
         <Link href="/" className="shrink-0" aria-label="iPhone Purple — inicio">
-          <Logo className="text-[15px]" />
+          <Logo className="h-7" />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">

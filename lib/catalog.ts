@@ -1,4 +1,4 @@
-import type { Condition, Product, TradeInPrice, Variant } from "@/types";
+import type { CatalogFilters, Condition, Product, TradeInPrice, Variant } from "@/types";
 
 /**
  * Helpers puros sobre el catálogo.
@@ -8,10 +8,28 @@ import type { Condition, Product, TradeInPrice, Variant } from "@/types";
  * Supabase (y la service role key) al bundle del navegador.
  */
 
-/** Variante más barata con stock; si no hay stock, la más barata a secas. */
-export function leadVariant(product: Product): Variant | undefined {
-  const withStock = product.variants.filter((v) => v.stock > 0);
-  const pool = withStock.length > 0 ? withStock : product.variants;
+/**
+ * Variante que representa al producto en la grilla.
+ *
+ * Es la más barata con stock, pero **respetando los filtros activos**: si
+ * alguien filtró por "Nuevo sellado", la tarjeta tiene que mostrar el precio y
+ * el estado del sellado, no los de una variante usada más barata. Mostrar algo
+ * distinto de lo que se pidió es la forma más rápida de perder la confianza.
+ */
+export function leadVariant(
+  product: Product,
+  filters: Pick<CatalogFilters, "condition" | "storage"> = {}
+): Variant | undefined {
+  const matching = product.variants.filter(
+    (v) =>
+      (!filters.condition || v.condition === filters.condition) &&
+      (!filters.storage || v.storage === filters.storage)
+  );
+  // Si el filtro no deja ninguna, volvemos al catálogo completo del producto.
+  const candidates = matching.length > 0 ? matching : product.variants;
+
+  const withStock = candidates.filter((v) => v.stock > 0);
+  const pool = withStock.length > 0 ? withStock : candidates;
   return [...pool].sort((a, b) => a.priceArs - b.priceArs)[0];
 }
 

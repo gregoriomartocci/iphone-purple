@@ -1,6 +1,6 @@
+import { CONDITIONS } from "@/types";
 import type {
   CatalogFilters,
-  Condition,
   Post,
   Product,
   RepairService,
@@ -149,30 +149,74 @@ export async function getRelatedProducts(
     .slice(0, limit);
 }
 
-/** Opciones disponibles para los filtros, derivadas del catálogo real. */
-export async function getCatalogFacets(): Promise<{
-  brands: string[];
-  models: string[];
-  storages: string[];
-  conditions: Condition[];
-}> {
-  const items = await allProducts();
-  const storages = [...new Set(items.flatMap((p) => p.variants.map((v) => v.storage)))];
-  const conditions = [
-    ...new Set(items.flatMap((p) => p.variants.map((v) => v.condition))),
-  ];
+/** Una opción de filtro con cuántos equipos la cumplen. */
+export type Facet = { value: string; count: number };
+
+export type CatalogFacets = {
+  models: Facet[];
+  storages: Facet[];
+  conditions: Facet[];
+  priceRange: { min: number; max: number };
+};
+
+/**
+ * Opciones de filtro con su cantidad de resultados.
+ *
+ * Los contadores se calculan sobre el catálogo YA filtrado por el resto de los
+ * criterios, menos el propio: así "128GB (4)" significa "si además tildás esto,
+ * te quedan 4", que es lo único que le sirve a quien filtra. Contarlos sobre el
+ * catálogo entero mostraría números que no se cumplen al hacer clic.
+ */
+export async function getCatalogFacets(
+  filters: CatalogFilters = {}
+): Promise<CatalogFacets> {
+  const all = await allProducts();
+
+  // Cuenta cuántos productos quedarían aplicando los filtros actuales más uno.
+  const countWith = async (extra: Partial<CatalogFilters>) =>
+    (await getProducts({ ...filters, ...extra })).length;
+
+  const models = [...new Set(all.map((p) => p.model))].sort();
+  const storages = [
+    ...new Set(all.flatMap((p) => p.variants.map((v) => v.storage))),
+  ].sort((a, b) => {
+    const na = parseInt(a, 10);
+    const nb = parseInt(b, 10);
+    if (!isNaN(na) && !isNaN(nb)) return na - nb;
+    return a.localeCompare(b);
+  });
+  const conditions = CONDITIONS.filter((c) =>
+    all.some((p) => p.variants.some((v) => v.condition === c))
+  );
+
+  const prices = all
+    .flatMap((p) => p.variants.map((v) => v.priceArs))
+    .filter((n) => n > 0);
+
+  const [modelCounts, storageCounts, conditionCounts] = await Promise.all([
+    Promise.all(
+      models.map(async (m) => ({ value: m, count: await countWith({ model: m }) }))
+    ),
+    Promise.all(
+      storages.map(async (s) => ({ value: s, count: await countWith({ storage: s }) }))
+    ),
+    Promise.all(
+      conditions.map(async (c) => ({
+        value: c,
+        count: await countWith({ condition: c }),
+      }))
+    ),
+  ]);
 
   return {
-    brands: [...new Set(items.map((p) => p.brand))].sort(),
-    models: [...new Set(items.map((p) => p.model))].sort(),
-    // "128GB" antes que "512GB" antes que "46mm GPS": numérico primero, resto alfabético.
-    storages: storages.sort((a, b) => {
-      const na = parseInt(a, 10);
-      const nb = parseInt(b, 10);
-      if (!isNaN(na) && !isNaN(nb)) return na - nb;
-      return a.localeCompare(b);
-    }),
-    conditions,
+    // Una opción con cero resultados solo estorba.
+    models: modelCounts.filter((f) => f.count > 0),
+    storages: storageCounts.filter((f) => f.count > 0),
+    conditions: conditionCounts.filter((f) => f.count > 0),
+    priceRange: {
+      min: prices.length ? Math.min(...prices) : 0,
+      max: prices.length ? Math.max(...prices) : 0,
+    },
   };
 }
 

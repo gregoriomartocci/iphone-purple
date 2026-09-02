@@ -40,7 +40,7 @@ export function SiteFooter({ settings }: { settings: StoreSettings }) {
         <div className="grid gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
             <Link href="/" aria-label="iPhone Purple — inicio">
-              <Logo className="text-[17px]" tone="onDark" />
+              <Logo className="h-9" />
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/60">
               Equipos Apple con garantía escrita, Plan Canje y servicio técnico propio.
