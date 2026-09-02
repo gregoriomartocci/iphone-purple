@@ -23,7 +23,7 @@ export default async function AdminRepairsPage() {
         {services.map((service) => (
           <li key={service.id} className="flex items-center justify-between gap-4 p-5">
             <div className="min-w-0">
-              <p className="text-ink font-medium">{service.name}</p>
+              <p className="text-foreground font-medium">{service.name}</p>
               <p className="text-muted-foreground mt-0.5 text-sm">{service.device}</p>
               {service.duration && (
                 <p className="text-muted-foreground mt-1 inline-flex items-center gap-1 text-xs">
@@ -32,7 +32,7 @@ export default async function AdminRepairsPage() {
                 </p>
               )}
             </div>
-            <span className="tnum text-ink shrink-0 font-medium">
+            <span className="tnum text-foreground shrink-0 font-medium">
               {service.priceFrom > 0
                 ? `Desde ${formatARS(service.priceFrom)}`
                 : "Sin cargo"}

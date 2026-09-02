@@ -83,7 +83,7 @@ export default async function ProductPage({
 
       <Link
         href="/catalogo"
-        className="text-muted-foreground hover:text-ink inline-flex items-center gap-1 text-sm transition-colors"
+        className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors"
       >
         <ChevronLeft className="size-4" />
         Volver al catálogo

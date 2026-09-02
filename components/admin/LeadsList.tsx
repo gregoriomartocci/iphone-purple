@@ -47,7 +47,9 @@ export function LeadsList({
   if (leads.length === 0) {
     return (
       <div className="border-line rounded-xl border border-dashed py-16 text-center">
-        <p className="text-ink font-medium">Todavía no hay consultas de Plan Canje</p>
+        <p className="text-foreground font-medium">
+          Todavía no hay consultas de Plan Canje
+        </p>
         <p className="text-muted-foreground mt-1.5 text-sm">
           Cuando alguien cotice su equipo en la web, la consulta aparece acá.
         </p>
@@ -63,14 +65,14 @@ export function LeadsList({
           <li key={lead.id} className="border-line rounded-xl border p-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className="text-ink font-medium">
+                <p className="text-foreground font-medium">
                   {lead.brand} {lead.model} {lead.storage}
                 </p>
                 <p className="text-muted-foreground mt-0.5 text-sm">
                   {CONDITION_LABELS[lead.condition]} · estimado{" "}
                   <span className="tnum">{formatUSD(lead.estimatedValue)}</span>
                 </p>
-                <p className="text-ink mt-2 text-sm">
+                <p className="text-foreground mt-2 text-sm">
                   {lead.contactName} — {lead.contactPhone}
                 </p>
                 {lead.notes && (
@@ -94,8 +96,8 @@ export function LeadsList({
                       className={cn(
                         "rounded-full px-3 py-1.5 text-xs transition-colors",
                         status === s.value
-                          ? "bg-ink font-medium text-white"
-                          : "text-muted-foreground hover:text-ink"
+                          ? "bg-purple font-medium text-white"
+                          : "text-muted-foreground hover:text-foreground"
                       )}
                     >
                       {s.label}

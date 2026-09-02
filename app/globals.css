@@ -3,8 +3,18 @@
 
 /*
   iPhone Purple — sistema visual
-  Blanco, tinta y un único acento violeta usado con cuentagotas.
-  Sin gradientes, sin glass, sin glow. El producto es el protagonista.
+
+  Grafito, no negro. Un fondo casi negro come las fotos y cansa la vista; este
+  gris medio deja respirar los equipos y mantiene la identidad oscura del logo.
+
+  Cuatro niveles de profundidad, de más hondo a más claro:
+    ink       #101014  hero y footer
+    fondo     #1a1a20  la página
+    surface   #23232b  tarjetas y bandas — lo que "sube"
+    elevated  #2d2d36  inputs y estados activos
+
+  Una sola tipografía (Inter) en todo el sitio: la jerarquía la dan el tamaño
+  y el peso, no mezclar familias.
 */
 
 @theme inline {
@@ -35,40 +45,41 @@
   --radius-2xl: calc(var(--radius) * 1.8);
 
   /* Escala de la marca */
-  --color-ink: #0a0a0a;
-  --color-line: #eaeaea;
-  --color-surface: #fafafa;
-  --color-purple: #7b2fbe;
-  /* El violeta de marca queda con poco contraste sobre negro: esta es la
-     variante para las bandas oscuras. */
-  --color-purple-light: #b07be8;
+  --color-ink: #101014;
+  --color-line: #383842;
+  --color-surface: #23232b;
+  --color-elevated: #2d2d36;
+  --color-purple: #7c3aed;
+  --color-purple-deep: #6d1fe0;
+  --color-purple-light: #a97bf5;
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #0a0a0a;
-  --card: #ffffff;
-  --card-foreground: #0a0a0a;
-  --popover: #ffffff;
-  --popover-foreground: #0a0a0a;
-  --primary: #0a0a0a;
+  --background: #1a1a20;
+  --foreground: #f4f4f6;
+  --card: #23232b;
+  --card-foreground: #f4f4f6;
+  --popover: #23232b;
+  --popover-foreground: #f4f4f6;
+  /* El violeta es el color de acción: botones primarios, foco, estados activos. */
+  --primary: #7c3aed;
   --primary-foreground: #ffffff;
-  --secondary: #fafafa;
-  --secondary-foreground: #0a0a0a;
-  --muted: #fafafa;
-  --muted-foreground: #6b6b6b;
-  --accent: #fafafa;
-  --accent-foreground: #0a0a0a;
-  --destructive: #dc2626;
-  --border: #eaeaea;
-  --input: #eaeaea;
-  --ring: #7b2fbe;
+  --secondary: #2d2d36;
+  --secondary-foreground: #f4f4f6;
+  --muted: #23232b;
+  --muted-foreground: #adadb8;
+  --accent: #2d2d36;
+  --accent-foreground: #f4f4f6;
+  --destructive: #f87171;
+  --border: #383842;
+  --input: #383842;
+  --ring: #7c3aed;
   --radius: 0.625rem;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/40;
+    @apply border-border outline-ring/50;
   }
 
   body {
@@ -82,9 +93,10 @@
   html {
     @apply font-sans;
     scroll-behavior: smooth;
+    color-scheme: dark;
   }
 
-  /* Los títulos respiran: interlineado corto y tracking negativo */
+  /* La jerarquía viene del tamaño y el tracking, no de otra familia. */
   h1,
   h2,
   h3 {
@@ -93,7 +105,7 @@
   }
 
   ::selection {
-    background: #7b2fbe;
+    background: #7c3aed;
     color: #fff;
   }
 }
@@ -109,10 +121,32 @@
     @apply py-20 sm:py-28;
   }
 
-  /* Precios: cifras de ancho fijo para que las columnas no bailen */
+  /* Cifras de ancho fijo, para que las columnas de precios no bailen. */
   .tnum {
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
+  }
+
+  /* Los precios se destacan con tracking cerrado, no con otra tipografía. */
+  .price {
+    @apply tracking-[-0.02em];
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Halo violeta detrás de una sección. Da profundidad sin ensuciar el negro. */
+  .glow-purple {
+    position: relative;
+  }
+  .glow-purple::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse 60% 50% at 50% 0%,
+      rgba(124, 58, 237, 0.16),
+      transparent 70%
+    );
   }
 
   .scrollbar-hide {

@@ -16,6 +16,7 @@ import {
   LogOut,
   Menu,
 } from "lucide-react";
+import { Logo } from "@/components/site/Logo";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -36,8 +37,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const nav = (
     <nav className="flex h-full flex-col">
       <div className="border-line border-b px-5 py-5">
-        <Link href="/" className="text-base font-semibold tracking-tight">
-          iPhone <span className="text-purple">Purple</span>
+        <Link href="/" aria-label="iPhone Purple — inicio">
+          <Logo className="text-[13px]" />
         </Link>
         <p className="text-muted-foreground mt-0.5 text-xs">Panel interno</p>
       </div>
@@ -54,8 +55,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors",
                 active
-                  ? "bg-ink font-medium text-white"
-                  : "text-muted-foreground hover:bg-surface hover:text-ink"
+                  ? "bg-purple font-medium text-white"
+                  : "text-muted-foreground hover:bg-surface hover:text-foreground"
               )}
             >
               <Icon className="size-4 shrink-0" />
@@ -68,7 +69,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="border-line border-t p-3">
         <Link
           href="/"
-          className="text-muted-foreground hover:bg-surface hover:text-ink flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors"
+          className="text-muted-foreground hover:bg-surface hover:text-foreground flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors"
         >
           Ver la tienda
         </Link>
@@ -85,13 +86,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   );
 
   return (
-    <div className="flex min-h-dvh bg-white">
+    <div className="bg-background flex min-h-dvh">
       <aside className="border-line hidden w-60 shrink-0 border-r lg:block">{nav}</aside>
 
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
-          <aside className="border-line absolute inset-y-0 left-0 w-64 border-r bg-white">
+          <aside className="border-line bg-background absolute inset-y-0 left-0 w-64 border-r">
             {nav}
           </aside>
         </div>
@@ -103,7 +104,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             type="button"
             onClick={() => setOpen(true)}
             aria-label="Abrir menú"
-            className="text-ink hover:bg-surface rounded-lg p-2"
+            className="text-foreground hover:bg-surface rounded-lg p-2"
           >
             <Menu className="size-5" />
           </button>

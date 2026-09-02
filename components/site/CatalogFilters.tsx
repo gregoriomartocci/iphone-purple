@@ -62,7 +62,7 @@ export function CatalogFilters({
   ].filter(Boolean) as { label: string; clear: Partial<CatalogFilters> }[];
 
   const selectClass =
-    "h-10 rounded-full border border-line bg-white px-4 text-sm text-ink outline-none transition-colors hover:border-ink/40 focus-visible:border-purple";
+    "h-10 rounded-full border border-line bg-surface px-4 text-sm text-foreground outline-none transition-colors hover:border-white/30 focus-visible:border-purple";
 
   return (
     <div className={cn("transition-opacity", pending && "opacity-60")}>
@@ -83,7 +83,7 @@ export function CatalogFilters({
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Buscar: iPhone 15, 256GB, como nuevo…"
           aria-label="Buscar en el catálogo"
-          className="border-line text-ink placeholder:text-muted-foreground focus-visible:border-purple h-12 w-full rounded-full border bg-white pr-28 pl-11 text-[15px] transition-colors outline-none"
+          className="border-line text-foreground placeholder:text-muted-foreground focus-visible:border-purple bg-surface h-12 w-full rounded-full border pr-28 pl-11 text-[15px] transition-colors outline-none"
         />
         {query && (
           <button
@@ -93,14 +93,14 @@ export function CatalogFilters({
               set({ q: undefined });
             }}
             aria-label="Limpiar búsqueda"
-            className="text-muted-foreground hover:text-ink absolute top-1/2 right-24 -translate-y-1/2 rounded-full p-1.5"
+            className="text-muted-foreground hover:text-foreground absolute top-1/2 right-24 -translate-y-1/2 rounded-full p-1.5"
           >
             <X className="size-4" />
           </button>
         )}
         <button
           type="submit"
-          className="bg-ink hover:bg-ink/85 absolute top-1.5 right-1.5 h-9 rounded-full px-5 text-sm font-medium text-white transition-colors"
+          className="bg-purple hover:bg-purple/85 absolute top-1.5 right-1.5 h-9 rounded-full px-5 text-sm font-medium text-white transition-colors"
         >
           Buscar
         </button>
@@ -110,7 +110,7 @@ export function CatalogFilters({
         type="button"
         onClick={() => setOpenOnMobile((v) => !v)}
         aria-expanded={openOnMobile}
-        className="border-line text-ink mt-3 inline-flex h-10 items-center gap-2 rounded-full border px-4 text-sm sm:hidden"
+        className="border-line text-foreground mt-3 inline-flex h-10 items-center gap-2 rounded-full border px-4 text-sm sm:hidden"
       >
         <SlidersHorizontal className="size-4" />
         Filtros
@@ -181,12 +181,12 @@ export function CatalogFilters({
           <option value="nuevo">Ingresos recientes</option>
         </select>
 
-        <label className="border-line text-ink hover:border-ink/40 inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border bg-white px-4 text-sm transition-colors">
+        <label className="border-line text-foreground bg-surface inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border px-4 text-sm transition-colors hover:border-white/30">
           <input
             type="checkbox"
             checked={filters.inStockOnly ?? false}
             onChange={(e) => set({ inStockOnly: e.target.checked || undefined })}
-            className="size-3.5 accent-[#7b2fbe]"
+            className="size-3.5 accent-[#6d1fe0]"
           />
           Solo con stock
         </label>
@@ -204,7 +204,7 @@ export function CatalogFilters({
             key={chip.label}
             type="button"
             onClick={() => set(chip.clear)}
-            className="bg-surface text-ink hover:bg-line inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs transition-colors"
+            className="bg-surface text-foreground hover:bg-line inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs transition-colors"
           >
             {chip.label}
             <X className="size-3" />
@@ -218,7 +218,7 @@ export function CatalogFilters({
               setQuery("");
               startTransition(() => router.push("/catalogo"));
             }}
-            className="text-muted-foreground hover:text-ink text-xs underline underline-offset-2"
+            className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-2"
           >
             Limpiar todo
           </button>

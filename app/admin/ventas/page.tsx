@@ -63,7 +63,9 @@ export default async function AdminSalesPage() {
       <div className="mt-8">
         {sales.length === 0 ? (
           <div className="border-line rounded-xl border border-dashed py-16 text-center">
-            <p className="text-ink font-medium">Todavía no hay ventas registradas</p>
+            <p className="text-foreground font-medium">
+              Todavía no hay ventas registradas
+            </p>
             <p className="text-muted-foreground mt-1.5 text-sm">
               Cuando registres la primera, vas a ver acá el historial y los totales.
             </p>
@@ -93,13 +95,13 @@ export default async function AdminSalesPage() {
                         {sale.saleNumber}
                       </td>
                       <td className="p-3">
-                        <p className="text-ink">{sale.productName}</p>
+                        <p className="text-foreground">{sale.productName}</p>
                         <p className="text-muted-foreground text-xs">
                           {sale.variantLabel}
                         </p>
                       </td>
                       <td className="p-3">
-                        <p className="text-ink">{sale.customerName}</p>
+                        <p className="text-foreground">{sale.customerName}</p>
                         {sale.customerPhone && (
                           <p className="text-muted-foreground text-xs">
                             {sale.customerPhone}
@@ -112,7 +114,7 @@ export default async function AdminSalesPage() {
                       <td className="text-muted-foreground p-3">
                         {new Date(sale.soldAt).toLocaleDateString("es-AR")}
                       </td>
-                      <td className="tnum text-ink p-3 text-right font-medium">
+                      <td className="tnum text-foreground p-3 text-right font-medium">
                         {formatARS(total)}
                       </td>
                       <td className="tnum text-muted-foreground p-3 text-right">

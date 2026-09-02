@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X, Search } from "lucide-react";
 import { WhatsAppLink } from "./WhatsAppLink";
+import { Logo } from "./Logo";
 import { GENERAL_MESSAGE } from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
 
@@ -21,10 +22,10 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="border-line sticky top-0 z-50 border-b bg-white/85 backdrop-blur-md">
+    <header className="border-line bg-background/80 sticky top-0 z-50 border-b backdrop-blur-xl">
       <div className="shell flex h-16 items-center justify-between gap-4">
-        <Link href="/" className="shrink-0 text-lg font-semibold tracking-tight">
-          iPhone <span className="text-purple">Purple</span>
+        <Link href="/" className="shrink-0" aria-label="iPhone Purple — inicio">
+          <Logo className="text-[15px]" />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -36,7 +37,9 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
                 href={link.href}
                 className={cn(
                   "rounded-full px-3.5 py-2 text-sm transition-colors",
-                  active ? "text-ink font-medium" : "text-muted-foreground hover:text-ink"
+                  active
+                    ? "text-foreground font-medium"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {link.label}
@@ -49,7 +52,7 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
           <Link
             href="/catalogo"
             aria-label="Buscar en el catálogo"
-            className="text-muted-foreground hover:text-ink rounded-full p-2.5 transition-colors md:hidden"
+            className="text-muted-foreground hover:text-foreground rounded-full p-2.5 transition-colors md:hidden"
           >
             <Search className="size-5" />
           </Link>
@@ -67,7 +70,7 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={open}
-            className="text-ink hover:bg-surface rounded-full p-2.5 transition-colors md:hidden"
+            className="text-foreground hover:bg-surface rounded-full p-2.5 transition-colors md:hidden"
           >
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
@@ -75,14 +78,14 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
       </div>
 
       {open && (
-        <div className="border-line border-t bg-white md:hidden">
+        <div className="border-line bg-background border-t md:hidden">
           <nav className="shell flex flex-col py-2">
             {LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="border-line text-ink border-b py-3.5 text-[15px] last:border-0"
+                className="border-line text-foreground border-b py-3.5 text-[15px] last:border-0"
               >
                 {link.label}
               </Link>

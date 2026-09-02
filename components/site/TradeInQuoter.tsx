@@ -119,12 +119,14 @@ export function TradeInQuoter({
   }
 
   const fieldClass =
-    "h-12 w-full rounded-xl border border-line bg-white px-4 text-[15px] text-ink outline-none transition-colors focus-visible:border-purple disabled:bg-surface disabled:text-muted-foreground";
+    "h-12 w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-foreground outline-none transition-colors focus-visible:border-purple disabled:bg-surface disabled:text-muted-foreground";
 
   return (
     <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
       <div>
-        <h2 className="text-ink text-sm font-medium">1. Contanos qué equipo tenés</h2>
+        <h2 className="text-foreground text-sm font-medium">
+          1. Contanos qué equipo tenés
+        </h2>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           <select
@@ -179,7 +181,9 @@ export function TradeInQuoter({
           </select>
         </div>
 
-        <h2 className="text-ink mt-10 text-sm font-medium">2. ¿En qué estado está?</h2>
+        <h2 className="text-foreground mt-10 text-sm font-medium">
+          2. ¿En qué estado está?
+        </h2>
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
           {CONDITIONS.map((c) => (
             <button
@@ -189,11 +193,11 @@ export function TradeInQuoter({
               className={cn(
                 "rounded-xl border p-4 text-left transition-colors",
                 condition === c
-                  ? "border-ink bg-surface"
-                  : "border-line hover:border-ink/40"
+                  ? "border-purple bg-purple/10"
+                  : "border-line hover:border-white/30"
               )}
             >
-              <span className="text-ink block text-sm font-medium">
+              <span className="text-foreground block text-sm font-medium">
                 {CONDITION_LABELS[c]}
               </span>
               <span className="text-muted-foreground mt-1 block text-xs leading-relaxed">
@@ -205,7 +209,7 @@ export function TradeInQuoter({
 
         {wantedOptions.length > 0 && (
           <>
-            <h2 className="text-ink mt-10 text-sm font-medium">
+            <h2 className="text-foreground mt-10 text-sm font-medium">
               3. ¿Qué te querés llevar?{" "}
               <span className="text-muted-foreground font-normal">(opcional)</span>
             </h2>
@@ -231,7 +235,9 @@ export function TradeInQuoter({
         <div className="border-line bg-surface rounded-2xl border p-6 sm:p-8">
           {!ready ? (
             <div className="py-8 text-center">
-              <p className="text-ink font-medium">Completá los datos de tu equipo</p>
+              <p className="text-foreground font-medium">
+                Completá los datos de tu equipo
+              </p>
               <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
                 En cuanto elijas modelo, capacidad y estado te mostramos cuánto te tomamos
                 por él.
@@ -240,7 +246,7 @@ export function TradeInQuoter({
           ) : (
             <>
               <p className="text-muted-foreground text-sm">Te tomamos tu equipo por</p>
-              <p className="tnum text-ink mt-1 text-4xl font-semibold">
+              <p className="tnum text-foreground mt-1 text-4xl font-semibold">
                 {formatARS(estimateArs ?? 0)}
               </p>
               <p className="tnum text-muted-foreground mt-1 text-sm">
@@ -265,7 +271,7 @@ export function TradeInQuoter({
 
               {sent ? (
                 <div className="mt-6">
-                  <p className="text-ink text-sm font-medium">
+                  <p className="text-foreground text-sm font-medium">
                     Listo, ya tenemos tu consulta.
                   </p>
                   <p className="text-muted-foreground mt-1 text-sm">
@@ -287,7 +293,7 @@ export function TradeInQuoter({
                     placeholder="Tu nombre"
                     autoComplete="name"
                     required
-                    className={cn(fieldClass, "bg-white")}
+                    className={cn(fieldClass, "bg-elevated")}
                   />
                   <input
                     value={phone}
@@ -296,7 +302,7 @@ export function TradeInQuoter({
                     type="tel"
                     autoComplete="tel"
                     required
-                    className={cn(fieldClass, "bg-white")}
+                    className={cn(fieldClass, "bg-elevated")}
                   />
 
                   {error && <p className="text-destructive text-sm">{error}</p>}
@@ -304,7 +310,7 @@ export function TradeInQuoter({
                   <button
                     type="submit"
                     disabled={pending}
-                    className="bg-ink hover:bg-ink/85 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-medium text-white transition-colors disabled:opacity-60"
+                    className="bg-purple hover:bg-purple/85 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-medium text-white transition-colors disabled:opacity-60"
                   >
                     {pending ? (
                       <Loader2 className="size-4 animate-spin" />

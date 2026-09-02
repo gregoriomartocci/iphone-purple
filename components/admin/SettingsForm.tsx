@@ -73,7 +73,7 @@ export function SettingsForm({
       <div className="border-line space-y-5 rounded-xl border p-6">
         {FIELDS.map((field) => (
           <label key={field.key} className="block">
-            <span className="text-ink mb-1.5 block text-sm">{field.label}</span>
+            <span className="text-foreground mb-1.5 block text-sm">{field.label}</span>
             <input
               type={field.type ?? "text"}
               value={String(values[field.key] ?? "")}
@@ -84,7 +84,7 @@ export function SettingsForm({
                     field.type === "number" ? Number(e.target.value) : e.target.value,
                 }))
               }
-              className="border-line text-ink focus-visible:border-purple h-10 w-full rounded-lg border bg-white px-3 text-sm transition-colors outline-none"
+              className="border-line text-foreground focus-visible:border-purple bg-surface h-10 w-full rounded-lg border px-3 text-sm transition-colors outline-none"
             />
             {field.hint && (
               <span className="text-muted-foreground mt-1 block text-xs">
@@ -106,7 +106,7 @@ export function SettingsForm({
       <button
         type="submit"
         disabled={pending || !supabaseReady}
-        className="bg-ink hover:bg-ink/85 mt-6 inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
+        className="bg-purple hover:bg-purple/85 mt-6 inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
       >
         {pending && <Loader2 className="size-4 animate-spin" />}
         Guardar ajustes

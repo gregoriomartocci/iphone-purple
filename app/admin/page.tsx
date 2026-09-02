@@ -13,7 +13,7 @@ function Stat({ label, value, hint }: { label: string; value: string; hint?: str
   return (
     <div className="border-line rounded-xl border p-5">
       <p className="text-muted-foreground text-sm">{label}</p>
-      <p className="tnum text-ink mt-1.5 text-2xl font-semibold">{value}</p>
+      <p className="tnum text-foreground mt-1.5 text-2xl font-semibold">{value}</p>
       {hint && <p className="text-muted-foreground mt-1 text-xs">{hint}</p>}
     </div>
   );
@@ -87,7 +87,7 @@ export default async function AdminDashboard() {
             <h2 className="font-medium">Poco stock</h2>
             <Link
               href="/admin/productos"
-              className="text-muted-foreground hover:text-ink inline-flex items-center gap-1 text-sm"
+              className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm"
             >
               Ver productos
               <ArrowRight className="size-3.5" />
@@ -103,7 +103,7 @@ export default async function AdminDashboard() {
               {stats.lowStock.map((item, i) => (
                 <li key={i} className="flex items-center justify-between gap-4 p-4">
                   <div className="min-w-0">
-                    <p className="text-ink truncate text-sm">{item.name}</p>
+                    <p className="text-foreground truncate text-sm">{item.name}</p>
                     <p className="text-muted-foreground truncate text-xs">
                       {item.variant}
                     </p>
@@ -123,7 +123,7 @@ export default async function AdminDashboard() {
             <h2 className="font-medium">Últimas ventas</h2>
             <Link
               href="/admin/ventas"
-              className="text-muted-foreground hover:text-ink inline-flex items-center gap-1 text-sm"
+              className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm"
             >
               Ver todas
               <ArrowRight className="size-3.5" />
@@ -139,12 +139,12 @@ export default async function AdminDashboard() {
               {sales.map((sale) => (
                 <li key={sale.id} className="flex items-center justify-between gap-4 p-4">
                   <div className="min-w-0">
-                    <p className="text-ink truncate text-sm">{sale.productName}</p>
+                    <p className="text-foreground truncate text-sm">{sale.productName}</p>
                     <p className="text-muted-foreground truncate text-xs">
                       {sale.customerName} · {sale.saleNumber}
                     </p>
                   </div>
-                  <span className="tnum text-ink shrink-0 text-sm font-medium">
+                  <span className="tnum text-foreground shrink-0 text-sm font-medium">
                     {formatARS(sale.salePrice * sale.quantity)}
                   </span>
                 </li>
@@ -157,10 +157,10 @@ export default async function AdminDashboard() {
       {stats.pendingLeads > 0 && (
         <Link
           href="/admin/plan-canje"
-          className="border-line hover:border-ink/25 mt-6 flex items-center justify-between gap-4 rounded-xl border p-5 transition-colors"
+          className="border-line mt-6 flex items-center justify-between gap-4 rounded-xl border p-5 transition-colors hover:border-white/25"
         >
           <div>
-            <p className="text-ink font-medium">
+            <p className="text-foreground font-medium">
               {stats.pendingLeads}{" "}
               {stats.pendingLeads === 1
                 ? "consulta de Plan Canje sin responder"

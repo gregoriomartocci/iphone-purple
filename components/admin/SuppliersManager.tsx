@@ -41,7 +41,7 @@ export function SuppliersManager({
   }
 
   const fieldClass =
-    "h-10 w-full rounded-lg border border-line bg-white px-3 text-sm text-ink outline-none transition-colors focus-visible:border-purple";
+    "h-10 w-full rounded-lg border border-line bg-surface px-3 text-sm text-foreground outline-none transition-colors focus-visible:border-purple";
 
   return (
     <div>
@@ -99,7 +99,7 @@ export function SuppliersManager({
             <button
               type="submit"
               disabled={pending || !supabaseReady}
-              className="bg-ink hover:bg-ink/85 inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
+              className="bg-purple hover:bg-purple/85 inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
             >
               {pending && <Loader2 className="size-4 animate-spin" />}
               Guardar
@@ -107,7 +107,7 @@ export function SuppliersManager({
             <button
               type="button"
               onClick={() => setDraft(null)}
-              className="border-line text-ink hover:border-ink inline-flex h-10 items-center rounded-full border px-5 text-sm transition-colors"
+              className="border-line text-foreground inline-flex h-10 items-center rounded-full border px-5 text-sm transition-colors hover:border-white/40"
             >
               Cancelar
             </button>
@@ -117,7 +117,7 @@ export function SuppliersManager({
         <button
           type="button"
           onClick={() => setDraft({ ...EMPTY })}
-          className="bg-ink hover:bg-ink/85 inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium text-white transition-colors"
+          className="bg-purple hover:bg-purple/85 inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium text-white transition-colors"
         >
           <Plus className="size-4" />
           Agregar proveedor
@@ -131,7 +131,7 @@ export function SuppliersManager({
             className="border-line flex flex-wrap items-center justify-between gap-4 rounded-xl border p-5"
           >
             <div className="min-w-0">
-              <p className="text-ink font-medium">{supplier.name}</p>
+              <p className="text-foreground font-medium">{supplier.name}</p>
               <p className="text-muted-foreground mt-0.5 text-sm">
                 Margen por defecto {supplier.defaultMarginPct}%
                 {supplier.phone && ` · ${supplier.phone}`}
@@ -160,7 +160,7 @@ export function SuppliersManager({
                   })
                 }
                 aria-label={`Editar ${supplier.name}`}
-                className="text-muted-foreground hover:bg-surface hover:text-ink rounded-lg p-2 transition-colors"
+                className="text-muted-foreground hover:bg-surface hover:text-foreground rounded-lg p-2 transition-colors"
               >
                 <Pencil className="size-4" />
               </button>

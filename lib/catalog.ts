@@ -38,3 +38,25 @@ export const CONDITION_MULTIPLIER: Record<Condition, number> = {
 export function quoteTradeIn(base: TradeInPrice, condition: Condition): number {
   return Math.round((base.baseValue * CONDITION_MULTIPLIER[condition]) / 5) * 5;
 }
+
+/**
+ * Cuánto se ahorra llevando esta variante en lugar del mismo equipo sellado.
+ *
+ * Es el dato que más mira quien compra un seminuevo, y solo tiene sentido si
+ * tenemos el sellado en el mismo producto: comparar contra un precio de lista
+ * que no vendemos sería inventarle un descuento al cliente.
+ */
+export function savingsVsNew(product: Product, variant: Variant): number | null {
+  if (variant.condition === "nuevo") return null;
+
+  const sealed = product.variants.filter(
+    (v) => v.condition === "nuevo" && v.storage === variant.storage
+  );
+  if (sealed.length === 0) return null;
+
+  const cheapestSealed = Math.min(...sealed.map((v) => v.priceArs));
+  const diff = cheapestSealed - variant.priceArs;
+
+  // Un ahorro menor al 5 % no vale la pena destacarlo.
+  return diff > 0 && diff / cheapestSealed >= 0.05 ? diff : null;
+}

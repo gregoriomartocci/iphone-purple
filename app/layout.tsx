@@ -1,14 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 
-const geistSans = Geist({
+/**
+ * Una sola familia para todo el sitio.
+ *
+ * Inter es neutra, muy legible en tamaños chicos y tiene cifras tabulares
+ * buenas para los precios. Tener una sola tipografía —en vez de una para
+ * títulos y otra para texto— es lo que da coherencia.
+ */
+const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
 });
 
+// Monoespaciada solo para el textarea donde se pegan las listas de proveedor:
+// ahí alinear columnas ayuda a leer, en el resto del sitio no hace falta.
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -52,14 +61,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
+  themeColor: "#1a1a20",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="es" className={`${inter.variable} ${geistMono.variable}`}>
       <body className="bg-background text-foreground flex min-h-dvh flex-col">
         <Providers>{children}</Providers>
       </body>

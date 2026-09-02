@@ -99,14 +99,14 @@ export function SaleForm({
   }
 
   const fieldClass =
-    "h-10 w-full rounded-lg border border-line bg-white px-3 text-sm text-ink outline-none transition-colors focus-visible:border-purple";
+    "h-10 w-full rounded-lg border border-line bg-surface px-3 text-sm text-foreground outline-none transition-colors focus-visible:border-purple";
 
   if (!open) {
     return (
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="bg-ink hover:bg-ink/85 inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium text-white transition-colors"
+        className="bg-purple hover:bg-purple/85 inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium text-white transition-colors"
       >
         <Plus className="size-4" />
         Registrar venta
@@ -240,7 +240,7 @@ export function SaleForm({
         <button
           type="submit"
           disabled={pending || !supabaseReady}
-          className="bg-ink hover:bg-ink/85 inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
+          className="bg-purple hover:bg-purple/85 inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
         >
           {pending && <Loader2 className="size-4 animate-spin" />}
           Guardar venta
@@ -251,7 +251,7 @@ export function SaleForm({
             reset();
             setOpen(false);
           }}
-          className="border-line text-ink hover:border-ink inline-flex h-10 items-center rounded-full border px-5 text-sm transition-colors"
+          className="border-line text-foreground inline-flex h-10 items-center rounded-full border px-5 text-sm transition-colors hover:border-white/40"
         >
           Cancelar
         </button>

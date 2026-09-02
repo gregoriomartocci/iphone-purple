@@ -33,7 +33,7 @@ export function ContactForm({ whatsappNumber }: { whatsappNumber: string }) {
     .join(" ");
 
   const fieldClass =
-    "w-full rounded-xl border border-line bg-white px-4 text-[15px] text-ink outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-purple";
+    "w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-purple";
 
   return (
     <div className="border-line rounded-2xl border p-6 sm:p-8">
@@ -45,7 +45,7 @@ export function ContactForm({ whatsappNumber }: { whatsappNumber: string }) {
 
       <div className="mt-6 space-y-3">
         <div>
-          <label htmlFor="contact-name" className="text-ink mb-1.5 block text-sm">
+          <label htmlFor="contact-name" className="text-foreground mb-1.5 block text-sm">
             Tu nombre
           </label>
           <input
@@ -59,7 +59,7 @@ export function ContactForm({ whatsappNumber }: { whatsappNumber: string }) {
         </div>
 
         <div>
-          <label htmlFor="contact-topic" className="text-ink mb-1.5 block text-sm">
+          <label htmlFor="contact-topic" className="text-foreground mb-1.5 block text-sm">
             ¿Sobre qué querés consultar?
           </label>
           <select
@@ -77,7 +77,10 @@ export function ContactForm({ whatsappNumber }: { whatsappNumber: string }) {
         </div>
 
         <div>
-          <label htmlFor="contact-detail" className="text-ink mb-1.5 block text-sm">
+          <label
+            htmlFor="contact-detail"
+            className="text-foreground mb-1.5 block text-sm"
+          >
             Contanos un poco más <span className="text-muted-foreground">(opcional)</span>
           </label>
           <textarea

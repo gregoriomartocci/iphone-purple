@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mail, MapPin, Clock } from "lucide-react";
 import { InstagramIcon, TikTokIcon, WhatsAppIcon } from "./BrandIcons";
+import { Logo } from "./Logo";
 import { waLink, GENERAL_MESSAGE } from "@/lib/whatsapp";
 import type { StoreSettings } from "@/types";
 
@@ -38,8 +39,8 @@ export function SiteFooter({ settings }: { settings: StoreSettings }) {
       <div className="shell py-16">
         <div className="grid gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
-            <Link href="/" className="text-lg font-semibold tracking-tight">
-              iPhone <span className="text-purple-light">Purple</span>
+            <Link href="/" aria-label="iPhone Purple — inicio">
+              <Logo className="text-[17px]" tone="onDark" />
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/60">
               Equipos Apple con garantía escrita, Plan Canje y servicio técnico propio.

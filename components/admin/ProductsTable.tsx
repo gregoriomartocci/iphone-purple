@@ -75,7 +75,7 @@ export function ProductsTable({
   }
 
   const inputClass =
-    "h-9 rounded-lg border border-line bg-white px-2.5 text-sm text-ink outline-none transition-colors focus-visible:border-purple";
+    "h-9 rounded-lg border border-line bg-surface px-2.5 text-sm text-foreground outline-none transition-colors focus-visible:border-purple";
 
   return (
     <div>
@@ -85,7 +85,7 @@ export function ProductsTable({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Buscar modelo, color o SKU…"
-          className="border-line text-ink focus-visible:border-purple h-10 w-full rounded-lg border bg-white pr-3 pl-9 text-sm transition-colors outline-none"
+          className="border-line text-foreground focus-visible:border-purple bg-surface h-10 w-full rounded-lg border pr-3 pl-9 text-sm transition-colors outline-none"
         />
       </div>
 
@@ -122,7 +122,7 @@ export function ProductsTable({
               return (
                 <tr key={variant.id} className="border-line border-b last:border-0">
                   <td className="p-3">
-                    <p className="text-ink font-medium">{product.name}</p>
+                    <p className="text-foreground font-medium">{product.name}</p>
                     <p className="text-muted-foreground text-xs">
                       {variant.storage} · {variant.color}
                     </p>
@@ -176,7 +176,7 @@ export function ProductsTable({
                       <span
                         className={cn(
                           "font-medium",
-                          marginPct < 10 ? "text-destructive" : "text-ink"
+                          marginPct < 10 ? "text-destructive" : "text-foreground"
                         )}
                       >
                         {marginPct}%
@@ -189,7 +189,7 @@ export function ProductsTable({
                         type="button"
                         onClick={() => save(variant.id, draft)}
                         disabled={savingId === variant.id}
-                        className="bg-ink hover:bg-ink/85 inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium text-white transition-colors disabled:opacity-50"
+                        className="bg-purple hover:bg-purple/85 inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium text-white transition-colors disabled:opacity-50"
                       >
                         {savingId === variant.id ? (
                           <Loader2 className="size-3 animate-spin" />

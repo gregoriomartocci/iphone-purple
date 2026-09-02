@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { TradeInQuoter } from "@/components/site/TradeInQuoter";
+import { PageHero, PAGE_PHOTOS } from "@/components/site/PageHero";
 import { getProducts, getSettings, getTradeInPrices } from "@/lib/data";
 import { CONDITION_MULTIPLIER, leadVariant } from "@/lib/catalog";
 
@@ -47,81 +48,83 @@ export default async function TradeInPage() {
   });
 
   return (
-    <div className="shell py-12 sm:py-16">
-      <header className="max-w-2xl">
-        <h1 className="text-3xl font-semibold sm:text-5xl">Plan Canje</h1>
-        <p className="text-muted-foreground mt-4 text-lg leading-relaxed">
-          Tu equipo usado vale plata. Cotizalo acá en dos minutos y descontá ese valor del
-          que te quieras llevar.
-        </p>
-      </header>
+    <>
+      <PageHero
+        title="Plan Canje"
+        subtitle="Tu equipo usado vale plata. Cotizalo acá en dos minutos y descontá ese valor del que te quieras llevar."
+        image={PAGE_PHOTOS.planCanje}
+      />
 
-      <div className="mt-14">
-        <TradeInQuoter
-          prices={prices}
-          conditionMultipliers={CONDITION_MULTIPLIER}
-          wantedOptions={wantedOptions}
-          dollarRate={settings.dollarRate}
-          whatsappNumber={settings.whatsappNumber}
-        />
+      <div className="shell py-12 sm:py-16">
+        <div>
+          <TradeInQuoter
+            prices={prices}
+            conditionMultipliers={CONDITION_MULTIPLIER}
+            wantedOptions={wantedOptions}
+            dollarRate={settings.dollarRate}
+            whatsappNumber={settings.whatsappNumber}
+          />
+        </div>
+
+        <section className="border-line mt-24 border-t pt-14">
+          <h2 className="text-2xl font-semibold">Cómo funciona</h2>
+          <ol className="mt-8 grid gap-8 sm:grid-cols-3">
+            {STEPS.map((step, i) => (
+              <li key={step.title}>
+                <span className="tnum bg-surface text-foreground inline-flex size-8 items-center justify-center rounded-full text-sm font-medium">
+                  {i + 1}
+                </span>
+                <h3 className="text-foreground mt-4 font-medium">{step.title}</h3>
+                <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+                  {step.text}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="bg-surface mt-20 rounded-2xl p-8 sm:p-10">
+          <h2 className="text-xl font-semibold">Lo que conviene saber</h2>
+          <dl className="mt-6 grid gap-6 sm:grid-cols-2">
+            <div>
+              <dt className="text-foreground text-sm font-medium">
+                ¿Recibís equipos con la pantalla rota?
+              </dt>
+              <dd className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+                Sí, pero esos los cotizamos aparte porque el descuento depende del daño.
+                Escribinos con una foto y te pasamos el número.
+              </dd>
+            </div>
+            <div>
+              <dt className="text-foreground text-sm font-medium">
+                ¿Necesito la caja y los accesorios?
+              </dt>
+              <dd className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+                No son obligatorios, pero suman al valor de toma. La factura original
+                también ayuda.
+              </dd>
+            </div>
+            <div>
+              <dt className="text-foreground text-sm font-medium">
+                ¿Qué pasa con mi cuenta de iCloud?
+              </dt>
+              <dd className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+                Tenés que cerrar sesión y desactivar «Buscar mi iPhone» antes de
+                entregarlo. Si no sabés cómo, lo hacemos juntos en el local.
+              </dd>
+            </div>
+            <div>
+              <dt className="text-foreground text-sm font-medium">
+                ¿Puedo canjear sin comprar?
+              </dt>
+              <dd className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+                Sí. También compramos equipos sueltos, aunque el valor de toma es un poco
+                menor que canjeándolo por otro.
+              </dd>
+            </div>
+          </dl>
+        </section>
       </div>
-
-      <section className="border-line mt-24 border-t pt-14">
-        <h2 className="text-2xl font-semibold">Cómo funciona</h2>
-        <ol className="mt-8 grid gap-8 sm:grid-cols-3">
-          {STEPS.map((step, i) => (
-            <li key={step.title}>
-              <span className="tnum bg-surface text-ink inline-flex size-8 items-center justify-center rounded-full text-sm font-medium">
-                {i + 1}
-              </span>
-              <h3 className="text-ink mt-4 font-medium">{step.title}</h3>
-              <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
-                {step.text}
-              </p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="bg-surface mt-20 rounded-2xl p-8 sm:p-10">
-        <h2 className="text-xl font-semibold">Lo que conviene saber</h2>
-        <dl className="mt-6 grid gap-6 sm:grid-cols-2">
-          <div>
-            <dt className="text-ink text-sm font-medium">
-              ¿Recibís equipos con la pantalla rota?
-            </dt>
-            <dd className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
-              Sí, pero esos los cotizamos aparte porque el descuento depende del daño.
-              Escribinos con una foto y te pasamos el número.
-            </dd>
-          </div>
-          <div>
-            <dt className="text-ink text-sm font-medium">
-              ¿Necesito la caja y los accesorios?
-            </dt>
-            <dd className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
-              No son obligatorios, pero suman al valor de toma. La factura original
-              también ayuda.
-            </dd>
-          </div>
-          <div>
-            <dt className="text-ink text-sm font-medium">
-              ¿Qué pasa con mi cuenta de iCloud?
-            </dt>
-            <dd className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
-              Tenés que cerrar sesión y desactivar «Buscar mi iPhone» antes de entregarlo.
-              Si no sabés cómo, lo hacemos juntos en el local.
-            </dd>
-          </div>
-          <div>
-            <dt className="text-ink text-sm font-medium">¿Puedo canjear sin comprar?</dt>
-            <dd className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
-              Sí. También compramos equipos sueltos, aunque el valor de toma es un poco
-              menor que canjeándolo por otro.
-            </dd>
-          </div>
-        </dl>
-      </section>
-    </div>
+    </>
   );
 }

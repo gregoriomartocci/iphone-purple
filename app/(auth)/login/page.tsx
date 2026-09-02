@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
+import { Logo } from "@/components/site/Logo";
 
 const loginSchema = z.object({
   email: z.email("Ese email no parece válido"),
@@ -48,16 +49,20 @@ function LoginContent() {
   }
 
   const fieldClass =
-    "h-12 w-full rounded-xl border border-line bg-white px-4 text-[15px] text-ink outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-purple";
+    "h-12 w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-purple";
 
   return (
     <div className="bg-surface flex min-h-dvh items-center justify-center px-5">
       <div className="w-full max-w-sm">
-        <Link href="/" className="block text-center text-lg font-semibold tracking-tight">
-          iPhone <span className="text-purple">Purple</span>
+        <Link
+          href="/"
+          className="flex justify-center"
+          aria-label="iPhone Purple — inicio"
+        >
+          <Logo className="text-[17px]" />
         </Link>
 
-        <div className="border-line mt-6 rounded-2xl border bg-white p-8">
+        <div className="border-line bg-surface mt-6 rounded-2xl border p-8">
           <h1 className="text-xl font-semibold">Panel de administración</h1>
           <p className="text-muted-foreground mt-1 text-sm">
             Ingresá con tu cuenta para gestionar el stock.
@@ -66,7 +71,7 @@ function LoginContent() {
           <button
             type="button"
             onClick={() => signIn("google", { callbackUrl: redirect })}
-            className="border-line text-ink hover:border-ink mt-6 flex h-12 w-full items-center justify-center gap-2.5 rounded-xl border text-sm font-medium transition-colors"
+            className="border-line text-foreground mt-6 flex h-12 w-full items-center justify-center gap-2.5 rounded-xl border text-sm font-medium transition-colors hover:border-white/40"
           >
             <svg className="size-4" viewBox="0 0 24 24" aria-hidden>
               <path
@@ -103,7 +108,7 @@ function LoginContent() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label htmlFor="email" className="text-ink mb-1.5 block text-sm">
+              <label htmlFor="email" className="text-foreground mb-1.5 block text-sm">
                 Email
               </label>
               <input
@@ -120,7 +125,7 @@ function LoginContent() {
             </div>
 
             <div>
-              <label htmlFor="password" className="text-ink mb-1.5 block text-sm">
+              <label htmlFor="password" className="text-foreground mb-1.5 block text-sm">
                 Contraseña
               </label>
               <input
@@ -141,7 +146,7 @@ function LoginContent() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-ink hover:bg-ink/85 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-medium text-white transition-colors disabled:opacity-60"
+              className="bg-purple hover:bg-purple/85 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-medium text-white transition-colors disabled:opacity-60"
             >
               {loading && <Loader2 className="size-4 animate-spin" />}
               {loading ? "Ingresando…" : "Ingresar"}
@@ -151,7 +156,7 @@ function LoginContent() {
 
         <Link
           href="/"
-          className="text-muted-foreground hover:text-ink mt-6 block text-center text-sm transition-colors"
+          className="text-muted-foreground hover:text-foreground mt-6 block text-center text-sm transition-colors"
         >
           Volver a la tienda
         </Link>

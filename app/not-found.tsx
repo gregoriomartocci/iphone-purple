@@ -16,13 +16,13 @@ export default function NotFound() {
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Link
           href="/catalogo"
-          className="bg-ink hover:bg-ink/85 inline-flex h-12 items-center justify-center rounded-full px-7 text-sm font-medium text-white transition-colors"
+          className="bg-purple hover:bg-purple/85 inline-flex h-12 items-center justify-center rounded-full px-7 text-sm font-medium text-white transition-colors"
         >
           Ver catálogo
         </Link>
         <Link
           href="/"
-          className="border-line text-ink hover:border-ink inline-flex h-12 items-center justify-center rounded-full border px-7 text-sm font-medium transition-colors"
+          className="border-line text-foreground inline-flex h-12 items-center justify-center rounded-full border px-7 text-sm font-medium transition-colors hover:border-white/40"
         >
           Ir al inicio
         </Link>

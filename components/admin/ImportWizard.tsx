@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 type Row = ParsedRow & { include: boolean; key: string };
 
 const inputClass =
-  "h-9 w-full rounded-lg border border-line bg-white px-2.5 text-sm text-ink outline-none transition-colors focus-visible:border-purple";
+  "h-9 w-full rounded-lg border border-line bg-surface px-2.5 text-sm text-foreground outline-none transition-colors focus-visible:border-purple";
 
 /** Mismo cálculo que `sellPrice` del servidor, para previsualizar sin ida y vuelta. */
 function preview(row: ParsedRow, marginPct: number, dollarRate: number) {
@@ -133,7 +133,9 @@ export function ImportWizard({
   return (
     <div className="space-y-8">
       <section className="border-line rounded-xl border p-5">
-        <h2 className="text-ink text-sm font-medium">1. Pegá la lista del proveedor</h2>
+        <h2 className="text-foreground text-sm font-medium">
+          1. Pegá la lista del proveedor
+        </h2>
         <p className="text-muted-foreground mt-1 text-sm">
           Copiá el mensaje tal cual viene de WhatsApp. No hace falta ordenarlo ni sacarle
           los emojis.
@@ -146,7 +148,7 @@ export function ImportWizard({
           placeholder={
             "Ejemplo:\n\nBUEN DÍA! LISTA DE HOY 🔥\niPhone 13 128 impecable bat 89 — 470\n15 pro max 256 sellado 1290 (x2)\nip 14 128gb usado 9/10 600 u$d"
           }
-          className="border-line text-ink focus-visible:border-purple mt-4 w-full resize-y rounded-lg border bg-white p-3 font-mono text-[13px] leading-relaxed transition-colors outline-none"
+          className="border-line text-foreground focus-visible:border-purple bg-surface mt-4 w-full resize-y rounded-lg border p-3 font-mono text-[13px] leading-relaxed transition-colors outline-none"
         />
 
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -200,7 +202,7 @@ export function ImportWizard({
           type="button"
           onClick={handleParse}
           disabled={parsing || !rawText.trim()}
-          className="bg-ink hover:bg-ink/85 mt-4 inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium text-white transition-colors disabled:opacity-50"
+          className="bg-purple hover:bg-purple/85 mt-4 inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium text-white transition-colors disabled:opacity-50"
         >
           {parsing ? (
             <>
@@ -236,7 +238,7 @@ export function ImportWizard({
         <section className="border-line rounded-xl border">
           <div className="border-line flex flex-wrap items-center justify-between gap-3 border-b p-5">
             <div>
-              <h2 className="text-ink text-sm font-medium">
+              <h2 className="text-foreground text-sm font-medium">
                 2. Revisá antes de publicar
               </h2>
               <p className="text-muted-foreground mt-1 text-sm">
@@ -247,7 +249,7 @@ export function ImportWizard({
               <p className="text-muted-foreground">
                 {included.length} de {rows.length} · {totals.units} unidades
               </p>
-              <p className="tnum text-ink font-medium">
+              <p className="tnum text-foreground font-medium">
                 Margen estimado: {formatUSD(totals.revenue - totals.cost)}
               </p>
             </div>
@@ -288,7 +290,7 @@ export function ImportWizard({
                             updateRow(row.key, { include: e.target.checked })
                           }
                           aria-label="Incluir esta fila"
-                          className="size-4 accent-[#7b2fbe]"
+                          className="size-4 accent-[#6d1fe0]"
                         />
                       </td>
                       <td className="p-3">
@@ -384,7 +386,7 @@ export function ImportWizard({
                         />
                       </td>
                       <td className="p-3 text-right">
-                        <span className="tnum text-ink block font-medium">
+                        <span className="tnum text-foreground block font-medium">
                           {formatARS(p.priceArs)}
                         </span>
                         <span className="tnum text-muted-foreground block text-xs">
@@ -421,7 +423,7 @@ export function ImportWizard({
               type="button"
               onClick={handlePublish}
               disabled={publishing || included.length === 0 || !supabaseReady}
-              className="bg-ink hover:bg-ink/85 ml-auto inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
+              className="bg-purple hover:bg-purple/85 ml-auto inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
             >
               {publishing ? (
                 <>

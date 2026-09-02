@@ -13,7 +13,7 @@ function renderInline(text: string, keyPrefix: string) {
   // Partimos por **negrita** conservando los delimitadores en los índices impares.
   return text.split(/\*\*(.+?)\*\*/g).map((chunk, i) =>
     i % 2 === 1 ? (
-      <strong key={`${keyPrefix}-${i}`} className="text-ink font-medium">
+      <strong key={`${keyPrefix}-${i}`} className="text-foreground font-medium">
         {chunk}
       </strong>
     ) : (
@@ -32,7 +32,7 @@ export function PostBody({ body }: { body: string }) {
 
         if (trimmed.startsWith("## ")) {
           return (
-            <h2 key={i} className="text-ink mt-10 mb-3 text-xl font-semibold">
+            <h2 key={i} className="text-foreground mt-10 mb-3 text-xl font-semibold">
               {renderInline(trimmed.slice(3), `h${i}`)}
             </h2>
           );

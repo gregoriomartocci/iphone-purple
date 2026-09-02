@@ -70,7 +70,7 @@ export function ProductDetail({
                 aria-label={`Ver foto ${i + 1}`}
                 className={cn(
                   "relative size-16 overflow-hidden rounded-lg border transition-colors",
-                  i === imageIndex ? "border-ink" : "border-line hover:border-ink/40"
+                  i === imageIndex ? "border-purple" : "border-line hover:border-white/30"
                 )}
               >
                 <Image src={img.url} alt="" fill sizes="64px" className="object-cover" />
@@ -85,7 +85,7 @@ export function ProductDetail({
         <h1 className="mt-1 text-3xl font-semibold sm:text-4xl">{product.name}</h1>
 
         <div className="mt-5 flex items-baseline gap-3">
-          <span className="tnum text-ink text-3xl font-semibold">
+          <span className="tnum text-foreground text-3xl font-semibold">
             {formatARS(selected?.priceArs ?? 0)}
           </span>
           {selected && selected.priceUsd > 0 && (
@@ -98,7 +98,7 @@ export function ProductDetail({
 
         {storages.length > 1 && (
           <div className="mt-8">
-            <h2 className="text-ink text-sm font-medium">Capacidad</h2>
+            <h2 className="text-foreground text-sm font-medium">Capacidad</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {storages.map((storage) => {
                 const active = selected?.storage === storage;
@@ -116,8 +116,8 @@ export function ProductDetail({
                     className={cn(
                       "h-10 rounded-full border px-5 text-sm transition-colors",
                       active
-                        ? "border-ink bg-ink text-white"
-                        : "border-line text-ink hover:border-ink/40"
+                        ? "border-purple bg-purple text-white"
+                        : "border-line text-foreground hover:border-white/30"
                     )}
                   >
                     {storage}
@@ -130,7 +130,7 @@ export function ProductDetail({
 
         {sameStorage.length > 1 && (
           <div className="mt-6">
-            <h2 className="text-ink text-sm font-medium">Estado y color</h2>
+            <h2 className="text-foreground text-sm font-medium">Estado y color</h2>
             <div className="mt-3 space-y-2">
               {sameStorage.map((variant) => {
                 const active = selected?.id === variant.id;
@@ -142,7 +142,7 @@ export function ProductDetail({
                     disabled={variant.stock === 0}
                     className={cn(
                       "flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-colors",
-                      active ? "border-ink" : "border-line hover:border-ink/40",
+                      active ? "border-purple" : "border-line hover:border-white/30",
                       variant.stock === 0 && "cursor-not-allowed opacity-45"
                     )}
                   >
@@ -152,7 +152,7 @@ export function ProductDetail({
                       aria-hidden
                     />
                     <span className="min-w-0 flex-1">
-                      <span className="text-ink block truncate text-sm">
+                      <span className="text-foreground block truncate text-sm">
                         {variant.color} · {CONDITION_LABELS[variant.condition]}
                       </span>
                       <span className="text-muted-foreground block text-xs">
@@ -162,7 +162,7 @@ export function ProductDetail({
                         {variant.stock === 0 && " · sin stock"}
                       </span>
                     </span>
-                    <span className="tnum text-ink shrink-0 text-sm font-medium">
+                    <span className="tnum text-foreground shrink-0 text-sm font-medium">
                       {formatARS(variant.priceArs)}
                     </span>
                     {active && <Check className="text-purple size-4 shrink-0" />}
@@ -202,12 +202,12 @@ export function ProductDetail({
 
         {Object.keys(product.specs).length > 0 && (
           <div className="mt-8">
-            <h2 className="text-ink text-sm font-medium">Especificaciones</h2>
+            <h2 className="text-foreground text-sm font-medium">Especificaciones</h2>
             <dl className="divide-line border-line mt-3 divide-y border-t">
               {Object.entries(product.specs).map(([key, value]) => (
                 <div key={key} className="flex gap-4 py-2.5 text-sm">
                   <dt className="text-muted-foreground w-32 shrink-0">{key}</dt>
-                  <dd className="text-ink">{value}</dd>
+                  <dd className="text-foreground">{value}</dd>
                 </div>
               ))}
             </dl>
