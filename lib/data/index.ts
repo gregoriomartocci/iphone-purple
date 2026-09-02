@@ -1,4 +1,4 @@
-import { BATTERY_TIERS, CATEGORIES, GRADES } from "@/types";
+import { BATTERY_TIERS, CATEGORIES, GRADES, LINES, STATES, stateOf } from "@/types";
 import type {
   CatalogFilters,
   Post,
@@ -98,20 +98,33 @@ export async function getProducts(filters: CatalogFilters = {}): Promise<Product
 
   // El resto de los criterios se evalúan sobre las variantes: alcanza con que
   // UNA cumpla para que el producto entre al listado.
+  if (filters.generation !== undefined) {
+    items = items.filter((p) => p.generation === filters.generation);
+  }
+
+  if (filters.line) {
+    items = items.filter((p) => p.line === filters.line);
+  }
+
+  /**
+   * El resto se evalúa a nivel variante y tiene que cumplirse en LA MISMA: si
+   * se pidiera por separado, un producto con un sellado agotado y una usada con
+   * stock entraría al filtro "sellado", y la tarjeta anunciaría algo que no se
+   * puede vender.
+   */
   items = items.filter((p) =>
     p.variants.some((v) =>
       matchesVariant(v, {
         authenticity,
+        state: filters.state,
         grade: filters.grade,
         storage: filters.storage,
+        color: filters.color,
         minBattery: filters.minBattery,
+        includeOutOfStock: filters.includeOutOfStock,
       })
     )
   );
-
-  if (filters.inStockOnly) {
-    items = items.filter((p) => totalStock(p) > 0);
-  }
 
   switch (filters.sort) {
     case "precio-asc":
@@ -165,8 +178,13 @@ export type Facet = { value: string; count: number };
 
 export type CatalogFacets = {
   categories: Facet[];
+  generations: Facet[];
+  lines: Facet[];
   models: Facet[];
   storages: Facet[];
+  colors: Facet[];
+  states: Facet[];
+  /** Solo tiene sentido con estado "seminuevo" ya elegido. */
   grades: Facet[];
   batteryTiers: Facet[];
   replicaCount: number;
@@ -194,62 +212,78 @@ export async function getCatalogFacets(
   const visible = all.filter((p) =>
     p.variants.some((v) => v.authenticity === authenticity)
   );
+  const visibleVariants = visible.flatMap((p) => p.variants);
 
   const categories = CATEGORIES.filter((c) => visible.some((p) => p.category === c));
+  // De la generación más nueva a la más vieja, que es como se busca.
+  const generations = [
+    ...new Set(visible.map((p) => p.generation).filter((g): g is number => g !== null)),
+  ].sort((a, b) => b - a);
+  const lines = LINES.filter((l) => visible.some((p) => p.line === l));
   const models = [...new Set(visible.map((p) => p.model))].sort();
-  const storages = [
-    ...new Set(visible.flatMap((p) => p.variants.map((v) => v.storage))),
-  ].sort((a, b) => {
+  const storages = [...new Set(visibleVariants.map((v) => v.storage))].sort((a, b) => {
     const na = parseInt(a, 10);
     const nb = parseInt(b, 10);
     if (!isNaN(na) && !isNaN(nb)) return na - nb;
     return a.localeCompare(b);
   });
-  const grades = GRADES.filter((g) =>
-    visible.some((p) => p.variants.some((v) => v.grade === g))
+  const colors = [...new Set(visibleVariants.map((v) => v.color))].filter(Boolean).sort();
+  const states = STATES.filter((st) =>
+    visibleVariants.some((v) => stateOf(v.grade) === st)
+  );
+  // El grado afina dentro de seminuevo; el sellado no tiene grados.
+  const grades = GRADES.filter(
+    (g) => g !== "sellado" && visibleVariants.some((v) => v.grade === g)
   );
 
-  const prices = visible
-    .flatMap((p) => p.variants.map((v) => v.priceArs))
-    .filter((n) => n > 0);
+  const prices = visibleVariants.map((v) => v.priceArs).filter((n) => n > 0);
 
-  const [categoryCounts, modelCounts, storageCounts, gradeCounts, batteryCounts] =
-    await Promise.all([
-      Promise.all(
-        categories.map(async (c) => ({
-          value: c,
-          count: await countWith({ category: c }),
-        }))
-      ),
-      Promise.all(
-        models.map(async (m) => ({ value: m, count: await countWith({ model: m }) }))
-      ),
-      Promise.all(
-        storages.map(async (s) => ({ value: s, count: await countWith({ storage: s }) }))
-      ),
-      Promise.all(
-        grades.map(async (g) => ({ value: g, count: await countWith({ grade: g }) }))
-      ),
-      Promise.all(
-        BATTERY_TIERS.map(async (t) => ({
-          value: String(t),
-          count: await countWith({ minBattery: t }),
-        }))
-      ),
-    ]);
+  const count = async <T extends string | number>(
+    values: T[],
+    toFilter: (v: T) => Partial<CatalogFilters>
+  ): Promise<Facet[]> =>
+    Promise.all(
+      values.map(async (v) => ({ value: String(v), count: await countWith(toFilter(v)) }))
+    );
 
-  // Cuántas réplicas hay, para ofrecer el acceso sin mezclarlas.
-  const replicaCount = (await getProducts({ ...filters, authenticity: "replica" }))
-    .length;
+  const [
+    categoryCounts,
+    generationCounts,
+    lineCounts,
+    modelCounts,
+    storageCounts,
+    colorCounts,
+    stateCounts,
+    gradeCounts,
+    batteryCounts,
+    replicas,
+  ] = await Promise.all([
+    count(categories, (c) => ({ category: c })),
+    count(generations, (g) => ({ generation: g })),
+    count(lines, (l) => ({ line: l })),
+    count(models, (m) => ({ model: m })),
+    count(storages, (s) => ({ storage: s })),
+    count(colors, (c) => ({ color: c })),
+    count(states, (st) => ({ state: st })),
+    count(grades, (g) => ({ grade: g })),
+    count([...BATTERY_TIERS], (t) => ({ minBattery: t })),
+    getProducts({ ...filters, authenticity: "replica" }),
+  ]);
+
+  // Una opción con cero resultados solo estorba.
+  const used = (list: Facet[]) => list.filter((f) => f.count > 0);
 
   return {
-    // Una opción con cero resultados solo estorba.
-    categories: categoryCounts.filter((f) => f.count > 0),
-    models: modelCounts.filter((f) => f.count > 0),
-    storages: storageCounts.filter((f) => f.count > 0),
-    grades: gradeCounts.filter((f) => f.count > 0),
-    batteryTiers: batteryCounts.filter((f) => f.count > 0),
-    replicaCount,
+    categories: used(categoryCounts),
+    generations: used(generationCounts),
+    lines: used(lineCounts),
+    models: used(modelCounts),
+    storages: used(storageCounts),
+    colors: used(colorCounts),
+    states: used(stateCounts),
+    grades: used(gradeCounts),
+    batteryTiers: used(batteryCounts),
+    replicaCount: replicas.length,
     priceRange: {
       min: prices.length ? Math.min(...prices) : 0,
       max: prices.length ? Math.max(...prices) : 0,

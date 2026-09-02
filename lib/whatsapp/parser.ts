@@ -37,7 +37,7 @@ const RowSchema = z.object({
     .enum(["iphone", "ipad", "mac", "watch", "audio", "consola", "accesorio"])
     .describe("Qué tipo de producto es, deducido del modelo."),
   grade: z
-    .enum(["sellado", "a-plus", "a", "b"])
+    .enum(["sellado", "a-plus", "a", "a-minus"])
     .describe(
       "Grado. 'sellado' solo para sellados o precintados. 'a-plus' si dicen impecable/como nuevo o batería 95+. 'a' es el caso por defecto de un usado sin detalle. 'b' si mencionan marcas de uso visibles o batería menor a 88."
     ),

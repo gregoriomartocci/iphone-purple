@@ -31,7 +31,7 @@ export default async function TradeInPage() {
   const [prices, settings, products] = await Promise.all([
     getTradeInPrices(),
     getSettings(),
-    getProducts({ inStockOnly: true, sort: "precio-asc" }),
+    getProducts({ sort: "precio-asc" }),
   ]);
 
   // Solo ofrecemos como destino lo que efectivamente se puede entregar hoy.

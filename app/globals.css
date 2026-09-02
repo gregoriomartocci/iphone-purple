@@ -11,7 +11,7 @@
   cada vista, la banda del medio en la home y el footer.
 
     ink       #0c0c10  navbar, portadas, bandas y footer
-    fondo     #ffffff  la página
+    fondo     #f6f6f8  la página, para que el blanco de las tarjetas resalte
     elevated  #f4f4f6  fondo de las fotos y rellenos suaves
     line      #e8e8ec  bordes
 
@@ -50,14 +50,14 @@
   --color-ink: #0c0c10;
   --color-line: #e8e8ec;
   --color-surface: #ffffff;
-  --color-elevated: #f4f4f6;
+  --color-elevated: #f0f0f3;
   --color-purple: #5e16eb;
   --color-purple-deep: #4a0fc0;
   --color-purple-light: #a97bf5;
 }
 
 :root {
-  --background: #ffffff;
+  --background: #f6f6f8;
   --foreground: #101014;
   --card: #ffffff;
   --card-foreground: #16161a;

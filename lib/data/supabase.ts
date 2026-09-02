@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { parseModel } from "@/lib/catalog";
 import type {
   Category,
   Grade,
@@ -58,7 +59,7 @@ const num = (value: number | string | null | undefined): number => {
   return typeof parsed === "number" && !isNaN(parsed) ? parsed : 0;
 };
 
-const VALID_GRADES: Grade[] = ["sellado", "a-plus", "a", "b"];
+const VALID_GRADES: Grade[] = ["sellado", "a-plus", "a", "a-minus"];
 
 const toGrade = (value: string | null): Grade =>
   VALID_GRADES.includes(value as Grade) ? (value as Grade) : "a";
@@ -105,6 +106,7 @@ function mapProduct(row: ProductRow): Product {
     slug: row.slug,
     brand: row.brand ?? "Apple",
     model: row.model ?? row.name,
+    ...parseModel(row.model ?? row.name),
     category: toCategory(row.category),
     description: row.description ?? "",
     specs: row.specs ?? {},

@@ -6,9 +6,13 @@ import { Search, X } from "lucide-react";
 import {
   CATEGORY_LABELS,
   GRADE_LABELS,
+  LINE_LABELS,
+  STATE_LABELS,
   type CatalogFilters,
   type Category,
   type Grade,
+  type Line,
+  type State,
 } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -42,13 +46,16 @@ export function CatalogToolbar({
     const params = new URLSearchParams();
     if (next.q) params.set("q", next.q);
     if (next.category) params.set("category", next.category);
+    if (next.generation) params.set("gen", String(next.generation));
+    if (next.line) params.set("linea", next.line);
+    if (next.state) params.set("estado", next.state);
+    if (next.color) params.set("color", next.color);
     if (next.model) params.set("model", next.model);
     if (next.storage) params.set("storage", next.storage);
     if (next.grade) params.set("grade", next.grade);
     if (next.authenticity === "replica") params.set("tipo", "replica");
     if (next.minBattery) params.set("bateria", String(next.minBattery));
     if (next.sort && next.sort !== "relevancia") params.set("sort", next.sort);
-    if (next.inStockOnly) params.set("stock", "1");
 
     const qs = params.toString();
     startTransition(() => router.push(qs ? `/catalogo?${qs}` : "/catalogo"));
@@ -65,12 +72,24 @@ export function CatalogToolbar({
       label: `Batería ${filters.minBattery}%+`,
       clear: { minBattery: undefined },
     },
+    filters.generation && {
+      label: `Generación ${filters.generation}`,
+      clear: { generation: undefined },
+    },
+    filters.line && {
+      label: LINE_LABELS[filters.line as Line],
+      clear: { line: undefined },
+    },
+    filters.state && {
+      label: STATE_LABELS[filters.state as State],
+      clear: { state: undefined, grade: undefined, minBattery: undefined },
+    },
     filters.grade && {
       label: GRADE_LABELS[filters.grade as Grade],
       clear: { grade: undefined },
     },
+    filters.color && { label: filters.color, clear: { color: undefined } },
     filters.storage && { label: filters.storage, clear: { storage: undefined } },
-    filters.inStockOnly && { label: "Con stock", clear: { inStockOnly: undefined } },
   ].filter(Boolean) as { label: string; clear: Partial<CatalogFilters> }[];
 
   return (
@@ -84,7 +103,7 @@ export function CatalogToolbar({
         }}
         className="relative"
       >
-        <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2" />
+        <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2" />
         <input
           type="search"
           name="q"
@@ -92,14 +111,14 @@ export function CatalogToolbar({
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Buscar: iPhone 15, 256GB, sellado…"
           aria-label="Buscar en el catálogo"
-          className="border-line bg-surface text-foreground placeholder:text-muted-foreground focus-visible:border-purple h-12 w-full rounded-xl border pr-4 pl-11 text-[15px] transition-colors outline-none"
+          className="border-line bg-surface text-foreground placeholder:text-muted-foreground focus-visible:border-purple h-14 w-full rounded-2xl border pr-4 pl-12 text-base shadow-sm transition-colors outline-none"
         />
       </form>
 
       <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
-        <p className="text-muted-foreground text-sm">
-          Mostrando <span className="text-foreground font-medium">{resultCount}</span> de{" "}
-          {totalCount} equipos
+        <p className="text-muted-foreground text-[15px]">
+          Mostrando <span className="text-foreground font-semibold">{resultCount}</span>{" "}
+          de {totalCount} equipos
         </p>
 
         <label className="flex items-center gap-2 text-sm">
@@ -109,7 +128,7 @@ export function CatalogToolbar({
             onChange={(e) =>
               navigate({ ...filters, sort: e.target.value as CatalogFilters["sort"] })
             }
-            className="border-line bg-surface text-foreground focus-visible:border-purple h-10 rounded-xl border px-3 transition-colors outline-none"
+            className="border-line bg-surface text-foreground focus-visible:border-purple h-11 rounded-xl border px-3.5 text-[15px] shadow-sm transition-colors outline-none"
           >
             {SORTS.map((s) => (
               <option key={s.value} value={s.value}>
@@ -131,7 +150,7 @@ export function CatalogToolbar({
                 if ("q" in chip.clear) setQuery("");
                 navigate({ ...filters, ...chip.clear });
               }}
-              className="border-line bg-surface text-foreground hover:border-purple inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors"
+              className="border-line bg-surface text-foreground hover:border-purple inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm shadow-sm transition-colors"
             >
               {chip.label}
               <X className="size-3" />

@@ -36,7 +36,9 @@ function product(overrides: Partial<Product> = {}): Product {
     name: "iPhone Test",
     slug: "iphone-test",
     brand: "Apple",
-    model: "iPhone Test",
+    model: "iPhone 15 Test",
+    generation: 15,
+    line: "base" as const,
     category: "iphone" as const,
     description: "",
     specs: {},
@@ -83,12 +85,12 @@ describe("helpers de catálogo", () => {
     // de una usada más barata: sería ofrecerle algo distinto de lo que pidió.
     const p = product({
       variants: [
-        variant({ id: "usada", grade: "b", priceArs: 500_000, stock: 5 }),
+        variant({ id: "usada", grade: "a-minus", priceArs: 500_000, stock: 5 }),
         variant({ id: "sellada", grade: "sellado", priceArs: 900_000, stock: 5 }),
       ],
     });
     expect(leadVariant(p, { grade: "sellado" })?.id).toBe("sellada");
-    expect(leadVariant(p, { grade: "b" })?.id).toBe("usada");
+    expect(leadVariant(p, { grade: "a-minus" })?.id).toBe("usada");
     // Sin filtro vuelve a mandar el precio.
     expect(leadVariant(p)?.id).toBe("usada");
   });
@@ -107,7 +109,7 @@ describe("helpers de catálogo", () => {
     // Puede pasar cuando el producto entra por otro criterio: mejor mostrar
     // algo que dejar la tarjeta sin precio.
     const p = product({
-      variants: [variant({ id: "unica", grade: "b", stock: 2 })],
+      variants: [variant({ id: "unica", grade: "a-minus", stock: 2 })],
     });
     expect(leadVariant(p, { grade: "sellado" })?.id).toBe("unica");
   });
@@ -174,10 +176,37 @@ describe("getProducts", () => {
     }
   });
 
-  it("con inStockOnly no devuelve nada agotado", async () => {
-    const result = await getProducts({ inStockOnly: true });
+  it("nunca devuelve equipos agotados", async () => {
+    // Regla del sitio: si no está, no se muestra.
+    const result = await getProducts();
     for (const p of result) {
       expect(totalStock(p)).toBeGreaterThan(0);
+    }
+  });
+
+  it("el panel sí puede pedir lo agotado, para reponer", async () => {
+    const publico = await getProducts();
+    const conAgotados = await getProducts({ includeOutOfStock: true });
+    expect(conAgotados.length).toBeGreaterThanOrEqual(publico.length);
+  });
+
+  it("filtra por generación", async () => {
+    const result = await getProducts({ generation: 15 });
+    expect(result.length).toBeGreaterThan(0);
+    for (const p of result) expect(p.generation).toBe(15);
+  });
+
+  it("filtra por línea", async () => {
+    const result = await getProducts({ line: "pro-max" });
+    expect(result.length).toBeGreaterThan(0);
+    for (const p of result) expect(p.line).toBe("pro-max");
+  });
+
+  it("combina generación y línea", async () => {
+    const result = await getProducts({ generation: 16, line: "pro" });
+    for (const p of result) {
+      expect(p.generation).toBe(16);
+      expect(p.line).toBe("pro");
     }
   });
 
@@ -205,11 +234,7 @@ describe("getProducts", () => {
   });
 
   it("combina varios filtros a la vez", async () => {
-    const result = await getProducts({
-      q: "iphone",
-      storage: "128GB",
-      inStockOnly: true,
-    });
+    const result = await getProducts({ q: "iphone", storage: "128GB" });
     for (const p of result) {
       expect(p.name.toLowerCase()).toContain("iphone");
       expect(p.variants.some((v) => v.storage === "128GB")).toBe(true);
@@ -225,7 +250,6 @@ describe("réplicas", () => {
     for (const filtros of [
       {},
       { q: "auriculares" },
-      { inStockOnly: true },
       { sort: "precio-asc" as const },
       { category: "accesorio" as const },
     ]) {
@@ -340,9 +364,9 @@ describe("getCatalogFacets", () => {
 
   it("los contadores respetan los filtros ya aplicados", async () => {
     // Con un filtro activo, cada opción cuenta la intersección, no el total.
-    const withStock = await getCatalogFacets({ inStockOnly: true });
-    for (const facet of withStock.storages) {
-      const filtered = await getProducts({ inStockOnly: true, storage: facet.value });
+    const facets = await getCatalogFacets({ category: "iphone" });
+    for (const facet of facets.storages) {
+      const filtered = await getProducts({ category: "iphone", storage: facet.value });
       expect(filtered.length).toBe(facet.count);
     }
   });

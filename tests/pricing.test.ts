@@ -69,19 +69,19 @@ describe("quoteTradeIn", () => {
   it("paga más por un equipo en mejor estado", () => {
     expect(quoteTradeIn(base, "sellado")).toBeGreaterThan(quoteTradeIn(base, "a-plus"));
     expect(quoteTradeIn(base, "a-plus")).toBeGreaterThan(quoteTradeIn(base, "a"));
-    expect(quoteTradeIn(base, "a")).toBeGreaterThan(quoteTradeIn(base, "b"));
+    expect(quoteTradeIn(base, "a")).toBeGreaterThan(quoteTradeIn(base, "a-minus"));
   });
 
   it("redondea a múltiplos de 5 para no cotizar cifras raras", () => {
     const raro: TradeInPrice = { ...base, baseValue: 333 };
-    for (const grade of ["sellado", "a-plus", "a", "b"] as const) {
+    for (const grade of ["sellado", "a-plus", "a", "a-minus"] as const) {
       expect(quoteTradeIn(raro, grade) % 5).toBe(0);
     }
   });
 
   it("nunca cotiza en negativo", () => {
     const cero: TradeInPrice = { ...base, baseValue: 0 };
-    expect(quoteTradeIn(cero, "b")).toBe(0);
+    expect(quoteTradeIn(cero, "a-minus")).toBe(0);
   });
 
   it("usa los mismos porcentajes que publicamos en el blog", () => {
@@ -89,6 +89,6 @@ describe("quoteTradeIn", () => {
     // calculamos lo que vale tu equipo", que los enumera explícitamente.
     expect(GRADE_MULTIPLIER["a-plus"]).toBe(1.15);
     expect(GRADE_MULTIPLIER.a).toBe(1);
-    expect(GRADE_MULTIPLIER.b).toBe(0.85);
+    expect(GRADE_MULTIPLIER["a-minus"]).toBe(0.85);
   });
 });

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, SearchX } from "lucide-react";
 import { CatalogSidebar } from "@/components/site/CatalogSidebar";
 import { CatalogToolbar } from "@/components/site/CatalogToolbar";
 import { PageHero, PAGE_PHOTOS } from "@/components/site/PageHero";
@@ -10,9 +10,13 @@ import {
   BATTERY_TIERS,
   CATEGORIES,
   GRADES,
+  LINES,
+  STATES,
   type CatalogFilters,
   type Category,
   type Grade,
+  type Line,
+  type State,
 } from "@/types";
 
 export const metadata: Metadata = {
@@ -32,8 +36,11 @@ function first(value: string | string[] | undefined): string | undefined {
 function parseFilters(params: SearchParams): CatalogFilters {
   const grade = first(params.grade);
   const category = first(params.category);
+  const state = first(params.estado);
+  const line = first(params.linea);
   const sort = first(params.sort);
   const battery = Number(first(params.bateria));
+  const generation = Number(first(params.gen));
 
   return {
     q: first(params.q),
@@ -43,6 +50,10 @@ function parseFilters(params: SearchParams): CatalogFilters {
     category: CATEGORIES.includes(category as Category)
       ? (category as Category)
       : undefined,
+    generation: Number.isInteger(generation) && generation > 0 ? generation : undefined,
+    line: LINES.includes(line as Line) ? (line as Line) : undefined,
+    color: first(params.color),
+    state: STATES.includes(state as State) ? (state as State) : undefined,
     grade: GRADES.includes(grade as Grade) ? (grade as Grade) : undefined,
     // Sin este parámetro, la capa de datos sirve solo originales.
     authenticity: first(params.tipo) === "replica" ? "replica" : undefined,
@@ -54,7 +65,6 @@ function parseFilters(params: SearchParams): CatalogFilters {
     )
       ? (sort as CatalogFilters["sort"])
       : "relevancia",
-    inStockOnly: first(params.stock) === "1",
   };
 }
 
@@ -111,24 +121,30 @@ export default async function CatalogPage({
                 ))}
               </div>
             ) : (
-              <div className="border-line mt-10 rounded-2xl border border-dashed py-20 text-center">
-                <p className="text-foreground font-medium">
-                  No encontramos equipos con esos filtros
-                </p>
-                <p className="text-muted-foreground mt-2 text-sm">
-                  Probá con menos filtros, o escribinos y te avisamos cuando entre lo que
-                  buscás.
-                </p>
-                <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+              <div className="border-line bg-surface mt-8 overflow-hidden rounded-2xl border shadow-sm">
+                <div className="bg-elevated flex flex-col items-center px-6 py-14 text-center">
+                  <span className="bg-purple/10 text-purple flex size-14 items-center justify-center rounded-2xl">
+                    <SearchX className="size-7" />
+                  </span>
+                  <h2 className="mt-5 text-2xl font-semibold">
+                    No encontramos equipos con esos filtros
+                  </h2>
+                  <p className="text-muted-foreground mt-2 max-w-md leading-relaxed">
+                    Puede que se haya vendido lo que buscabas. Probá sacando algún filtro,
+                    o decinos qué necesitás y te avisamos apenas entre.
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-3 p-6 sm:flex-row sm:justify-center">
                   <Link
                     href="/catalogo"
-                    className="bg-purple hover:bg-purple/85 inline-flex h-11 items-center justify-center rounded-full px-6 text-sm font-medium text-white transition-colors"
+                    className="bg-purple hover:bg-purple/85 inline-flex h-12 items-center justify-center rounded-full px-7 text-[15px] font-medium text-white transition-colors"
                   >
                     Ver todo el catálogo
                   </Link>
                   <Link
                     href="/contacto"
-                    className="border-line text-foreground hover:border-foreground/35 inline-flex h-11 items-center justify-center rounded-full border px-6 text-sm font-medium transition-colors"
+                    className="border-line text-foreground hover:border-foreground/35 inline-flex h-12 items-center justify-center rounded-full border px-7 text-[15px] font-medium transition-colors"
                   >
                     Pedir un equipo
                   </Link>

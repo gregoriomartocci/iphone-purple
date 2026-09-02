@@ -30,7 +30,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   ipad: "iPad",
   mac: "Mac",
   watch: "Apple Watch",
-  audio: "Audio",
+  audio: "AirPods",
   consola: "Consolas",
   accesorio: "Accesorios",
 };
@@ -54,15 +54,15 @@ export const AUTHENTICITY_LABELS: Record<Authenticity, string> = {
  * Grado del equipo, de mejor a peor. El orden importa: se usa para cotizar
  * el Plan Canje y para ordenar los filtros.
  */
-export type Grade = "sellado" | "a-plus" | "a" | "b";
+export type Grade = "sellado" | "a-plus" | "a" | "a-minus";
 
-export const GRADES: Grade[] = ["sellado", "a-plus", "a", "b"];
+export const GRADES: Grade[] = ["sellado", "a-plus", "a", "a-minus"];
 
 export const GRADE_LABELS: Record<Grade, string> = {
   sellado: "Sellado",
   "a-plus": "Seminuevo A+",
   a: "Seminuevo A",
-  b: "Seminuevo B",
+  "a-minus": "Seminuevo A−",
 };
 
 /**
@@ -85,7 +85,7 @@ export const GRADE_SPECS: Record<Grade, { cosmetic: string; battery: string }> =
     cosmetic: "Micromarcas que no se ven de frente.",
     battery: "Batería 88 % o más.",
   },
-  b: {
+  "a-minus": {
     cosmetic: "Marcas de uso visibles en marco o tapa.",
     battery: "Batería 80 % o más.",
   },
@@ -96,12 +96,55 @@ export const GRADE_MIN_BATTERY: Record<Grade, number> = {
   sellado: 100,
   "a-plus": 95,
   a: 88,
-  b: 80,
+  "a-minus": 80,
 };
 
 /** Tramos del filtro de batería: "90 % o más". */
 export const BATTERY_TIERS = [95, 90, 85, 80] as const;
 export type BatteryTier = (typeof BATTERY_TIERS)[number];
+
+/**
+ * Estado: la primera decisión, y la única que importa a la mayoría.
+ *
+ * "Sellado o usado" es lo que todo el mundo pregunta primero. El grado
+ * (A+/A/A−) recién tiene sentido una vez elegido seminuevo, así que se muestra
+ * como un segundo paso en vez de mezclar cuatro opciones de entrada.
+ */
+export type State = "sellado" | "seminuevo";
+
+export const STATE_LABELS: Record<State, string> = {
+  sellado: "Sellado",
+  seminuevo: "Seminuevo",
+};
+
+export const STATES: State[] = ["sellado", "seminuevo"];
+
+/** El grado de un equipo determina su estado. */
+export function stateOf(grade: Grade): State {
+  return grade === "sellado" ? "sellado" : "seminuevo";
+}
+
+/**
+ * Línea dentro de una generación.
+ *
+ * Separar generación ("15") de línea ("Pro Max") permite dos filtros útiles
+ * en vez de una lista larga de nombres completos: se puede pedir "todo lo del
+ * 15" o "todos los Pro Max", que es como la gente busca.
+ */
+export type Line = "base" | "mini" | "plus" | "pro" | "pro-max" | "ultra" | "air";
+
+export const LINE_LABELS: Record<Line, string> = {
+  base: "Base",
+  mini: "mini",
+  plus: "Plus",
+  pro: "Pro",
+  "pro-max": "Pro Max",
+  ultra: "Ultra",
+  air: "Air",
+};
+
+/** Orden de presentación: de la más simple a la más equipada. */
+export const LINES: Line[] = ["base", "mini", "plus", "pro", "pro-max", "air", "ultra"];
 
 export interface ProductImage {
   url: string;
@@ -133,6 +176,10 @@ export interface Product {
   brand: string;
   /** Familia del equipo: "iPhone 15 Pro". Sirve para agrupar y filtrar. */
   model: string;
+  /** Generación: 15 en "iPhone 15 Pro". null cuando no aplica (consolas, Mac). */
+  generation: number | null;
+  /** Línea dentro de la generación. null cuando no aplica. */
+  line: Line | null;
   category: Category;
   description: string;
   specs: Record<string, string>;
@@ -260,7 +307,12 @@ export interface CatalogFilters {
   q?: string;
   category?: Category;
   model?: string;
+  generation?: number;
+  line?: Line;
+  /** Sellado o seminuevo. El grado afina dentro de seminuevo. */
+  state?: State;
   storage?: string;
+  color?: string;
   grade?: Grade;
   /**
    * Autenticidad. Sin especificar, el catálogo muestra SOLO originales: las
@@ -270,5 +322,9 @@ export interface CatalogFilters {
   /** Batería mínima: 90 significa "90 % o más". */
   minBattery?: number;
   sort?: "relevancia" | "precio-asc" | "precio-desc" | "nuevo";
-  inStockOnly?: boolean;
+  /**
+   * Incluir lo agotado. El sitio público no lo usa —si no está, no se
+   * muestra—, pero el panel necesita ver el stock en cero para reponer.
+   */
+  includeOutOfStock?: boolean;
 }
