@@ -254,7 +254,7 @@ npm run lint
 ```
 app/
   (store)/        portada, catálogo, ficha, canje, reparaciones, blog, contacto, checkout
-  admin/          panel: importador, productos, proveedores, ventas, leads, notas
+  admin/          panel: importador, productos, proveedores, ventas, leads, blog
   opengraph-image.tsx   imagen de compartir, generada en el build
 components/
   site/           navbar, footer, portadas, tarjeta, ficha, filtros, cotizador

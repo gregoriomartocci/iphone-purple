@@ -5,7 +5,7 @@ import { getPosts } from "@/lib/data";
 import { PageHero, PAGE_PHOTOS } from "@/components/site/PageHero";
 
 export const metadata: Metadata = {
-  title: "Notas y guías sobre iPhone",
+  title: "Blog: guías para comprar un iPhone",
   description:
     "Guías para comprar mejor: comparativas entre modelos, cómo revisar un iPhone usado antes de pagarlo, cuánto dura la batería y cómo se calcula el Plan Canje.",
   alternates: { canonical: "/blog" },
@@ -30,7 +30,7 @@ export default async function BlogPage() {
   return (
     <>
       <PageHero
-        title="Notas"
+        title="Blog"
         subtitle="Lo que aprendimos vendiendo y reparando equipos, contado sin vueltas."
         image={PAGE_PHOTOS.blog}
       />

@@ -46,21 +46,29 @@ export function ProductRail({
       </div>
 
       {/*
-        El padding lateral negativo deja que la primera y la última tarjeta
-        lleguen al borde del contenedor en vez de quedar recuadradas, que es
-        lo que da la sensación de que la fila sigue.
+        Cuántas tarjetas entran, calculado contra el contenedor.
+
+        Antes el ancho iba en `vw` y la cuenta nunca cerraba: el contenedor
+        ocupa el 82 % de la pantalla, así que cuatro tarjetas de 23 vw más sus
+        separaciones dejaban asomando un pedazo de la quinta. El riel además se
+        estiraba unos píxeles hacia los costados, lo que dejaba asomar otro
+        pedacito. Las dos cosas se leían igual: una tarjeta cortada al costado
+        en vez de una fila prolija.
+
+        Ahora el riel termina donde termina el contenedor, y entra un número
+        exacto por vez —una, dos, tres o cuatro según el ancho— restando
+        primero lo que ocupan las separaciones. Lo que no entra queda fuera de
+        pantalla y se llega scrolleando.
 
         El padding vertical no es decorativo: `overflow-x: auto` recorta
         también en vertical, y sin lugar de sobra la tarjeta que se levanta al
-        pasar el mouse aparecía con la sombra cortada al ras. El margen
-        negativo de arriba compensa el padding para que el espacio visible
-        contra el título no cambie.
+        pasar el mouse mostraba la sombra cortada al ras.
       */}
-      <div className="scrollbar-hide -mx-5 mt-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pt-6 pb-14 sm:-mx-8 sm:px-8">
+      <div className="scrollbar-hide mt-4 flex snap-x snap-mandatory gap-5 overflow-x-auto pt-6 pb-14">
         {products.map((product, i) => (
           <div
             key={product.id}
-            className="w-[70vw] shrink-0 snap-start sm:w-[44vw] lg:w-[30vw] xl:w-[23%]"
+            className="w-full shrink-0 snap-start sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)] xl:w-[calc((100%-3.75rem)/4)]"
           >
             <ProductCard product={product} index={i} />
           </div>

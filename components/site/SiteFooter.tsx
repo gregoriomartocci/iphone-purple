@@ -10,7 +10,7 @@ const COLUMNS = [
     title: "Tienda",
     links: [
       { href: "/catalogo", label: "Catálogo" },
-      { href: "/catalogo?grade=nuevo", label: "Equipos nuevos" },
+      { href: "/catalogo?estado=sellado", label: "Equipos sellados" },
       { href: "/catalogo?sort=precio-asc", label: "Los más accesibles" },
     ],
   },
@@ -19,7 +19,7 @@ const COLUMNS = [
     links: [
       { href: "/plan-canje", label: "Plan Canje" },
       { href: "/reparaciones", label: "Reparaciones" },
-      { href: "/blog", label: "Notas" },
+      { href: "/blog", label: "Blog" },
     ],
   },
   {

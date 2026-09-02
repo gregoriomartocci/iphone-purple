@@ -12,7 +12,7 @@ const LINKS = [
   { href: "/catalogo", label: "Catálogo" },
   { href: "/plan-canje", label: "Plan Canje" },
   { href: "/reparaciones", label: "Reparaciones" },
-  { href: "/blog", label: "Notas" },
+  { href: "/blog", label: "Blog" },
   { href: "/contacto", label: "Contacto" },
 ];
 

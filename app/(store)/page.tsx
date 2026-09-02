@@ -218,7 +218,7 @@ export default async function HomePage() {
       {latestPosts.length > 0 && (
         <section className="shell band">
           <div className="flex items-end justify-between gap-4">
-            <h2 className="text-3xl font-semibold sm:text-4xl">Notas</h2>
+            <h2 className="text-3xl font-semibold sm:text-4xl">Blog</h2>
             <Link
               href="/blog"
               className="text-foreground hover:text-purple inline-flex shrink-0 items-center gap-1.5 text-sm"
