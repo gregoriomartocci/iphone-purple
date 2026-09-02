@@ -76,6 +76,26 @@ export function parseModel(model: string): {
 }
 
 /**
+ * Si el descriptor de una variante es una capacidad de almacenamiento real.
+ *
+ * El campo `storage` guarda lo que distingue a la variante, y eso no siempre
+ * es capacidad: en un Apple Watch es el tamaño de caja ("46mm GPS") y en unos
+ * AirPods el conector ("USB-C"). Ofrecerlos dentro del filtro de
+ * almacenamiento no tiene sentido, así que el filtro solo lista capacidades.
+ */
+export function isCapacity(storage: string): boolean {
+  return /^\d+\s*(GB|TB)$/i.test(storage.trim());
+}
+
+/** Capacidad en GB, para poder ordenar 64 · 128 · 256 · 512 · 1TB. */
+export function capacityInGb(storage: string): number {
+  const match = storage.trim().match(/^(\d+)\s*(GB|TB)$/i);
+  if (!match) return Number.MAX_SAFE_INTEGER;
+  const value = Number(match[1]);
+  return match[2].toUpperCase() === "TB" ? value * 1024 : value;
+}
+
+/**
  * Si una variante cumple los criterios que se aplican a nivel variante.
  *
  * Está acá y no en la capa de datos porque lo usan las dos: el filtrado del

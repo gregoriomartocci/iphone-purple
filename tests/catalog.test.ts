@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { getCatalogFacets, getProducts, getProduct } from "@/lib/data";
-import { leadVariant, priceFrom, savingsVsNew, totalStock } from "@/lib/catalog";
+import {
+  capacityInGb,
+  isCapacity,
+  leadVariant,
+  priceFrom,
+  savingsVsNew,
+  totalStock,
+} from "@/lib/catalog";
 import { PRODUCTS } from "@/lib/data/seed";
 import type { Product, Variant } from "@/types";
 
@@ -330,6 +337,32 @@ describe("getProduct", () => {
   it("todos los SKU de la semilla son únicos", () => {
     const skus = PRODUCTS.flatMap((p) => p.variants.map((v) => v.sku));
     expect(new Set(skus).size).toBe(skus.length);
+  });
+});
+
+describe("capacidades", () => {
+  it("reconoce capacidades reales y descarta el resto", () => {
+    for (const v of ["64GB", "128GB", "256 GB", "1TB", "2tb"]) {
+      expect(isCapacity(v)).toBe(true);
+    }
+    // El campo también guarda tamaño de caja de Watch y conector de AirPods.
+    for (const v of ["42mm GPS", "46mm GPS", "49mm", "USB-C", ""]) {
+      expect(isCapacity(v)).toBe(false);
+    }
+  });
+
+  it("ordena 1TB después de 512GB, no antes", () => {
+    // Ordenar por el número suelto pondría "1TB" primero, que es lo que pasaba.
+    const orden = ["64GB", "128GB", "256GB", "512GB", "1TB"];
+    const mezclado = ["1TB", "128GB", "512GB", "64GB", "256GB"];
+    expect(mezclado.sort((a, b) => capacityInGb(a) - capacityInGb(b))).toEqual(orden);
+  });
+
+  it("el filtro de almacenamiento no ofrece nada que no sea capacidad", async () => {
+    const facets = await getCatalogFacets();
+    for (const facet of facets.storages) {
+      expect(isCapacity(facet.value)).toBe(true);
+    }
   });
 });
 

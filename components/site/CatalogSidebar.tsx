@@ -111,7 +111,7 @@ export function CatalogSidebar({
       )}
 
       {facets.states.length > 0 && (
-        <Section title="Estado" defaultOpen>
+        <Section title="Condición" defaultOpen>
           {facets.states.map((f) => (
             <FilterRow
               key={f.value}
@@ -134,7 +134,7 @@ export function CatalogSidebar({
 
       {/* La condición y la batería solo existen dentro de "seminuevo". */}
       {esSeminuevo && facets.grades.length > 0 && (
-        <Section title="Condición" defaultOpen>
+        <Section title="Grado" defaultOpen>
           {facets.grades.map((f) => (
             <FilterRow
               key={f.value}

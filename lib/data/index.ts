@@ -9,7 +9,13 @@ import type {
 } from "@/types";
 import * as seed from "./seed";
 import * as db from "./supabase";
-import { matchesVariant, priceFrom, totalStock } from "@/lib/catalog";
+import {
+  capacityInGb,
+  isCapacity,
+  matchesVariant,
+  priceFrom,
+  totalStock,
+} from "@/lib/catalog";
 
 // Los helpers puros viven en lib/catalog para que el cliente los use sin
 // arrastrar este módulo (y con él, el acceso a Supabase) al bundle.
@@ -221,12 +227,11 @@ export async function getCatalogFacets(
   ].sort((a, b) => b - a);
   const lines = LINES.filter((l) => visible.some((p) => p.line === l));
   const models = [...new Set(visible.map((p) => p.model))].sort();
-  const storages = [...new Set(visibleVariants.map((v) => v.storage))].sort((a, b) => {
-    const na = parseInt(a, 10);
-    const nb = parseInt(b, 10);
-    if (!isNaN(na) && !isNaN(nb)) return na - nb;
-    return a.localeCompare(b);
-  });
+  // Solo capacidades reales: el campo también guarda tamaños de caja de Watch
+  // y conectores de AirPods, que no son almacenamiento.
+  const storages = [...new Set(visibleVariants.map((v) => v.storage))]
+    .filter(isCapacity)
+    .sort((a, b) => capacityInGb(a) - capacityInGb(b));
   const colors = [...new Set(visibleVariants.map((v) => v.color))].filter(Boolean).sort();
   const states = STATES.filter((st) =>
     visibleVariants.some((v) => stateOf(v.grade) === st)
