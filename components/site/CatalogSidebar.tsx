@@ -54,7 +54,11 @@ export function CatalogSidebar({
     if (next.sort && next.sort !== "relevancia") params.set("sort", next.sort);
 
     const qs = params.toString();
-    startTransition(() => router.push(qs ? `/catalogo?${qs}` : "/catalogo"));
+    // `scroll: false` mantiene la posición: por defecto Next salta al tope
+    // en cada navegación, y tocar un filtro te devolvía arriba de todo.
+    startTransition(() =>
+      router.push(qs ? `/catalogo?${qs}` : "/catalogo", { scroll: false })
+    );
   }
 
   /** Volver a tocar la opción activa la desmarca: sirve de atajo para limpiar. */

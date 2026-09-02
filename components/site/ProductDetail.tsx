@@ -2,20 +2,47 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
-import { BatteryMedium, Check, ShieldCheck } from "lucide-react";
+import { BatteryMedium, Check, ShieldCheck, Truck, Wrench } from "lucide-react";
 import { WhatsAppLink } from "./WhatsAppLink";
-import { StockBadge } from "./ProductCard";
+import { savingsVsNew } from "@/lib/catalog";
 import { productMessage } from "@/lib/whatsapp";
 import { formatARS, formatUSD } from "@/utils/format";
-import { GRADE_LABELS, GRADE_SPECS, type Product, type Variant } from "@/types";
+import {
+  GRADE_LABELS,
+  GRADE_SPECS,
+  type Grade,
+  type Product,
+  type Variant,
+} from "@/types";
 import { cn } from "@/lib/utils";
+
+const GRADE_STYLES: Record<Grade, string> = {
+  sellado: "bg-purple text-white",
+  "a-plus": "bg-emerald-600 text-white",
+  a: "bg-sky-600 text-white",
+  "a-minus": "bg-amber-500 text-ink",
+};
+
+const GARANTIAS = [
+  { icon: ShieldCheck, text: "Garantía escrita de 6 meses, con factura." },
+  {
+    icon: BatteryMedium,
+    text: "Batería, piezas originales y bloqueo de iCloud verificados.",
+  },
+  { icon: Wrench, text: "Servicio técnico propio si algo falla." },
+  { icon: Truck, text: "Envío a todo el país o retiro en el local." },
+];
 
 /**
  * Ficha de producto con selector de variante.
  *
- * Es cliente porque elegir capacidad/estado cambia el precio y, sobre todo, el
- * mensaje de WhatsApp: el vendedor tiene que recibir exactamente qué equipo miró
- * la persona, no solo el modelo.
+ * Acá va todo el detalle que la tarjeta del catálogo deliberadamente no
+ * muestra: grado con su definición, batería exacta, colores, comparación
+ * contra el sellado y especificaciones.
+ *
+ * Es cliente porque elegir capacidad o color cambia el precio y, sobre todo,
+ * el mensaje de WhatsApp: el vendedor tiene que recibir exactamente qué equipo
+ * miró la persona, no solo el modelo.
  */
 export function ProductDetail({
   product,
@@ -24,7 +51,7 @@ export function ProductDetail({
   product: Product;
   whatsappNumber: string;
 }) {
-  // Arrancamos en la variante que la tarjeta mostró en el catálogo: la más barata con stock.
+  // Arrancamos en la variante que la tarjeta mostró: la más barata con stock.
   const initial = useMemo(() => {
     const withStock = product.variants.filter((v) => v.stock > 0);
     const pool = withStock.length > 0 ? withStock : product.variants;
@@ -37,26 +64,40 @@ export function ProductDetail({
   const storages = [...new Set(product.variants.map((v) => v.storage))];
   const image = product.images[imageIndex] ?? product.images[0];
 
-  /** Variantes que comparten la capacidad elegida: definen los estados ofrecidos. */
+  /** Variantes de la capacidad elegida: definen los grados y colores ofrecidos. */
   const sameStorage = product.variants.filter((v) => v.storage === selected?.storage);
+
+  const savings = selected ? savingsVsNew(product, selected) : null;
+  const fullPrice = savings !== null && selected ? selected.priceArs + savings : null;
 
   const variantLabel = selected
     ? `${selected.storage} · ${selected.color} · ${GRADE_LABELS[selected.grade]}`
     : undefined;
 
   return (
-    <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-      <div>
-        <div className="bg-surface relative aspect-square overflow-hidden rounded-2xl">
+    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_460px] lg:gap-14">
+      <div className="lg:sticky lg:top-24 lg:self-start">
+        <div className="border-line bg-surface relative aspect-square overflow-hidden rounded-3xl border shadow-sm">
           {image && (
             <Image
               src={image.url}
               alt={image.alt}
               fill
               priority
-              sizes="(max-width: 1024px) 100vw, 560px"
+              sizes="(max-width: 1024px) 100vw, 620px"
               className="object-cover"
             />
+          )}
+
+          {selected && (
+            <span
+              className={cn(
+                "absolute top-5 left-5 rounded-full px-3.5 py-1.5 text-xs font-semibold tracking-wide uppercase",
+                GRADE_STYLES[selected.grade]
+              )}
+            >
+              {GRADE_LABELS[selected.grade]}
+            </span>
           )}
         </div>
 
@@ -69,13 +110,13 @@ export function ProductDetail({
                 onClick={() => setImageIndex(i)}
                 aria-label={`Ver foto ${i + 1}`}
                 className={cn(
-                  "relative size-16 overflow-hidden rounded-lg border transition-colors",
+                  "relative size-20 overflow-hidden rounded-xl border transition-colors",
                   i === imageIndex
                     ? "border-purple"
                     : "border-line hover:border-foreground/30"
                 )}
               >
-                <Image src={img.url} alt="" fill sizes="64px" className="object-cover" />
+                <Image src={img.url} alt="" fill sizes="80px" className="object-cover" />
               </button>
             ))}
           </div>
@@ -83,27 +124,70 @@ export function ProductDetail({
       </div>
 
       <div>
-        <p className="text-muted-foreground text-sm">{product.brand}</p>
+        <p className="eyebrow text-muted-foreground">{product.brand}</p>
+        <h1 className="mt-2 text-3xl leading-tight font-semibold sm:text-4xl">
+          {product.name}
+        </h1>
 
         {selected?.authenticity === "replica" && (
-          <p className="mt-3 rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 text-sm leading-relaxed text-amber-800">
+          <p className="mt-4 rounded-xl border border-amber-500/50 bg-amber-500/10 p-3.5 text-sm leading-relaxed text-amber-900">
             <strong className="font-semibold">Esto es una réplica.</strong> No es un
             producto original de la marca ni cuenta con su garantía oficial.
           </p>
         )}
-        <h1 className="mt-1 text-3xl font-semibold sm:text-4xl">{product.name}</h1>
 
-        <div className="mt-5 flex items-baseline gap-3">
-          <span className="tnum text-foreground text-3xl font-semibold">
-            {formatARS(selected?.priceArs ?? 0)}
-          </span>
-          {selected && selected.priceUsd > 0 && (
-            <span className="tnum text-muted-foreground text-sm">
-              ≈ {formatUSD(selected.priceUsd)}
+        {/* Bloque de precio: lo primero que se busca al entrar. */}
+        <div className="border-line bg-surface mt-6 rounded-2xl border p-6 shadow-sm">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span className="tnum text-foreground text-4xl font-semibold">
+              {formatARS(selected?.priceArs ?? 0)}
             </span>
-          )}
+            {fullPrice !== null && (
+              <span className="tnum text-muted-foreground text-lg line-through">
+                {formatARS(fullPrice)}
+              </span>
+            )}
+          </div>
+
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 text-sm">
+            {selected && selected.priceUsd > 0 && (
+              <span className="tnum text-muted-foreground">
+                ≈ {formatUSD(selected.priceUsd)}
+              </span>
+            )}
+            {savings !== null && (
+              <span className="font-medium text-emerald-700">
+                Ahorrás {formatARS(savings)} contra el sellado
+              </span>
+            )}
+          </div>
+
+          <p className="mt-4 flex items-center gap-2 text-sm">
+            {(selected?.stock ?? 0) > 0 ? (
+              <>
+                <span className="inline-block size-2 rounded-full bg-emerald-500" />
+                <span className="text-foreground">
+                  {selected!.stock <= 2
+                    ? `Queda${selected!.stock === 1 ? "" : "n"} ${selected!.stock}`
+                    : "Disponible"}{" "}
+                  para entrega inmediata
+                </span>
+              </>
+            ) : (
+              <span className="text-muted-foreground">Sin stock por ahora</span>
+            )}
+          </p>
+
+          <WhatsAppLink
+            number={whatsappNumber}
+            message={productMessage(product.name, variantLabel)}
+            className="mt-5 w-full"
+          >
+            {(selected?.stock ?? 0) > 0
+              ? "Consultar por WhatsApp"
+              : "Avisame cuando entre"}
+          </WhatsAppLink>
         </div>
-        <StockBadge stock={selected?.stock ?? 0} className="mt-2 block" />
 
         {storages.length > 1 && (
           <div className="mt-8">
@@ -116,17 +200,17 @@ export function ProductDetail({
                     key={storage}
                     type="button"
                     onClick={() => {
-                      // Al cambiar capacidad, saltamos a la variante más barata de esa capacidad.
+                      // Al cambiar capacidad saltamos a la más barata de esa capacidad.
                       const next = product.variants
                         .filter((v) => v.storage === storage)
                         .sort((a, b) => a.priceArs - b.priceArs)[0];
                       setSelected(next);
                     }}
                     className={cn(
-                      "h-10 rounded-full border px-5 text-sm transition-colors",
+                      "h-11 rounded-xl border px-5 text-sm font-medium transition-all duration-200",
                       active
-                        ? "border-purple bg-purple text-white"
-                        : "border-line text-foreground hover:border-foreground/30"
+                        ? "border-foreground bg-foreground text-background"
+                        : "border-line bg-surface hover:border-foreground/40"
                     )}
                   >
                     {storage}
@@ -150,28 +234,30 @@ export function ProductDetail({
                     onClick={() => setSelected(variant)}
                     disabled={variant.stock === 0}
                     className={cn(
-                      "flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-colors",
-                      active ? "border-purple" : "border-line hover:border-foreground/30",
+                      "bg-surface flex w-full items-center gap-3.5 rounded-xl border p-3.5 text-left transition-all duration-200",
+                      active
+                        ? "border-foreground shadow-sm"
+                        : "border-line hover:border-foreground/30",
                       variant.stock === 0 && "cursor-not-allowed opacity-45"
                     )}
                   >
                     <span
-                      className="size-6 shrink-0 rounded-full border border-black/10"
+                      className="size-7 shrink-0 rounded-full border border-black/10"
                       style={{ background: variant.colorHex }}
                       aria-hidden
                     />
                     <span className="min-w-0 flex-1">
-                      <span className="text-foreground block truncate text-sm">
+                      <span className="text-foreground block truncate text-sm font-medium">
                         {variant.color} · {GRADE_LABELS[variant.grade]}
                       </span>
                       <span className="text-muted-foreground block text-xs">
                         {variant.batteryHealth !== null
                           ? `Batería ${variant.batteryHealth}%`
-                          : "Sellado"}
+                          : "Sellado, sin uso"}
                         {variant.stock === 0 && " · sin stock"}
                       </span>
                     </span>
-                    <span className="tnum text-foreground shrink-0 text-sm font-medium">
+                    <span className="tnum text-foreground shrink-0 text-sm font-semibold">
                       {formatARS(variant.priceArs)}
                     </span>
                     {active && <Check className="text-purple size-4 shrink-0" />}
@@ -182,29 +268,8 @@ export function ProductDetail({
           </div>
         )}
 
-        <WhatsAppLink
-          number={whatsappNumber}
-          message={productMessage(product.name, variantLabel)}
-          className="mt-8 w-full"
-        >
-          {selected && selected.stock > 0
-            ? "Consultar por WhatsApp"
-            : "Avisame cuando entre"}
-        </WhatsAppLink>
-
-        <div className="text-muted-foreground mt-5 space-y-2.5 text-sm">
-          <p className="flex items-start gap-2.5">
-            <ShieldCheck className="text-purple mt-0.5 size-4 shrink-0" />
-            Garantía escrita de 6 meses y factura.
-          </p>
-          <p className="flex items-start gap-2.5">
-            <BatteryMedium className="text-purple mt-0.5 size-4 shrink-0" />
-            Batería, piezas originales y bloqueo de iCloud verificados antes de publicar.
-          </p>
-        </div>
-
         {selected && (
-          <div className="border-line mt-8 rounded-xl border p-4">
+          <div className="border-line bg-elevated mt-8 rounded-2xl border p-5">
             <p className="text-foreground text-sm font-medium">
               Qué significa &laquo;{GRADE_LABELS[selected.grade]}&raquo;
             </p>
@@ -214,6 +279,18 @@ export function ProductDetail({
           </div>
         )}
 
+        <ul className="mt-8 space-y-3">
+          {GARANTIAS.map(({ icon: Icon, text }) => (
+            <li
+              key={text}
+              className="text-muted-foreground flex items-start gap-3 text-sm"
+            >
+              <Icon className="text-purple mt-0.5 size-4 shrink-0" />
+              {text}
+            </li>
+          ))}
+        </ul>
+
         {product.description && (
           <p className="text-muted-foreground mt-8 leading-relaxed">
             {product.description}
@@ -221,12 +298,14 @@ export function ProductDetail({
         )}
 
         {Object.keys(product.specs).length > 0 && (
-          <div className="mt-8">
-            <h2 className="text-foreground text-sm font-medium">Especificaciones</h2>
-            <dl className="divide-line border-line mt-3 divide-y border-t">
+          <div className="border-line bg-surface mt-8 overflow-hidden rounded-2xl border">
+            <h2 className="border-line bg-elevated text-foreground border-b px-5 py-3.5 text-sm font-medium">
+              Especificaciones
+            </h2>
+            <dl className="divide-line divide-y">
               {Object.entries(product.specs).map(([key, value]) => (
-                <div key={key} className="flex gap-4 py-2.5 text-sm">
-                  <dt className="text-muted-foreground w-32 shrink-0">{key}</dt>
+                <div key={key} className="flex gap-4 px-5 py-3 text-sm">
+                  <dt className="text-muted-foreground w-36 shrink-0">{key}</dt>
                   <dd className="text-foreground">{value}</dd>
                 </div>
               ))}

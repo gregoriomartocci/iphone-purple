@@ -59,7 +59,11 @@ export function CatalogToolbar({
     if (next.sort && next.sort !== "relevancia") params.set("sort", next.sort);
 
     const qs = params.toString();
-    startTransition(() => router.push(qs ? `/catalogo?${qs}` : "/catalogo"));
+    // `scroll: false` mantiene la posición: por defecto Next salta al tope
+    // en cada navegación, y tocar un filtro te devolvía arriba de todo.
+    startTransition(() =>
+      router.push(qs ? `/catalogo?${qs}` : "/catalogo", { scroll: false })
+    );
   }
 
   const chips = [
@@ -162,7 +166,7 @@ export function CatalogToolbar({
             type="button"
             onClick={() => {
               setQuery("");
-              startTransition(() => router.push("/catalogo"));
+              startTransition(() => router.push("/catalogo", { scroll: false }));
             }}
             className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-2"
           >
