@@ -44,7 +44,7 @@ export const PREGUNTAS = [
 export function Faq() {
   return (
     <section className="border-line border-t">
-      <div className="shell py-16 sm:py-20">
+      <div className="shell aparece py-16 sm:py-20">
         <h2 className="text-2xl font-semibold sm:text-3xl">Preguntas frecuentes</h2>
 
         <div className="border-line mt-8 border-t">

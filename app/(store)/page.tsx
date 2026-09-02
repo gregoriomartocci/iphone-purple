@@ -149,7 +149,7 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="mt-10 grid grid-cols-2 gap-5 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="aparece mt-8 grid grid-cols-1 gap-4 sm:mt-10 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
             {featured.map((product, i) => (
               <ProductCard key={product.id} product={product} index={i} />
             ))}
@@ -169,7 +169,7 @@ export default async function HomePage() {
           medio, además de empujar el canje, que es lo que más consultas trae. */}
       <section className="bg-ink text-white">
         <div className="shell py-20 sm:py-24">
-          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <div className="aparece grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div>
               <p className="eyebrow text-purple">Plan Canje</p>
               <h2 className="mt-3 text-3xl leading-[1.1] font-semibold sm:text-4xl">
@@ -228,7 +228,7 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="mt-10 grid gap-6 sm:grid-cols-3">
+          <div className="aparece mt-10 grid gap-6 sm:grid-cols-3">
             {latestPosts.map((post) => (
               <Link key={post.id} href={`/blog/${post.slug}`} className="group">
                 <div className="bg-surface relative aspect-16/10 overflow-hidden rounded-xl">
@@ -265,7 +265,7 @@ export default async function HomePage() {
       */}
       <section className="border-line border-t">
         <div className="shell py-16 sm:py-20">
-          <div className="grid gap-10 lg:grid-cols-3 lg:gap-14">
+          <div className="aparece grid gap-10 lg:grid-cols-3 lg:gap-14">
             <div>
               <h2 className="text-2xl font-semibold sm:text-3xl">
                 Venta de iPhone y productos Apple en La Plata

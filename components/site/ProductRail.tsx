@@ -31,7 +31,7 @@ export function ProductRail({
 
   return (
     <section className="shell band">
-      <div className="flex items-end justify-between gap-4">
+      <div className="aparece flex items-end justify-between gap-4">
         <div>
           <h2 className="text-3xl font-semibold sm:text-4xl">{title}</h2>
           {subtitle && <p className="text-muted-foreground mt-2">{subtitle}</p>}
@@ -45,10 +45,18 @@ export function ProductRail({
         </Link>
       </div>
 
-      {/* El padding lateral negativo deja que la primera y la última tarjeta
-          lleguen al borde del contenedor en vez de quedar recuadradas, que es
-          lo que da la sensación de que la fila sigue. */}
-      <div className="scrollbar-hide -mx-5 mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-2 sm:-mx-8 sm:px-8">
+      {/*
+        El padding lateral negativo deja que la primera y la última tarjeta
+        lleguen al borde del contenedor en vez de quedar recuadradas, que es
+        lo que da la sensación de que la fila sigue.
+
+        El padding vertical no es decorativo: `overflow-x: auto` recorta
+        también en vertical, y sin lugar de sobra la tarjeta que se levanta al
+        pasar el mouse aparecía con la sombra cortada al ras. El margen
+        negativo de arriba compensa el padding para que el espacio visible
+        contra el título no cambie.
+      */}
+      <div className="scrollbar-hide -mx-5 mt-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pt-6 pb-14 sm:-mx-8 sm:px-8">
         {products.map((product, i) => (
           <div
             key={product.id}
@@ -82,14 +90,14 @@ export function ProductRanking({
 
   return (
     <section className="shell band">
-      <div>
+      <div className="aparece">
         <h2 className="text-3xl font-semibold sm:text-4xl">{title}</h2>
         {subtitle && <p className="text-muted-foreground mt-2 max-w-xl">{subtitle}</p>}
       </div>
 
       <ol className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
         {products.map((product, i) => (
-          <li key={product.id} className="relative">
+          <li key={product.id} className="aparece relative">
             {/* La posición flota sobre la esquina de la tarjeta: ocupa cero
                 espacio del layout y se lee de un vistazo al recorrer la fila. */}
             <span

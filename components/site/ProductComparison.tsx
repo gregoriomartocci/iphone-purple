@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Check } from "lucide-react";
 import { formatARS } from "@/utils/format";
 import { leadVariant } from "@/lib/catalog";
+import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
 import type { Product } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +15,11 @@ import { cn } from "@/lib/utils";
  * salen de la unión de las specs de los modelos comparados, así que si uno
  * declara algo que otro no, la fila igual aparece y el faltante se marca.
  */
+/** Si la primera foto del producto es un render recortado sobre transparente. */
+function esRender(slug: string): boolean {
+  return FOTOS_PRODUCTO[slug]?.[0]?.recorte === "render";
+}
+
 export function ProductComparison({
   products,
   currentId,
@@ -49,14 +55,26 @@ export function ProductComparison({
                     className={cn("px-5 py-4 align-top", actual && "bg-elevated")}
                   >
                     <Link href={`/catalogo/${p.slug}`} className="group block">
-                      <span className="bg-elevated relative block aspect-square w-24 overflow-hidden rounded-xl">
+                      {/* El render del equipo entra entero sobre blanco. Con
+                          `cover` se recortaba el celular vertical a un cuadrado
+                          y quedaba solo el centro de la pantalla apagada: un
+                          cuadrado negro donde tenía que verse el teléfono. */}
+                      <span
+                        className={cn(
+                          "relative block aspect-square w-24 overflow-hidden rounded-xl",
+                          esRender(p.slug) ? "bg-white" : "bg-elevated"
+                        )}
+                      >
                         {p.images[0] && (
                           <Image
                             src={p.images[0].url}
                             alt=""
                             fill
                             sizes="96px"
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            className={cn(
+                              "transition-transform duration-500 group-hover:scale-105",
+                              esRender(p.slug) ? "object-contain p-2" : "object-cover"
+                            )}
                           />
                         )}
                       </span>

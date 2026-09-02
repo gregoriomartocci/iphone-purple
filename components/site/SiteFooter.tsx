@@ -81,12 +81,15 @@ export function SiteFooter({ settings }: { settings: StoreSettings }) {
           {COLUMNS.map((col) => (
             <div key={col.title}>
               <h3 className="text-sm font-medium text-white">{col.title}</h3>
-              <ul className="mt-4 space-y-2.5">
+              {/* Los links son bloque con alto propio y no texto suelto: un
+                  renglón de 20 px es imposible de acertar con el pulgar, y el
+                  footer se usa sobre todo desde el teléfono. */}
+              <ul className="mt-3 sm:mt-4">
                 {col.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-white/60 transition-colors hover:text-white"
+                      className="block py-2 text-sm text-white/60 transition-colors hover:text-white"
                     >
                       {link.label}
                     </Link>

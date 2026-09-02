@@ -149,9 +149,13 @@
     @apply max-w-[68ch];
   }
 
-  /* Ritmo vertical entre secciones */
+  /* Ritmo vertical entre secciones.
+
+     Dos secciones seguidas suman el doble de este valor: con py-28 quedaban
+     224 px de aire entre una fila de productos y la siguiente, y la página se
+     leía como bloques desconectados en vez de un recorrido continuo. */
   .band {
-    @apply py-20 sm:py-28;
+    @apply py-14 sm:py-20;
   }
 
   /* Antetítulos: mayúsculas con tracking abierto, el recurso que usan las
@@ -192,6 +196,33 @@
   .rise-in {
     animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
     animation-delay: var(--delay, 0ms);
+  }
+
+  /**
+   * Aparición al llegar scrolleando.
+   *
+   * A diferencia de `rise-in`, que corre una sola vez al cargar, esta se
+   * engancha al scroll: la sección se anima cuando entra en pantalla. En una
+   * portada larga es la diferencia entre que todo lo de abajo ya haya
+   * terminado de animarse antes de que lo veas, y que cada bloque se arme
+   * mientras bajás.
+   *
+   * Va detrás de `@supports` a propósito: donde el navegador no soporta
+   * animaciones atadas al scroll no se aplica nada y el contenido se muestra
+   * normal, en vez de quedar invisible esperando una animación que no corre.
+   */
+  .aparece {
+    animation: none;
+  }
+
+  @supports (animation-timeline: view()) {
+    .aparece {
+      animation: rise-in 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-timeline: view();
+      /* Termina cuando la sección entró la mitad: si se estira hasta el final
+         del recorrido, el texto sigue moviéndose mientras se lo lee. */
+      animation-range: entry 0% entry 45%;
+    }
   }
 
   /**

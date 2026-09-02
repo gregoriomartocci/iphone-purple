@@ -75,16 +75,18 @@ export function ProductCard({
         stock === 0 && "opacity-55"
       )}
     >
-      {/* La foto va más ancha que alta y el texto ocupa lo mínimo: así la
-          tarjeta entera queda con proporción pareja en vez de alargada, que
-          es lo que pasaba con una foto cuadrada más cuatro líneas debajo.
+      {/* En teléfono la foto va cuadrada y la tarjeta ocupa todo el ancho:
+          ahí el equipo tiene que verse grande, que es lo único que se mira
+          scrolleando con el pulgar. De tablet para arriba pasa a más ancha
+          que alta, para que la tarjeta quede pareja dentro de la grilla y no
+          alargada, que es lo que pasaba con foto cuadrada más cuatro líneas.
 
           Fondo blanco cuando la imagen es el equipo recortado: así se ve como
           una foto de catálogo y todas las tarjetas quedan parejas. Las fotos
           ambientales van sobre el gris, que las contiene mejor. */}
       <div
         className={cn(
-          "relative aspect-4/3 overflow-hidden",
+          "relative aspect-square overflow-hidden sm:aspect-4/3",
           propia ? "bg-white" : "bg-elevated"
         )}
       >

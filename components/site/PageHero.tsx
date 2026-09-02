@@ -22,7 +22,9 @@ export function PageHero({
   return (
     <section
       data-hero
-      className="bg-ink relative isolate -mt-16 flex min-h-[400px] items-end overflow-hidden sm:min-h-[460px]"
+      // Más baja en teléfono: 400 px se comían casi la mitad de la pantalla
+      // y había que scrollear 750 px para ver el primer equipo.
+      className="bg-ink relative isolate -mt-16 flex min-h-[300px] items-end overflow-hidden sm:min-h-[420px] lg:min-h-[460px]"
     >
       <Image
         src={image}
@@ -41,10 +43,14 @@ export function PageHero({
         className="absolute inset-0 -z-10 bg-linear-to-t from-black/85 via-black/45 to-transparent"
       />
 
-      <div className="shell w-full pt-28 pb-12 sm:pb-14">
-        <h1 className="text-4xl font-semibold text-white sm:text-5xl">{title}</h1>
+      <div className="shell w-full pt-24 pb-9 sm:pt-28 sm:pb-14">
+        <h1 className="text-3xl font-semibold text-white sm:text-4xl lg:text-5xl">
+          {title}
+        </h1>
         {subtitle && (
-          <p className="mt-4 max-w-xl leading-relaxed text-white/75">{subtitle}</p>
+          <p className="mt-3 max-w-xl leading-relaxed text-white/75 sm:mt-4">
+            {subtitle}
+          </p>
         )}
       </div>
     </section>

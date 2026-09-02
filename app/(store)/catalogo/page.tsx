@@ -117,10 +117,11 @@ export default async function CatalogPage({
             />
 
             {products.length > 0 ? (
-              // Cuatro por fila como techo: con cinco las tarjetas quedan
-              // angostas y altas, y el equipo se ve chico. Cuatro mantiene
-              // varias por fila y deja la tarjeta con proporción pareja.
-              <div className="mt-8 grid grid-cols-2 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              // Una sola por fila en teléfono: con dos quedaban de 165 px de
+              // ancho, el equipo se veía diminuto y el precio apretado. A
+              // ancho completo la foto respira y se lee todo de un vistazo.
+              // Cuatro por fila como techo: con cinco vuelven a angostarse.
+              <div className="mt-6 grid grid-cols-1 gap-4 sm:mt-8 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
                 {products.map((product, i) => (
                   <ProductCard
                     key={product.id}
