@@ -1,8 +1,10 @@
 import { parseModel } from "@/lib/catalog";
 import { FOTOS_PRODUCTO } from "./fotos.generado";
+import { pulgadasDe } from "./ficha-tecnica";
 import type {
   Authenticity,
   Category,
+  Line,
   Post,
   Product,
   ProductImage,
@@ -175,12 +177,22 @@ const IPHONE_COLORS: Record<number, [string, string][]> = {
   ],
 };
 
-const LINE_SPECS: Record<"base" | "pro" | "proMax", { suffix: string; screen: string }> =
-  {
-    base: { suffix: "", screen: '6.1" Super Retina XDR' },
-    pro: { suffix: " Pro", screen: '6.3" Super Retina XDR ProMotion' },
-    proMax: { suffix: " Pro Max", screen: '6.9" Super Retina XDR ProMotion' },
-  };
+// La medida de pantalla no está acá: depende de la generación, no solo de la
+// línea, y tenerla fija hacía que un iPhone 15 Pro figurara con la pantalla de
+// un 16 Pro. Sale de `pulgadasDe`, que es la misma fuente que usa la ficha
+// técnica, así el catálogo y la ficha no pueden discrepar.
+const LINE_SPECS: Record<"base" | "pro" | "proMax", { suffix: string }> = {
+  base: { suffix: "" },
+  pro: { suffix: " Pro" },
+  proMax: { suffix: " Pro Max" },
+};
+
+/** Línea del catálogo a partir de la clave interna de la semilla. */
+const LINE_KEY: Record<"base" | "pro" | "proMax", Line> = {
+  base: "base",
+  pro: "pro",
+  proMax: "pro-max",
+};
 
 /** Reparte grados y stock para que el catálogo de demo no sea uniforme. */
 function iphoneVariants(
@@ -224,7 +236,8 @@ const IPHONE_SEED: SeedProduct[] = Object.keys(IPHONE_PRICES)
   .sort((a, b) => b - a)
   .flatMap((generation) =>
     (["base", "pro", "proMax"] as const).map((line) => {
-      const { suffix, screen } = LINE_SPECS[line];
+      const { suffix } = LINE_SPECS[line];
+      const pulgadas = pulgadasDe(generation, LINE_KEY[line]);
       const name = `iPhone ${generation}${suffix}`;
 
       return {
@@ -234,7 +247,7 @@ const IPHONE_SEED: SeedProduct[] = Object.keys(IPHONE_PRICES)
         category: "celular" as Category,
         description: `${name} revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.`,
         specs: {
-          Pantalla: screen,
+          Pantalla: pulgadas ? `${pulgadas} Super Retina XDR` : "Super Retina XDR",
           Chip: `A${generation + 1}${line === "base" ? "" : " Pro"}`,
           Cámara: line === "base" ? "48 MP dual" : "48 MP + teleobjetivo",
           Material: generation >= 15 && line !== "base" ? "Titanio" : "Aluminio",

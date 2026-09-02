@@ -5,6 +5,8 @@ import { ChevronLeft } from "lucide-react";
 import { ProductDetail } from "@/components/site/ProductDetail";
 import { ProductCard } from "@/components/site/ProductCard";
 import { ProductComparison } from "@/components/site/ProductComparison";
+import { FichaTecnica, Respaldos } from "@/components/site/FichaTecnica";
+import { FaqProducto } from "@/components/site/FaqProducto";
 import {
   getGenerationComparison,
   getProduct,
@@ -144,12 +146,22 @@ export default async function ProductPage({
         <ProductDetail product={product} whatsappNumber={settings.whatsappNumber} />
       </div>
 
+      {/* El orden de abajo sigue el de las preguntas de quien está mirando:
+          primero qué trae el equipo, después con qué respaldo lo compra, luego
+          cómo se compara con los modelos vecinos, y al final las dudas de
+          cerrar la operación. */}
+      <FichaTecnica product={product} variante={lead} />
+
+      <Respaldos />
+
       <ProductComparison products={comparison} currentId={product.id} />
 
+      <FaqProducto product={product} esSellado={lead?.grade === "sellado"} />
+
       {related.length > 0 && (
-        <section className="border-line mt-24 border-t pt-12">
+        <section className="border-line mt-16 border-t pt-12 sm:mt-20">
           <h2 className="text-2xl font-semibold">También te puede servir</h2>
-          <div className="mt-8 grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
+          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
             {related.map((item) => (
               <ProductCard key={item.id} product={item} />
             ))}

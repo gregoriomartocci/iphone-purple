@@ -3,10 +3,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, RefreshCcw, ShieldCheck, Smartphone, Wrench } from "lucide-react";
 import { Hero } from "@/components/site/Hero";
-import { ProductCard } from "@/components/site/ProductCard";
 import { ProductRail, ProductRanking } from "@/components/site/ProductRail";
 import { Faq, faqJsonLd } from "@/components/site/Faq";
-import { getBestValue, getBestsellers, getFeaturedProducts, getPosts } from "@/lib/data";
+import { getBestValue, getBestsellers, getPosts } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -67,8 +66,7 @@ const TRUST = [
 ];
 
 export default async function HomePage() {
-  const [featured, masVendidos, calidadPrecio, posts] = await Promise.all([
-    getFeaturedProducts(8),
+  const [masVendidos, calidadPrecio, posts] = await Promise.all([
     getBestsellers(6),
     getBestValue(5),
     getPosts(),
@@ -130,40 +128,6 @@ export default async function HomePage() {
         subtitle="Modelos de generaciones anteriores que andan igual de bien y cuestan bastante menos que el del año."
         products={calidadPrecio}
       />
-
-      {featured.length > 0 && (
-        <section className="shell band">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <h2 className="text-3xl font-semibold sm:text-4xl">Disponibles ahora</h2>
-              <p className="text-muted-foreground mt-2">
-                Equipos con stock confirmado, listos para retirar.
-              </p>
-            </div>
-            <Link
-              href="/catalogo"
-              className="text-foreground hover:text-purple hidden shrink-0 items-center gap-1.5 text-sm sm:inline-flex"
-            >
-              Ver todo
-              <ArrowRight className="size-3.5" />
-            </Link>
-          </div>
-
-          <div className="aparece mt-8 grid grid-cols-1 gap-4 sm:mt-10 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
-            {featured.map((product, i) => (
-              <ProductCard key={product.id} product={product} index={i} />
-            ))}
-          </div>
-
-          <Link
-            href="/catalogo"
-            className="border-line text-foreground hover:border-foreground/35 mt-8 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border text-sm font-medium transition-colors sm:hidden"
-          >
-            Ver todo el catálogo
-            <ArrowRight className="size-3.5" />
-          </Link>
-        </section>
-      )}
 
       {/* Banda oscura: corta el blanco de la página y le da respiro visual al
           medio, además de empujar el canje, que es lo que más consultas trae. */}

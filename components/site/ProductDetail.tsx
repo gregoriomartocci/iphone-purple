@@ -357,22 +357,6 @@ export function ProductDetail({
             {product.description}
           </p>
         )}
-
-        {Object.keys(product.specs).length > 0 && (
-          <div className="border-line bg-surface mt-8 overflow-hidden rounded-2xl border">
-            <h2 className="border-line bg-elevated text-foreground border-b px-5 py-3.5 text-sm font-medium">
-              Especificaciones
-            </h2>
-            <dl className="divide-line divide-y">
-              {Object.entries(product.specs).map(([key, value]) => (
-                <div key={key} className="flex gap-4 px-5 py-3 text-sm">
-                  <dt className="text-muted-foreground w-36 shrink-0">{key}</dt>
-                  <dd className="text-foreground">{value}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        )}
       </div>
     </div>
   );
