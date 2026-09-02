@@ -35,6 +35,14 @@ const SHORTCUTS = [
   },
 ];
 
+/**
+ * Foto de la banda de Plan Canje. Va sobre fondo negro, así que tiene que ser
+ * una imagen oscura: una clara abre un agujero de luz y arruina el corte.
+ * Reemplazable por una del local.
+ */
+const TRADE_IN_PHOTO =
+  "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1200&q=80";
+
 const TRUST = [
   {
     title: "Garantía escrita",
@@ -115,14 +123,48 @@ export default async function HomePage() {
         </section>
       )}
 
-      <section className="border-line bg-surface border-y">
-        <div className="shell py-16">
-          <div className="grid gap-8 sm:grid-cols-3">
+      {/* Banda oscura: corta el blanco de la página y le da respiro visual al
+          medio, además de empujar el canje, que es lo que más consultas trae. */}
+      <section className="bg-ink text-white">
+        <div className="shell py-20 sm:py-24">
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+            <div>
+              <p className="text-purple-light text-sm font-medium">Plan Canje</p>
+              <h2 className="mt-3 text-3xl leading-[1.1] font-semibold sm:text-4xl">
+                Tu equipo usado vale más
+                <br />
+                de lo que pensás.
+              </h2>
+              <p className="mt-5 max-w-md leading-relaxed text-white/70">
+                Cotizalo en dos minutos y descontá ese valor del que te quieras llevar. Te
+                decimos el número en pantalla, sin vueltas ni letra chica.
+              </p>
+              <Link
+                href="/plan-canje"
+                className="text-ink mt-8 inline-flex h-12 items-center gap-2 rounded-full bg-white px-7 text-sm font-medium transition-colors hover:bg-white/90"
+              >
+                Cotizar mi equipo
+                <ArrowRight className="size-4" />
+              </Link>
+            </div>
+
+            <div className="relative aspect-4/3 overflow-hidden rounded-2xl">
+              <Image
+                src={TRADE_IN_PHOTO}
+                alt="Cotización de un equipo usado en el local"
+                fill
+                sizes="(max-width: 1024px) 100vw, 520px"
+                className="object-cover"
+              />
+            </div>
+          </div>
+
+          <div className="mt-20 grid gap-8 border-t border-white/10 pt-12 sm:grid-cols-3">
             {TRUST.map((item) => (
               <div key={item.title}>
-                <ShieldCheck className="text-purple size-5" />
-                <h3 className="text-ink mt-3 font-medium">{item.title}</h3>
-                <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+                <ShieldCheck className="text-purple-light size-5" />
+                <h3 className="mt-3 font-medium">{item.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-white/60">
                   {item.text}
                 </p>
               </div>

@@ -34,14 +34,14 @@ export function SiteFooter({ settings }: { settings: StoreSettings }) {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-line bg-surface mt-auto border-t">
+    <footer className="bg-ink mt-auto text-white">
       <div className="shell py-16">
         <div className="grid gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
             <Link href="/" className="text-lg font-semibold tracking-tight">
-              iPhone <span className="text-purple">Purple</span>
+              iPhone <span className="text-purple-light">Purple</span>
             </Link>
-            <p className="text-muted-foreground mt-3 max-w-xs text-sm leading-relaxed">
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/60">
               Equipos Apple con garantía escrita, Plan Canje y servicio técnico propio.
               Atendemos en CABA y enviamos a todo el país.
             </p>
@@ -52,7 +52,7 @@ export function SiteFooter({ settings }: { settings: StoreSettings }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
-                className="border-line text-muted-foreground hover:border-ink hover:text-ink rounded-full border bg-white p-2.5 transition-colors"
+                className="rounded-full border border-white/15 p-2.5 text-white/70 transition-colors hover:border-white/40 hover:text-white"
               >
                 <WhatsAppIcon className="size-4" />
               </a>
@@ -61,7 +61,7 @@ export function SiteFooter({ settings }: { settings: StoreSettings }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="border-line text-muted-foreground hover:border-ink hover:text-ink rounded-full border bg-white p-2.5 transition-colors"
+                className="rounded-full border border-white/15 p-2.5 text-white/70 transition-colors hover:border-white/40 hover:text-white"
               >
                 <InstagramIcon className="size-4" />
               </a>
@@ -70,7 +70,7 @@ export function SiteFooter({ settings }: { settings: StoreSettings }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok"
-                className="border-line text-muted-foreground hover:border-ink hover:text-ink rounded-full border bg-white p-2.5 transition-colors"
+                className="rounded-full border border-white/15 p-2.5 text-white/70 transition-colors hover:border-white/40 hover:text-white"
               >
                 <TikTokIcon className="size-4" />
               </a>
@@ -79,13 +79,13 @@ export function SiteFooter({ settings }: { settings: StoreSettings }) {
 
           {COLUMNS.map((col) => (
             <div key={col.title}>
-              <h3 className="text-ink text-sm font-medium">{col.title}</h3>
+              <h3 className="text-sm font-medium text-white">{col.title}</h3>
               <ul className="mt-4 space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-muted-foreground hover:text-ink text-sm transition-colors"
+                      className="text-sm text-white/60 transition-colors hover:text-white"
                     >
                       {link.label}
                     </Link>
@@ -96,7 +96,7 @@ export function SiteFooter({ settings }: { settings: StoreSettings }) {
           ))}
         </div>
 
-        <div className="border-line text-muted-foreground mt-12 flex flex-col gap-4 border-t pt-8 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
+        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-8 text-sm text-white/60 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
           <span className="inline-flex items-center gap-2">
             <MapPin className="size-4 shrink-0" />
             {settings.address}
@@ -107,14 +107,14 @@ export function SiteFooter({ settings }: { settings: StoreSettings }) {
           </span>
           <a
             href={`mailto:${settings.email}`}
-            className="hover:text-ink inline-flex items-center gap-2 transition-colors"
+            className="inline-flex items-center gap-2 transition-colors hover:text-white"
           >
             <Mail className="size-4 shrink-0" />
             {settings.email}
           </a>
         </div>
 
-        <p className="text-muted-foreground mt-8 text-xs">
+        <p className="mt-8 text-xs text-white/40">
           © {year} iPhone Purple. Todos los precios incluyen IVA.
         </p>
       </div>

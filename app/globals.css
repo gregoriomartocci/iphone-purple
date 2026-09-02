@@ -39,6 +39,9 @@
   --color-line: #eaeaea;
   --color-surface: #fafafa;
   --color-purple: #7b2fbe;
+  /* El violeta de marca queda con poco contraste sobre negro: esta es la
+     variante para las bandas oscuras. */
+  --color-purple-light: #b07be8;
 }
 
 :root {
