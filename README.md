@@ -6,11 +6,14 @@
 
 Catálogo con stock real · Plan Canje · Reparaciones · Carrito sin cuenta · Panel que carga las listas del proveedor desde WhatsApp
 
+### [→ Ver el sitio en vivo](https://iphone-purple.vercel.app)
+
 [![Next.js](https://img.shields.io/badge/Next.js-16.3-000?logo=next.js)](https://nextjs.org)
 [![React](https://img.shields.io/badge/React-19-087ea4?logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind](https://img.shields.io/badge/Tailwind-v4-38bdf8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![Tests](https://img.shields.io/badge/tests-76%20passing-22c55e)](#calidad)
+[![Tests](https://img.shields.io/badge/tests-79%20passing-22c55e)](#calidad)
+[![Deploy](https://img.shields.io/badge/deploy-Vercel-000?logo=vercel)](https://iphone-purple.vercel.app)
 
 </div>
 
@@ -233,14 +236,14 @@ las preguntas frecuentes.
 
 ```bash
 npm run verify     # tipos → lint → tests → build, todo junto
-npm test           # 76 tests
+npm test           # 79 tests
 npm run typecheck
 npm run lint
 ```
 
-- **76 tests** sobre lo que no puede fallar en silencio: aislamiento de réplicas,
-  cálculo del canje, coherencia de facetas, orden de capacidades, unicidad de
-  slugs y SKU.
+- **79 tests** sobre lo que no puede fallar en silencio: aislamiento de réplicas,
+  cálculo del canje, coherencia de facetas, tramos de batería, orden de
+  capacidades, unicidad de slugs y SKU.
 - **Husky + lint-staged** corren tipos y lint antes de cada commit.
 - **GitHub Actions** con tres jobs en cada push.
 - **Cabeceras de seguridad y CSP** en [`next.config.ts`](next.config.ts).

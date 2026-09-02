@@ -235,7 +235,15 @@ export function CatalogSidebar({
         </Section>
       )}
 
-      {facets.storages.length > 1 && (
+      {/*
+        El almacenamiento aparece recién con un modelo elegido.
+
+        Sin modelo, la lista mezcla capacidades de cosas que no se comparan
+        entre sí: alguien pedía 64 GB buscando un iPhone y le aparecía la
+        Nintendo Switch, que también tiene 64 GB. La capacidad solo significa
+        algo dentro de un modelo concreto.
+      */}
+      {Boolean(filters.model) && facets.storages.length > 1 && (
         <Section
           title="Almacenamiento"
           summary={filters.storage}

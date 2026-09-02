@@ -1,4 +1,4 @@
-import { BATTERY_TIERS, CATEGORIES, GRADES, LINES, STATES, stateOf } from "@/types";
+import { CATEGORIES, GRADES, LINES, STATES, stateOf } from "@/types";
 import type {
   CatalogFilters,
   Post,
@@ -299,6 +299,27 @@ export async function getCatalogFacets(
   const storages = [...new Set(visibleVariants.map((v) => v.storage))]
     .filter(isCapacity)
     .sort((a, b) => capacityInGb(a) - capacityInGb(b));
+  /**
+   * Tramos de batería que existen de verdad.
+   *
+   * Antes eran cuatro fijos —95, 90, 85 y 80— y eso tenía dos problemas: si
+   * había un equipo al 100 % no se podía pedir, porque el tramo más alto era
+   * "95 % o más"; y si no había nada por debajo de 90, el sitio igual ofrecía
+   * tramos que no correspondían a nada.
+   *
+   * Ahora salen de los valores reales en stock, redondeados hacia abajo al
+   * múltiplo de 5. Con equipos al 100, 97, 91 y 84 quedan los tramos 100, 95,
+   * 90 y 80, y cada uno se lee como "de ahí para arriba".
+   */
+  const tramosBateria = [
+    ...new Set(
+      visibleVariants
+        .map((v) => v.batteryHealth)
+        .filter((b): b is number => b !== null && b > 0)
+        .map((b) => Math.floor(b / 5) * 5)
+    ),
+  ].sort((a, b) => b - a);
+
   const colors = [...new Set(visibleVariants.map((v) => v.color))].filter(Boolean).sort();
   // El hex de cada color, para poder mostrarlo como muestra en el filtro.
   const colorHex = new Map(visibleVariants.map((v) => [v.color, v.colorHex]));
@@ -350,7 +371,7 @@ export async function getCatalogFacets(
     count(colors, (c) => ({ color: c })),
     count(states, (st) => ({ state: st })),
     count(grades, (g) => ({ grade: g })),
-    count([...BATTERY_TIERS], (t) => ({ minBattery: t })),
+    count(tramosBateria, (t) => ({ minBattery: t })),
     getProducts({ ...filters, authenticity: "replica" }),
   ]);
 

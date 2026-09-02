@@ -7,7 +7,6 @@ import { PageHero, PAGE_PHOTOS } from "@/components/site/PageHero";
 import { ProductCard } from "@/components/site/ProductCard";
 import { getCatalogFacets, getProducts } from "@/lib/data";
 import {
-  BATTERY_TIERS,
   CATEGORIES,
   GRADES,
   LINES,
@@ -59,9 +58,11 @@ function parseFilters(params: SearchParams): CatalogFilters {
     grade: GRADES.includes(grade as Grade) ? (grade as Grade) : undefined,
     // Sin este parámetro, la capa de datos sirve solo originales.
     authenticity: first(params.tipo) === "replica" ? "replica" : undefined,
-    minBattery: (BATTERY_TIERS as readonly number[]).includes(battery)
-      ? battery
-      : undefined,
+    // Los tramos ya no son una lista fija: salen de lo que hay en stock. Acá
+    // alcanza con validar que sea un porcentaje verosímil; si no existe nada
+    // con esa batería, el filtro simplemente no devuelve resultados.
+    minBattery:
+      Number.isInteger(battery) && battery >= 50 && battery <= 100 ? battery : undefined,
     sort: (["precio-asc", "precio-desc", "nuevo"] as const).includes(
       sort as "precio-asc" | "precio-desc" | "nuevo"
     )

@@ -434,4 +434,52 @@ describe("getCatalogFacets", () => {
     expect(priceRange.min).toBeGreaterThan(0);
     expect(priceRange.max).toBeGreaterThanOrEqual(priceRange.min);
   });
+
+  /**
+   * Las opciones de batería salían de una lista fija de cuatro tramos. Eso
+   * dejaba afuera un equipo al 100 % —el tramo más alto era "95 % o más"— y a
+   * la vez ofrecía tramos sin nada detrás.
+   */
+  it("ofrece solo tramos de batería que existen en stock", async () => {
+    const facets = await getCatalogFacets({ state: "seminuevo" });
+    const productos = await getProducts({ state: "seminuevo" });
+    const baterias = productos
+      .flatMap((p) => p.variants)
+      .map((v) => v.batteryHealth)
+      .filter((b): b is number => b !== null);
+
+    expect(facets.batteryTiers.length).toBeGreaterThan(0);
+    for (const tramo of facets.batteryTiers) {
+      // Cada tramo tiene al menos un equipo con esa batería o más.
+      expect(baterias.some((b) => b >= Number(tramo.value))).toBe(true);
+      expect(tramo.count).toBeGreaterThan(0);
+    }
+  });
+
+  it("incluye el tramo más alto cuando hay una batería de 100 %", async () => {
+    const facets = await getCatalogFacets({ state: "seminuevo" });
+    const productos = await getProducts({ state: "seminuevo" });
+    const maxima = Math.max(
+      ...productos.flatMap((p) => p.variants).map((v) => v.batteryHealth ?? 0)
+    );
+    const tramoMasAlto = Math.max(...facets.batteryTiers.map((t) => Number(t.value)));
+
+    // El tramo más alto acompaña a la mejor batería en stock, redondeada
+    // hacia abajo al múltiplo de 5: con un equipo al 100 % hay tramo 100.
+    expect(tramoMasAlto).toBe(Math.floor(maxima / 5) * 5);
+  });
+
+  /**
+   * La capacidad solo significa algo dentro de un modelo: sin acotar, pedir
+   * 64 GB traía la Nintendo Switch junto a un iPhone.
+   */
+  it("las capacidades de un modelo son solo las de ese modelo", async () => {
+    const facets = await getCatalogFacets({ model: "iPhone 15 Pro" });
+    const productos = await getProducts({ model: "iPhone 15 Pro" });
+    const propias = new Set(productos.flatMap((p) => p.variants).map((v) => v.storage));
+
+    for (const capacidad of facets.storages) {
+      expect(propias.has(capacidad.value)).toBe(true);
+    }
+  });
 });
