@@ -1,34 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { motion } from "framer-motion";
-import { Loader2, Mail, Lock } from "lucide-react";
-import { Suspense } from "react";
+import { Loader2 } from "lucide-react";
 
 const loginSchema = z.object({
-  email: z.string().email("Email inválido"),
+  email: z.email("Ese email no parece válido"),
   password: z.string().min(6, "Mínimo 6 caracteres"),
 });
+
 type LoginForm = z.infer<typeof loginSchema>;
 
+/**
+ * Acceso al panel. No hay cuentas de cliente: el sitio público es anónimo, así
+ * que este login es solo para quien administra la tienda.
+ */
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") ?? "/";
+  const redirect = searchParams.get("redirect") ?? "/admin";
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
-    resolver: zodResolver(loginSchema),
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
 
-  const onSubmit = async (data: LoginForm) => {
+  async function onSubmit(data: LoginForm) {
     setLoading(true);
     setError("");
     const res = await signIn("credentials", {
@@ -37,113 +42,120 @@ function LoginContent() {
       redirect: false,
     });
     setLoading(false);
-    if (res?.error) {
-      setError("Email o contraseña incorrectos");
-    } else {
-      router.push(redirect);
-    }
-  };
 
-  const handleGoogle = () => signIn("google", { callbackUrl: redirect });
+    if (res?.error) setError("Email o contraseña incorrectos");
+    else router.push(redirect);
+  }
+
+  const fieldClass =
+    "h-12 w-full rounded-xl border border-line bg-white px-4 text-[15px] text-ink outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-purple";
 
   return (
-    <div className="bg-[#F7F7F7] min-h-screen flex items-center justify-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-sm"
-      >
-        <div className="bg-white border border-[#E8E8E8] rounded-2xl p-8 shadow-sm">
-          {/* Logo */}
-          <div className="mb-6 text-center">
-            <Link href="/" className="inline-block">
-              <span className="text-xl font-black text-[#111]">iPhone</span>
-              <span className="text-xl font-black text-[#7B2FBE]">Purple</span>
-            </Link>
-          </div>
+    <div className="bg-surface flex min-h-dvh items-center justify-center px-5">
+      <div className="w-full max-w-sm">
+        <Link href="/" className="block text-center text-lg font-semibold tracking-tight">
+          iPhone <span className="text-purple">Purple</span>
+        </Link>
 
-          <h1 className="text-xl font-bold text-[#111] text-center">Iniciá sesión</h1>
-          <p className="text-[#666] text-sm text-center mt-1 mb-6">Bienvenido/a de vuelta</p>
+        <div className="border-line mt-6 rounded-2xl border bg-white p-8">
+          <h1 className="text-xl font-semibold">Panel de administración</h1>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Ingresá con tu cuenta para gestionar el stock.
+          </p>
 
-          {/* Google */}
           <button
-            onClick={handleGoogle}
-            className="flex items-center justify-center gap-2.5 w-full border border-[#E8E8E8] rounded-xl py-2.5 text-sm font-medium text-[#111] hover:bg-[#F7F7F7] transition-colors"
+            type="button"
+            onClick={() => signIn("google", { callbackUrl: redirect })}
+            className="border-line text-ink hover:border-ink mt-6 flex h-12 w-full items-center justify-center gap-2.5 rounded-xl border text-sm font-medium transition-colors"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            <svg className="size-4" viewBox="0 0 24 24" aria-hidden>
+              <path
+                fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              />
             </svg>
             Continuar con Google
           </button>
 
-          {/* Divider */}
-          <div className="flex items-center gap-3 my-5">
-            <div className="flex-1 h-px bg-[#F0F0F0]" />
-            <span className="text-[#999] text-xs">o</span>
-            <div className="flex-1 h-px bg-[#F0F0F0]" />
+          <div className="my-5 flex items-center gap-3">
+            <span className="bg-line h-px flex-1" />
+            <span className="text-muted-foreground text-xs">o</span>
+            <span className="bg-line h-px flex-1" />
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-3 py-2 text-sm mb-3">
+            <p className="bg-destructive/10 text-destructive mb-3 rounded-xl px-3 py-2.5 text-sm">
               {error}
-            </div>
+            </p>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="text-[#666] text-xs font-medium mb-1 block">Email</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#CCC]" />
-                <input
-                  {...register("email")}
-                  type="email"
-                  placeholder="vos@email.com"
-                  className="border border-[#E8E8E8] bg-white rounded-xl h-10 px-3 pl-9 text-sm text-[#111] placeholder:text-[#CCC] focus:border-[#7B2FBE] focus:outline-none w-full"
-                />
-              </div>
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+              <label htmlFor="email" className="text-ink mb-1.5 block text-sm">
+                Email
+              </label>
+              <input
+                id="email"
+                {...register("email")}
+                type="email"
+                autoComplete="email"
+                placeholder="vos@email.com"
+                className={fieldClass}
+              />
+              {errors.email && (
+                <p className="text-destructive mt-1.5 text-xs">{errors.email.message}</p>
+              )}
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-[#666] text-xs font-medium">Contraseña</label>
-                <Link href="/forgot-password" className="text-[#7B2FBE] text-xs hover:underline">
-                  ¿Olvidaste tu contraseña?
-                </Link>
-              </div>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#CCC]" />
-                <input
-                  {...register("password")}
-                  type="password"
-                  placeholder="••••••••"
-                  className="border border-[#E8E8E8] bg-white rounded-xl h-10 px-3 pl-9 text-sm text-[#111] placeholder:text-[#CCC] focus:border-[#7B2FBE] focus:outline-none w-full"
-                />
-              </div>
-              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+              <label htmlFor="password" className="text-ink mb-1.5 block text-sm">
+                Contraseña
+              </label>
+              <input
+                id="password"
+                {...register("password")}
+                type="password"
+                autoComplete="current-password"
+                placeholder="••••••••"
+                className={fieldClass}
+              />
+              {errors.password && (
+                <p className="text-destructive mt-1.5 text-xs">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="bg-[#7B2FBE] text-white w-full rounded-xl py-2.5 font-semibold text-sm hover:bg-[#6D28D9] transition-colors mt-2 flex items-center justify-center gap-2 disabled:opacity-60"
+              className="bg-ink hover:bg-ink/85 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-medium text-white transition-colors disabled:opacity-60"
             >
-              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              {loading ? "Ingresando..." : "Ingresar"}
+              {loading && <Loader2 className="size-4 animate-spin" />}
+              {loading ? "Ingresando…" : "Ingresar"}
             </button>
           </form>
-
-          <p className="text-center text-[#666] text-xs mt-5">
-            ¿No tenés cuenta?{" "}
-            <Link href="/register" className="text-[#7B2FBE] hover:underline">
-              Registrate gratis
-            </Link>
-          </p>
         </div>
-      </motion.div>
+
+        <Link
+          href="/"
+          className="text-muted-foreground hover:text-ink mt-6 block text-center text-sm transition-colors"
+        >
+          Volver a la tienda
+        </Link>
+      </div>
     </div>
   );
 }

@@ -30,8 +30,10 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files — nunca se commitean secretos.
+# .env.example sí, porque documenta qué variables hacen falta.
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +41,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# test output
+/coverage
+/playwright-report
+/test-results
+
+# capturas generadas para el README
+/docs/screenshots/*.tmp.png

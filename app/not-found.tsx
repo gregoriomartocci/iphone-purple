@@ -1,30 +1,30 @@
 import Link from "next/link";
-import { Metadata } from "next";
+import { type Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Página no encontrada | iPhone Purple",
+  title: "Página no encontrada",
 };
 
 export default function NotFound() {
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center justify-center px-4 text-center">
-      <p className="text-[120px] font-black text-[#F0F0F0] leading-none select-none">404</p>
-      <h1 className="text-2xl font-bold text-[#111] -mt-4">Página no encontrada</h1>
-      <p className="text-[#666] text-sm mt-2 mb-8 max-w-xs">
-        La página que buscás no existe o fue movida. Volvé al inicio para seguir comprando.
+    <div className="shell flex min-h-[70svh] flex-col items-center justify-center py-20 text-center">
+      <p className="text-muted-foreground text-sm">Error 404</p>
+      <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">Esta página no existe</h1>
+      <p className="text-muted-foreground mt-3 max-w-sm leading-relaxed">
+        Puede que el equipo que buscabas ya se haya vendido. Probá desde el catálogo.
       </p>
-      <div className="flex gap-3">
-        <Link
-          href="/"
-          className="bg-[#7B2FBE] text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:bg-[#6D28D9] transition-colors"
-        >
-          Ir al inicio
-        </Link>
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Link
           href="/catalogo"
-          className="border border-[#E8E8E8] text-[#111] px-6 py-2.5 rounded-xl font-semibold text-sm hover:bg-[#F7F7F7] transition-colors"
+          className="bg-ink hover:bg-ink/85 inline-flex h-12 items-center justify-center rounded-full px-7 text-sm font-medium text-white transition-colors"
         >
           Ver catálogo
+        </Link>
+        <Link
+          href="/"
+          className="border-line text-ink hover:border-ink inline-flex h-12 items-center justify-center rounded-full border px-7 text-sm font-medium transition-colors"
+        >
+          Ir al inicio
         </Link>
       </div>
     </div>

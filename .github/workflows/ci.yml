@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Un push nuevo cancela el run anterior de la misma rama: no tiene sentido
+# gastar minutos validando un commit que ya quedó atrás.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Tipos, lint y tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Chequeo de tipos
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Formato
+        run: npm run format:check
+
+      - name: Tests
+        run: npm run test
+
+  build:
+    name: Build de producción
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # El build corre sin secretos a propósito: verifica que el sitio se
+      # construye con la capa de datos en modo semilla, que es como arranca
+      # cualquiera que clone el repo.
+      - name: Build
+        run: npm run build
+
+  security:
+    name: Seguridad
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Falla solo ante vulnerabilidades altas o críticas: con "moderate" el
+      # ruido de dependencias transitivas vuelve inútil la señal.
+      - name: Auditoría de dependencias
+        run: npm audit --audit-level=high
+
+      - name: Buscar secretos commiteados
+        run: |
+          if git ls-files | grep -E '^\.env($|\.)' | grep -v '\.env\.example'; then
+            echo "::error::Hay un archivo .env commiteado. Sacalo del repo y rotá esas claves."
+            exit 1
+          fi
+          echo "OK: no hay archivos .env versionados."

@@ -1,230 +1,301 @@
-<div align="center">
-
-<img src="https://img.shields.io/badge/Next.js-16.2-black?style=for-the-badge&logo=next.js&logoColor=white" />
-<img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
-<img src="https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" />
-<img src="https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
-<img src="https://img.shields.io/badge/Claude_AI-Anthropic-D97757?style=for-the-badge" />
-
-<br /><br />
-
 # iPhone Purple
 
-### E-commerce premium de celulares para el mercado argentino
+Catálogo y panel de gestión para una casa de venta de equipos Apple en Argentina.
+El cliente entra, ve qué hay **en stock hoy**, cotiza su equipo usado y cierra por
+WhatsApp. Del otro lado, el panel carga las listas que mandan los proveedores por
+WhatsApp, les aplica el margen y registra las ventas.
 
-Plataforma fullstack de venta de iPhones y smartphones construida con Next.js 16, Supabase y Claude AI. Incluye catálogo, carrito, checkout con Mercado Pago, panel de administración y chatbot con IA.
+No hay carrito ni checkout: las ventas se cierran por WhatsApp y se registran desde
+el panel, que es como funciona el negocio de verdad.
 
-<br />
-
-[Reportar un bug](https://github.com/gregoriomartocci/iphone-purple/issues) · [Sugerir feature](https://github.com/gregoriomartocci/iphone-purple/issues)
-
-</div>
-
----
-
-## Características
-
-### Tienda
-- **Landing page** — Hero con carrusel de productos, beneficios, más vendidos, categorías, Plan Canje, reviews y newsletter
-- **Catálogo** — Filtros por categoría, marca, precio, almacenamiento y condición vía URL params. Vista grilla/lista, ordenamiento, paginación
-- **Detalle de producto** — Galería con thumbnails, selector de variantes (storage/color), precio con descuento, tabs de descripción/especificaciones/reviews
-- **Carrito** — Drawer lateral con animación spring, persistencia con Zustand, stepper de cantidades
-- **Plan Canje** — Formulario de 5 pasos para cotizar y entregar un equipo usado
-
-### Checkout
-- **Paso 1** — Autenticación (Google OAuth o continuar como invitado)
-- **Paso 2** — Dirección de envío con validación Zod
-- **Paso 3** — Pago con Mercado Pago (preferencias + webhooks) o Stripe
-
-### Cuenta de usuario
-- Historial de pedidos con tracking de estados en tiempo real
-- Perfil editable con preferencias de notificaciones
-- Autenticación con Google y email/contraseña
-
-### IA
-- **Violeta** — Chatbot de atención al cliente impulsado por Claude claude-sonnet-4-6 con streaming SSE. Responde sobre productos, stock, envíos y el Plan Canje
-
-### Admin Panel
-- Dashboard con KPIs, pedidos recientes y alertas de stock bajo
-- Gestión de productos con búsqueda, filtros, paginación y acciones en bulk
-- Panel oscuro independiente del tema de la tienda
-
-### Técnico
-- Imágenes alojadas en **Supabase Storage** — sin dependencias externas
-- Emails transaccionales con **Resend** (confirmación de pedido, envío, entrega, bienvenida)
-- **Multi-moneda** ARS/USD con toggle en navbar
-- SEO completo — sitemap dinámico, robots.txt, OpenGraph, metadatos por página
-- RLS (Row Level Security) en todas las tablas de Supabase
+![Inicio](docs/screenshots/01-home.png)
 
 ---
 
-## Stack
+## Índice
 
-| Categoría | Tecnología |
-|---|---|
-| Framework | Next.js 16.2 (App Router, Turbopack) |
-| Lenguaje | TypeScript 5 — modo strict |
-| Estilos | Tailwind CSS v4 + shadcn/ui |
-| Base de datos | Supabase (PostgreSQL + RLS) |
-| Storage | Supabase Storage |
-| Auth | NextAuth v5 — Google OAuth + Credentials |
-| Estado global | Zustand v5 con persist middleware |
-| Animaciones | Framer Motion v12 |
-| Formularios | React Hook Form v7 + Zod v4 |
-| IA | Anthropic Claude claude-sonnet-4-6 (SSE streaming) |
-| Pagos | Mercado Pago + Stripe |
-| Emails | Resend v6 |
-| React | React 19 |
+- [Qué hace](#qué-hace)
+- [Arrancar en dos minutos](#arrancar-en-dos-minutos)
+- [Cómo está armado](#cómo-está-armado)
+- [El importador de listas de WhatsApp](#el-importador-de-listas-de-whatsapp)
+- [Base de datos](#base-de-datos)
+- [Capturas](#capturas)
+- [Calidad y seguridad](#calidad-y-seguridad)
+- [Comandos](#comandos)
+- [Desplegar](#desplegar)
 
 ---
 
-## Estructura del proyecto
+## Qué hace
 
-```
-iphone-purple/
-├── app/
-│   ├── (auth)/           # Login y registro
-│   ├── (store)/          # Tienda pública
-│   │   ├── page.tsx      # Landing page
-│   │   ├── catalogo/     # Catálogo y detalle de producto
-│   │   ├── checkout/     # Flujo de compra (3 pasos)
-│   │   ├── cuenta/       # Perfil y pedidos del usuario
-│   │   └── plan-canje/   # Trade-in de equipos
-│   ├── admin/            # Panel de administración (dark)
-│   └── api/
-│       ├── auth/         # NextAuth + registro
-│       ├── chat/         # Claude AI SSE stream
-│       ├── orders/       # Creación y consulta de pedidos
-│       ├── payments/     # Preferencias Mercado Pago
-│       ├── products/     # Consulta de productos
-│       ├── upload/       # Upload a Supabase Storage
-│       └── webhooks/     # Webhooks Mercado Pago
-├── components/
-│   ├── cart/             # CartDrawer
-│   ├── catalog/          # FiltersSidebar
-│   ├── chatbot/          # ChatbotBubble (Violeta)
-│   ├── landing/          # Secciones de la landing
-│   ├── layout/           # Navbar, Footer
-│   ├── product/          # ProductCard
-│   └── ui/               # shadcn/ui components
-├── lib/
-│   ├── auth.ts           # NextAuth config
-│   ├── email/            # Templates HTML con Resend
-│   └── supabase/         # Clientes server/browser + schema SQL
-├── stores/               # Zustand: carrito y moneda
-├── types/                # Interfaces TypeScript
-├── utils/                # formatARS, formatUSD, cn, slugify
-└── proxy.ts              # Auth middleware (Next.js 16)
-```
+### Para quien compra
+
+| Página                | Qué resuelve                                                               |
+| --------------------- | -------------------------------------------------------------------------- |
+| **Inicio**            | Hero con video de fondo y tres accesos: catálogo, canje, reparaciones      |
+| **Catálogo**          | Búsqueda y filtros por modelo, capacidad, estado y stock — todo en la URL  |
+| **Ficha de producto** | Fotos, specs, selector de capacidad/color/estado y consulta por WhatsApp   |
+| **Plan Canje**        | Cotizador: cuánto te tomamos tu equipo y cuánto ponés de diferencia        |
+| **Reparaciones**      | Servicios con precio orientativo y consulta directa                        |
+| **Notas**             | Blog con guías y comparativas                                              |
+| **Contacto**          | Dirección, horarios, redes y un formulario que arma el mensaje de WhatsApp |
+
+### Para quien administra
+
+| Sección            | Qué resuelve                                                            |
+| ------------------ | ----------------------------------------------------------------------- |
+| **Resumen**        | Stock valorizado, margen potencial, ventas del mes, equipos por reponer |
+| **Importar lista** | Pegás el WhatsApp del proveedor y sale publicado con margen aplicado    |
+| **Productos**      | Edición de precio y stock en línea, con el margen por fila a la vista   |
+| **Ventas**         | Alta de venta que descuenta stock y calcula margen                      |
+| **Plan Canje**     | Consultas del cotizador, con estado y botón para responder por WhatsApp |
+| **Proveedores**    | Margen por defecto de cada uno y acceso para pedirles la lista          |
+| **Configuración**  | Cotización del dólar, contacto y redes, sin tocar código                |
 
 ---
 
-## Instalación
-
-### Requisitos
-- Node.js 20+
-- Proyecto en [Supabase](https://supabase.com)
-- API key de [Anthropic](https://console.anthropic.com) para el chatbot
-
-### 1. Clonar e instalar
+## Arrancar en dos minutos
 
 ```bash
-git clone https://github.com/gregoriomartocci/iphone-purple.git
+git clone git@github.com:gregoriomartocci/iphone-purple.git
 cd iphone-purple
 npm install
+npm run dev
 ```
 
-### 2. Variables de entorno
+Listo — **no hace falta configurar nada** para ver el sitio completo.
+
+Sin base de datos, la capa de datos sirve un catálogo de demostración
+(`lib/data/seed.ts`): 15 equipos, servicios de reparación, tabla de canje y notas.
+Todo el sitio se puede recorrer, buscar y filtrar. Cuando cargues las claves de
+Supabase, pasa a Postgres sin que haya que tocar ni una página.
+
+### Ir a datos reales
 
 ```bash
 cp .env.example .env.local
 ```
 
-```env
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
+Después completá:
 
-# NextAuth
-NEXTAUTH_URL=http://localhost:3000
-AUTH_SECRET=                        # openssl rand -base64 32
+| Variable                                                                                     | Para qué                                       | Sin esto                              |
+| -------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`<br>`NEXT_PUBLIC_SUPABASE_ANON_KEY`<br>`SUPABASE_SERVICE_ROLE_KEY` | Catálogo, ventas y leads reales                | Se usa la semilla; el panel no guarda |
+| `AUTH_SECRET`                                                                                | Sesiones del panel (`openssl rand -base64 32`) | No podés entrar al panel              |
+| `ANTHROPIC_API_KEY`                                                                          | Interpretar las listas de proveedor            | El importador no funciona             |
 
-# Google OAuth
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
+Después, en el SQL Editor de Supabase, aplicá en orden:
 
-# Mercado Pago
-MERCADOPAGO_ACCESS_TOKEN=
-NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY=
+1. `lib/supabase/schema.sql` — tablas, índices, RLS y triggers
+2. `lib/supabase/seed.sql` — los mismos datos de demostración, ya en Postgres
 
-# Stripe (opcional)
-STRIPE_SECRET_KEY=
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+Por último, marcate como admin:
 
-# Resend
-RESEND_API_KEY=
-RESEND_FROM_EMAIL=noreply@tudominio.com
-
-# Claude AI
-ANTHROPIC_API_KEY=
-
-# App
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+```sql
+update profiles set role = 'admin' where id = '<tu-user-id>';
 ```
 
-### 3. Base de datos
+---
 
-En el SQL editor de tu proyecto Supabase, ejecutá el contenido de `lib/supabase/schema.sql`. Incluye todas las tablas, RLS policies, triggers e índices.
+## Cómo está armado
 
-### 4. Supabase Storage
+**Next.js 16** (App Router, Turbopack) · **React 19** · **TypeScript** ·
+**Tailwind v4** · **Supabase** (Postgres + Storage) · **Auth.js v5** ·
+**Claude** para interpretar las listas · **Vitest** para los tests.
 
-Dashboard → Storage → **New bucket** → nombre `images` → marcar como **Public**.
-
-### 5. Desarrollo
-
-```bash
-npm run dev
+```
+app/
+  (store)/          Sitio público — catálogo, canje, reparaciones, blog, contacto
+  (auth)/login/     Acceso al panel
+  admin/            Panel interno + Server Actions
+lib/
+  data/             ⭐ Puerta única a los datos (Supabase ↔ semilla)
+  catalog.ts        Helpers puros: precios, stock, cotización de canje
+  whatsapp/         Parser de listas de proveedor
+  supabase/         Clientes + schema.sql + seed.sql
+components/
+  site/             Componentes del sitio público
+  admin/            Componentes del panel
+tests/              54 tests sobre la lógica que mueve plata
 ```
 
-Abrí [http://localhost:3000](http://localhost:3000)
+### La decisión que sostiene todo lo demás
 
----
+`lib/data/index.ts` es **la única puerta a los datos**. Decide sola si lee de
+Supabase o de la semilla, y expone siempre la misma interfaz:
 
-## API Routes
-
-| Método | Ruta | Descripción |
-|---|---|---|
-| `GET` | `/api/products` | Listar productos con filtros |
-| `POST` | `/api/orders` | Crear pedido |
-| `GET` | `/api/orders` | Pedidos del usuario autenticado |
-| `POST` | `/api/payments/mercadopago` | Crear preferencia de pago |
-| `POST` | `/api/webhooks/mercadopago` | Webhook de pagos |
-| `POST` | `/api/chat` | Stream SSE con Claude AI |
-| `POST` | `/api/upload` | Subir imagen a Storage |
-| `DELETE` | `/api/upload` | Eliminar imagen de Storage |
-| `POST` | `/api/auth/register` | Registrar usuario |
-
----
-
-## Deploy
-
-Optimizado para **Vercel**:
-
-```bash
-vercel deploy
+```ts
+const products = await getProducts({ q: "iphone 15", storage: "256GB" });
 ```
 
-Configurá todas las variables de entorno en el dashboard de Vercel y actualizá `NEXTAUTH_URL` y `NEXT_PUBLIC_APP_URL` con tu dominio de producción.
+Ninguna página sabe cuál de los dos está activo. Eso hace que el proyecto arranque
+sin configuración, que los tests corran sin base de datos, y que conectar Supabase
+más adelante no obligue a tocar ninguna vista.
+
+El filtrado y el orden viven en esa capa, no en el SQL: el catálogo se comporta
+**idéntico** contra Postgres y contra la semilla, así que lo que probás en
+desarrollo es lo que pasa en producción.
 
 ---
 
-## Licencia
+## El importador de listas de WhatsApp
 
-MIT
+El problema real: cada proveedor manda su lista con un formato distinto.
+
+```
+BUEN DÍA! LISTA DE HOY 🔥
+iPhone 13 128 impecable bat 89 — 470
+15 pro max 256 sellado 1290 (x2)
+ip 14 128gb usado 9/10 600 u$d
+```
+
+Mantener expresiones regulares para eso es una batalla perdida. En su lugar, el
+texto va a Claude con **salida estructurada** (`messages.parse` + Zod), que
+devuelve filas tipadas: modelo normalizado, capacidad, estado, batería, moneda,
+costo y cantidad.
+
+![Importador](docs/screenshots/10-admin-importar.png)
+
+El flujo tiene tres pasos, y **el del medio no es opcional**:
+
+1. **Pegás** el mensaje crudo y elegís proveedor, margen y cotización del dólar.
+2. **Revisás** la tabla editable, con el precio de venta ya calculado por fila.
+   Podés corregir cualquier celda y destildar lo que no quieras subir.
+3. **Publicás** — recién ahí se escriben productos y variantes.
+
+La interpretación automática acierta casi siempre, pero "casi" no alcanza cuando
+el resultado son los precios que ve el cliente. Cada importación guarda el texto
+original junto al resultado, así un parseo dudoso se puede auditar después contra
+lo que realmente mandó el proveedor.
 
 ---
 
-<div align="center">
-Hecho en Argentina 🇦🇷
-</div>
+## Base de datos
+
+Once tablas, sin nada de e-commerce que no se use:
+
+- `products` / `product_variants` / `product_images` — una variante por
+  combinación vendible (capacidad + color + estado)
+- `suppliers` / `supplier_imports` — proveedores y el historial auditable de listas
+- `sales` — ventas, con trigger que descuenta stock y numeración `IPP-2026-0001`
+- `trade_in_prices` / `trade_ins` — tabla de valores y consultas del cotizador
+- `repair_services`, `posts`, `store_settings`, `profiles`
+
+**RLS activo en todas.** El sitio público solo puede _leer_ lo publicado; nada le
+abre escritura al rol anónimo. Todo lo que escribe pasa por Server Actions
+autenticadas. `sales`, `trade_ins`, `suppliers` y `supplier_imports` no tienen
+policy de lectura a propósito: solo se acceden desde el panel.
+
+---
+
+## Capturas
+
+### Catálogo y producto
+
+Filtros y búsqueda viven en la URL, así que un filtro se puede compartir, guardar
+en favoritos y sobrevive al refresh.
+
+![Catálogo filtrado](docs/screenshots/03-catalogo-filtrado.png)
+![Ficha de producto](docs/screenshots/04-producto.png)
+
+### Plan Canje
+
+![Plan Canje](docs/screenshots/05-plan-canje.png)
+
+### Reparaciones y notas
+
+![Reparaciones](docs/screenshots/06-reparaciones.png)
+![Notas](docs/screenshots/07-blog.png)
+
+### Panel
+
+![Resumen](docs/screenshots/09-admin-resumen.png)
+![Productos](docs/screenshots/11-admin-productos.png)
+
+### En el teléfono
+
+La mitad de las visitas de una tienda así llegan desde el celular.
+
+<p align="left">
+  <img src="docs/screenshots/m1-home.png" width="240" alt="Inicio en móvil">
+  <img src="docs/screenshots/m2-catalogo.png" width="240" alt="Catálogo en móvil">
+  <img src="docs/screenshots/m3-producto.png" width="240" alt="Producto en móvil">
+</p>
+
+Las capturas se regeneran con `npm run screenshots` (ver `scripts/screenshots.mjs`).
+
+---
+
+## Calidad y seguridad
+
+**CI en cada push y PR** (`.github/workflows/ci.yml`), en tres jobs paralelos:
+
+| Job       | Qué corre                                                                      |
+| --------- | ------------------------------------------------------------------------------ |
+| Calidad   | `typecheck` · `lint` · `format:check` · `test`                                 |
+| Build     | Build de producción **sin secretos**, como lo vería alguien que clona el repo  |
+| Seguridad | `npm audit --audit-level=high` + verificación de que no haya `.env` versionado |
+
+**Hooks de git** (Husky): `pre-commit` pasa ESLint y Prettier sobre lo que tocaste;
+`pre-push` corre tipos y tests para no romper `main`.
+
+**54 tests** (Vitest) concentrados donde un error cuesta plata: cálculo de margen,
+redondeo de precios, cotización de canje, filtros del catálogo y armado de los
+links de WhatsApp.
+
+### Capas de seguridad
+
+- **CSP y cabeceras** en `next.config.ts`: `frame-ancestors 'none'` contra
+  clickjacking del panel, HSTS, `nosniff`, `Permissions-Policy` y `X-Frame-Options`.
+- **Doble verificación de permisos.** `proxy.ts` redirige, pero cada Server Action
+  **vuelve a chequear sesión y rol** por dentro: las acciones son accesibles por
+  POST directo sin pasar por el proxy, así que el redirect es comodidad y la
+  acción es la barrera.
+- **La service role key no puede llegar al navegador.** `lib/data/admin.ts` está
+  marcado con `server-only`, que convierte una importación equivocada en un error
+  de build en vez de en una filtración.
+- **Validación con Zod** en el borde de toda Server Action, incluidas las filas
+  que devuelve el parser.
+- **Cero HTML crudo.** El cuerpo de las notas se renderiza con elementos de React
+  (`PostBody`), así que un texto cargado desde el panel no puede inyectar markup.
+  Hay un test que lo verifica.
+- **0 vulnerabilidades** en `npm audit`.
+
+---
+
+## Comandos
+
+| Comando                     | Qué hace                                 |
+| --------------------------- | ---------------------------------------- |
+| `npm run dev`               | Servidor de desarrollo                   |
+| `npm run build`             | Build de producción                      |
+| `npm test`                  | Tests                                    |
+| `npm run test:coverage`     | Tests con reporte de cobertura           |
+| `npm run typecheck`         | Chequeo de tipos                         |
+| `npm run lint` / `lint:fix` | ESLint                                   |
+| `npm run format`            | Prettier                                 |
+| `npm run verify`            | Todo junto: tipos → lint → tests → build |
+| `npm run screenshots`       | Regenera las capturas del README         |
+
+---
+
+## Desplegar
+
+Pensado para Vercel. Importás el repo, cargás las variables de `.env.example` y
+listo.
+
+Dos detalles que evitan un dolor de cabeza:
+
+- **`NEXT_PUBLIC_APP_URL`** tiene que ser el dominio real: alimenta el sitemap,
+  los datos de OpenGraph y el JSON-LD.
+- **`AUTH_SECRET`** distinto al de desarrollo.
+
+`trustHost` ya viene activado en `lib/auth.ts`, así que el panel funciona detrás
+de un proxy inverso o en cualquier dominio sin quedar bloqueado por `UntrustedHost`.
+
+### Falta cargar
+
+- `public/hero.mp4` y `public/hero-poster.jpg` — el hero degrada elegante mientras
+  tanto, pero el video es lo que le da vida.
+- Fotos reales de producto (hoy son de demostración).
+- Los datos de contacto reales, desde **Configuración** en el panel.

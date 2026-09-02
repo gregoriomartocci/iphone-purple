@@ -3,31 +3,38 @@
 import { useEffect } from "react";
 import Link from "next/link";
 
-export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
   useEffect(() => {
     console.error(error);
   }, [error]);
 
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center justify-center px-4 text-center">
-      <p className="text-[120px] font-black text-[#F0F0F0] leading-none select-none">500</p>
-      <h1 className="text-2xl font-bold text-[#111] -mt-4">Algo salió mal</h1>
-      <p className="text-[#666] text-sm mt-2 mb-8 max-w-xs">
-        Ocurrió un error inesperado. Podés intentarlo de nuevo o volver al inicio.
+    <div className="shell flex min-h-[70svh] flex-col items-center justify-center py-20 text-center">
+      <p className="text-muted-foreground text-sm">Algo falló</p>
+      <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">Se nos rompió algo</h1>
+      <p className="text-muted-foreground mt-3 max-w-sm leading-relaxed">
+        No pudimos cargar esta página. Probá de nuevo; si sigue pasando, escribinos y lo
+        vemos.
       </p>
       {error.digest && (
-        <p className="text-[#999] text-xs mb-6 font-mono">ID: {error.digest}</p>
+        <p className="text-muted-foreground mt-4 font-mono text-xs">ID: {error.digest}</p>
       )}
-      <div className="flex gap-3">
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <button
           onClick={reset}
-          className="bg-[#7B2FBE] text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:bg-[#6D28D9] transition-colors"
+          className="bg-ink hover:bg-ink/85 inline-flex h-12 items-center justify-center rounded-full px-7 text-sm font-medium text-white transition-colors"
         >
           Reintentar
         </button>
         <Link
           href="/"
-          className="border border-[#E8E8E8] text-[#111] px-6 py-2.5 rounded-xl font-semibold text-sm hover:bg-[#F7F7F7] transition-colors"
+          className="border-line text-ink hover:border-ink inline-flex h-12 items-center justify-center rounded-full border px-7 text-sm font-medium transition-colors"
         >
           Ir al inicio
         </Link>

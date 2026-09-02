@@ -1,263 +1,264 @@
--- Enable required extensions
+-- iPhone Purple — esquema
+-- Catálogo de equipos Apple, Plan Canje, reparaciones, blog y panel interno.
+-- No hay venta online: las ventas se registran a mano desde el panel.
+--
+-- Aplicar en el SQL Editor de Supabase, y después `seed.sql`.
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Profiles (extends auth.users)
+-- ---------------------------------------------------------------- usuarios
+
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users PRIMARY KEY,
   full_name TEXT,
   phone TEXT,
   avatar_url TEXT,
-  address JSONB,
-  preferences JSONB,
   role TEXT DEFAULT 'customer' CHECK (role IN ('customer', 'admin', 'super_admin')),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Categories
-CREATE TABLE IF NOT EXISTS categories (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  slug TEXT UNIQUE NOT NULL,
-  description TEXT,
-  image_url TEXT,
-  parent_id UUID REFERENCES categories(id),
-  sort_order INT DEFAULT 0,
-  is_active BOOLEAN DEFAULT TRUE,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- ---------------------------------------------------------------- catálogo
 
--- Brands
-CREATE TABLE IF NOT EXISTS brands (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  slug TEXT UNIQUE NOT NULL,
-  logo_url TEXT,
-  is_active BOOLEAN DEFAULT TRUE
-);
-
--- Products
 CREATE TABLE IF NOT EXISTS products (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
+  brand TEXT NOT NULL DEFAULT 'Apple',
+  -- Familia del equipo ("iPhone 15 Pro"): agrupa variantes y alimenta los filtros.
+  model TEXT NOT NULL,
+  category TEXT NOT NULL DEFAULT 'iphone',
   description TEXT,
-  short_description TEXT,
-  brand_id UUID REFERENCES brands(id),
-  category_id UUID REFERENCES categories(id),
-  sku TEXT UNIQUE,
+  specs JSONB DEFAULT '{}',
   status TEXT DEFAULT 'active' CHECK (status IN ('active', 'draft', 'archived')),
   is_featured BOOLEAN DEFAULT FALSE,
-  is_bestseller BOOLEAN DEFAULT FALSE,
-  tags TEXT[] DEFAULT '{}',
-  specs JSONB,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Product variants
+-- Una fila por combinación concreta que se puede vender: capacidad + color + estado.
 CREATE TABLE IF NOT EXISTS product_variants (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   product_id UUID REFERENCES products(id) ON DELETE CASCADE,
-  name TEXT NOT NULL,
-  sku TEXT UNIQUE,
+  storage TEXT NOT NULL,
+  color TEXT,
+  color_hex TEXT,
+  condition TEXT NOT NULL DEFAULT 'muy-bueno'
+    CHECK (condition IN ('nuevo', 'como-nuevo', 'muy-bueno', 'bueno')),
+  battery_health INT CHECK (battery_health BETWEEN 0 AND 100),
   price_ars DECIMAL(12,2) NOT NULL,
   price_usd DECIMAL(10,2),
-  compare_price_ars DECIMAL(12,2),
-  cost_price DECIMAL(12,2),
+  -- Costo del proveedor. Nunca sale al sitio público: solo alimenta el margen.
+  cost_usd DECIMAL(10,2),
   stock INT DEFAULT 0,
-  low_stock_threshold INT DEFAULT 3,
-  attributes JSONB DEFAULT '{}',
+  sku TEXT,
+  supplier_id UUID,
   is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Product images
 CREATE TABLE IF NOT EXISTS product_images (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   product_id UUID REFERENCES products(id) ON DELETE CASCADE,
-  variant_id UUID REFERENCES product_variants(id),
   url TEXT NOT NULL,
   alt TEXT,
-  sort_order INT DEFAULT 0,
-  is_primary BOOLEAN DEFAULT FALSE
+  sort_order INT DEFAULT 0
 );
 
--- Reviews
-CREATE TABLE IF NOT EXISTS reviews (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  product_id UUID REFERENCES products(id),
-  user_id UUID REFERENCES profiles(id),
-  order_id UUID,
-  rating INT CHECK (rating BETWEEN 1 AND 5),
-  title TEXT,
-  body TEXT,
-  is_verified BOOLEAN DEFAULT FALSE,
-  is_approved BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- ---------------------------------------------------------------- proveedores
 
--- Coupons
-CREATE TABLE IF NOT EXISTS coupons (
+CREATE TABLE IF NOT EXISTS suppliers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  code TEXT UNIQUE NOT NULL,
-  description TEXT,
-  type TEXT NOT NULL CHECK (type IN ('percentage', 'fixed_amount', 'free_shipping')),
-  value DECIMAL(10,2) NOT NULL,
-  min_purchase DECIMAL(10,2) DEFAULT 0,
-  max_uses INT,
-  used_count INT DEFAULT 0,
-  user_id UUID REFERENCES profiles(id),
-  expires_at TIMESTAMPTZ,
+  name TEXT NOT NULL,
+  phone TEXT,
+  notes TEXT,
+  -- Margen que se propone al importar una lista de este proveedor. 18 = +18%.
+  default_margin_pct DECIMAL(5,2) DEFAULT 18,
   is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Orders
-CREATE TABLE IF NOT EXISTS orders (
+-- Historial de cada lista de WhatsApp pegada en el panel.
+-- Guardamos el texto original además del resultado: si el parseo sale mal,
+-- se puede revisar contra lo que mandó el proveedor.
+CREATE TABLE IF NOT EXISTS supplier_imports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  order_number TEXT UNIQUE NOT NULL,
-  user_id UUID REFERENCES profiles(id),
-  guest_email TEXT,
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending','confirmed','processing','shipped','delivered','cancelled','refunded')),
-  payment_status TEXT DEFAULT 'pending' CHECK (payment_status IN ('pending','paid','failed','refunded','partially_refunded')),
-  payment_method TEXT CHECK (payment_method IN ('mercadopago','stripe','cash')),
-  payment_id TEXT,
-  currency TEXT DEFAULT 'ARS',
-  subtotal DECIMAL(12,2) NOT NULL,
-  discount DECIMAL(12,2) DEFAULT 0,
-  shipping DECIMAL(12,2) DEFAULT 0,
-  total DECIMAL(12,2) NOT NULL,
-  coupon_id UUID REFERENCES coupons(id),
-  shipping_address JSONB NOT NULL,
-  billing_address JSONB,
-  notes TEXT,
-  tracking_number TEXT,
-  tracking_url TEXT,
-  estimated_delivery TIMESTAMPTZ,
-  delivered_at TIMESTAMPTZ,
-  cancelled_at TIMESTAMPTZ,
-  cancel_reason TEXT,
-  metadata JSONB,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
+  supplier_id UUID REFERENCES suppliers(id),
+  raw_text TEXT NOT NULL,
+  parsed_json JSONB DEFAULT '[]',
+  margin_pct DECIMAL(5,2),
+  dollar_rate DECIMAL(12,2),
+  rows_published INT DEFAULT 0,
+  status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'approved', 'discarded')),
+  created_by UUID REFERENCES profiles(id),
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Order items
-CREATE TABLE IF NOT EXISTS order_items (
+ALTER TABLE product_variants
+  DROP CONSTRAINT IF EXISTS product_variants_supplier_id_fkey;
+ALTER TABLE product_variants
+  ADD CONSTRAINT product_variants_supplier_id_fkey
+  FOREIGN KEY (supplier_id) REFERENCES suppliers(id);
+
+-- ---------------------------------------------------------------- ventas
+
+CREATE TABLE IF NOT EXISTS sales (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
+  sale_number TEXT UNIQUE NOT NULL,
   variant_id UUID REFERENCES product_variants(id),
+  -- Se copian nombre y variante al momento de vender: si después borrás el
+  -- producto, la venta sigue siendo legible.
   product_name TEXT NOT NULL,
-  variant_name TEXT NOT NULL,
-  product_image TEXT,
-  quantity INT NOT NULL,
-  price DECIMAL(12,2) NOT NULL,
-  total DECIMAL(12,2) NOT NULL
-);
-
--- Order events (timeline)
-CREATE TABLE IF NOT EXISTS order_events (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
-  status TEXT NOT NULL,
-  message TEXT,
-  metadata JSONB,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Refunds
-CREATE TABLE IF NOT EXISTS refunds (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  order_id UUID REFERENCES orders(id),
-  amount DECIMAL(12,2) NOT NULL,
-  reason TEXT,
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected','processed')),
-  payment_refund_id TEXT,
+  variant_label TEXT NOT NULL,
+  sale_price DECIMAL(12,2) NOT NULL,
+  cost_price DECIMAL(12,2),
+  quantity INT NOT NULL DEFAULT 1,
+  customer_name TEXT NOT NULL,
+  customer_phone TEXT,
+  payment_method TEXT DEFAULT 'efectivo'
+    CHECK (payment_method IN ('efectivo', 'transferencia', 'tarjeta', 'canje')),
   notes TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  sold_at TIMESTAMPTZ DEFAULT NOW(),
+  created_by UUID REFERENCES profiles(id)
 );
 
--- Trade-ins (Plan Canje)
+-- ---------------------------------------------------------------- plan canje
+
+-- Valor de referencia por modelo, para un equipo en estado "muy-bueno".
+-- El cotizador aplica encima el ajuste por estado.
+CREATE TABLE IF NOT EXISTS trade_in_prices (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  brand TEXT NOT NULL,
+  model TEXT NOT NULL,
+  storage TEXT NOT NULL,
+  base_value DECIMAL(10,2) NOT NULL,
+  is_active BOOLEAN DEFAULT TRUE,
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (brand, model, storage)
+);
+
 CREATE TABLE IF NOT EXISTS trade_ins (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES profiles(id),
-  device_brand TEXT NOT NULL,
-  device_model TEXT NOT NULL,
-  device_storage TEXT,
-  device_condition TEXT NOT NULL CHECK (device_condition IN ('excelente','bueno','regular','roto')),
-  has_accessories BOOLEAN DEFAULT FALSE,
-  photos TEXT[] DEFAULT '{}',
-  estimated_value_min DECIMAL(10,2),
-  estimated_value_max DECIMAL(10,2),
+  brand TEXT NOT NULL,
+  model TEXT NOT NULL,
+  storage TEXT,
+  condition TEXT NOT NULL
+    CHECK (condition IN ('nuevo', 'como-nuevo', 'muy-bueno', 'bueno')),
+  estimated_value DECIMAL(10,2),
   final_value DECIMAL(10,2),
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending','evaluating','offered','accepted','rejected')),
+  wanted_product_id UUID REFERENCES products(id),
+  contact_name TEXT NOT NULL,
+  contact_phone TEXT NOT NULL,
   notes TEXT,
   admin_notes TEXT,
-  contact_name TEXT,
-  contact_phone TEXT,
-  contact_email TEXT,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'contacted', 'closed')),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Banners
-CREATE TABLE IF NOT EXISTS banners (
+-- ---------------------------------------------------------------- servicios
+
+CREATE TABLE IF NOT EXISTS repair_services (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title TEXT,
-  subtitle TEXT,
-  image_url TEXT NOT NULL,
-  mobile_image_url TEXT,
-  link TEXT,
-  position TEXT DEFAULT 'hero' CHECK (position IN ('hero','strip','section','popup')),
+  name TEXT NOT NULL,
+  device TEXT,
+  description TEXT,
+  price_from DECIMAL(12,2) NOT NULL DEFAULT 0,
+  duration TEXT,
   sort_order INT DEFAULT 0,
-  is_active BOOLEAN DEFAULT TRUE,
-  starts_at TIMESTAMPTZ,
-  ends_at TIMESTAMPTZ,
+  is_active BOOLEAN DEFAULT TRUE
+);
+
+-- ---------------------------------------------------------------- blog
+
+CREATE TABLE IF NOT EXISTS posts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  excerpt TEXT,
+  body TEXT,
+  cover_url TEXT,
+  author TEXT DEFAULT 'Equipo iPhone Purple',
+  is_published BOOLEAN DEFAULT FALSE,
+  published_at DATE DEFAULT CURRENT_DATE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Chat sessions
-CREATE TABLE IF NOT EXISTS chat_sessions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES profiles(id),
-  session_token TEXT NOT NULL,
-  messages JSONB DEFAULT '[]',
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- ---------------------------------------------------------------- ajustes
 
--- Wishlists
-CREATE TABLE IF NOT EXISTS wishlists (
-  user_id UUID REFERENCES profiles(id),
-  product_id UUID REFERENCES products(id),
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  PRIMARY KEY (user_id, product_id)
-);
-
--- Store settings
+-- Clave/valor: cotización del dólar, WhatsApp, redes, dirección, horarios.
 CREATE TABLE IF NOT EXISTS store_settings (
   key TEXT PRIMARY KEY,
   value JSONB NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- RLS Policies
+-- ---------------------------------------------------------------- índices
+
+CREATE INDEX IF NOT EXISTS idx_products_status ON products(status);
+CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);
+CREATE INDEX IF NOT EXISTS idx_products_model ON products(model);
+CREATE INDEX IF NOT EXISTS idx_products_featured ON products(is_featured) WHERE is_featured = TRUE;
+CREATE INDEX IF NOT EXISTS idx_variants_product ON product_variants(product_id);
+CREATE INDEX IF NOT EXISTS idx_variants_stock ON product_variants(stock) WHERE stock > 0;
+CREATE INDEX IF NOT EXISTS idx_images_product ON product_images(product_id);
+CREATE INDEX IF NOT EXISTS idx_sales_sold_at ON sales(sold_at DESC);
+CREATE INDEX IF NOT EXISTS idx_trade_ins_status ON trade_ins(status);
+CREATE INDEX IF NOT EXISTS idx_imports_supplier ON supplier_imports(supplier_id);
+CREATE INDEX IF NOT EXISTS idx_posts_published ON posts(is_published, published_at DESC);
+
+-- ---------------------------------------------------------------- seguridad
+--
+-- El sitio público es de solo lectura y anónimo. Todo lo que escribe pasa por
+-- Server Actions autenticadas que usan la service role key, así que ninguna
+-- policy le abre escritura al rol `anon`.
+
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE product_variants ENABLE ROW LEVEL SECURITY;
+ALTER TABLE product_images ENABLE ROW LEVEL SECURITY;
+ALTER TABLE repair_services ENABLE ROW LEVEL SECURITY;
+ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE trade_in_prices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE store_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
-ALTER TABLE wishlists ENABLE ROW LEVEL SECURITY;
-ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE trade_ins ENABLE ROW LEVEL SECURITY;
-ALTER TABLE chat_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE suppliers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE supplier_imports ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can view own profile" ON profiles FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
-CREATE POLICY "Users can view own orders" ON orders FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can manage own wishlist" ON wishlists USING (auth.uid() = user_id);
-CREATE POLICY "Users can view approved reviews" ON reviews FOR SELECT USING (is_approved = TRUE);
-CREATE POLICY "Users can insert own review" ON reviews FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can view own trade-ins" ON trade_ins FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Public can insert trade-ins" ON trade_ins FOR INSERT WITH CHECK (TRUE);
+DROP POLICY IF EXISTS "Catálogo público" ON products;
+CREATE POLICY "Catálogo público" ON products
+  FOR SELECT USING (status = 'active');
 
--- Auto-create profile on signup
+DROP POLICY IF EXISTS "Variantes públicas" ON product_variants;
+CREATE POLICY "Variantes públicas" ON product_variants
+  FOR SELECT USING (is_active = TRUE);
+
+DROP POLICY IF EXISTS "Imágenes públicas" ON product_images;
+CREATE POLICY "Imágenes públicas" ON product_images FOR SELECT USING (TRUE);
+
+DROP POLICY IF EXISTS "Servicios públicos" ON repair_services;
+CREATE POLICY "Servicios públicos" ON repair_services
+  FOR SELECT USING (is_active = TRUE);
+
+DROP POLICY IF EXISTS "Notas publicadas" ON posts;
+CREATE POLICY "Notas publicadas" ON posts
+  FOR SELECT USING (is_published = TRUE);
+
+DROP POLICY IF EXISTS "Valores de canje públicos" ON trade_in_prices;
+CREATE POLICY "Valores de canje públicos" ON trade_in_prices
+  FOR SELECT USING (is_active = TRUE);
+
+DROP POLICY IF EXISTS "Ajustes públicos" ON store_settings;
+CREATE POLICY "Ajustes públicos" ON store_settings FOR SELECT USING (TRUE);
+
+DROP POLICY IF EXISTS "Perfil propio" ON profiles;
+CREATE POLICY "Perfil propio" ON profiles FOR SELECT USING (auth.uid() = id);
+
+-- `trade_ins`, `sales`, `suppliers` y `supplier_imports` quedan sin policy de
+-- lectura a propósito: solo se acceden con la service role key desde el panel.
+
+-- ---------------------------------------------------------------- funciones
+
+-- Crea el perfil apenas se registra un usuario.
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -266,7 +267,8 @@ BEGIN
     NEW.id,
     NEW.raw_user_meta_data->>'full_name',
     NEW.raw_user_meta_data->>'avatar_url'
-  );
+  )
+  ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -275,27 +277,33 @@ CREATE OR REPLACE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
--- Auto-generate order number
-CREATE OR REPLACE FUNCTION generate_order_number()
+-- Numera las ventas como IPP-2026-0001.
+CREATE OR REPLACE FUNCTION next_sale_number()
 RETURNS TEXT AS $$
 DECLARE
-  year_part TEXT;
-  seq_num TEXT;
+  year_part TEXT := TO_CHAR(NOW(), 'YYYY');
   next_val INT;
 BEGIN
-  year_part := TO_CHAR(NOW(), 'YYYY');
-  SELECT COUNT(*) + 1 INTO next_val FROM orders WHERE EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM NOW());
-  seq_num := LPAD(next_val::TEXT, 4, '0');
-  RETURN 'IPP-' || year_part || '-' || seq_num;
+  SELECT COUNT(*) + 1 INTO next_val
+  FROM sales
+  WHERE EXTRACT(YEAR FROM sold_at) = EXTRACT(YEAR FROM NOW());
+  RETURN 'IPP-' || year_part || '-' || LPAD(next_val::TEXT, 4, '0');
 END;
 $$ LANGUAGE plpgsql;
 
--- Indexes for performance
-CREATE INDEX IF NOT EXISTS idx_products_status ON products(status);
-CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);
-CREATE INDEX IF NOT EXISTS idx_products_featured ON products(is_featured) WHERE is_featured = TRUE;
-CREATE INDEX IF NOT EXISTS idx_product_variants_product_id ON product_variants(product_id);
-CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
-CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
-CREATE INDEX IF NOT EXISTS idx_reviews_product_id ON reviews(product_id);
-CREATE INDEX IF NOT EXISTS idx_order_events_order_id ON order_events(order_id);
+-- Descuenta stock al registrar una venta, sin dejarlo en negativo.
+CREATE OR REPLACE FUNCTION apply_sale_stock()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.variant_id IS NOT NULL THEN
+    UPDATE product_variants
+    SET stock = GREATEST(0, stock - NEW.quantity)
+    WHERE id = NEW.variant_id;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER on_sale_created
+  AFTER INSERT ON sales
+  FOR EACH ROW EXECUTE FUNCTION apply_sale_stock();

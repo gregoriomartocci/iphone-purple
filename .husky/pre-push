@@ -1,0 +1,2 @@
+# Antes de push corremos lo que también corre en CI, para no romper main.
+npm run typecheck && npm run test

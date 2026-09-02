@@ -16,15 +16,23 @@ export function formatUSD(amount: number): string {
   }).format(amount);
 }
 
+/**
+ * Convierte un texto en un slug apto para URL.
+ *
+ * El orden importa: hay que recortar los extremos ANTES de pasar los espacios a
+ * guiones, o " iPhone 15 " termina como "-iphone-15-". No es teórico: los modelos
+ * llegan desde listas de WhatsApp, que vienen llenas de espacios de más.
+ */
 export function slugify(text: string): string {
   return text
     .toLowerCase()
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
-    .trim();
+    .replace(/^-|-$/g, "");
 }
 
 export function cn(...classes: (string | undefined | null | false)[]): string {

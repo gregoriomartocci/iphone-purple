@@ -1,50 +1,30 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-export async function createClient() {
-  const cookieStore = await cookies();
+/**
+ * Clientes de Supabase.
+ *
+ * El sitio público es anónimo — no hay cuentas de cliente ni sesiones — así que
+ * ninguno de los dos lee cookies. Eso tiene dos consecuencias buenas: las páginas
+ * públicas se siguen pudiendo prerenderizar (acceder a cookies las volvería
+ * dinámicas), y el cliente admin no arrastra `next/headers`, que no existe en el
+ * runtime del proxy.
+ */
 
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch {
-            // Server Component — cookie mutations handled by middleware
-          }
-        },
-      },
-    }
-  );
+const url = () => process.env.NEXT_PUBLIC_SUPABASE_URL!;
+
+/** Lecturas públicas: anon key, sujeto a las policies de RLS del esquema. */
+export function createClient() {
+  return createSupabaseClient(url(), process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 }
 
-export async function createAdminClient() {
-  const cookieStore = await cookies();
-
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch {}
-        },
-      },
-    }
-  );
+/**
+ * Escrituras y lecturas del panel: service role key, salta RLS.
+ * Nunca debe llegar a un componente de cliente.
+ */
+export function createAdminClient() {
+  return createSupabaseClient(url(), process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 }
