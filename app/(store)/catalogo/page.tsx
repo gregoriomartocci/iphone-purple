@@ -6,7 +6,14 @@ import { CatalogToolbar } from "@/components/site/CatalogToolbar";
 import { PageHero, PAGE_PHOTOS } from "@/components/site/PageHero";
 import { ProductCard } from "@/components/site/ProductCard";
 import { getCatalogFacets, getProducts } from "@/lib/data";
-import { CONDITIONS, type CatalogFilters, type Condition } from "@/types";
+import {
+  BATTERY_TIERS,
+  CATEGORIES,
+  GRADES,
+  type CatalogFilters,
+  type Category,
+  type Grade,
+} from "@/types";
 
 export const metadata: Metadata = {
   title: "Catálogo",
@@ -23,16 +30,24 @@ function first(value: string | string[] | undefined): string | undefined {
 }
 
 function parseFilters(params: SearchParams): CatalogFilters {
-  const condition = first(params.condition);
+  const grade = first(params.grade);
+  const category = first(params.category);
   const sort = first(params.sort);
+  const battery = Number(first(params.bateria));
 
   return {
     q: first(params.q),
     model: first(params.model),
     storage: first(params.storage),
     // Solo aceptamos valores conocidos: una URL manipulada no debe romper el filtro.
-    condition: CONDITIONS.includes(condition as Condition)
-      ? (condition as Condition)
+    category: CATEGORIES.includes(category as Category)
+      ? (category as Category)
+      : undefined,
+    grade: GRADES.includes(grade as Grade) ? (grade as Grade) : undefined,
+    // Sin este parámetro, la capa de datos sirve solo originales.
+    authenticity: first(params.tipo) === "replica" ? "replica" : undefined,
+    minBattery: (BATTERY_TIERS as readonly number[]).includes(battery)
+      ? battery
       : undefined,
     sort: (["precio-asc", "precio-desc", "nuevo"] as const).includes(
       sort as "precio-asc" | "precio-desc" | "nuevo"

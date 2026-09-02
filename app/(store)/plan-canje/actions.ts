@@ -3,13 +3,13 @@
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/data";
-import { CONDITIONS } from "@/types";
+import { GRADES } from "@/types";
 
 const TradeInSchema = z.object({
   brand: z.string().min(1, "Falta la marca"),
   model: z.string().min(1, "Elegí el modelo de tu equipo"),
   storage: z.string().min(1, "Elegí la capacidad"),
-  condition: z.enum(CONDITIONS as [string, ...string[]]),
+  grade: z.enum(GRADES as [string, ...string[]]),
   estimatedValue: z.number().nonnegative(),
   wantedProductId: z.string().nullable(),
   contactName: z.string().min(2, "Decinos tu nombre"),
@@ -43,7 +43,7 @@ export async function submitTradeIn(input: TradeInInput): Promise<TradeInResult>
   if (!isSupabaseConfigured()) {
     console.info("[plan-canje] lead sin guardar (Supabase no configurado):", {
       model: data.model,
-      condition: data.condition,
+      grade: data.grade,
       contact: data.contactPhone,
     });
     return { ok: true };
@@ -55,7 +55,7 @@ export async function submitTradeIn(input: TradeInInput): Promise<TradeInResult>
       brand: data.brand,
       model: data.model,
       storage: data.storage,
-      condition: data.condition,
+      grade: data.grade,
       estimated_value: data.estimatedValue,
       wanted_product_id: data.wantedProductId,
       contact_name: data.contactName,

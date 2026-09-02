@@ -16,7 +16,8 @@
     "format:check": "prettier --check .",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run build",
     "prepare": "husky",
-    "screenshots": "node scripts/screenshots.mjs"
+    "screenshots": "node scripts/screenshots.mjs",
+    "seed:sql": "node scripts/generate-seed-sql.mjs > lib/supabase/seed.sql"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",

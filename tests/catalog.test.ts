@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getCatalogFacets, getProducts, getProduct } from "@/lib/data";
-import { leadVariant, priceFrom, totalStock } from "@/lib/catalog";
+import { leadVariant, priceFrom, savingsVsNew, totalStock } from "@/lib/catalog";
 import { PRODUCTS } from "@/lib/data/seed";
 import type { Product, Variant } from "@/types";
 
@@ -18,7 +18,8 @@ function variant(overrides: Partial<Variant> = {}): Variant {
     storage: "128GB",
     color: "Negro",
     colorHex: "#000",
-    condition: "muy-bueno",
+    grade: "a",
+    authenticity: "original",
     batteryHealth: 90,
     priceArs: 1_000_000,
     priceUsd: 700,
@@ -36,7 +37,7 @@ function product(overrides: Partial<Product> = {}): Product {
     slug: "iphone-test",
     brand: "Apple",
     model: "iPhone Test",
-    category: "iphone",
+    category: "iphone" as const,
     description: "",
     specs: {},
     images: [],
@@ -82,12 +83,12 @@ describe("helpers de catálogo", () => {
     // de una usada más barata: sería ofrecerle algo distinto de lo que pidió.
     const p = product({
       variants: [
-        variant({ id: "usada", condition: "bueno", priceArs: 500_000, stock: 5 }),
-        variant({ id: "sellada", condition: "nuevo", priceArs: 900_000, stock: 5 }),
+        variant({ id: "usada", grade: "b", priceArs: 500_000, stock: 5 }),
+        variant({ id: "sellada", grade: "sellado", priceArs: 900_000, stock: 5 }),
       ],
     });
-    expect(leadVariant(p, { condition: "nuevo" })?.id).toBe("sellada");
-    expect(leadVariant(p, { condition: "bueno" })?.id).toBe("usada");
+    expect(leadVariant(p, { grade: "sellado" })?.id).toBe("sellada");
+    expect(leadVariant(p, { grade: "b" })?.id).toBe("usada");
     // Sin filtro vuelve a mandar el precio.
     expect(leadVariant(p)?.id).toBe("usada");
   });
@@ -106,9 +107,9 @@ describe("helpers de catálogo", () => {
     // Puede pasar cuando el producto entra por otro criterio: mejor mostrar
     // algo que dejar la tarjeta sin precio.
     const p = product({
-      variants: [variant({ id: "unica", condition: "bueno", stock: 2 })],
+      variants: [variant({ id: "unica", grade: "b", stock: 2 })],
     });
-    expect(leadVariant(p, { condition: "nuevo" })?.id).toBe("unica");
+    expect(leadVariant(p, { grade: "sellado" })?.id).toBe("unica");
   });
 
   it("no rompe con un producto sin variantes", () => {
@@ -120,9 +121,12 @@ describe("helpers de catálogo", () => {
 });
 
 describe("getProducts", () => {
-  it("sin filtros devuelve todo el catálogo", async () => {
+  it("sin filtros devuelve solo los originales", async () => {
+    const originales = PRODUCTS.filter((p) =>
+      p.variants.some((v) => v.authenticity === "original")
+    );
     const result = await getProducts();
-    expect(result).toHaveLength(PRODUCTS.length);
+    expect(result).toHaveLength(originales.length);
   });
 
   it("exige que aparezcan TODAS las palabras de la búsqueda", async () => {
@@ -163,10 +167,10 @@ describe("getProducts", () => {
   });
 
   it("filtra por estado", async () => {
-    const result = await getProducts({ condition: "nuevo" });
+    const result = await getProducts({ grade: "sellado" });
     expect(result.length).toBeGreaterThan(0);
     for (const p of result) {
-      expect(p.variants.some((v) => v.condition === "nuevo")).toBe(true);
+      expect(p.variants.some((v) => v.grade === "sellado")).toBe(true);
     }
   });
 
@@ -211,6 +215,76 @@ describe("getProducts", () => {
       expect(p.variants.some((v) => v.storage === "128GB")).toBe(true);
       expect(totalStock(p)).toBeGreaterThan(0);
     }
+  });
+});
+
+describe("réplicas", () => {
+  it("nunca aparecen mezcladas con los originales", async () => {
+    // La regla central: vender una réplica sin que se entienda que lo es
+    // expone legalmente al negocio. Ningún listado por defecto puede traerlas.
+    for (const filtros of [
+      {},
+      { q: "auriculares" },
+      { inStockOnly: true },
+      { sort: "precio-asc" as const },
+      { category: "accesorio" as const },
+    ]) {
+      const result = await getProducts(filtros);
+      for (const p of result) {
+        expect(p.variants.some((v) => v.authenticity === "original")).toBe(true);
+      }
+    }
+  });
+
+  it("se ven solo cuando se piden explícitamente", async () => {
+    const result = await getProducts({ authenticity: "replica" });
+    expect(result.length).toBeGreaterThan(0);
+    for (const p of result) {
+      expect(p.variants.some((v) => v.authenticity === "replica")).toBe(true);
+    }
+  });
+
+  it("el catálogo informa cuántas réplicas hay, sin listarlas", async () => {
+    const facets = await getCatalogFacets();
+    expect(facets.replicaCount).toBeGreaterThan(0);
+  });
+
+  it("una réplica no cuenta como ahorro contra un sellado original", () => {
+    // Comparar precios entre original y réplica inventaría un descuento falso.
+    const p = product({
+      variants: [
+        variant({ id: "orig", grade: "sellado", priceArs: 900_000 }),
+        variant({
+          id: "rep",
+          grade: "a",
+          authenticity: "replica",
+          priceArs: 200_000,
+        }),
+      ],
+    });
+    const replica = p.variants.find((v) => v.id === "rep")!;
+    expect(savingsVsNew(p, replica)).toBeNull();
+  });
+});
+
+describe("filtro de batería", () => {
+  it("deja pasar solo lo que llega al mínimo", async () => {
+    const result = await getProducts({ minBattery: 95 });
+    for (const p of result) {
+      const ok = p.variants.some(
+        (v) =>
+          v.authenticity === "original" &&
+          (v.grade === "sellado" || (v.batteryHealth ?? 0) >= 95)
+      );
+      expect(ok).toBe(true);
+    }
+  });
+
+  it("un sellado cumple cualquier mínimo aunque no informe batería", async () => {
+    // No declara porcentaje porque está sin abrir; asumir que no cumple lo
+    // dejaría fuera del filtro más exigente, que es justo donde tiene que estar.
+    const result = await getProducts({ minBattery: 95, grade: "sellado" });
+    expect(result.length).toBeGreaterThan(0);
   });
 });
 
@@ -275,7 +349,7 @@ describe("getCatalogFacets", () => {
 
   it("descarta las opciones que no dejarían ningún resultado", async () => {
     const facets = await getCatalogFacets({ model: "iPhone 16" });
-    for (const list of [facets.models, facets.storages, facets.conditions]) {
+    for (const list of [facets.models, facets.storages, facets.grades]) {
       for (const facet of list) {
         expect(facet.count).toBeGreaterThan(0);
       }

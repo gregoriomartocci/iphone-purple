@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { TradeInQuoter } from "@/components/site/TradeInQuoter";
 import { PageHero, PAGE_PHOTOS } from "@/components/site/PageHero";
 import { getProducts, getSettings, getTradeInPrices } from "@/lib/data";
-import { CONDITION_MULTIPLIER, leadVariant } from "@/lib/catalog";
+import { GRADE_MULTIPLIER, leadVariant } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "Plan Canje",
@@ -59,7 +59,7 @@ export default async function TradeInPage() {
         <div>
           <TradeInQuoter
             prices={prices}
-            conditionMultipliers={CONDITION_MULTIPLIER}
+            gradeMultipliers={GRADE_MULTIPLIER}
             wantedOptions={wantedOptions}
             dollarRate={settings.dollarRate}
             whatsappNumber={settings.whatsappNumber}

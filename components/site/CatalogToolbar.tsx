@@ -3,7 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Search, X } from "lucide-react";
-import { CONDITION_LABELS, type CatalogFilters, type Condition } from "@/types";
+import {
+  CATEGORY_LABELS,
+  GRADE_LABELS,
+  type CatalogFilters,
+  type Category,
+  type Grade,
+} from "@/types";
 import { cn } from "@/lib/utils";
 
 const SORTS = [
@@ -35,9 +41,12 @@ export function CatalogToolbar({
   function navigate(next: CatalogFilters) {
     const params = new URLSearchParams();
     if (next.q) params.set("q", next.q);
+    if (next.category) params.set("category", next.category);
     if (next.model) params.set("model", next.model);
     if (next.storage) params.set("storage", next.storage);
-    if (next.condition) params.set("condition", next.condition);
+    if (next.grade) params.set("grade", next.grade);
+    if (next.authenticity === "replica") params.set("tipo", "replica");
+    if (next.minBattery) params.set("bateria", String(next.minBattery));
     if (next.sort && next.sort !== "relevancia") params.set("sort", next.sort);
     if (next.inStockOnly) params.set("stock", "1");
 
@@ -47,10 +56,18 @@ export function CatalogToolbar({
 
   const chips = [
     filters.q && { label: `"${filters.q}"`, clear: { q: undefined } },
+    filters.category && {
+      label: CATEGORY_LABELS[filters.category as Category],
+      clear: { category: undefined },
+    },
     filters.model && { label: filters.model, clear: { model: undefined } },
-    filters.condition && {
-      label: CONDITION_LABELS[filters.condition as Condition],
-      clear: { condition: undefined },
+    filters.minBattery && {
+      label: `Batería ${filters.minBattery}%+`,
+      clear: { minBattery: undefined },
+    },
+    filters.grade && {
+      label: GRADE_LABELS[filters.grade as Grade],
+      clear: { grade: undefined },
     },
     filters.storage && { label: filters.storage, clear: { storage: undefined } },
     filters.inStockOnly && { label: "Con stock", clear: { inStockOnly: undefined } },

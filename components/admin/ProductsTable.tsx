@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Check, Loader2, Search } from "lucide-react";
 import { updateVariantAction } from "@/app/admin/actions";
 import { formatARS } from "@/utils/format";
-import { CONDITION_LABELS, type Product } from "@/types";
+import { GRADE_LABELS, type Product } from "@/types";
 import { cn } from "@/lib/utils";
 
 type Draft = { priceArs: number; stock: number };
@@ -129,7 +129,7 @@ export function ProductsTable({
                   </td>
                   <td className="p-3">
                     <span className="text-muted-foreground text-xs">
-                      {CONDITION_LABELS[variant.condition]}
+                      {GRADE_LABELS[variant.grade]}
                       {variant.batteryHealth !== null && ` · ${variant.batteryHealth}%`}
                     </span>
                   </td>

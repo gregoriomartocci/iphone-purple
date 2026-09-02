@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type {
-  Condition,
+  Category,
+  Grade,
   Post,
   Product,
   RepairService,
@@ -25,7 +26,8 @@ type VariantRow = {
   storage: string | null;
   color: string | null;
   color_hex: string | null;
-  condition: string | null;
+  grade: string | null;
+  authenticity: string | null;
   battery_health: number | null;
   price_ars: number | string | null;
   price_usd: number | string | null;
@@ -56,10 +58,23 @@ const num = (value: number | string | null | undefined): number => {
   return typeof parsed === "number" && !isNaN(parsed) ? parsed : 0;
 };
 
-const VALID_CONDITIONS: Condition[] = ["nuevo", "como-nuevo", "muy-bueno", "bueno"];
+const VALID_GRADES: Grade[] = ["sellado", "a-plus", "a", "b"];
 
-const toCondition = (value: string | null): Condition =>
-  VALID_CONDITIONS.includes(value as Condition) ? (value as Condition) : "muy-bueno";
+const toGrade = (value: string | null): Grade =>
+  VALID_GRADES.includes(value as Grade) ? (value as Grade) : "a";
+
+const VALID_CATEGORIES: Category[] = [
+  "iphone",
+  "ipad",
+  "mac",
+  "watch",
+  "audio",
+  "consola",
+  "accesorio",
+];
+
+const toCategory = (value: string | null): Category =>
+  VALID_CATEGORIES.includes(value as Category) ? (value as Category) : "iphone";
 
 function mapVariant(row: VariantRow): Variant {
   return {
@@ -68,7 +83,8 @@ function mapVariant(row: VariantRow): Variant {
     storage: row.storage ?? "",
     color: row.color ?? "",
     colorHex: row.color_hex ?? "#cccccc",
-    condition: toCondition(row.condition),
+    grade: toGrade(row.grade),
+    authenticity: row.authenticity === "replica" ? "replica" : "original",
     batteryHealth: row.battery_health,
     priceArs: num(row.price_ars),
     priceUsd: num(row.price_usd),
@@ -89,7 +105,7 @@ function mapProduct(row: ProductRow): Product {
     slug: row.slug,
     brand: row.brand ?? "Apple",
     model: row.model ?? row.name,
-    category: row.category ?? "iphone",
+    category: toCategory(row.category),
     description: row.description ?? "",
     specs: row.specs ?? {},
     images: images.map((i) => ({ url: i.url, alt: i.alt ?? row.name })),
@@ -105,8 +121,8 @@ export async function fetchProducts(): Promise<Product[]> {
     .from("products")
     .select(
       `id, name, slug, brand, model, category, description, specs, is_featured, created_at,
-       variants:product_variants(id, product_id, storage, color, color_hex, condition,
-         battery_health, price_ars, price_usd, cost_usd, stock, sku, is_active),
+       variants:product_variants(id, product_id, storage, color, color_hex, grade,
+         battery_health, price_ars, price_usd, cost_usd, stock, sku, authenticity, is_active),
        images:product_images(url, alt, sort_order)`
     )
     .eq("status", "active");

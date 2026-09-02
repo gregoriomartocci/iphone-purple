@@ -6,7 +6,7 @@ import { auth } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/data";
 import { parseSupplierList, sellPrice } from "@/lib/whatsapp/parser";
-import { CONDITIONS, type ParsedRow } from "@/types";
+import { GRADES, type ParsedRow } from "@/types";
 import { slugify } from "@/utils/format";
 
 export type ActionResult<T = undefined> =
@@ -36,7 +36,7 @@ const ParsedRowSchema = z.object({
   model: z.string().min(1),
   storage: z.string(),
   color: z.string().nullable(),
-  condition: z.enum(CONDITIONS as [string, ...string[]]),
+  grade: z.enum(GRADES as [string, ...string[]]),
   batteryHealth: z.number().int().min(0).max(100).nullable(),
   currency: z.enum(["USD", "ARS"]),
   cost: z.number().positive(),
@@ -146,7 +146,7 @@ export async function publishImportAction(
       }
 
       const price = sellPrice(row.cost, row.currency, marginPct, dollarRate);
-      const sku = `${slug.toUpperCase()}-${row.storage || "NA"}-${row.condition}`;
+      const sku = `${slug.toUpperCase()}-${row.storage || "NA"}-${row.grade}`;
 
       const { data: variant } = await supabase
         .from("product_variants")
@@ -159,7 +159,7 @@ export async function publishImportAction(
         storage: row.storage || "—",
         color: row.color ?? "Sin especificar",
         color_hex: "#cccccc",
-        condition: row.condition,
+        grade: row.grade,
         battery_health: row.batteryHealth,
         price_ars: price.priceArs,
         price_usd: price.priceUsd,

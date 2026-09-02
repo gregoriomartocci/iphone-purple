@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Loader2, Plus } from "lucide-react";
 import { registerSaleAction } from "@/app/admin/actions";
 import { formatARS } from "@/utils/format";
-import { CONDITION_LABELS, type Product } from "@/types";
+import { GRADE_LABELS, type Product } from "@/types";
 import { cn } from "@/lib/utils";
 
 const PAYMENT_METHODS = [
@@ -47,8 +47,8 @@ export function SaleForm({
     product.variants.map((variant) => ({
       id: variant.id,
       productName: product.name,
-      label: `${product.name} · ${variant.storage} · ${variant.color} · ${CONDITION_LABELS[variant.condition]}`,
-      variantLabel: `${variant.storage} · ${variant.color} · ${CONDITION_LABELS[variant.condition]}`,
+      label: `${product.name} · ${variant.storage} · ${variant.color} · ${GRADE_LABELS[variant.grade]}`,
+      variantLabel: `${variant.storage} · ${variant.color} · ${GRADE_LABELS[variant.grade]}`,
       priceArs: variant.priceArs,
       costArs: variant.costUsd === null ? null : Math.round(variant.costUsd * dollarRate),
       stock: variant.stock,

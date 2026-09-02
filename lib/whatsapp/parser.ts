@@ -33,10 +33,18 @@ const RowSchema = z.object({
     .string()
     .nullable()
     .describe("Color en español si aparece; null si no se menciona."),
-  condition: z
-    .enum(["nuevo", "como-nuevo", "muy-bueno", "bueno"])
+  category: z
+    .enum(["iphone", "ipad", "mac", "watch", "audio", "consola", "accesorio"])
+    .describe("Qué tipo de producto es, deducido del modelo."),
+  grade: z
+    .enum(["sellado", "a-plus", "a", "b"])
     .describe(
-      "Estado del equipo. 'nuevo' solo para sellados o precintados. Usados sin detalle de estado: 'muy-bueno'."
+      "Grado. 'sellado' solo para sellados o precintados. 'a-plus' si dicen impecable/como nuevo o batería 95+. 'a' es el caso por defecto de un usado sin detalle. 'b' si mencionan marcas de uso visibles o batería menor a 88."
+    ),
+  authenticity: z
+    .enum(["original", "replica"])
+    .describe(
+      "'replica' SOLO si el texto lo indica: réplica, clon, AAA, calidad A, 'estilo', 'tipo'. Ante la duda, 'original'."
     ),
   batteryHealth: z
     .number()
@@ -90,7 +98,8 @@ Reglas:
 - No inventes datos. Si un dato no está, usá null (o cadena vacía en storage).
 - Ignorá saludos, condiciones de pago, datos de contacto y todo lo que no sea un equipo.
 - Si una línea parece un equipo pero no podés extraer modelo o precio con confianza, no la incluyas en rows: describila en warnings.
-- Los precios de listas mayoristas argentinas están casi siempre en dólares. Marcá ARS solo si el texto lo indica ("$", "pesos", "ARS") o si el monto es claramente de esa escala.`;
+- Los precios de listas mayoristas argentinas están casi siempre en dólares. Marcá ARS solo si el texto lo indica ("$", "pesos", "ARS") o si el monto es claramente de esa escala.
+- Réplicas: marcá 'replica' únicamente cuando el texto lo diga ("réplica", "clon", "AAA", "calidad A", "estilo Apple", "tipo AirPods"). Si no lo aclara, es original. Equivocarse acá tiene consecuencias legales, así que ante la duda va 'original' y la persona lo corrige en la revisión.`;
 
 let cached: Anthropic | null = null;
 

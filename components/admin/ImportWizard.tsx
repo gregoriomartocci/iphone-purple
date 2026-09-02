@@ -5,13 +5,7 @@ import { toast } from "sonner";
 import { AlertTriangle, Check, Loader2, Sparkles, Trash2 } from "lucide-react";
 import { parseListAction, publishImportAction } from "@/app/admin/actions";
 import { formatARS, formatUSD } from "@/utils/format";
-import {
-  CONDITION_LABELS,
-  CONDITIONS,
-  type Condition,
-  type ParsedRow,
-  type Supplier,
-} from "@/types";
+import { GRADE_LABELS, GRADES, type Grade, type ParsedRow, type Supplier } from "@/types";
 import { cn } from "@/lib/utils";
 
 type Row = ParsedRow & { include: boolean; key: string };
@@ -320,15 +314,15 @@ export function ImportWizard({
                       </td>
                       <td className="p-3">
                         <select
-                          value={row.condition}
+                          value={row.grade}
                           onChange={(e) =>
-                            updateRow(row.key, { condition: e.target.value as Condition })
+                            updateRow(row.key, { grade: e.target.value as Grade })
                           }
                           className={cn(inputClass, "w-32")}
                         >
-                          {CONDITIONS.map((c) => (
+                          {GRADES.map((c) => (
                             <option key={c} value={c}>
-                              {CONDITION_LABELS[c]}
+                              {GRADE_LABELS[c]}
                             </option>
                           ))}
                         </select>

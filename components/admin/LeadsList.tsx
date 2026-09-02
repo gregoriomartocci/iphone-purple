@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { updateLeadStatusAction } from "@/app/admin/actions";
 import { WhatsAppLink } from "@/components/site/WhatsAppLink";
 import { formatUSD } from "@/utils/format";
-import { CONDITION_LABELS, type TradeInLead } from "@/types";
+import { GRADE_LABELS, type TradeInLead } from "@/types";
 import { cn } from "@/lib/utils";
 
 const STATUSES = [
@@ -69,7 +69,7 @@ export function LeadsList({
                   {lead.brand} {lead.model} {lead.storage}
                 </p>
                 <p className="text-muted-foreground mt-0.5 text-sm">
-                  {CONDITION_LABELS[lead.condition]} · estimado{" "}
+                  {GRADE_LABELS[lead.grade]} · estimado{" "}
                   <span className="tnum">{formatUSD(lead.estimatedValue)}</span>
                 </p>
                 <p className="text-foreground mt-2 text-sm">

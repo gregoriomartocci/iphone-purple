@@ -29,14 +29,14 @@ export function repairMessage(service: string, device?: string): string {
 
 export function tradeInMessage(
   device: string,
-  condition: string,
+  grade: string,
   estimate: string,
   wanted?: string
 ): string {
   const lines = [
     "¡Hola! Coticé mi equipo en la web:",
     `• Equipo: ${device}`,
-    `• Estado: ${condition}`,
+    `• Estado: ${grade}`,
     `• Estimado: ${estimate}`,
   ];
   if (wanted) lines.push(`• Me interesa llevarme: ${wanted}`);

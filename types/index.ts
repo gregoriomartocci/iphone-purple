@@ -1,16 +1,107 @@
 export type UserRole = "customer" | "admin" | "super_admin";
 
-/** Estado del equipo. Ordenado de mejor a peor: el orden importa para cotizar canje. */
-export type Condition = "nuevo" | "como-nuevo" | "muy-bueno" | "bueno";
+// ─────────────────────────────────────────────────────────────
+// Taxonomía del catálogo
+//
+// Cinco ejes que se combinan, en vez de una sola lista de "categorías":
+//   categoría      qué es el producto        → navegación
+//   autenticidad   original o réplica        → filtro, y separación por defecto
+//   grado          sellado / A+ / A / B      → filtro
+//   batería        tramos de salud           → filtro
+//   capacidad      128GB, 256GB…             → filtro
+// ─────────────────────────────────────────────────────────────
 
-export const CONDITIONS: Condition[] = ["nuevo", "como-nuevo", "muy-bueno", "bueno"];
+/** Qué es el producto. Es el nivel de navegación del catálogo. */
+export type Category =
+  "iphone" | "ipad" | "mac" | "watch" | "audio" | "consola" | "accesorio";
 
-export const CONDITION_LABELS: Record<Condition, string> = {
-  nuevo: "Nuevo sellado",
-  "como-nuevo": "Como nuevo",
-  "muy-bueno": "Muy bueno",
-  bueno: "Bueno",
+export const CATEGORIES: Category[] = [
+  "iphone",
+  "ipad",
+  "mac",
+  "watch",
+  "audio",
+  "consola",
+  "accesorio",
+];
+
+export const CATEGORY_LABELS: Record<Category, string> = {
+  iphone: "iPhone",
+  ipad: "iPad",
+  mac: "Mac",
+  watch: "Apple Watch",
+  audio: "Audio",
+  consola: "Consolas",
+  accesorio: "Accesorios",
 };
+
+/**
+ * Original o réplica.
+ *
+ * Nunca puede quedar ambiguo: una réplica vendida sin que se entienda que lo
+ * es expone legalmente al negocio y quema la reputación. Por eso las réplicas
+ * quedan fuera del listado por defecto y llevan etiqueta propia en la tarjeta
+ * y en la ficha.
+ */
+export type Authenticity = "original" | "replica";
+
+export const AUTHENTICITY_LABELS: Record<Authenticity, string> = {
+  original: "Original",
+  replica: "Réplica",
+};
+
+/**
+ * Grado del equipo, de mejor a peor. El orden importa: se usa para cotizar
+ * el Plan Canje y para ordenar los filtros.
+ */
+export type Grade = "sellado" | "a-plus" | "a" | "b";
+
+export const GRADES: Grade[] = ["sellado", "a-plus", "a", "b"];
+
+export const GRADE_LABELS: Record<Grade, string> = {
+  sellado: "Sellado",
+  "a-plus": "Seminuevo A+",
+  a: "Seminuevo A",
+  b: "Seminuevo B",
+};
+
+/**
+ * Qué significa cada grado, en criterios verificables.
+ *
+ * Se publica en el sitio a propósito: "A+" no le dice nada a nadie si no está
+ * escrito qué batería mínima y qué marcas de uso admite. Tenerlo publicado
+ * evita discusiones después de la venta.
+ */
+export const GRADE_SPECS: Record<Grade, { cosmetic: string; battery: string }> = {
+  sellado: {
+    cosmetic: "Caja cerrada, sin abrir.",
+    battery: "Batería 100 %, ciclo cero.",
+  },
+  "a-plus": {
+    cosmetic: "Sin marcas de uso visibles.",
+    battery: "Batería 95 % o más.",
+  },
+  a: {
+    cosmetic: "Micromarcas que no se ven de frente.",
+    battery: "Batería 88 % o más.",
+  },
+  b: {
+    cosmetic: "Marcas de uso visibles en marco o tapa.",
+    battery: "Batería 80 % o más.",
+  },
+};
+
+/** Batería mínima que garantiza cada grado. Se usa para validar al importar. */
+export const GRADE_MIN_BATTERY: Record<Grade, number> = {
+  sellado: 100,
+  "a-plus": 95,
+  a: 88,
+  b: 80,
+};
+
+/** Tramos del filtro de batería: "90 % o más". */
+export const BATTERY_TIERS = [95, 90, 85, 80] as const;
+export type BatteryTier = (typeof BATTERY_TIERS)[number];
 
 export interface ProductImage {
   url: string;
@@ -23,8 +114,9 @@ export interface Variant {
   storage: string;
   color: string;
   colorHex: string;
-  condition: Condition;
-  /** Salud de batería en %, null en equipos sellados. */
+  grade: Grade;
+  authenticity: Authenticity;
+  /** Salud de batería en %, null cuando no aplica (sellados, accesorios). */
   batteryHealth: number | null;
   priceArs: number;
   priceUsd: number;
@@ -41,7 +133,7 @@ export interface Product {
   brand: string;
   /** Familia del equipo: "iPhone 15 Pro". Sirve para agrupar y filtrar. */
   model: string;
-  category: string;
+  category: Category;
   description: string;
   specs: Record<string, string>;
   images: ProductImage[];
@@ -86,7 +178,7 @@ export interface TradeInLead {
   brand: string;
   model: string;
   storage: string;
-  condition: Condition;
+  grade: Grade;
   estimatedValue: number;
   wantedProductId: string | null;
   contactName: string;
@@ -123,7 +215,9 @@ export interface ParsedRow {
   model: string;
   storage: string;
   color: string | null;
-  condition: Condition;
+  category: Category;
+  grade: Grade;
+  authenticity: Authenticity;
   batteryHealth: number | null;
   currency: "USD" | "ARS";
   cost: number;
@@ -164,10 +258,17 @@ export interface StoreSettings {
 /** Filtros del catálogo. Todos llegan desde la URL. */
 export interface CatalogFilters {
   q?: string;
-  brand?: string;
+  category?: Category;
   model?: string;
   storage?: string;
-  condition?: Condition;
+  grade?: Grade;
+  /**
+   * Autenticidad. Sin especificar, el catálogo muestra SOLO originales: las
+   * réplicas se ven cuando se piden explícitamente, nunca mezcladas.
+   */
+  authenticity?: Authenticity;
+  /** Batería mínima: 90 significa "90 % o más". */
+  minBattery?: number;
   sort?: "relevancia" | "precio-asc" | "precio-desc" | "nuevo";
   inStockOnly?: boolean;
 }

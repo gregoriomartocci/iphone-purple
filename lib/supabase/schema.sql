@@ -26,7 +26,8 @@ CREATE TABLE IF NOT EXISTS products (
   brand TEXT NOT NULL DEFAULT 'Apple',
   -- Familia del equipo ("iPhone 15 Pro"): agrupa variantes y alimenta los filtros.
   model TEXT NOT NULL,
-  category TEXT NOT NULL DEFAULT 'iphone',
+  category TEXT NOT NULL DEFAULT 'iphone'
+    CHECK (category IN ('iphone','ipad','mac','watch','audio','consola','accesorio')),
   description TEXT,
   specs JSONB DEFAULT '{}',
   status TEXT DEFAULT 'active' CHECK (status IN ('active', 'draft', 'archived')),
@@ -42,8 +43,12 @@ CREATE TABLE IF NOT EXISTS product_variants (
   storage TEXT NOT NULL,
   color TEXT,
   color_hex TEXT,
-  condition TEXT NOT NULL DEFAULT 'muy-bueno'
-    CHECK (condition IN ('nuevo', 'como-nuevo', 'muy-bueno', 'bueno')),
+  grade TEXT NOT NULL DEFAULT 'a'
+    CHECK (grade IN ('sellado', 'a-plus', 'a', 'b')),
+  -- Original o réplica. El sitio nunca las mezcla: el listado por defecto
+  -- filtra por 'original' y las réplicas se piden explícitamente.
+  authenticity TEXT NOT NULL DEFAULT 'original'
+    CHECK (authenticity IN ('original', 'replica')),
   battery_health INT CHECK (battery_health BETWEEN 0 AND 100),
   price_ars DECIMAL(12,2) NOT NULL,
   price_usd DECIMAL(10,2),
@@ -141,8 +146,8 @@ CREATE TABLE IF NOT EXISTS trade_ins (
   brand TEXT NOT NULL,
   model TEXT NOT NULL,
   storage TEXT,
-  condition TEXT NOT NULL
-    CHECK (condition IN ('nuevo', 'como-nuevo', 'muy-bueno', 'bueno')),
+  grade TEXT NOT NULL
+    CHECK (grade IN ('sellado', 'a-plus', 'a', 'b')),
   estimated_value DECIMAL(10,2),
   final_value DECIMAL(10,2),
   wanted_product_id UUID REFERENCES products(id),
@@ -199,6 +204,8 @@ CREATE INDEX IF NOT EXISTS idx_products_model ON products(model);
 CREATE INDEX IF NOT EXISTS idx_products_featured ON products(is_featured) WHERE is_featured = TRUE;
 CREATE INDEX IF NOT EXISTS idx_variants_product ON product_variants(product_id);
 CREATE INDEX IF NOT EXISTS idx_variants_stock ON product_variants(stock) WHERE stock > 0;
+CREATE INDEX IF NOT EXISTS idx_variants_authenticity ON product_variants(authenticity);
+CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
 CREATE INDEX IF NOT EXISTS idx_images_product ON product_images(product_id);
 CREATE INDEX IF NOT EXISTS idx_sales_sold_at ON sales(sold_at DESC);
 CREATE INDEX IF NOT EXISTS idx_trade_ins_status ON trade_ins(status);

@@ -6,17 +6,16 @@ import { WhatsAppLink } from "./WhatsAppLink";
 import { submitTradeIn } from "@/app/(store)/plan-canje/actions";
 import { tradeInMessage } from "@/lib/whatsapp";
 import { formatARS, formatUSD } from "@/utils/format";
-import { CONDITION_LABELS, CONDITIONS, type Condition, type TradeInPrice } from "@/types";
+import {
+  GRADE_LABELS,
+  GRADE_SPECS,
+  GRADES,
+  type Grade,
+  type TradeInPrice,
+} from "@/types";
 import { cn } from "@/lib/utils";
 
 type WantedOption = { id: string; label: string; priceArs: number };
-
-const CONDITION_HELP: Record<Condition, string> = {
-  nuevo: "Sellado, sin abrir.",
-  "como-nuevo": "Sin marcas de uso. Batería sobre 95 %.",
-  "muy-bueno": "Micromarcas que no se ven de frente. Batería sobre 88 %.",
-  bueno: "Rayas visibles o batería entre 80 y 88 %.",
-};
 
 /**
  * Cotizador del Plan Canje.
@@ -27,13 +26,13 @@ const CONDITION_HELP: Record<Condition, string> = {
  */
 export function TradeInQuoter({
   prices,
-  conditionMultipliers,
+  gradeMultipliers,
   wantedOptions,
   dollarRate,
   whatsappNumber,
 }: {
   prices: TradeInPrice[];
-  conditionMultipliers: Record<Condition, number>;
+  gradeMultipliers: Record<Grade, number>;
   wantedOptions: WantedOption[];
   dollarRate: number;
   whatsappNumber: string;
@@ -41,7 +40,7 @@ export function TradeInQuoter({
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
   const [storage, setStorage] = useState("");
-  const [condition, setCondition] = useState<Condition | "">("");
+  const [grade, setCondition] = useState<Grade | "">("");
   const [wantedId, setWantedId] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -73,8 +72,8 @@ export function TradeInQuoter({
   );
 
   const estimateUsd =
-    match && condition
-      ? Math.round((match.baseValue * conditionMultipliers[condition]) / 5) * 5
+    match && grade
+      ? Math.round((match.baseValue * gradeMultipliers[grade]) / 5) * 5
       : null;
 
   const estimateArs = estimateUsd === null ? null : estimateUsd * dollarRate;
@@ -83,13 +82,13 @@ export function TradeInQuoter({
   const difference =
     wanted && estimateArs !== null ? Math.max(0, wanted.priceArs - estimateArs) : null;
 
-  const ready = Boolean(match && condition && estimateUsd !== null);
+  const ready = Boolean(match && grade && estimateUsd !== null);
 
   const waMessage =
     ready && estimateArs !== null
       ? tradeInMessage(
           `${brand} ${model} ${storage}`,
-          CONDITION_LABELS[condition as Condition],
+          GRADE_LABELS[grade as Grade],
           formatARS(estimateArs),
           wanted?.label
         )
@@ -105,7 +104,7 @@ export function TradeInQuoter({
         brand,
         model,
         storage,
-        condition: condition as Condition,
+        grade: grade as Grade,
         estimatedValue: estimateUsd,
         wantedProductId: wanted?.id ?? null,
         contactName: name.trim(),
@@ -185,23 +184,23 @@ export function TradeInQuoter({
           2. ¿En qué estado está?
         </h2>
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
-          {CONDITIONS.map((c) => (
+          {GRADES.map((c) => (
             <button
               key={c}
               type="button"
               onClick={() => setCondition(c)}
               className={cn(
                 "rounded-xl border p-4 text-left transition-colors",
-                condition === c
+                grade === c
                   ? "border-purple bg-purple/10"
                   : "border-line hover:border-foreground/30"
               )}
             >
               <span className="text-foreground block text-sm font-medium">
-                {CONDITION_LABELS[c]}
+                {GRADE_LABELS[c]}
               </span>
               <span className="text-muted-foreground mt-1 block text-xs leading-relaxed">
-                {CONDITION_HELP[c]}
+                {`${GRADE_SPECS[c].cosmetic} ${GRADE_SPECS[c].battery}`}
               </span>
             </button>
           ))}

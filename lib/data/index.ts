@@ -1,4 +1,4 @@
-import { CONDITIONS } from "@/types";
+import { BATTERY_TIERS, CATEGORIES, GRADES } from "@/types";
 import type {
   CatalogFilters,
   Post,
@@ -9,15 +9,18 @@ import type {
 } from "@/types";
 import * as seed from "./seed";
 import * as db from "./supabase";
-import { priceFrom, totalStock } from "@/lib/catalog";
+import { matchesVariant, priceFrom, totalStock } from "@/lib/catalog";
 
 // Los helpers puros viven en lib/catalog para que el cliente los use sin
 // arrastrar este módulo (y con él, el acceso a Supabase) al bundle.
 export {
   leadVariant,
+  matchesVariant,
   priceFrom,
   totalStock,
-  CONDITION_MULTIPLIER,
+  hasReplica,
+  savingsVsNew,
+  GRADE_MULTIPLIER,
   quoteTradeIn,
 } from "@/lib/catalog";
 
@@ -52,7 +55,7 @@ async function allProducts(): Promise<Product[]> {
 /** Texto plano sobre el que corre la búsqueda libre. */
 function haystack(product: Product): string {
   const variantText = product.variants
-    .map((v) => `${v.storage} ${v.color} ${v.condition}`)
+    .map((v) => `${v.storage} ${v.color} ${v.grade} ${v.authenticity}`)
     .join(" ");
   return `${product.name} ${product.brand} ${product.model} ${product.category} ${variantText}`
     .toLowerCase()
@@ -78,25 +81,33 @@ export async function getProducts(filters: CatalogFilters = {}): Promise<Product
     });
   }
 
-  if (filters.brand) {
-    items = items.filter((p) => normalize(p.brand) === normalize(filters.brand!));
+  if (filters.category) {
+    items = items.filter((p) => p.category === filters.category);
   }
 
   if (filters.model) {
     items = items.filter((p) => normalize(p.model) === normalize(filters.model!));
   }
 
-  if (filters.storage) {
-    items = items.filter((p) =>
-      p.variants.some((v) => normalize(v.storage) === normalize(filters.storage!))
-    );
-  }
+  /**
+   * Autenticidad: si no se pide explícitamente, se muestran SOLO originales.
+   * Las réplicas existen y son buscables, pero nunca aparecen mezcladas con los
+   * originales sin que la persona las haya pedido.
+   */
+  const authenticity = filters.authenticity ?? "original";
 
-  if (filters.condition) {
-    items = items.filter((p) =>
-      p.variants.some((v) => v.condition === filters.condition)
-    );
-  }
+  // El resto de los criterios se evalúan sobre las variantes: alcanza con que
+  // UNA cumpla para que el producto entre al listado.
+  items = items.filter((p) =>
+    p.variants.some((v) =>
+      matchesVariant(v, {
+        authenticity,
+        grade: filters.grade,
+        storage: filters.storage,
+        minBattery: filters.minBattery,
+      })
+    )
+  );
 
   if (filters.inStockOnly) {
     items = items.filter((p) => totalStock(p) > 0);
@@ -153,9 +164,12 @@ export async function getRelatedProducts(
 export type Facet = { value: string; count: number };
 
 export type CatalogFacets = {
+  categories: Facet[];
   models: Facet[];
   storages: Facet[];
-  conditions: Facet[];
+  grades: Facet[];
+  batteryTiers: Facet[];
+  replicaCount: number;
   priceRange: { min: number; max: number };
 };
 
@@ -171,48 +185,71 @@ export async function getCatalogFacets(
   filters: CatalogFilters = {}
 ): Promise<CatalogFacets> {
   const all = await allProducts();
+  const authenticity = filters.authenticity ?? "original";
 
-  // Cuenta cuántos productos quedarían aplicando los filtros actuales más uno.
   const countWith = async (extra: Partial<CatalogFilters>) =>
     (await getProducts({ ...filters, ...extra })).length;
 
-  const models = [...new Set(all.map((p) => p.model))].sort();
+  // El universo de opciones sale de lo que existe con esta autenticidad.
+  const visible = all.filter((p) =>
+    p.variants.some((v) => v.authenticity === authenticity)
+  );
+
+  const categories = CATEGORIES.filter((c) => visible.some((p) => p.category === c));
+  const models = [...new Set(visible.map((p) => p.model))].sort();
   const storages = [
-    ...new Set(all.flatMap((p) => p.variants.map((v) => v.storage))),
+    ...new Set(visible.flatMap((p) => p.variants.map((v) => v.storage))),
   ].sort((a, b) => {
     const na = parseInt(a, 10);
     const nb = parseInt(b, 10);
     if (!isNaN(na) && !isNaN(nb)) return na - nb;
     return a.localeCompare(b);
   });
-  const conditions = CONDITIONS.filter((c) =>
-    all.some((p) => p.variants.some((v) => v.condition === c))
+  const grades = GRADES.filter((g) =>
+    visible.some((p) => p.variants.some((v) => v.grade === g))
   );
 
-  const prices = all
+  const prices = visible
     .flatMap((p) => p.variants.map((v) => v.priceArs))
     .filter((n) => n > 0);
 
-  const [modelCounts, storageCounts, conditionCounts] = await Promise.all([
-    Promise.all(
-      models.map(async (m) => ({ value: m, count: await countWith({ model: m }) }))
-    ),
-    Promise.all(
-      storages.map(async (s) => ({ value: s, count: await countWith({ storage: s }) }))
-    ),
-    Promise.all(
-      conditions.map(async (c) => ({
-        value: c,
-        count: await countWith({ condition: c }),
-      }))
-    ),
-  ]);
+  const [categoryCounts, modelCounts, storageCounts, gradeCounts, batteryCounts] =
+    await Promise.all([
+      Promise.all(
+        categories.map(async (c) => ({
+          value: c,
+          count: await countWith({ category: c }),
+        }))
+      ),
+      Promise.all(
+        models.map(async (m) => ({ value: m, count: await countWith({ model: m }) }))
+      ),
+      Promise.all(
+        storages.map(async (s) => ({ value: s, count: await countWith({ storage: s }) }))
+      ),
+      Promise.all(
+        grades.map(async (g) => ({ value: g, count: await countWith({ grade: g }) }))
+      ),
+      Promise.all(
+        BATTERY_TIERS.map(async (t) => ({
+          value: String(t),
+          count: await countWith({ minBattery: t }),
+        }))
+      ),
+    ]);
+
+  // Cuántas réplicas hay, para ofrecer el acceso sin mezclarlas.
+  const replicaCount = (await getProducts({ ...filters, authenticity: "replica" }))
+    .length;
 
   return {
     // Una opción con cero resultados solo estorba.
+    categories: categoryCounts.filter((f) => f.count > 0),
     models: modelCounts.filter((f) => f.count > 0),
     storages: storageCounts.filter((f) => f.count > 0),
-    conditions: conditionCounts.filter((f) => f.count > 0),
+    grades: gradeCounts.filter((f) => f.count > 0),
+    batteryTiers: batteryCounts.filter((f) => f.count > 0),
+    replicaCount,
     priceRange: {
       min: prices.length ? Math.min(...prices) : 0,
       max: prices.length ? Math.max(...prices) : 0,

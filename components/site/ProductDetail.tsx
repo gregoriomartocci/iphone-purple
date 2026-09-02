@@ -7,7 +7,7 @@ import { WhatsAppLink } from "./WhatsAppLink";
 import { StockBadge } from "./ProductCard";
 import { productMessage } from "@/lib/whatsapp";
 import { formatARS, formatUSD } from "@/utils/format";
-import { CONDITION_LABELS, type Product, type Variant } from "@/types";
+import { GRADE_LABELS, GRADE_SPECS, type Product, type Variant } from "@/types";
 import { cn } from "@/lib/utils";
 
 /**
@@ -41,7 +41,7 @@ export function ProductDetail({
   const sameStorage = product.variants.filter((v) => v.storage === selected?.storage);
 
   const variantLabel = selected
-    ? `${selected.storage} · ${selected.color} · ${CONDITION_LABELS[selected.condition]}`
+    ? `${selected.storage} · ${selected.color} · ${GRADE_LABELS[selected.grade]}`
     : undefined;
 
   return (
@@ -84,6 +84,13 @@ export function ProductDetail({
 
       <div>
         <p className="text-muted-foreground text-sm">{product.brand}</p>
+
+        {selected?.authenticity === "replica" && (
+          <p className="mt-3 rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 text-sm leading-relaxed text-amber-800">
+            <strong className="font-semibold">Esto es una réplica.</strong> No es un
+            producto original de la marca ni cuenta con su garantía oficial.
+          </p>
+        )}
         <h1 className="mt-1 text-3xl font-semibold sm:text-4xl">{product.name}</h1>
 
         <div className="mt-5 flex items-baseline gap-3">
@@ -155,7 +162,7 @@ export function ProductDetail({
                     />
                     <span className="min-w-0 flex-1">
                       <span className="text-foreground block truncate text-sm">
-                        {variant.color} · {CONDITION_LABELS[variant.condition]}
+                        {variant.color} · {GRADE_LABELS[variant.grade]}
                       </span>
                       <span className="text-muted-foreground block text-xs">
                         {variant.batteryHealth !== null
@@ -195,6 +202,17 @@ export function ProductDetail({
             Batería, piezas originales y bloqueo de iCloud verificados antes de publicar.
           </p>
         </div>
+
+        {selected && (
+          <div className="border-line mt-8 rounded-xl border p-4">
+            <p className="text-foreground text-sm font-medium">
+              Qué significa &laquo;{GRADE_LABELS[selected.grade]}&raquo;
+            </p>
+            <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+              {GRADE_SPECS[selected.grade].cosmetic} {GRADE_SPECS[selected.grade].battery}
+            </p>
+          </div>
+        )}
 
         {product.description && (
           <p className="text-muted-foreground mt-8 leading-relaxed">

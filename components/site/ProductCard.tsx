@@ -4,9 +4,10 @@ import { BatteryMedium } from "lucide-react";
 import { formatARS } from "@/utils/format";
 import { leadVariant, savingsVsNew, totalStock } from "@/lib/catalog";
 import {
-  CONDITION_LABELS,
+  CATEGORY_LABELS,
+  GRADE_LABELS,
   type CatalogFilters,
-  type Condition,
+  type Grade,
   type Product,
 } from "@/types";
 import { cn } from "@/lib/utils";
@@ -17,11 +18,11 @@ import { cn } from "@/lib/utils";
  * Que cada estado tenga el suyo permite barrer la grilla de un vistazo y saber
  * qué es sellado y qué es usado sin leer cada tarjeta.
  */
-const CONDITION_STYLES: Record<Condition, string> = {
-  nuevo: "bg-purple text-white",
-  "como-nuevo": "bg-emerald-600 text-white",
-  "muy-bueno": "bg-sky-600 text-white",
-  bueno: "bg-amber-500 text-ink",
+const GRADE_STYLES: Record<Grade, string> = {
+  sellado: "bg-purple text-white",
+  "a-plus": "bg-emerald-600 text-white",
+  a: "bg-sky-600 text-white",
+  b: "bg-amber-500 text-ink",
 };
 
 /** Etiqueta de disponibilidad. Poco stock es información útil, no urgencia falsa. */
@@ -60,7 +61,7 @@ export function ProductCard({
 }: {
   product: Product;
   /** Filtros activos del catálogo, para que la tarjeta muestre lo que se pidió. */
-  filters?: Pick<CatalogFilters, "condition" | "storage">;
+  filters?: Pick<CatalogFilters, "grade" | "storage">;
 }) {
   const lead = leadVariant(product, filters);
   const stock = totalStock(product);
@@ -93,10 +94,16 @@ export function ProductCard({
           <span
             className={cn(
               "absolute top-3 left-3 rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide uppercase",
-              CONDITION_STYLES[lead.condition]
+              GRADE_STYLES[lead.grade]
             )}
           >
-            {CONDITION_LABELS[lead.condition]}
+            {GRADE_LABELS[lead.grade]}
+          </span>
+        )}
+
+        {lead?.authenticity === "replica" && (
+          <span className="absolute bottom-3 left-3 rounded-full bg-amber-500 px-3 py-1 text-[11px] font-semibold tracking-wide text-white uppercase">
+            Réplica
           </span>
         )}
 
@@ -108,7 +115,9 @@ export function ProductCard({
       </div>
 
       <div className="mt-4">
-        <p className="eyebrow text-muted-foreground">{product.category}</p>
+        <p className="eyebrow text-muted-foreground">
+          {CATEGORY_LABELS[product.category]}
+        </p>
 
         <h3 className="group-hover:text-purple mt-1.5 text-lg leading-tight font-medium transition-colors">
           {product.name}

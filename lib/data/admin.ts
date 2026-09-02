@@ -3,7 +3,7 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured, getProducts } from "./index";
 import { totalStock } from "@/lib/catalog";
 import { SUPPLIERS as SEED_SUPPLIERS } from "./seed";
-import type { Sale, Supplier, TradeInLead, Condition } from "@/types";
+import type { Sale, Supplier, TradeInLead, Grade } from "@/types";
 
 /**
  * Lecturas del panel.
@@ -86,7 +86,7 @@ export async function getTradeInLeads(): Promise<TradeInLead[]> {
     const { data, error } = await supabase
       .from("trade_ins")
       .select(
-        "id, brand, model, storage, condition, estimated_value, wanted_product_id, contact_name, contact_phone, notes, status, created_at"
+        "id, brand, model, storage, grade, estimated_value, wanted_product_id, contact_name, contact_phone, notes, status, created_at"
       )
       .order("created_at", { ascending: false })
       .limit(100);
@@ -98,7 +98,7 @@ export async function getTradeInLeads(): Promise<TradeInLead[]> {
       brand: row.brand,
       model: row.model,
       storage: row.storage ?? "",
-      condition: row.condition as Condition,
+      grade: row.grade as Grade,
       estimatedValue: Number(row.estimated_value ?? 0),
       wantedProductId: row.wanted_product_id,
       contactName: row.contact_name,

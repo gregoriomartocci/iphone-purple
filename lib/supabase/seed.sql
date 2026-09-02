@@ -45,16 +45,16 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1200&q=80', 'iPhone 16 Pro Max', 0 FROM products WHERE slug = 'iphone-16-pro-max'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-16-pro-max' AND pi.url = 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '256GB', 'Titanio Desierto', '#bfa48f', 'nuevo', NULL, 2248000, 1550, 1310, 3, 'IPHONE-16-PRO-MAX-256GB-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Titanio Desierto', '#bfa48f', 'sellado', 'original', NULL, 2248000, 1550, 1310, 3, 'IPHONE-16-PRO-MAX-256GB-1'
   FROM products WHERE slug = 'iphone-16-pro-max'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-16-PRO-MAX-256GB-1');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '512GB', 'Titanio Natural', '#c2bcb2', 'nuevo', NULL, 2581000, 1780, 1510, 1, 'IPHONE-16-PRO-MAX-512GB-2'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '512GB', 'Titanio Natural', '#c2bcb2', 'sellado', 'original', NULL, 2581000, 1780, 1510, 1, 'IPHONE-16-PRO-MAX-512GB-2'
   FROM products WHERE slug = 'iphone-16-pro-max'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-16-PRO-MAX-512GB-2');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '256GB', 'Titanio Negro', '#3b3b3d', 'como-nuevo', 99, 2001000, 1380, 1170, 2, 'IPHONE-16-PRO-MAX-256GB-3'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Titanio Negro', '#3b3b3d', 'a-plus', 'original', 99, 2001000, 1380, 1170, 2, 'IPHONE-16-PRO-MAX-256GB-3'
   FROM products WHERE slug = 'iphone-16-pro-max'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-16-PRO-MAX-256GB-3');
 
@@ -65,16 +65,16 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1200&q=80', 'iPhone 16 Pro', 0 FROM products WHERE slug = 'iphone-16-pro'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-16-pro' AND pi.url = 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '128GB', 'Titanio Natural', '#c2bcb2', 'nuevo', NULL, 1958000, 1350, 1140, 4, 'IPHONE-16-PRO-128GB-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Titanio Natural', '#c2bcb2', 'sellado', 'original', NULL, 1958000, 1350, 1140, 4, 'IPHONE-16-PRO-128GB-1'
   FROM products WHERE slug = 'iphone-16-pro'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-16-PRO-128GB-1');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '256GB', 'Titanio Negro', '#3b3b3d', 'nuevo', NULL, 2132000, 1470, 1245, 2, 'IPHONE-16-PRO-256GB-2'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Titanio Negro', '#3b3b3d', 'sellado', 'original', NULL, 2132000, 1470, 1245, 2, 'IPHONE-16-PRO-256GB-2'
   FROM products WHERE slug = 'iphone-16-pro'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-16-PRO-256GB-2');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '128GB', 'Titanio Blanco', '#e8e4dd', 'muy-bueno', 94, 1668000, 1150, 975, 1, 'IPHONE-16-PRO-128GB-3'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Titanio Blanco', '#e8e4dd', 'a', 'original', 94, 1668000, 1150, 975, 1, 'IPHONE-16-PRO-128GB-3'
   FROM products WHERE slug = 'iphone-16-pro'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-16-PRO-128GB-3');
 
@@ -85,16 +85,16 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=1200&q=80', 'iPhone 16', 0 FROM products WHERE slug = 'iphone-16'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-16' AND pi.url = 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '128GB', 'Ultramarino', '#8fa5cc', 'nuevo', NULL, 1450000, 1000, 845, 5, 'IPHONE-16-128GB-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Ultramarino', '#8fa5cc', 'sellado', 'original', NULL, 1450000, 1000, 845, 5, 'IPHONE-16-128GB-1'
   FROM products WHERE slug = 'iphone-16'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-16-128GB-1');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '256GB', 'Verde Azulado', '#a8c4bd', 'nuevo', NULL, 1624000, 1120, 950, 3, 'IPHONE-16-256GB-2'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Verde Azulado', '#a8c4bd', 'sellado', 'original', NULL, 1624000, 1120, 950, 3, 'IPHONE-16-256GB-2'
   FROM products WHERE slug = 'iphone-16'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-16-256GB-2');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '128GB', 'Negro', '#2c2c2e', 'nuevo', NULL, 1450000, 1000, 845, 2, 'IPHONE-16-128GB-3'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Negro', '#2c2c2e', 'sellado', 'original', NULL, 1450000, 1000, 845, 2, 'IPHONE-16-128GB-3'
   FROM products WHERE slug = 'iphone-16'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-16-128GB-3');
 
@@ -105,16 +105,16 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1200&q=80', 'iPhone 15 Pro Max', 0 FROM products WHERE slug = 'iphone-15-pro-max'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-15-pro-max' AND pi.url = 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '256GB', 'Titanio Natural', '#c2bcb2', 'como-nuevo', 97, 1624000, 1120, 950, 2, 'IPHONE-15-PRO-MAX-256GB-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Titanio Natural', '#c2bcb2', 'a-plus', 'original', 97, 1624000, 1120, 950, 2, 'IPHONE-15-PRO-MAX-256GB-1'
   FROM products WHERE slug = 'iphone-15-pro-max'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-15-PRO-MAX-256GB-1');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '256GB', 'Titanio Azul', '#5f6b7a', 'muy-bueno', 91, 1465000, 1010, 855, 1, 'IPHONE-15-PRO-MAX-256GB-2'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Titanio Azul', '#5f6b7a', 'a', 'original', 91, 1465000, 1010, 855, 1, 'IPHONE-15-PRO-MAX-256GB-2'
   FROM products WHERE slug = 'iphone-15-pro-max'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-15-PRO-MAX-256GB-2');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '512GB', 'Titanio Negro', '#3b3b3d', 'muy-bueno', 89, 1711000, 1180, 1000, 1, 'IPHONE-15-PRO-MAX-512GB-3'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '512GB', 'Titanio Negro', '#3b3b3d', 'a', 'original', 89, 1711000, 1180, 1000, 1, 'IPHONE-15-PRO-MAX-512GB-3'
   FROM products WHERE slug = 'iphone-15-pro-max'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-15-PRO-MAX-512GB-3');
 
@@ -125,12 +125,12 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1200&q=80', 'iPhone 15 Pro', 0 FROM products WHERE slug = 'iphone-15-pro'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-15-pro' AND pi.url = 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '128GB', 'Titanio Negro', '#3b3b3d', 'muy-bueno', 92, 1262000, 870, 735, 3, 'IPHONE-15-PRO-128GB-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Titanio Negro', '#3b3b3d', 'a', 'original', 92, 1262000, 870, 735, 3, 'IPHONE-15-PRO-128GB-1'
   FROM products WHERE slug = 'iphone-15-pro'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-15-PRO-128GB-1');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '256GB', 'Titanio Blanco', '#e8e4dd', 'como-nuevo', 98, 1421000, 980, 830, 1, 'IPHONE-15-PRO-256GB-2'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Titanio Blanco', '#e8e4dd', 'a-plus', 'original', 98, 1421000, 980, 830, 1, 'IPHONE-15-PRO-256GB-2'
   FROM products WHERE slug = 'iphone-15-pro'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-15-PRO-256GB-2');
 
@@ -141,16 +141,16 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=1200&q=80', 'iPhone 15', 0 FROM products WHERE slug = 'iphone-15'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-15' AND pi.url = 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '128GB', 'Rosa', '#f0d5d8', 'nuevo', NULL, 1189000, 820, 690, 4, 'IPHONE-15-128GB-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Rosa', '#f0d5d8', 'sellado', 'original', NULL, 1189000, 820, 690, 4, 'IPHONE-15-128GB-1'
   FROM products WHERE slug = 'iphone-15'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-15-128GB-1');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '128GB', 'Negro', '#2c2c2e', 'muy-bueno', 93, 1015000, 700, 590, 2, 'IPHONE-15-128GB-2'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Negro', '#2c2c2e', 'a', 'original', 93, 1015000, 700, 590, 2, 'IPHONE-15-128GB-2'
   FROM products WHERE slug = 'iphone-15'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-15-128GB-2');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '256GB', 'Azul', '#b4c8d8', 'muy-bueno', 90, 1131000, 780, 660, 1, 'IPHONE-15-256GB-3'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Azul', '#b4c8d8', 'a', 'original', 90, 1131000, 780, 660, 1, 'IPHONE-15-256GB-3'
   FROM products WHERE slug = 'iphone-15'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-15-256GB-3');
 
@@ -161,12 +161,12 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1200&q=80', 'iPhone 14 Pro', 0 FROM products WHERE slug = 'iphone-14-pro'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-14-pro' AND pi.url = 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '128GB', 'Morado Oscuro', '#5b5069', 'muy-bueno', 88, 1015000, 700, 590, 2, 'IPHONE-14-PRO-128GB-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Morado Oscuro', '#5b5069', 'a', 'original', 88, 1015000, 700, 590, 2, 'IPHONE-14-PRO-128GB-1'
   FROM products WHERE slug = 'iphone-14-pro'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-14-PRO-128GB-1');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '256GB', 'Negro Espacial', '#3a3a3c', 'muy-bueno', 91, 1131000, 780, 660, 1, 'IPHONE-14-PRO-256GB-2'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Negro Espacial', '#3a3a3c', 'a', 'original', 91, 1131000, 780, 660, 1, 'IPHONE-14-PRO-256GB-2'
   FROM products WHERE slug = 'iphone-14-pro'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-14-PRO-256GB-2');
 
@@ -177,12 +177,12 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=1200&q=80', 'iPhone 14', 0 FROM products WHERE slug = 'iphone-14'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-14' AND pi.url = 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '128GB', 'Medianoche', '#2c2c34', 'muy-bueno', 89, 870000, 600, 505, 3, 'IPHONE-14-128GB-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Medianoche', '#2c2c34', 'a', 'original', 89, 870000, 600, 505, 3, 'IPHONE-14-128GB-1'
   FROM products WHERE slug = 'iphone-14'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-14-128GB-1');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '128GB', 'Blanco Estelar', '#f0ece4', 'bueno', 84, 783000, 540, 455, 2, 'IPHONE-14-128GB-2'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Blanco Estelar', '#f0ece4', 'b', 'original', 84, 783000, 540, 455, 2, 'IPHONE-14-128GB-2'
   FROM products WHERE slug = 'iphone-14'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-14-128GB-2');
 
@@ -193,12 +193,12 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=1200&q=80', 'iPhone 13', 0 FROM products WHERE slug = 'iphone-13'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-13' AND pi.url = 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '128GB', 'Medianoche', '#2c2c34', 'muy-bueno', 87, 682000, 470, 395, 4, 'IPHONE-13-128GB-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Medianoche', '#2c2c34', 'a', 'original', 87, 682000, 470, 395, 4, 'IPHONE-13-128GB-1'
   FROM products WHERE slug = 'iphone-13'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-13-128GB-1');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '256GB', 'Azul', '#87a6c4', 'bueno', 83, 740000, 510, 430, 1, 'IPHONE-13-256GB-2'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Azul', '#87a6c4', 'b', 'original', 83, 740000, 510, 430, 1, 'IPHONE-13-256GB-2'
   FROM products WHERE slug = 'iphone-13'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-13-256GB-2');
 
@@ -209,12 +209,12 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=1200&q=80', 'iPhone 12', 0 FROM products WHERE slug = 'iphone-12'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-12' AND pi.url = 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '64GB', 'Negro', '#2c2c2e', 'bueno', 82, 479000, 330, 275, 3, 'IPHONE-12-64GB-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '64GB', 'Negro', '#2c2c2e', 'b', 'original', 82, 479000, 330, 275, 3, 'IPHONE-12-64GB-1'
   FROM products WHERE slug = 'iphone-12'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-12-64GB-1');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '128GB', 'Verde', '#c9ddc4', 'muy-bueno', 86, 566000, 390, 328, 2, 'IPHONE-12-128GB-2'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Verde', '#c9ddc4', 'a', 'original', 86, 566000, 390, 328, 2, 'IPHONE-12-128GB-2'
   FROM products WHERE slug = 'iphone-12'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-12-128GB-2');
 
@@ -225,12 +225,12 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=1200&q=80', 'iPhone 11', 0 FROM products WHERE slug = 'iphone-11'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-11' AND pi.url = 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '64GB', 'Blanco', '#f2f2f0', 'bueno', 81, 363000, 250, 208, 2, 'IPHONE-11-64GB-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '64GB', 'Blanco', '#f2f2f0', 'b', 'original', 81, 363000, 250, 208, 2, 'IPHONE-11-64GB-1'
   FROM products WHERE slug = 'iphone-11'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-11-64GB-1');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '128GB', 'Negro', '#2c2c2e', 'bueno', 80, 421000, 290, 242, 0, 'IPHONE-11-128GB-2'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Negro', '#2c2c2e', 'b', 'original', 80, 421000, 290, 242, 0, 'IPHONE-11-128GB-2'
   FROM products WHERE slug = 'iphone-11'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-11-128GB-2');
 
@@ -241,12 +241,12 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=1200&q=80', 'iPad Air M2', 0 FROM products WHERE slug = 'ipad-air-m2'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'ipad-air-m2' AND pi.url = 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '128GB', 'Azul', '#7d95ad', 'nuevo', NULL, 1015000, 700, 590, 2, 'IPAD-AIR-M2-128GB-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Azul', '#7d95ad', 'sellado', 'original', NULL, 1015000, 700, 590, 2, 'IPAD-AIR-M2-128GB-1'
   FROM products WHERE slug = 'ipad-air-m2'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-M2-128GB-1');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '256GB', 'Gris Espacial', '#57585c', 'como-nuevo', 100, 1131000, 780, 660, 1, 'IPAD-AIR-M2-256GB-2'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Gris Espacial', '#57585c', 'a-plus', 'original', 100, 1131000, 780, 660, 1, 'IPAD-AIR-M2-256GB-2'
   FROM products WHERE slug = 'ipad-air-m2'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-M2-256GB-2');
 
@@ -257,12 +257,12 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=1200&q=80', 'Apple Watch Series 10', 0 FROM products WHERE slug = 'apple-watch-series-10'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'apple-watch-series-10' AND pi.url = 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '46mm GPS', 'Titanio Natural', '#c2bcb2', 'nuevo', NULL, 653000, 450, 378, 3, 'APPLE-WATCH-SERIES-10-46mm GPS-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '46mm GPS', 'Titanio Natural', '#c2bcb2', 'sellado', 'original', NULL, 653000, 450, 378, 3, 'APPLE-WATCH-SERIES-10-46mm GPS-1'
   FROM products WHERE slug = 'apple-watch-series-10'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'APPLE-WATCH-SERIES-10-46mm GPS-1');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '42mm GPS', 'Medianoche', '#2c2c34', 'nuevo', NULL, 580000, 400, 336, 2, 'APPLE-WATCH-SERIES-10-42mm GPS-2'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '42mm GPS', 'Medianoche', '#2c2c34', 'sellado', 'original', NULL, 580000, 400, 336, 2, 'APPLE-WATCH-SERIES-10-42mm GPS-2'
   FROM products WHERE slug = 'apple-watch-series-10'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'APPLE-WATCH-SERIES-10-42mm GPS-2');
 
@@ -273,8 +273,8 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=1200&q=80', 'AirPods Pro 2', 0 FROM products WHERE slug = 'airpods-pro-2'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'airpods-pro-2' AND pi.url = 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, 'USB-C', 'Blanco', '#f5f5f7', 'nuevo', NULL, 319000, 220, 182, 8, 'AIRPODS-PRO-2-USB-C-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, 'USB-C', 'Blanco', '#f5f5f7', 'sellado', 'original', NULL, 319000, 220, 182, 8, 'AIRPODS-PRO-2-USB-C-1'
   FROM products WHERE slug = 'airpods-pro-2'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'AIRPODS-PRO-2-USB-C-1');
 
@@ -285,14 +285,66 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80', 'MacBook Air M3', 0 FROM products WHERE slug = 'macbook-air-m3'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'macbook-air-m3' AND pi.url = 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '256GB', 'Medianoche', '#2c2c34', 'nuevo', NULL, 1668000, 1150, 970, 1, 'MACBOOK-AIR-M3-256GB-1'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Medianoche', '#2c2c34', 'sellado', 'original', NULL, 1668000, 1150, 970, 1, 'MACBOOK-AIR-M3-256GB-1'
   FROM products WHERE slug = 'macbook-air-m3'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-AIR-M3-256GB-1');
-INSERT INTO product_variants (product_id, storage, color, color_hex, condition, battery_health, price_ars, price_usd, cost_usd, stock, sku)
-  SELECT id, '512GB', 'Blanco Estelar', '#f0ece4', 'como-nuevo', 99, 1871000, 1290, 1090, 1, 'MACBOOK-AIR-M3-512GB-2'
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '512GB', 'Blanco Estelar', '#f0ece4', 'a-plus', 'original', 99, 1871000, 1290, 1090, 1, 'MACBOOK-AIR-M3-512GB-2'
   FROM products WHERE slug = 'macbook-air-m3'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-AIR-M3-512GB-2');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('PlayStation 5 Slim', 'playstation-5-slim', 'Sony', 'PlayStation 5 Slim', 'consola', 'PS5 Slim con lectora de discos. Más chica y liviana que la original, mismo rendimiento.', '{"Almacenamiento":"1 TB SSD","Resolución":"Hasta 4K 120 Hz","Lectora":"Blu-ray Ultra HD","Incluye":"Un joystick DualSense"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80', 'PlayStation 5 Slim', 0 FROM products WHERE slug = 'playstation-5-slim'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'playstation-5-slim' AND pi.url = 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '1TB', 'Blanco', '#f2f2f2', 'sellado', 'original', NULL, 899000, 620, 520, 2, 'PLAYSTATION-5-SLIM-1TB-1'
+  FROM products WHERE slug = 'playstation-5-slim'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'PLAYSTATION-5-SLIM-1TB-1');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '1TB', 'Blanco', '#f2f2f2', 'a-plus', 'original', NULL, 783000, 540, 452, 1, 'PLAYSTATION-5-SLIM-1TB-2'
+  FROM products WHERE slug = 'playstation-5-slim'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'PLAYSTATION-5-SLIM-1TB-2');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('Nintendo Switch OLED', 'nintendo-switch-oled', 'Nintendo', 'Nintendo Switch OLED', 'consola', 'Pantalla OLED de 7 pulgadas, dock con puerto de red y 64 GB de almacenamiento.', '{"Pantalla":"7\" OLED","Almacenamiento":"64 GB","Batería":"4.5 a 9 h","Incluye":"Dock y Joy-Con"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80', 'Nintendo Switch OLED', 0 FROM products WHERE slug = 'nintendo-switch-oled'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'nintendo-switch-oled' AND pi.url = 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '64GB', 'Blanco', '#f2f2f2', 'sellado', 'original', NULL, 566000, 390, 325, 3, 'NINTENDO-SWITCH-OLED-64GB-1'
+  FROM products WHERE slug = 'nintendo-switch-oled'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'NINTENDO-SWITCH-OLED-64GB-1');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('Smartwatch estilo Watch Ultra', 'smartwatch-estilo-watch-ultra', 'Genérico', 'Smartwatch estilo Watch Ultra', 'accesorio', 'Réplica de línea premium. No es un Apple Watch: no corre watchOS ni se integra con el ecosistema de Apple.', '{"Pantalla":"1.9\" AMOLED","Batería":"Hasta 7 días","Compatibilidad":"Android e iOS por app propia","Resistencia":"IP68"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=1200&q=80', 'Smartwatch estilo Watch Ultra', 0 FROM products WHERE slug = 'smartwatch-estilo-watch-ultra'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'smartwatch-estilo-watch-ultra' AND pi.url = 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=1200&q=80');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '49mm', 'Titanio', '#c2bcb2', 'sellado', 'replica', NULL, 65000, 45, 28, 12, 'SMARTWATCH-ESTILO-WATCH-ULTRA-49mm-1'
+  FROM products WHERE slug = 'smartwatch-estilo-watch-ultra'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'SMARTWATCH-ESTILO-WATCH-ULTRA-49mm-1');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('Auriculares estilo AirPods Pro', 'auriculares-estilo-airpods-pro', 'Genérico', 'Auriculares estilo AirPods Pro', 'accesorio', 'Réplica con cancelación de ruido. No son AirPods originales: no tienen chip H2 ni integración nativa con iOS.', '{"Cancelación":"Activa básica","Batería":"4 h + 20 h con estuche","Conexión":"Bluetooth 5.3","Estuche":"USB-C"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=1200&q=80', 'Auriculares estilo AirPods Pro', 0 FROM products WHERE slug = 'auriculares-estilo-airpods-pro'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'auriculares-estilo-airpods-pro' AND pi.url = 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=1200&q=80');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, 'USB-C', 'Blanco', '#f5f5f7', 'sellado', 'replica', NULL, 36000, 25, 14, 20, 'AURICULARES-ESTILO-AIRPODS-PRO-USB-C-1'
+  FROM products WHERE slug = 'auriculares-estilo-airpods-pro'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'AURICULARES-ESTILO-AIRPODS-PRO-USB-C-1');
 
 -- Servicios de reparación
 INSERT INTO repair_services (name, device, description, price_from, duration, sort_order, is_active)

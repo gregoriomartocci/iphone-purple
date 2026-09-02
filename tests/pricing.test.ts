@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { sellPrice } from "@/lib/whatsapp/parser";
-import { CONDITION_MULTIPLIER, quoteTradeIn } from "@/lib/catalog";
+import { GRADE_MULTIPLIER, quoteTradeIn } from "@/lib/catalog";
 import type { TradeInPrice } from "@/types";
 
 /**
@@ -63,34 +63,32 @@ describe("quoteTradeIn", () => {
   };
 
   it("toma el valor base tal cual para un equipo muy bueno", () => {
-    expect(quoteTradeIn(base, "muy-bueno")).toBe(500);
+    expect(quoteTradeIn(base, "a")).toBe(500);
   });
 
   it("paga más por un equipo en mejor estado", () => {
-    expect(quoteTradeIn(base, "nuevo")).toBeGreaterThan(quoteTradeIn(base, "como-nuevo"));
-    expect(quoteTradeIn(base, "como-nuevo")).toBeGreaterThan(
-      quoteTradeIn(base, "muy-bueno")
-    );
-    expect(quoteTradeIn(base, "muy-bueno")).toBeGreaterThan(quoteTradeIn(base, "bueno"));
+    expect(quoteTradeIn(base, "sellado")).toBeGreaterThan(quoteTradeIn(base, "a-plus"));
+    expect(quoteTradeIn(base, "a-plus")).toBeGreaterThan(quoteTradeIn(base, "a"));
+    expect(quoteTradeIn(base, "a")).toBeGreaterThan(quoteTradeIn(base, "b"));
   });
 
   it("redondea a múltiplos de 5 para no cotizar cifras raras", () => {
     const raro: TradeInPrice = { ...base, baseValue: 333 };
-    for (const condition of ["nuevo", "como-nuevo", "muy-bueno", "bueno"] as const) {
-      expect(quoteTradeIn(raro, condition) % 5).toBe(0);
+    for (const grade of ["sellado", "a-plus", "a", "b"] as const) {
+      expect(quoteTradeIn(raro, grade) % 5).toBe(0);
     }
   });
 
   it("nunca cotiza en negativo", () => {
     const cero: TradeInPrice = { ...base, baseValue: 0 };
-    expect(quoteTradeIn(cero, "bueno")).toBe(0);
+    expect(quoteTradeIn(cero, "b")).toBe(0);
   });
 
   it("usa los mismos porcentajes que publicamos en el blog", () => {
     // Si estos números cambian, hay que actualizar la nota "Plan Canje: cómo
     // calculamos lo que vale tu equipo", que los enumera explícitamente.
-    expect(CONDITION_MULTIPLIER["como-nuevo"]).toBe(1.15);
-    expect(CONDITION_MULTIPLIER["muy-bueno"]).toBe(1);
-    expect(CONDITION_MULTIPLIER.bueno).toBe(0.85);
+    expect(GRADE_MULTIPLIER["a-plus"]).toBe(1.15);
+    expect(GRADE_MULTIPLIER.a).toBe(1);
+    expect(GRADE_MULTIPLIER.b).toBe(0.85);
   });
 });
