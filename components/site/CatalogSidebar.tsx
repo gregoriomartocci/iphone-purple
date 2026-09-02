@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
+import { Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import type { CatalogFacets } from "@/lib/data";
 import {
   AUTHENTICITY_LABELS,
@@ -261,15 +261,38 @@ export function CatalogSidebar({
           open={isOpen("color", Boolean(filters.color))}
           onToggle={() => toggleSection("color", Boolean(filters.color))}
         >
-          {facets.colors.map((f) => (
-            <FilterRow
-              key={f.value}
-              label={f.value}
-              count={f.count}
-              checked={filters.color === f.value}
-              onChange={() => toggle("color", f.value)}
-            />
-          ))}
+          {/* Los colores se eligen mirando, no leyendo: la muestra manda y el
+              nombre queda como apoyo. */}
+          <li className="flex flex-wrap gap-2 px-1.5 py-1">
+            {facets.colors.map((f) => {
+              const activo = filters.color === f.value;
+              return (
+                <button
+                  key={f.value}
+                  type="button"
+                  title={`${f.value} (${f.count})`}
+                  aria-label={`${f.value}, ${f.count} equipos`}
+                  aria-pressed={activo}
+                  onClick={() => toggle("color", f.value)}
+                  className={cn(
+                    "relative size-9 rounded-full border transition-all duration-200",
+                    "hover:scale-110",
+                    activo
+                      ? "border-purple ring-purple/30 ring-2"
+                      : "border-black/15 hover:border-black/35"
+                  )}
+                  style={{ background: f.hex ?? "#cccccc" }}
+                >
+                  {activo && (
+                    <Check
+                      className="absolute inset-0 m-auto size-4 drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]"
+                      style={{ color: esClaro(f.hex) ? "#16161a" : "#ffffff" }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </li>
         </Section>
       )}
 
@@ -455,4 +478,15 @@ function FilterRow({
       </label>
     </li>
   );
+}
+
+/**
+ * Si un color es claro, para saber de qué color va el tilde encima.
+ * Luminancia percibida: el ojo pesa mucho más el verde que el azul.
+ */
+function esClaro(hex?: string): boolean {
+  if (!hex) return true;
+  const m = hex.replace("#", "");
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(m.slice(i, i + 2), 16));
+  return (r * 299 + g * 587 + b * 114) / 1000 > 150;
 }

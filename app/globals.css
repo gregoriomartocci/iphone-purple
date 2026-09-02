@@ -49,7 +49,7 @@
 
   /* Escala de la marca */
   --color-ink: #0c0c10;
-  --color-line: #dcdde3;
+  --color-line: #d5d6de;
   --color-surface: #ffffff;
   --color-elevated: #f2f3f6;
   --color-purple: #5e16eb;
@@ -70,12 +70,12 @@
   --secondary: #f4f4f6;
   --secondary-foreground: #16161a;
   --muted: #f4f4f6;
-  --muted-foreground: #6b6b75;
+  --muted-foreground: #55555f;
   --accent: #f4f4f6;
   --accent-foreground: #16161a;
   --destructive: #dc2626;
-  --border: #dcdde3;
-  --input: #dcdde3;
+  --border: #d5d6de;
+  --input: #d5d6de;
   --ring: #5e16eb;
   --radius: 0.625rem;
 }
@@ -86,7 +86,8 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    /* 16 px de base: Jost es geométrica y a 14 px pierde legibilidad. */
+    @apply bg-background text-foreground text-base;
     font-feature-settings:
       "rlig" 1,
       "calt" 1;
@@ -99,11 +100,11 @@
     color-scheme: light;
   }
 
-  /* La jerarquía viene del tamaño y el tracking, no de otra familia. */
+  /* La jerarquía viene del tamaño, el peso y el tracking, no de otra familia. */
   h1,
   h2,
   h3 {
-    @apply tracking-[-0.02em];
+    @apply font-semibold tracking-[-0.02em];
     text-wrap: balance;
   }
 
@@ -134,7 +135,7 @@
   /* Antetítulos: mayúsculas con tracking abierto, el recurso que usan las
      piezas de Instagram de la marca. */
   .eyebrow {
-    @apply text-xs font-medium tracking-[0.22em] uppercase;
+    @apply text-[11px] font-semibold tracking-[0.18em] uppercase;
   }
 
   /* Cifras de ancho fijo, para que las columnas de precios no bailen. */

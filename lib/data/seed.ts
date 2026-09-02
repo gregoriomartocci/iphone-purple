@@ -625,46 +625,34 @@ export const REPAIR_SERVICES: RepairService[] = [
   },
 ];
 
-export const TRADE_IN_PRICES: TradeInPrice[] = [
-  {
-    id: "t1",
-    brand: "Apple",
-    model: "iPhone 16 Pro Max",
-    storage: "256GB",
-    baseValue: 1120,
-  },
-  { id: "t2", brand: "Apple", model: "iPhone 16 Pro", storage: "128GB", baseValue: 950 },
-  { id: "t3", brand: "Apple", model: "iPhone 16", storage: "128GB", baseValue: 700 },
-  {
-    id: "t4",
-    brand: "Apple",
-    model: "iPhone 15 Pro Max",
-    storage: "256GB",
-    baseValue: 830,
-  },
-  { id: "t5", brand: "Apple", model: "iPhone 15 Pro", storage: "128GB", baseValue: 690 },
-  { id: "t6", brand: "Apple", model: "iPhone 15", storage: "128GB", baseValue: 540 },
-  { id: "t7", brand: "Apple", model: "iPhone 14 Pro", storage: "128GB", baseValue: 530 },
-  { id: "t8", brand: "Apple", model: "iPhone 14", storage: "128GB", baseValue: 420 },
-  { id: "t9", brand: "Apple", model: "iPhone 13", storage: "128GB", baseValue: 330 },
-  { id: "t10", brand: "Apple", model: "iPhone 12", storage: "64GB", baseValue: 220 },
-  { id: "t11", brand: "Apple", model: "iPhone 11", storage: "64GB", baseValue: 160 },
-  {
-    id: "t12",
-    brand: "Samsung",
-    model: "Galaxy S24 Ultra",
-    storage: "256GB",
-    baseValue: 560,
-  },
-  { id: "t13", brand: "Samsung", model: "Galaxy S23", storage: "128GB", baseValue: 300 },
-  {
-    id: "t14",
-    brand: "Xiaomi",
-    model: "Redmi Note 13 Pro",
-    storage: "256GB",
-    baseValue: 130,
-  },
-];
+/**
+ * Valores de toma del Plan Canje.
+ *
+ * Solo Apple: el canje es sobre lo que después podemos revender, y esa es la
+ * especialidad. Se generan desde el mismo ancla de precio del catálogo, a un
+ * porcentaje de lo que vale ese equipo sellado, así el canje nunca queda
+ * desalineado del precio de venta.
+ */
+export const TRADE_IN_PRICES: TradeInPrice[] = Object.keys(IPHONE_PRICES)
+  .map(Number)
+  .sort((a, b) => b - a)
+  .flatMap((generation, i) => {
+    const { base, pro, proMax } = IPHONE_PRICES[generation];
+    // Cuanto más viejo el equipo, más castigada la toma: se revende peor.
+    const ratio = 0.72 - i * 0.02;
+
+    return [
+      { line: "", price: base, storage: "128GB" },
+      { line: " Pro", price: pro, storage: "128GB" },
+      { line: " Pro Max", price: proMax, storage: "256GB" },
+    ].map(({ line, price, storage }) => ({
+      id: `t-${generation}${line.trim().toLowerCase().replace(/\s+/g, "-") || "base"}`,
+      brand: "Apple",
+      model: `iPhone ${generation}${line}`,
+      storage,
+      baseValue: Math.round((price * ratio) / 5) * 5,
+    }));
+  });
 
 export const SUPPLIERS: Supplier[] = [
   {

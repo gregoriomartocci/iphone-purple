@@ -75,9 +75,7 @@ export default async function TradeInPage() {
                   {i + 1}
                 </span>
                 <h3 className="text-foreground mt-4 font-medium">{step.title}</h3>
-                <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
-                  {step.text}
-                </p>
+                <p className="text-muted-foreground mt-2 leading-relaxed">{step.text}</p>
               </li>
             ))}
           </ol>
@@ -90,7 +88,7 @@ export default async function TradeInPage() {
               <dt className="text-foreground text-sm font-medium">
                 ¿Recibís equipos con la pantalla rota?
               </dt>
-              <dd className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+              <dd className="text-muted-foreground mt-2 leading-relaxed">
                 Sí, pero esos los cotizamos aparte porque el descuento depende del daño.
                 Escribinos con una foto y te pasamos el número.
               </dd>
@@ -99,7 +97,7 @@ export default async function TradeInPage() {
               <dt className="text-foreground text-sm font-medium">
                 ¿Necesito la caja y los accesorios?
               </dt>
-              <dd className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+              <dd className="text-muted-foreground mt-2 leading-relaxed">
                 No son obligatorios, pero suman al valor de toma. La factura original
                 también ayuda.
               </dd>
@@ -108,7 +106,7 @@ export default async function TradeInPage() {
               <dt className="text-foreground text-sm font-medium">
                 ¿Qué pasa con mi cuenta de iCloud?
               </dt>
-              <dd className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+              <dd className="text-muted-foreground mt-2 leading-relaxed">
                 Tenés que cerrar sesión y desactivar «Buscar mi iPhone» antes de
                 entregarlo. Si no sabés cómo, lo hacemos juntos en el local.
               </dd>
@@ -117,7 +115,7 @@ export default async function TradeInPage() {
               <dt className="text-foreground text-sm font-medium">
                 ¿Puedo canjear sin comprar?
               </dt>
-              <dd className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+              <dd className="text-muted-foreground mt-2 leading-relaxed">
                 Sí. También compramos equipos sueltos, aunque el valor de toma es un poco
                 menor que canjeándolo por otro.
               </dd>

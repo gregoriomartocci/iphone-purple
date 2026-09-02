@@ -4,7 +4,14 @@ import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { ProductDetail } from "@/components/site/ProductDetail";
 import { ProductCard } from "@/components/site/ProductCard";
-import { getProduct, getProducts, getRelatedProducts, getSettings } from "@/lib/data";
+import { ProductComparison } from "@/components/site/ProductComparison";
+import {
+  getGenerationComparison,
+  getProduct,
+  getProducts,
+  getRelatedProducts,
+  getSettings,
+} from "@/lib/data";
 import { leadVariant, totalStock } from "@/lib/catalog";
 
 export const revalidate = 600;
@@ -49,9 +56,10 @@ export default async function ProductPage({
   const product = await getProduct(slug);
   if (!product) notFound();
 
-  const [settings, related] = await Promise.all([
+  const [settings, related, comparison] = await Promise.all([
     getSettings(),
     getRelatedProducts(product, 4),
+    getGenerationComparison(product),
   ]);
 
   const lead = leadVariant(product);
@@ -92,6 +100,8 @@ export default async function ProductPage({
       <div className="mt-8">
         <ProductDetail product={product} whatsappNumber={settings.whatsappNumber} />
       </div>
+
+      <ProductComparison products={comparison} currentId={product.id} />
 
       {related.length > 0 && (
         <section className="border-line mt-24 border-t pt-12">

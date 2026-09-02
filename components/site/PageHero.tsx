@@ -32,9 +32,10 @@ export function PageHero({
         className="-z-10 object-cover"
       />
 
+      <div aria-hidden className="absolute inset-0 -z-10 bg-black/40" />
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-linear-to-t from-black/90 via-black/60 to-black/40"
+        className="absolute inset-0 -z-10 bg-linear-to-t from-black/85 via-black/45 to-transparent"
       />
 
       <div className="shell w-full pt-28 pb-12 sm:pb-14">
@@ -57,8 +58,8 @@ export const PAGE_PHOTOS = {
   planCanje:
     "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=2000&q=80",
   reparaciones:
-    "https://images.unsplash.com/photo-1526406915894-7bcd65f60845?auto=format&fit=crop&w=2000&q=80",
+    "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=2000&q=80",
   blog: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=2000&q=80",
   contacto:
-    "https://images.unsplash.com/photo-1534536281715-e28d76689b4d?auto=format&fit=crop&w=2000&q=80",
+    "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=2000&q=80",
 } as const;

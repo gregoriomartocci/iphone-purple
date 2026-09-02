@@ -184,7 +184,12 @@ export async function getRelatedProducts(
 }
 
 /** Una opción de filtro con cuántos equipos la cumplen. */
-export type Facet = { value: string; count: number };
+export type Facet = {
+  value: string;
+  count: number;
+  /** Color de muestra, solo en la faceta de color. */
+  hex?: string;
+};
 
 export type CatalogFacets = {
   brands: Facet[];
@@ -268,6 +273,8 @@ export async function getCatalogFacets(
     .filter(isCapacity)
     .sort((a, b) => capacityInGb(a) - capacityInGb(b));
   const colors = [...new Set(visibleVariants.map((v) => v.color))].filter(Boolean).sort();
+  // El hex de cada color, para poder mostrarlo como muestra en el filtro.
+  const colorHex = new Map(visibleVariants.map((v) => [v.color, v.colorHex]));
   const states = STATES.filter((st) =>
     visibleVariants.some((v) => stateOf(v.grade) === st)
   );
@@ -330,7 +337,7 @@ export async function getCatalogFacets(
     lines: used(lineCounts),
     models: used(modelCounts),
     storages: used(storageCounts),
-    colors: used(colorCounts),
+    colors: used(colorCounts).map((f) => ({ ...f, hex: colorHex.get(f.value) })),
     states: used(stateCounts),
     grades: used(gradeCounts),
     batteryTiers: used(batteryCounts),
@@ -340,6 +347,33 @@ export async function getCatalogFacets(
       max: prices.length ? Math.max(...prices) : 0,
     },
   };
+}
+
+/**
+ * El mismo modelo en la generación anterior y en la siguiente.
+ *
+ * Sirve para responder la pregunta que todo el mundo se hace antes de
+ * comprar un usado: "¿cuánto mejor es el que sigue, y cuánto me ahorro con
+ * el anterior?". Se compara dentro de la misma línea —un 15 Pro contra un
+ * 14 Pro y un 16 Pro— porque comparar un Pro Max contra un base no dice nada.
+ */
+export async function getGenerationComparison(product: Product): Promise<Product[]> {
+  if (product.generation === null) return [];
+  const items = await allProducts();
+
+  const enLinea = (generation: number) =>
+    items.find(
+      (p) =>
+        p.category === product.category &&
+        p.line === product.line &&
+        p.generation === generation
+    );
+
+  return [
+    enLinea(product.generation - 1),
+    product,
+    enLinea(product.generation + 1),
+  ].filter((p): p is Product => p !== undefined);
 }
 
 // ---------------------------------------------------------------- contenido

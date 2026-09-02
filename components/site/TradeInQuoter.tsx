@@ -123,9 +123,7 @@ export function TradeInQuoter({
   return (
     <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
       <div>
-        <h2 className="text-foreground text-sm font-medium">
-          1. Contanos qué equipo tenés
-        </h2>
+        <StepTitle n={1}>Contanos qué equipo tenés</StepTitle>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           <select
@@ -180,9 +178,9 @@ export function TradeInQuoter({
           </select>
         </div>
 
-        <h2 className="text-foreground mt-10 text-sm font-medium">
-          2. ¿En qué estado está?
-        </h2>
+        <StepTitle n={2} className="mt-10">
+          ¿En qué grado está?
+        </StepTitle>
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
           {GRADES.map((c) => (
             <button
@@ -208,10 +206,10 @@ export function TradeInQuoter({
 
         {wantedOptions.length > 0 && (
           <>
-            <h2 className="text-foreground mt-10 text-sm font-medium">
-              3. ¿Qué te querés llevar?{" "}
+            <StepTitle n={3} className="mt-10">
+              ¿Qué te querés llevar?{" "}
               <span className="text-muted-foreground font-normal">(opcional)</span>
-            </h2>
+            </StepTitle>
             <select
               value={wantedId}
               onChange={(e) => setWantedId(e.target.value)}
@@ -336,5 +334,30 @@ export function TradeInQuoter({
         </div>
       </div>
     </div>
+  );
+}
+
+/** Título de paso, con el número en un círculo para que la secuencia se lea. */
+function StepTitle({
+  n,
+  children,
+  className,
+}: {
+  n: number;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <h2
+      className={cn(
+        "text-foreground flex items-center gap-3 text-lg font-semibold",
+        className
+      )}
+    >
+      <span className="bg-purple flex size-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white">
+        {n}
+      </span>
+      {children}
+    </h2>
   );
 }
