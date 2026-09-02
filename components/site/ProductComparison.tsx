@@ -46,7 +46,7 @@ export function ProductComparison({
                 return (
                   <th
                     key={p.id}
-                    className={cn("px-5 py-4 align-top", actual && "bg-purple/5")}
+                    className={cn("px-5 py-4 align-top", actual && "bg-elevated")}
                   >
                     <Link href={`/catalogo/${p.slug}`} className="group block">
                       <span className="bg-elevated relative block aspect-square w-24 overflow-hidden rounded-xl">
@@ -95,7 +95,7 @@ export function ProductComparison({
                     key={p.id}
                     className={cn(
                       "text-foreground px-5 py-3.5 text-sm",
-                      p.id === currentId && "bg-purple/5 font-medium"
+                      p.id === currentId && "bg-elevated font-medium"
                     )}
                   >
                     {p.specs[fila] ?? <span className="text-muted-foreground">—</span>}

@@ -96,7 +96,7 @@ export function LeadsList({
                       className={cn(
                         "rounded-full px-3 py-1.5 text-xs transition-colors",
                         status === s.value
-                          ? "bg-purple font-medium text-white"
+                          ? "bg-ink font-medium text-white"
                           : "text-muted-foreground hover:text-foreground"
                       )}
                     >

@@ -32,7 +32,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <SiteHeader whatsappNumber={settings.whatsappNumber} />
+      <SiteHeader />
       <main className="flex-1">{children}</main>
       <SiteFooter settings={settings} />
     </>

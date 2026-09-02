@@ -196,7 +196,7 @@ export function ImportWizard({
           type="button"
           onClick={handleParse}
           disabled={parsing || !rawText.trim()}
-          className="bg-purple hover:bg-purple/85 mt-4 inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium text-white transition-colors disabled:opacity-50"
+          className="bg-ink hover:bg-ink/85 mt-4 inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium text-white transition-colors disabled:opacity-50"
         >
           {parsing ? (
             <>
@@ -417,7 +417,7 @@ export function ImportWizard({
               type="button"
               onClick={handlePublish}
               disabled={publishing || included.length === 0 || !supabaseReady}
-              className="bg-purple hover:bg-purple/85 ml-auto inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
+              className="bg-ink hover:bg-ink/85 ml-auto inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
             >
               {publishing ? (
                 <>

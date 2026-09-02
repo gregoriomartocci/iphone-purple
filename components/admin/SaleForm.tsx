@@ -106,7 +106,7 @@ export function SaleForm({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="bg-purple hover:bg-purple/85 inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium text-white transition-colors"
+        className="bg-ink hover:bg-ink/85 inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium text-white transition-colors"
       >
         <Plus className="size-4" />
         Registrar venta
@@ -240,7 +240,7 @@ export function SaleForm({
         <button
           type="submit"
           disabled={pending || !supabaseReady}
-          className="bg-purple hover:bg-purple/85 inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
+          className="bg-ink hover:bg-ink/85 inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
         >
           {pending && <Loader2 className="size-4 animate-spin" />}
           Guardar venta

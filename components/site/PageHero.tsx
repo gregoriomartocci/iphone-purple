@@ -20,7 +20,10 @@ export function PageHero({
   image: string;
 }) {
   return (
-    <section className="bg-ink relative isolate -mt-16 flex min-h-[400px] items-end overflow-hidden sm:min-h-[460px]">
+    <section
+      data-hero
+      className="bg-ink relative isolate -mt-16 flex min-h-[400px] items-end overflow-hidden sm:min-h-[460px]"
+    >
       <Image
         src={image}
         // Decorativa: el sentido lo aporta el <h1>, así que un alt acá sería ruido

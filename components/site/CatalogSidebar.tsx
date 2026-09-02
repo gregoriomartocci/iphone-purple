@@ -461,7 +461,7 @@ function FilterRow({
         className={cn(
           "flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-[15px] transition-colors",
           checked
-            ? "bg-purple/8 text-foreground font-medium"
+            ? "border-purple/40 text-foreground border bg-white font-medium"
             : "text-muted-foreground hover:text-foreground"
         )}
       >

@@ -307,7 +307,7 @@ export function TradeInQuoter({
                   <button
                     type="submit"
                     disabled={pending}
-                    className="bg-purple hover:bg-purple/85 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-medium text-white transition-colors disabled:opacity-60"
+                    className="bg-ink hover:bg-ink/85 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-medium text-white transition-colors disabled:opacity-60"
                   >
                     {pending ? (
                       <Loader2 className="size-4 animate-spin" />
@@ -354,7 +354,7 @@ function StepTitle({
         className
       )}
     >
-      <span className="bg-purple flex size-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white">
+      <span className="border-purple text-purple flex size-7 shrink-0 items-center justify-center rounded-full border bg-white text-sm font-semibold">
         {n}
       </span>
       {children}

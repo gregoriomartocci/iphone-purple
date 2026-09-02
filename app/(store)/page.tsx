@@ -84,7 +84,7 @@ export default async function HomePage() {
             >
               {/* El ícono se llena de violeta al pasar el mouse: da señal de
                   que la tarjeta entera es clickeable. */}
-              <span className="bg-purple/10 text-purple group-hover:bg-purple flex size-12 items-center justify-center rounded-xl transition-colors duration-300 group-hover:text-white">
+              <span className="border-purple/35 text-purple group-hover:border-purple group-hover:bg-purple/8 flex size-12 items-center justify-center rounded-xl border bg-white transition-colors duration-300">
                 <Icon className="size-5" />
               </span>
 

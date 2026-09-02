@@ -64,8 +64,9 @@
   --card-foreground: #16161a;
   --popover: #ffffff;
   --popover-foreground: #16161a;
-  /* El violeta es el color de acción: botones primarios, foco, estados activos. */
-  --primary: #5e16eb;
+  /* La acción va en tinta. El violeta queda reservado a la marca y a
+     acentos de contorno: en relleno pesa demasiado. */
+  --primary: #101014;
   --primary-foreground: #ffffff;
   --secondary: #f4f4f6;
   --secondary-foreground: #16161a;

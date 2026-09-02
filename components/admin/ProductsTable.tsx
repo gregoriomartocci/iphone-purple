@@ -189,7 +189,7 @@ export function ProductsTable({
                         type="button"
                         onClick={() => save(variant.id, draft)}
                         disabled={savingId === variant.id}
-                        className="bg-purple hover:bg-purple/85 inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium text-white transition-colors disabled:opacity-50"
+                        className="bg-ink hover:bg-ink/85 inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium text-white transition-colors disabled:opacity-50"
                       >
                         {savingId === variant.id ? (
                           <Loader2 className="size-3 animate-spin" />

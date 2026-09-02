@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import { BatteryMedium, Check, ShieldCheck, Truck, Wrench } from "lucide-react";
 import { WhatsAppLink } from "./WhatsAppLink";
+import { AddToCart } from "@/components/cart/AddToCart";
 import { savingsVsNew } from "@/lib/catalog";
 import { productMessage } from "@/lib/whatsapp";
 import { formatARS, formatUSD } from "@/utils/format";
@@ -178,15 +179,21 @@ export function ProductDetail({
             )}
           </p>
 
-          <WhatsAppLink
-            number={whatsappNumber}
-            message={productMessage(product.name, variantLabel)}
-            className="mt-5 w-full"
-          >
-            {(selected?.stock ?? 0) > 0
-              ? "Consultar por WhatsApp"
-              : "Avisame cuando entre"}
-          </WhatsAppLink>
+          {/* Dos caminos, sin obligar a ninguno: quien quiere resolverlo solo
+              compra, y quien prefiere preguntar antes escribe. */}
+          <div className="mt-5 flex flex-col gap-2.5">
+            <AddToCart product={product} variant={selected} className="w-full" />
+            <WhatsAppLink
+              number={whatsappNumber}
+              message={productMessage(product.name, variantLabel)}
+              variant="outline"
+              className="w-full"
+            >
+              {(selected?.stock ?? 0) > 0
+                ? "Consultar por WhatsApp"
+                : "Avisame cuando entre"}
+            </WhatsAppLink>
+          </div>
         </div>
 
         {storages.length > 1 && (

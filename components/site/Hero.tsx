@@ -14,7 +14,10 @@ export function Hero() {
   return (
     // Ocupa la pantalla entera: al entrar se ve solo la foto. El -mt-16 la mete
     // por debajo del header, que arranca transparente sobre ella.
-    <section className="bg-ink relative isolate -mt-16 flex min-h-svh items-center overflow-hidden">
+    <section
+      data-hero
+      className="bg-ink relative isolate -mt-16 flex min-h-svh items-center overflow-hidden"
+    >
       <video
         autoPlay
         muted
@@ -50,30 +53,42 @@ export function Hero() {
       />
 
       <div className="shell w-full pt-32 pb-20 sm:pb-24">
-        <p className="eyebrow text-white/70">Equipos Apple · La Plata</p>
+        <p className="eyebrow rise-in text-white/60">Equipos Apple · La Plata</p>
 
-        <h1 className="mt-4 max-w-3xl text-4xl leading-[1.05] font-semibold text-white sm:text-6xl">
+        {/*
+          Peso liviano y tracking cerrado: a este tamaño un semibold se vuelve
+          macizo, y la geométrica de la marca luce mejor abierta y fina.
+        */}
+        <h1
+          style={{ "--delay": "80ms" } as React.CSSProperties}
+          className="rise-in mt-5 max-w-4xl text-5xl leading-[0.98] font-normal tracking-[-0.03em] text-white sm:text-7xl"
+        >
           El iPhone que buscás,
           <br />
-          con garantía y sin vueltas.
+          <span className="font-medium">con garantía y sin vueltas.</span>
         </h1>
 
-        <p className="mt-5 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">
-          Mirá el stock real, cotizá tu equipo usado en dos minutos y escribinos. Precios
-          claros, sin letra chica.
+        <p
+          style={{ "--delay": "160ms" } as React.CSSProperties}
+          className="rise-in mt-7 max-w-lg text-lg leading-relaxed text-white/70"
+        >
+          Mirá el stock real, cotizá tu equipo usado en dos minutos y escribinos.
         </p>
 
-        <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+        <div
+          style={{ "--delay": "240ms" } as React.CSSProperties}
+          className="rise-in mt-10 flex flex-col gap-3 sm:flex-row"
+        >
           <Link
             href="/catalogo"
-            className="text-ink inline-flex h-12 items-center justify-center gap-2 rounded-full bg-white px-7 text-sm font-medium transition-colors hover:bg-white/90"
+            className="text-ink inline-flex h-13 items-center justify-center gap-2 rounded-full bg-white px-8 text-[15px] font-medium transition-transform duration-200 hover:scale-[1.03]"
           >
             Ver catálogo
             <ArrowRight className="size-4" />
           </Link>
           <Link
             href="/plan-canje"
-            className="inline-flex h-12 items-center justify-center rounded-full border border-white/30 px-7 text-sm font-medium text-white transition-colors hover:border-white/70"
+            className="inline-flex h-13 items-center justify-center rounded-full border border-white/25 bg-white/5 px-8 text-[15px] font-medium text-white backdrop-blur-sm transition-colors duration-200 hover:border-white/50 hover:bg-white/10"
           >
             Cotizar mi equipo
           </Link>
