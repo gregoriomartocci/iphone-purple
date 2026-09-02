@@ -51,6 +51,7 @@ export function ProductCard({
   const stock = totalStock(product);
   const image = product.images[0];
   // Foto del equipo recortado sobre transparente: se muestra sobre blanco.
+  // La grilla siempre muestra la primera foto, que es el render cuando lo hay.
   const propia = FOTOS_PRODUCTO[product.slug]?.[0]?.recorte === "render";
   const multiplePrices = new Set(product.variants.map((v) => v.priceArs)).size > 1;
 

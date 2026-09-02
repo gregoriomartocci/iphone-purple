@@ -67,12 +67,22 @@ export function ProductDetail({
   const image = product.images[imageIndex] ?? product.images[0];
 
   /**
-   * Fotos del producto real, con su autoría. Cuando existen se encuadran
-   * enteras y se muestra el crédito; cuando no, lo que hay es una foto
-   * ambiental de la familia y no corresponde acreditar a nadie.
+   * Fotos del producto real, con su autoría. Cuando existen se muestra el
+   * crédito; cuando no, lo que hay es una foto ambiental de la familia y no
+   * corresponde acreditar a nadie.
    */
   const propias = FOTOS_PRODUCTO[product.slug];
   const credito = propias?.[imageIndex] ?? propias?.[0];
+
+  /**
+   * Cómo encuadrar cada foto, decidido una por una y no por producto.
+   *
+   * Un render recortado tiene que entrar entero sobre blanco —recortarlo le
+   * come el borde al equipo—, mientras que una foto real se recorta, porque
+   * encuadrarla completa deja franjas vacías a los costados. Una misma ficha
+   * mezcla las dos cosas: el render primero y fotos del dorso después.
+   */
+  const esRender = (i: number) => propias?.[i]?.recorte === "render";
 
   /** Variantes de la capacidad elegida: definen los grados y colores ofrecidos. */
   const sameStorage = product.variants.filter((v) => v.storage === selected?.storage);
@@ -95,10 +105,9 @@ export function ProductDetail({
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 620px"
-              // Las fotos propias del producto entran completas: recortarlas
-              // le come el borde al equipo. Las genéricas son ambientales y sí
-              // se recortan, porque encuadrarlas enteras deja aire muerto.
-              className={cn(propias ? "object-contain p-4" : "object-cover")}
+              className={cn(
+                esRender(imageIndex) ? "bg-white object-contain p-4" : "object-cover"
+              )}
             />
           )}
 
@@ -134,7 +143,9 @@ export function ProductDetail({
                   alt=""
                   fill
                   sizes="80px"
-                  className={cn(propias ? "object-contain p-1.5" : "object-cover")}
+                  className={cn(
+                    esRender(i) ? "bg-white object-contain p-1.5" : "object-cover"
+                  )}
                 />
               </button>
             ))}
