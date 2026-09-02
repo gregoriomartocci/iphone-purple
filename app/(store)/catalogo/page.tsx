@@ -117,8 +117,13 @@ export default async function CatalogPage({
 
             {products.length > 0 ? (
               <div className="mt-8 grid grid-cols-2 gap-5 xl:grid-cols-3">
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} filters={filters} />
+                {products.map((product, i) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    filters={filters}
+                    index={i}
+                  />
                 ))}
               </div>
             ) : (

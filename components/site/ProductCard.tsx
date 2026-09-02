@@ -38,10 +38,13 @@ export function StockBadge({ stock, className }: { stock: number; className?: st
 export function ProductCard({
   product,
   filters,
+  index = 0,
 }: {
   product: Product;
   /** Filtros activos del catálogo, para que la tarjeta muestre lo que se pidió. */
   filters?: VariantFilters;
+  /** Posición en la grilla, para escalonar la animación de entrada. */
+  index?: number;
 }) {
   const lead = leadVariant(product, filters);
   const stock = totalStock(product);
@@ -57,9 +60,14 @@ export function ProductCard({
   return (
     <Link
       href={`/catalogo/${product.slug}`}
+      // El retraso se corta a los 300 ms: más allá, la última fila tardaría
+      // tanto en aparecer que se sentiría lenta en vez de fluida.
+      style={{ "--delay": `${Math.min(index * 45, 300)}ms` } as React.CSSProperties}
       className={cn(
-        "group border-line bg-surface flex flex-col overflow-hidden rounded-2xl border transition-all duration-300",
-        "hover:border-foreground/20 hover:shadow-[0_14px_32px_-16px_rgba(16,16,20,0.25)]",
+        "group border-line bg-surface rise-in flex flex-col overflow-hidden rounded-2xl border shadow-sm",
+        "transition-[transform,box-shadow,border-color] duration-300 ease-out",
+        "hover:-translate-y-1.5 hover:border-transparent",
+        "hover:shadow-[0_22px_45px_-18px_rgba(16,16,22,0.35)]",
         stock === 0 && "opacity-55"
       )}
     >
@@ -70,7 +78,7 @@ export function ProductCard({
             alt={image.alt}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1280px) 33vw, 340px"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            className="object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.06]"
           />
         ) : (
           <div className="text-muted-foreground flex h-full items-center justify-center text-sm">

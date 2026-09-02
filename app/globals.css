@@ -11,7 +11,8 @@
   cada vista, la banda del medio en la home y el footer.
 
     ink       #0c0c10  navbar, portadas, bandas y footer
-    fondo     #f6f6f8  la página, para que el blanco de las tarjetas resalte
+    fondo     #eaebef  la página: un gris con cuerpo, para que el blanco
+                       de las tarjetas se despegue de verdad
     elevated  #f4f4f6  fondo de las fotos y rellenos suaves
     line      #e8e8ec  bordes
 
@@ -48,16 +49,16 @@
 
   /* Escala de la marca */
   --color-ink: #0c0c10;
-  --color-line: #e8e8ec;
+  --color-line: #dcdde3;
   --color-surface: #ffffff;
-  --color-elevated: #f0f0f3;
+  --color-elevated: #f2f3f6;
   --color-purple: #5e16eb;
   --color-purple-deep: #4a0fc0;
   --color-purple-light: #a97bf5;
 }
 
 :root {
-  --background: #f6f6f8;
+  --background: #eaebef;
   --foreground: #101014;
   --card: #ffffff;
   --card-foreground: #16161a;
@@ -73,8 +74,8 @@
   --accent: #f4f4f6;
   --accent-foreground: #16161a;
   --destructive: #dc2626;
-  --border: #e8e8ec;
-  --input: #e8e8ec;
+  --border: #dcdde3;
+  --input: #dcdde3;
   --ring: #5e16eb;
   --radius: 0.625rem;
 }
@@ -153,12 +154,33 @@
     );
   }
 
+  /**
+   * Entrada de la grilla: cada tarjeta sube y aparece con un retraso propio.
+   * El escalonado se pasa por `--delay` desde el componente, para no generar
+   * una clase por posición.
+   */
+  .rise-in {
+    animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: var(--delay, 0ms);
+  }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 

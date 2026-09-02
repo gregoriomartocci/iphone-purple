@@ -77,480 +77,152 @@ type SeedProduct = {
   variants: SeedVariant[];
 };
 
+// ─────────────────────────────────────────────────────────────
+// Línea de iPhone, del 11 al 17
+//
+// Se genera en vez de escribirse a mano: son 21 modelos por tres variantes
+// cada uno, y a mano se vuelven imposibles de mantener coherentes. Los
+// precios salen de un ancla por generación y línea, con el descuento de cada
+// grado aplicado encima.
+// ─────────────────────────────────────────────────────────────
+
+/** Precio del sellado en USD, por generación y línea, en la capacidad base. */
+const IPHONE_PRICES: Record<number, { base: number; pro: number; proMax: number }> = {
+  17: { base: 1050, pro: 1350, proMax: 1550 },
+  16: { base: 950, pro: 1250, proMax: 1450 },
+  15: { base: 800, pro: 1050, proMax: 1250 },
+  14: { base: 650, pro: 850, proMax: 1000 },
+  13: { base: 520, pro: 700, proMax: 820 },
+  12: { base: 400, pro: 550, proMax: 650 },
+  11: { base: 300, pro: 420, proMax: 500 },
+};
+
+/** Cuánto vale un seminuevo respecto del mismo equipo sellado. */
+const GRADE_DISCOUNT: Record<Grade, number> = {
+  sellado: 1,
+  "a-plus": 0.88,
+  a: 0.8,
+  "a-minus": 0.7,
+};
+
+const IPHONE_STORAGES = {
+  base: ["128GB", "256GB"],
+  pro: ["128GB", "256GB", "512GB"],
+  proMax: ["256GB", "512GB", "1TB"],
+} as const;
+
+/** Cada capacidad suma sobre el precio base. */
+const STORAGE_STEP: Record<string, number> = {
+  "128GB": 0,
+  "256GB": 110,
+  "512GB": 300,
+  "1TB": 520,
+};
+
+const IPHONE_COLORS: Record<number, [string, string][]> = {
+  17: [
+    ["Naranja Cósmico", "#d97a45"],
+    ["Blanco Nube", "#f0efeb"],
+  ],
+  16: [
+    ["Titanio Negro", "#3b3b3d"],
+    ["Titanio Natural", "#c2bcb2"],
+  ],
+  15: [
+    ["Titanio Azul", "#5f6b7a"],
+    ["Titanio Natural", "#c2bcb2"],
+  ],
+  14: [
+    ["Morado Oscuro", "#5b5069"],
+    ["Medianoche", "#2c2c34"],
+  ],
+  13: [
+    ["Medianoche", "#2c2c34"],
+    ["Azul Sierra", "#87a6c4"],
+  ],
+  12: [
+    ["Negro", "#2c2c2e"],
+    ["Verde", "#c9ddc4"],
+  ],
+  11: [
+    ["Blanco", "#f2f2f0"],
+    ["Negro", "#2c2c2e"],
+  ],
+};
+
+const LINE_SPECS: Record<"base" | "pro" | "proMax", { suffix: string; screen: string }> =
+  {
+    base: { suffix: "", screen: '6.1" Super Retina XDR' },
+    pro: { suffix: " Pro", screen: '6.3" Super Retina XDR ProMotion' },
+    proMax: { suffix: " Pro Max", screen: '6.9" Super Retina XDR ProMotion' },
+  };
+
+/** Reparte grados y stock para que el catálogo de demo no sea uniforme. */
+function iphoneVariants(
+  generation: number,
+  line: "base" | "pro" | "proMax"
+): SeedVariant[] {
+  const anchor = IPHONE_PRICES[generation][line];
+  const colors = IPHONE_COLORS[generation];
+  const storages = IPHONE_STORAGES[line];
+
+  // Los modelos nuevos llegan sellados; los viejos, seminuevos.
+  const grades: Grade[] =
+    generation >= 16
+      ? ["sellado", "a-plus", "a"]
+      : generation >= 14
+        ? ["a-plus", "a", "a-minus"]
+        : ["a", "a-minus"];
+
+  return grades.map((grade, i) => {
+    const storage = storages[i % storages.length];
+    const [color, colorHex] = colors[i % colors.length];
+    const priceUsd = Math.round((anchor + STORAGE_STEP[storage]) * GRADE_DISCOUNT[grade]);
+
+    return {
+      storage,
+      color,
+      colorHex,
+      grade,
+      batteryHealth:
+        grade === "sellado" ? null : grade === "a-plus" ? 97 : grade === "a" ? 91 : 84,
+      priceUsd,
+      costUsd: Math.round(priceUsd * 0.84),
+      // Alguno sin stock a propósito: el sitio no lo muestra, y eso se prueba.
+      stock: (generation + i) % 7 === 0 ? 0 : ((generation + i) % 3) + 1,
+    };
+  });
+}
+
+const IPHONE_SEED: SeedProduct[] = Object.keys(IPHONE_PRICES)
+  .map(Number)
+  .sort((a, b) => b - a)
+  .flatMap((generation) =>
+    (["base", "pro", "proMax"] as const).map((line) => {
+      const { suffix, screen } = LINE_SPECS[line];
+      const name = `iPhone ${generation}${suffix}`;
+
+      return {
+        name,
+        brand: "Apple",
+        model: name,
+        category: "iphone" as Category,
+        description: `${name} revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.`,
+        specs: {
+          Pantalla: screen,
+          Chip: `A${generation + 1}${line === "base" ? "" : " Pro"}`,
+          Cámara: line === "base" ? "48 MP dual" : "48 MP + teleobjetivo",
+          Material: generation >= 15 && line !== "base" ? "Titanio" : "Aluminio",
+        },
+        photo: line === "base" ? PHOTOS.iphone : PHOTOS.iphonePro,
+        featured: generation >= 16,
+        variants: iphoneVariants(generation, line),
+      };
+    })
+  );
+
 const SEED: SeedProduct[] = [
-  {
-    name: "iPhone 16 Pro Max",
-    brand: "Apple",
-    model: "iPhone 16 Pro Max",
-    category: "iphone",
-    description:
-      "El iPhone más grande y más rápido. Titanio, chip A18 Pro y el sistema de cámaras más completo que hizo Apple.",
-    specs: {
-      Pantalla: '6.9" Super Retina XDR ProMotion',
-      Chip: "A18 Pro",
-      Cámara: "48 MP principal + ultra gran angular + teleobjetivo 5x",
-      Batería: "Hasta 33 h de video",
-      Material: "Titanio",
-    },
-    photo: PHOTOS.iphonePro,
-    featured: true,
-    variants: [
-      {
-        storage: "256GB",
-        color: "Titanio Desierto",
-        colorHex: "#bfa48f",
-        grade: "sellado",
-        batteryHealth: null,
-        priceUsd: 1550,
-        costUsd: 1310,
-        stock: 3,
-      },
-      {
-        storage: "512GB",
-        color: "Titanio Natural",
-        colorHex: "#c2bcb2",
-        grade: "sellado",
-        batteryHealth: null,
-        priceUsd: 1780,
-        costUsd: 1510,
-        stock: 1,
-      },
-      {
-        storage: "256GB",
-        color: "Titanio Negro",
-        colorHex: "#3b3b3d",
-        grade: "a-plus",
-        batteryHealth: 99,
-        priceUsd: 1380,
-        costUsd: 1170,
-        stock: 2,
-      },
-    ],
-  },
-  {
-    name: "iPhone 16 Pro",
-    brand: "Apple",
-    model: "iPhone 16 Pro",
-    category: "iphone",
-    description:
-      "Todo el poder del A18 Pro en un cuerpo más manejable. Botón de Control de Cámara y grabación en 4K120.",
-    specs: {
-      Pantalla: '6.3" Super Retina XDR ProMotion',
-      Chip: "A18 Pro",
-      Cámara: "48 MP principal + teleobjetivo 5x",
-      Batería: "Hasta 27 h de video",
-      Material: "Titanio",
-    },
-    photo: PHOTOS.iphonePro,
-    featured: true,
-    variants: [
-      {
-        storage: "128GB",
-        color: "Titanio Natural",
-        colorHex: "#c2bcb2",
-        grade: "sellado",
-        batteryHealth: null,
-        priceUsd: 1350,
-        costUsd: 1140,
-        stock: 4,
-      },
-      {
-        storage: "256GB",
-        color: "Titanio Negro",
-        colorHex: "#3b3b3d",
-        grade: "sellado",
-        batteryHealth: null,
-        priceUsd: 1470,
-        costUsd: 1245,
-        stock: 2,
-      },
-      {
-        storage: "128GB",
-        color: "Titanio Blanco",
-        colorHex: "#e8e4dd",
-        grade: "a",
-        batteryHealth: 94,
-        priceUsd: 1150,
-        costUsd: 975,
-        stock: 1,
-      },
-    ],
-  },
-  {
-    name: "iPhone 16",
-    brand: "Apple",
-    model: "iPhone 16",
-    category: "iphone",
-    description:
-      "Chip A18, cámara de 48 MP y Control de Cámara. El equilibrio justo entre precio y potencia.",
-    specs: {
-      Pantalla: '6.1" Super Retina XDR',
-      Chip: "A18",
-      Cámara: "48 MP principal + ultra gran angular",
-      Batería: "Hasta 22 h de video",
-      Material: "Aluminio",
-    },
-    photo: PHOTOS.iphone,
-    featured: true,
-    variants: [
-      {
-        storage: "128GB",
-        color: "Ultramarino",
-        colorHex: "#8fa5cc",
-        grade: "sellado",
-        batteryHealth: null,
-        priceUsd: 1000,
-        costUsd: 845,
-        stock: 5,
-      },
-      {
-        storage: "256GB",
-        color: "Verde Azulado",
-        colorHex: "#a8c4bd",
-        grade: "sellado",
-        batteryHealth: null,
-        priceUsd: 1120,
-        costUsd: 950,
-        stock: 3,
-      },
-      {
-        storage: "128GB",
-        color: "Negro",
-        colorHex: "#2c2c2e",
-        grade: "sellado",
-        batteryHealth: null,
-        priceUsd: 1000,
-        costUsd: 845,
-        stock: 2,
-      },
-    ],
-  },
-  {
-    name: "iPhone 15 Pro Max",
-    brand: "Apple",
-    model: "iPhone 15 Pro Max",
-    category: "iphone",
-    description:
-      "Titanio, A17 Pro y teleobjetivo 5x. Uno de los equipos con mejor relación precio-calidad del catálogo.",
-    specs: {
-      Pantalla: '6.7" Super Retina XDR ProMotion',
-      Chip: "A17 Pro",
-      Cámara: "48 MP + teleobjetivo 5x",
-      Batería: "Hasta 29 h de video",
-      Material: "Titanio",
-    },
-    photo: PHOTOS.iphonePro,
-    featured: true,
-    variants: [
-      {
-        storage: "256GB",
-        color: "Titanio Natural",
-        colorHex: "#c2bcb2",
-        grade: "a-plus",
-        batteryHealth: 97,
-        priceUsd: 1120,
-        costUsd: 950,
-        stock: 2,
-      },
-      {
-        storage: "256GB",
-        color: "Titanio Azul",
-        colorHex: "#5f6b7a",
-        grade: "a",
-        batteryHealth: 91,
-        priceUsd: 1010,
-        costUsd: 855,
-        stock: 1,
-      },
-      {
-        storage: "512GB",
-        color: "Titanio Negro",
-        colorHex: "#3b3b3d",
-        grade: "a",
-        batteryHealth: 89,
-        priceUsd: 1180,
-        costUsd: 1000,
-        stock: 1,
-      },
-    ],
-  },
-  {
-    name: "iPhone 15 Pro",
-    brand: "Apple",
-    model: "iPhone 15 Pro",
-    category: "iphone",
-    description:
-      "El primer iPhone de titanio en formato compacto. USB-C, A17 Pro y botón de Acción.",
-    specs: {
-      Pantalla: '6.1" Super Retina XDR ProMotion',
-      Chip: "A17 Pro",
-      Cámara: "48 MP + teleobjetivo 3x",
-      Batería: "Hasta 23 h de video",
-      Material: "Titanio",
-    },
-    photo: PHOTOS.iphonePro,
-    variants: [
-      {
-        storage: "128GB",
-        color: "Titanio Negro",
-        colorHex: "#3b3b3d",
-        grade: "a",
-        batteryHealth: 92,
-        priceUsd: 870,
-        costUsd: 735,
-        stock: 3,
-      },
-      {
-        storage: "256GB",
-        color: "Titanio Blanco",
-        colorHex: "#e8e4dd",
-        grade: "a-plus",
-        batteryHealth: 98,
-        priceUsd: 980,
-        costUsd: 830,
-        stock: 1,
-      },
-    ],
-  },
-  {
-    name: "iPhone 15",
-    brand: "Apple",
-    model: "iPhone 15",
-    category: "iphone",
-    description:
-      "Dynamic Island, cámara de 48 MP y USB-C. Sigue siendo la mejor puerta de entrada a iOS.",
-    specs: {
-      Pantalla: '6.1" Super Retina XDR',
-      Chip: "A16 Bionic",
-      Cámara: "48 MP principal + ultra gran angular",
-      Batería: "Hasta 20 h de video",
-      Material: "Aluminio",
-    },
-    photo: PHOTOS.iphone,
-    featured: true,
-    variants: [
-      {
-        storage: "128GB",
-        color: "Rosa",
-        colorHex: "#f0d5d8",
-        grade: "sellado",
-        batteryHealth: null,
-        priceUsd: 820,
-        costUsd: 690,
-        stock: 4,
-      },
-      {
-        storage: "128GB",
-        color: "Negro",
-        colorHex: "#2c2c2e",
-        grade: "a",
-        batteryHealth: 93,
-        priceUsd: 700,
-        costUsd: 590,
-        stock: 2,
-      },
-      {
-        storage: "256GB",
-        color: "Azul",
-        colorHex: "#b4c8d8",
-        grade: "a",
-        batteryHealth: 90,
-        priceUsd: 780,
-        costUsd: 660,
-        stock: 1,
-      },
-    ],
-  },
-  {
-    name: "iPhone 14 Pro",
-    brand: "Apple",
-    model: "iPhone 14 Pro",
-    category: "iphone",
-    description:
-      "El que estrenó la Dynamic Island. Pantalla siempre activa y cámara de 48 MP a muy buen precio.",
-    specs: {
-      Pantalla: '6.1" Super Retina XDR ProMotion',
-      Chip: "A16 Bionic",
-      Cámara: "48 MP + teleobjetivo 3x",
-      Batería: "Hasta 23 h de video",
-      Material: "Acero inoxidable",
-    },
-    photo: PHOTOS.iphonePro,
-    variants: [
-      {
-        storage: "128GB",
-        color: "Morado Oscuro",
-        colorHex: "#5b5069",
-        grade: "a",
-        batteryHealth: 88,
-        priceUsd: 700,
-        costUsd: 590,
-        stock: 2,
-      },
-      {
-        storage: "256GB",
-        color: "Negro Espacial",
-        colorHex: "#3a3a3c",
-        grade: "a",
-        batteryHealth: 91,
-        priceUsd: 780,
-        costUsd: 660,
-        stock: 1,
-      },
-    ],
-  },
-  {
-    name: "iPhone 14",
-    brand: "Apple",
-    model: "iPhone 14",
-    category: "iphone",
-    description:
-      "Batería para todo el día y cámaras muy sólidas. La opción más elegida por relación precio-calidad.",
-    specs: {
-      Pantalla: '6.1" Super Retina XDR',
-      Chip: "A15 Bionic",
-      Cámara: "12 MP principal + ultra gran angular",
-      Batería: "Hasta 20 h de video",
-      Material: "Aluminio",
-    },
-    photo: PHOTOS.iphone,
-    variants: [
-      {
-        storage: "128GB",
-        color: "Medianoche",
-        colorHex: "#2c2c34",
-        grade: "a",
-        batteryHealth: 89,
-        priceUsd: 600,
-        costUsd: 505,
-        stock: 3,
-      },
-      {
-        storage: "128GB",
-        color: "Blanco Estelar",
-        colorHex: "#f0ece4",
-        grade: "a-minus",
-        batteryHealth: 84,
-        priceUsd: 540,
-        costUsd: 455,
-        stock: 2,
-      },
-    ],
-  },
-  {
-    name: "iPhone 13",
-    brand: "Apple",
-    model: "iPhone 13",
-    category: "iphone",
-    description:
-      "Un clásico que no baja el nivel. Excelente batería y cámara con modo Cinemático.",
-    specs: {
-      Pantalla: '6.1" Super Retina XDR',
-      Chip: "A15 Bionic",
-      Cámara: "12 MP dual",
-      Batería: "Hasta 19 h de video",
-      Material: "Aluminio",
-    },
-    photo: PHOTOS.iphoneOlder,
-    variants: [
-      {
-        storage: "128GB",
-        color: "Medianoche",
-        colorHex: "#2c2c34",
-        grade: "a",
-        batteryHealth: 87,
-        priceUsd: 470,
-        costUsd: 395,
-        stock: 4,
-      },
-      {
-        storage: "256GB",
-        color: "Azul",
-        colorHex: "#87a6c4",
-        grade: "a-minus",
-        batteryHealth: 83,
-        priceUsd: 510,
-        costUsd: 430,
-        stock: 1,
-      },
-    ],
-  },
-  {
-    name: "iPhone 12",
-    brand: "Apple",
-    model: "iPhone 12",
-    category: "iphone",
-    description:
-      "Pantalla OLED y 5G en el rango más accesible. Ideal como primer iPhone.",
-    specs: {
-      Pantalla: '6.1" Super Retina XDR',
-      Chip: "A14 Bionic",
-      Cámara: "12 MP dual",
-      Batería: "Hasta 17 h de video",
-      Material: "Aluminio",
-    },
-    photo: PHOTOS.iphoneOlder,
-    variants: [
-      {
-        storage: "64GB",
-        color: "Negro",
-        colorHex: "#2c2c2e",
-        grade: "a-minus",
-        batteryHealth: 82,
-        priceUsd: 330,
-        costUsd: 275,
-        stock: 3,
-      },
-      {
-        storage: "128GB",
-        color: "Verde",
-        colorHex: "#c9ddc4",
-        grade: "a",
-        batteryHealth: 86,
-        priceUsd: 390,
-        costUsd: 328,
-        stock: 2,
-      },
-    ],
-  },
-  {
-    name: "iPhone 11",
-    brand: "Apple",
-    model: "iPhone 11",
-    category: "iphone",
-    description:
-      "El más vendido de su generación. Batería enorme y buen rendimiento para el uso diario.",
-    specs: {
-      Pantalla: '6.1" Liquid Retina HD',
-      Chip: "A13 Bionic",
-      Cámara: "12 MP dual",
-      Batería: "Hasta 17 h de video",
-      Material: "Aluminio",
-    },
-    photo: PHOTOS.iphoneOlder,
-    variants: [
-      {
-        storage: "64GB",
-        color: "Blanco",
-        colorHex: "#f2f2f0",
-        grade: "a-minus",
-        batteryHealth: 81,
-        priceUsd: 250,
-        costUsd: 208,
-        stock: 2,
-      },
-      {
-        storage: "128GB",
-        color: "Negro",
-        colorHex: "#2c2c2e",
-        grade: "a-minus",
-        batteryHealth: 80,
-        priceUsd: 290,
-        costUsd: 242,
-        stock: 0,
-      },
-    ],
-  },
+  ...IPHONE_SEED,
   {
     name: "iPad Air M2",
     brand: "Apple",
