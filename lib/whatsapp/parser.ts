@@ -34,8 +34,19 @@ const RowSchema = z.object({
     .nullable()
     .describe("Color en español si aparece; null si no se menciona."),
   category: z
-    .enum(["iphone", "ipad", "mac", "watch", "audio", "consola", "accesorio"])
-    .describe("Qué tipo de producto es, deducido del modelo."),
+    .enum([
+      "celular",
+      "tablet",
+      "notebook",
+      "reloj",
+      "audio",
+      "consola",
+      "hogar",
+      "accesorio",
+    ])
+    .describe(
+      "Tipo de producto, deducido del modelo. Un iPhone o un Redmi son 'celular'; un iPad o Redmi Pad, 'tablet'; un MacBook, 'notebook'; un Garmin, Kieslect o Apple Watch, 'reloj'; una Switch o PlayStation, 'consola'; un secador Dyson o una aspiradora, 'hogar'; fundas, cargadores, joysticks y SSD, 'accesorio'."
+    ),
   grade: z
     .enum(["sellado", "a-plus", "a", "a-minus"])
     .describe(

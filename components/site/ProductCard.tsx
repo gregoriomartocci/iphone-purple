@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatARS } from "@/utils/format";
 import { leadVariant, totalStock } from "@/lib/catalog";
+import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
 import type { VariantFilters } from "@/lib/catalog";
 import { CATEGORY_LABELS, GRADE_LABELS, type Product } from "@/types";
 import { cn } from "@/lib/utils";
@@ -78,7 +79,12 @@ export function ProductCard({
             alt={image.alt}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1280px) 33vw, (max-width: 1536px) 25vw, 20vw"
-            className="object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.06]"
+            className={cn(
+              "transition-transform duration-[600ms] ease-out group-hover:scale-[1.06]",
+              // Igual que en la ficha: la foto del producto entra completa,
+              // la ambiental se recorta.
+              FOTOS_PRODUCTO[product.slug] ? "object-contain p-5" : "object-cover"
+            )}
           />
         ) : (
           <div className="text-muted-foreground flex h-full items-center justify-center text-sm">

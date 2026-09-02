@@ -16,26 +16,38 @@ const LINKS = [
   { href: "/contacto", label: "Contacto" },
 ];
 
+/**
+ * Fondo del header.
+ *
+ * Arranca transparente sobre la foto de portada —ahí la imagen ocupa toda la
+ * pantalla y cualquier barra la corta— y apenas se scrollea se materializa en
+ * oscuro, porque sobre una foto en movimiento el texto blanco suelto deja de
+ * leerse.
+ *
+ * No hay variante clara: el header oscuro es la constante de la marca en todo
+ * el sitio, y cambiar de color a mitad del scroll hacía que la barra pareciera
+ * otra en cada página.
+ */
+type Fondo = "transparente" | "oscuro";
+
+/** Cuánto hay que bajar en la portada para que el header se materialice. */
+const UMBRAL_TRANSPARENTE = 24;
+
 export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { count, setOpen: setCartOpen } = useCart();
-  const [pasoElHero, setPasoElHero] = useState(false);
+  const [fondo, setFondo] = useState<Fondo>("transparente");
 
-  /**
-   * Cuando la foto de portada sale de pantalla, el header cambia a vidrio
-   * claro: sobre la foto necesita ser oscuro para que el texto blanco se lea,
-   * pero sobre el contenido claro de abajo un bloque oscuro pesa de más.
-   */
   useEffect(() => {
-    const hero = document.querySelector<HTMLElement>("[data-hero]");
-    if (!hero) {
-      // Sin portada el header va claro desde el arranque, pero se difiere
-      // igual para no encadenar renders al montar.
-      const id = requestAnimationFrame(() => setPasoElHero(true));
-      return () => cancelAnimationFrame(id);
-    }
-    const onScroll = () => setPasoElHero(window.scrollY > hero.offsetHeight - 64);
+    const hay = () => Boolean(document.querySelector("[data-hero]"));
+    const onScroll = () => {
+      // Sin foto de portada detrás, transparente dejaría las letras blancas
+      // sobre fondo claro: ahí va oscuro desde el arranque.
+      setFondo(
+        hay() && window.scrollY <= UMBRAL_TRANSPARENTE ? "transparente" : "oscuro"
+      );
+    };
     // La medición inicial se difiere un cuadro: hacerla en el cuerpo del
     // efecto dispararía un render en cascada apenas monta.
     const inicial = requestAnimationFrame(onScroll);
@@ -46,35 +58,30 @@ export function SiteHeader() {
     };
   }, [pathname]);
 
-  const claro = pasoElHero;
-
   return (
     /**
-     * Oscuro desde el arranque, con vidrio esmerilado: el fondo es
-     * semitransparente y desenfoca lo que pasa por detrás. Sobre la foto de
-     * portada se ve la imagen difuminada a través de la barra, y sobre el
-     * contenido claro sigue leyéndose como una barra oscura sólida.
-     *
-     * `saturate` compensa el lavado de color que produce el desenfoque.
+     * En oscuro va con vidrio esmerilado: el fondo es semitransparente y
+     * desenfoca lo que pasa por detrás, así se intuye la foto a través de la
+     * barra en vez de cortarla con un bloque opaco. `saturate` compensa el
+     * lavado de color que produce el desenfoque.
      */
     <header
       // El separador va como sombra interior y no como `border-b`: un borde
       // suma 1 px a la altura del header, y como el hero sube exactamente 64 px
       // para meterse debajo, ese píxel dejaba asomar una línea del fondo claro.
-      // Vidrio esmerilado en las dos variantes. El separador va como sombra
-      // interior porque un `border-b` sumaría 1 px a la altura del header y
-      // dejaría asomar una línea clara sobre la portada.
       className={cn(
-        "sticky top-0 z-50 h-16 backdrop-blur-2xl backdrop-saturate-150",
-        "transition-colors duration-500",
-        claro
-          ? "bg-white/72 shadow-[inset_0_-1px_0_rgba(16,16,22,0.1)]"
-          : "bg-[#101016]/88 shadow-[inset_0_-1px_0_rgba(255,255,255,0.14)]"
+        "sticky top-0 z-50 h-16 transition-colors duration-500",
+        // El desenfoque también se apaga en transparente: si se deja, la foto
+        // de portada se ve borroneada en la franja del header y se nota.
+        fondo !== "transparente" && "backdrop-blur-2xl backdrop-saturate-150",
+        fondo === "oscuro"
+          ? "bg-[#101016]/88 shadow-[inset_0_-1px_0_rgba(255,255,255,0.14)]"
+          : "bg-transparent"
       )}
     >
       <div className="shell-wide flex h-16 items-center justify-between gap-4">
         <Link href="/" className="shrink-0" aria-label="iPhone Purple — inicio">
-          <Logo className="h-7" tone={claro ? "onLight" : "onDark"} />
+          <Logo className="h-7" tone="onDark" />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -86,13 +93,9 @@ export function SiteHeader() {
                 href={link.href}
                 className={cn(
                   "rounded-full px-3.5 py-2 text-[15px] font-medium transition-all duration-200",
-                  claro
-                    ? active
-                      ? "bg-foreground/8 text-foreground"
-                      : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
-                    : active
-                      ? "bg-white/12 text-white"
-                      : "text-white/75 hover:bg-white/8 hover:text-white"
+                  active
+                    ? "bg-white/12 text-white"
+                    : "text-white/75 hover:bg-white/8 hover:text-white"
                 )}
               >
                 {link.label}
@@ -113,12 +116,7 @@ export function SiteHeader() {
           <Link
             href="/cuenta"
             aria-label="Mi cuenta"
-            className={cn(
-              "rounded-full p-2.5 transition-colors",
-              claro
-                ? "text-muted-foreground hover:bg-foreground/8 hover:text-foreground"
-                : "text-white/75 hover:bg-white/10 hover:text-white"
-            )}
+            className="rounded-full p-2.5 text-white/75 transition-colors hover:bg-white/10 hover:text-white"
           >
             <User className="size-5" />
           </Link>
@@ -127,16 +125,17 @@ export function SiteHeader() {
             type="button"
             onClick={() => setCartOpen(true)}
             aria-label={count > 0 ? `Carrito, ${count} equipos` : "Carrito"}
-            className={cn(
-              "relative rounded-full p-2.5 transition-colors",
-              claro
-                ? "text-muted-foreground hover:bg-foreground/8 hover:text-foreground"
-                : "text-white/75 hover:bg-white/10 hover:text-white"
-            )}
+            className="relative rounded-full p-2.5 text-white/75 transition-colors hover:bg-white/10 hover:text-white"
           >
             <ShoppingBag className="size-5" />
             {count > 0 && (
-              <span className="bg-purple absolute top-1 right-1 flex size-4 items-center justify-center rounded-full text-[10px] font-semibold text-white">
+              // La `key` es el propio contador: al cambiar, React remonta el
+              // globito y la animación de rebote vuelve a correr. Es el aviso
+              // de que el equipo entró al carrito.
+              <span
+                key={count}
+                className="bg-purple pop absolute top-1 right-1 flex size-4 items-center justify-center rounded-full text-[10px] font-semibold text-white"
+              >
                 {count > 9 ? "9+" : count}
               </span>
             )}

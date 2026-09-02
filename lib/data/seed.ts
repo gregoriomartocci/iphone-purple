@@ -1,4 +1,5 @@
 import { parseModel } from "@/lib/catalog";
+import { FOTOS_PRODUCTO } from "./fotos.generado";
 import type {
   Authenticity,
   Category,
@@ -38,6 +39,25 @@ const img = (url: string, alt: string): ProductImage => ({
   url: `${url}?auto=format&fit=crop&w=1200&q=80`,
   alt,
 });
+
+/**
+ * Fotos de un producto, de la más específica a la más genérica.
+ *
+ * 1. Las que estén en public/productos/<slug>/, listadas en fotos.generado.ts
+ *    por `npm run fotos`. Son del producto exacto y pueden ser varias, así la
+ *    ficha muestra una galería y no una sola toma.
+ * 2. Si no hay, la foto genérica de la familia. Sirve para que la grilla no
+ *    tenga huecos, pero no es el equipo: se reemplaza en cuanto haya la propia.
+ */
+function fotosDe(slug: string, seed: SeedProduct): ProductImage[] {
+  const propias = FOTOS_PRODUCTO[slug];
+  if (propias?.length) {
+    // Ya están servidas desde el propio dominio: no llevan los parámetros de
+    // recorte de Unsplash.
+    return propias.map((f) => ({ url: f.url, alt: seed.name }));
+  }
+  return [img(seed.photo, seed.name)];
+}
 
 /** Fotos genéricas por familia de producto. Se reemplazan al cargar las reales. */
 const PHOTOS: Record<string, string> = {
@@ -206,7 +226,7 @@ const IPHONE_SEED: SeedProduct[] = Object.keys(IPHONE_PRICES)
         name,
         brand: "Apple",
         model: name,
-        category: "iphone" as Category,
+        category: "celular" as Category,
         description: `${name} revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.`,
         specs: {
           Pantalla: screen,
@@ -221,13 +241,351 @@ const IPHONE_SEED: SeedProduct[] = Object.keys(IPHONE_PRICES)
     })
   );
 
+// ─────────────────────────────────────────────────────────────
+// Catálogo multimarca
+//
+// Cargado desde una lista real de proveedor. Los importes son el COSTO que
+// cobra el proveedor en dólares; el precio de venta sale de aplicarle el
+// margen, igual que hace el importador del panel.
+//
+// Las fotos son genéricas por categoría: no hay forma de conseguir la imagen
+// real de cada modelo sin inventarla, así que se reemplazan subiendo las
+// propias desde el panel.
+// ─────────────────────────────────────────────────────────────
+
+const MARGEN_DEMO = 0.18;
+
+/** Costo del proveedor → precio de venta, redondeado a decenas de dólar. */
+const conMargen = (costo: number) => Math.round((costo * (1 + MARGEN_DEMO)) / 10) * 10;
+
+type ItemProveedor = {
+  marca: string;
+  nombre: string;
+  categoria: Category;
+  /** Lo que distingue a la variante: capacidad, medida o versión. */
+  variante: string;
+  colores: [string, string][];
+  costoUsd: number;
+  specs?: Record<string, string>;
+  stock?: number;
+};
+
+const LISTA_PROVEEDOR: ItemProveedor[] = [
+  // ── Consolas y gaming
+  {
+    marca: "Nintendo",
+    nombre: "Nintendo Switch OLED",
+    categoria: "consola",
+    variante: "64GB",
+    colores: [["Neón", "#e60012"]],
+    costoUsd: 419,
+    specs: { Pantalla: '7" OLED', Almacenamiento: "64 GB", Incluye: "Dock y Joy-Con" },
+  },
+  {
+    marca: "Nintendo",
+    nombre: "Nintendo Switch 2 + Mario Kart",
+    categoria: "consola",
+    variante: "Bundle US",
+    colores: [["Negro", "#2c2c2e"]],
+    costoUsd: 630,
+    specs: { Incluye: "Consola + Mario Kart", Región: "US" },
+  },
+  {
+    marca: "Logitech",
+    nombre: "Logitech G29 Driving Force",
+    categoria: "accesorio",
+    variante: "Volante + pedales",
+    colores: [["Negro", "#2c2c2e"]],
+    costoUsd: 350,
+    specs: { Compatibilidad: "PS5, PS4 y PC", Incluye: "Volante y pedales" },
+  },
+  {
+    marca: "Western Digital",
+    nombre: "WD_Black NVMe SSD para PS5",
+    categoria: "accesorio",
+    variante: "2TB",
+    colores: [["Negro", "#2c2c2e"]],
+    costoUsd: 370,
+    specs: { Capacidad: "2 TB", Interfaz: "NVMe", Uso: "Expansión de PS5" },
+  },
+
+  // ── Xiaomi
+  {
+    marca: "Xiaomi",
+    nombre: "Redmi 15C",
+    categoria: "celular",
+    variante: "8+256",
+    colores: [
+      ["Negro", "#2c2c2e"],
+      ["Verde", "#7fa886"],
+    ],
+    costoUsd: 180,
+    specs: { Memoria: "8 GB + 256 GB", Red: "4G" },
+  },
+  {
+    marca: "Xiaomi",
+    nombre: "Redmi Pad 2",
+    categoria: "tablet",
+    variante: '11" 4+128',
+    colores: [
+      ["Gris", "#8a8a90"],
+      ["Verde", "#7fa886"],
+    ],
+    costoUsd: 210,
+    specs: { Pantalla: '11"', Memoria: "4 GB + 128 GB" },
+  },
+  {
+    marca: "Xiaomi",
+    nombre: "Poco F8 Ultra",
+    categoria: "celular",
+    variante: "12+256 5G",
+    colores: [["Azul", "#3f6fb5"]],
+    costoUsd: 720,
+    specs: { Memoria: "12 GB + 256 GB", Red: "5G" },
+  },
+  {
+    marca: "Xiaomi",
+    nombre: "Xiaomi 17",
+    categoria: "celular",
+    variante: "12+512 5G",
+    colores: [["Negro", "#2c2c2e"]],
+    costoUsd: 880,
+    specs: { Memoria: "12 GB + 512 GB", Red: "5G" },
+  },
+  {
+    marca: "Xiaomi",
+    nombre: "Xiaomi 17 Ultra",
+    categoria: "celular",
+    variante: "12+512 5G",
+    colores: [
+      ["Blanco", "#f0efeb"],
+      ["Verde", "#7fa886"],
+    ],
+    costoUsd: 1250,
+    specs: { Memoria: "12 GB + 512 GB", Red: "5G" },
+  },
+
+  // ── Motorola
+  {
+    marca: "Motorola",
+    nombre: "Moto G06",
+    categoria: "celular",
+    variante: "4+128 DS",
+    colores: [["Azul", "#3f6fb5"]],
+    costoUsd: 145,
+    specs: { Memoria: "4 GB + 128 GB", SIM: "Dual" },
+  },
+  {
+    marca: "Motorola",
+    nombre: "Moto G15",
+    categoria: "celular",
+    variante: "4+512 DS",
+    colores: [["Azul", "#3f6fb5"]],
+    costoUsd: 175,
+    specs: { Memoria: "4 GB + 512 GB", SIM: "Dual" },
+  },
+  {
+    marca: "Motorola",
+    nombre: "Moto G17",
+    categoria: "celular",
+    variante: "4+256 DS",
+    colores: [
+      ["Arándano", "#6b3a5b"],
+      ["Celeste", "#8fc0d8"],
+    ],
+    costoUsd: 200,
+    specs: { Memoria: "4 GB + 256 GB", SIM: "Dual" },
+  },
+  {
+    marca: "Motorola",
+    nombre: "Moto G35",
+    categoria: "celular",
+    variante: "4+256 DS",
+    colores: [["Negro", "#2c2c2e"]],
+    costoUsd: 175,
+    specs: { Memoria: "4 GB + 256 GB", SIM: "Dual" },
+  },
+  {
+    marca: "Motorola",
+    nombre: "Moto G67",
+    categoria: "celular",
+    variante: "4+256 DS",
+    colores: [["Gris", "#8a8a90"]],
+    costoUsd: 265,
+    specs: { Memoria: "4 GB + 256 GB", SIM: "Dual" },
+  },
+
+  // ── Hogar y belleza
+  {
+    marca: "Dyson",
+    nombre: "Dyson HD18 Hair Dryer R Professional",
+    categoria: "hogar",
+    variante: "Sin estuche",
+    colores: [
+      ["Vinca Blue", "#5f7fb5"],
+      ["Topaz", "#c89a5b"],
+    ],
+    costoUsd: 549,
+    specs: { Tensión: "220V", Incluye: "Accesorios", Estuche: "No incluye" },
+  },
+  {
+    marca: "Dyson",
+    nombre: "Dyson HD16 Hair Dryer Nural",
+    categoria: "hogar",
+    variante: "Sin estuche",
+    colores: [
+      ["Vinca Blue", "#5f7fb5"],
+      ["Ceramic", "#dcd3c6"],
+    ],
+    costoUsd: 449,
+    specs: { Tensión: "220V", Estuche: "No incluye" },
+  },
+  {
+    marca: "Dyson",
+    nombre: "Dyson HS08 I.d Straight+Wavy",
+    categoria: "hogar",
+    variante: "Moldeador",
+    colores: [["Jasper Plum", "#6b4a6b"]],
+    costoUsd: 699,
+    specs: { Tensión: "220V", Tipo: "Moldeador multifunción" },
+  },
+  {
+    marca: "Xiaomi",
+    nombre: "Xiaomi Aspiradora Mijia 2",
+    categoria: "hogar",
+    variante: "Inalámbrica",
+    colores: [["Blanco", "#f0efeb"]],
+    costoUsd: 279,
+    specs: { Tipo: "Inalámbrica", Tensión: "220V" },
+  },
+
+  // ── Relojes
+  {
+    marca: "Xiaomi",
+    nombre: "Xiaomi Band 9 Active",
+    categoria: "reloj",
+    variante: "Estándar",
+    colores: [
+      ["Rosa", "#e8a7bd"],
+      ["Blanco", "#f0efeb"],
+    ],
+    costoUsd: 28,
+    specs: { Tipo: "Banda de actividad" },
+    stock: 12,
+  },
+  {
+    marca: "Garmin",
+    nombre: "Garmin Instinct 2S Solar",
+    categoria: "reloj",
+    variante: "Rugged",
+    colores: [["Grafito", "#4a4a52"]],
+    costoUsd: 259,
+    specs: { Carga: "Solar", Uso: "Outdoor" },
+  },
+  {
+    marca: "Garmin",
+    nombre: "Garmin Epix Pro Gen 2",
+    categoria: "reloj",
+    variante: "51mm Sapphire",
+    colores: [
+      ["Gris", "#8a8a90"],
+      ["Blanco", "#f0efeb"],
+    ],
+    costoUsd: 649,
+    specs: { Caja: "51 mm", Cristal: "Zafiro", Uso: "Multideporte" },
+  },
+  {
+    marca: "Garmin",
+    nombre: "Garmin Approach S70",
+    categoria: "reloj",
+    variante: "42mm Golf",
+    colores: [["Negro", "#2c2c2e"]],
+    costoUsd: 529,
+    specs: { Caja: "42 mm", Uso: "Golf" },
+  },
+  {
+    marca: "Kieslect",
+    nombre: "Kieslect Calling Watch Kr3",
+    categoria: "reloj",
+    variante: "Estándar",
+    colores: [["Denim", "#5f7fb5"]],
+    costoUsd: 69,
+    stock: 8,
+  },
+  {
+    marca: "Kieslect",
+    nombre: "Kieslect Calling Watch Kr Ultra 3",
+    categoria: "reloj",
+    variante: "Ultra",
+    colores: [["Ice White", "#eef1f4"]],
+    costoUsd: 69,
+    stock: 8,
+  },
+  {
+    marca: "Kieslect",
+    nombre: "Kieslect Lady Watch Elfin",
+    categoria: "reloj",
+    variante: "Estándar",
+    colores: [
+      ["Negro Grafito", "#3a3a42"],
+      ["Rosa Dorado", "#d8a68f"],
+      ["Plata", "#c9c9d2"],
+    ],
+    costoUsd: 69,
+    stock: 10,
+  },
+  {
+    marca: "Kieslect",
+    nombre: "Kieslect Al Watch Elite 2",
+    categoria: "reloj",
+    variante: "Elite",
+    colores: [["Titan Black", "#2c2c34"]],
+    costoUsd: 79,
+    stock: 6,
+  },
+];
+
+/** Foto genérica por categoría, hasta que se carguen las propias. */
+const FOTO_CATEGORIA: Record<Category, string> = {
+  celular: PHOTOS.iphone,
+  tablet: PHOTOS.ipad,
+  notebook: PHOTOS.mac,
+  reloj: PHOTOS.watch,
+  audio: PHOTOS.airpods,
+  consola: PHOTOS.consola,
+  hogar: PHOTOS.consola,
+  accesorio: PHOTOS.consola,
+};
+
+const PROVEEDOR_SEED: SeedProduct[] = LISTA_PROVEEDOR.map((item) => ({
+  name: item.nombre,
+  brand: item.marca,
+  model: item.nombre,
+  category: item.categoria,
+  description: `${item.nombre} nuevo, sellado y con garantía. Consultanos por disponibilidad de color.`,
+  specs: item.specs ?? {},
+  photo: FOTO_CATEGORIA[item.categoria],
+  // Un color por variante: es lo que distingue las unidades en stock.
+  variants: item.colores.map(([color, colorHex]) => ({
+    storage: item.variante,
+    color,
+    colorHex,
+    grade: "sellado" as Grade,
+    batteryHealth: null,
+    priceUsd: conMargen(item.costoUsd),
+    costUsd: item.costoUsd,
+    stock: item.stock ?? 2,
+  })),
+}));
+
 const SEED: SeedProduct[] = [
   ...IPHONE_SEED,
+  ...PROVEEDOR_SEED,
   {
     name: "iPad Air M2",
     brand: "Apple",
     model: "iPad Air M2",
-    category: "ipad",
+    category: "tablet",
     description:
       'iPad Air de 11" con chip M2. Compatible con Apple Pencil Pro y Magic Keyboard.',
     specs: {
@@ -265,7 +623,7 @@ const SEED: SeedProduct[] = [
     name: "Apple Watch Series 10",
     brand: "Apple",
     model: "Apple Watch Series 10",
-    category: "watch",
+    category: "reloj",
     description:
       "La pantalla más grande y el cuerpo más delgado de la historia del Apple Watch.",
     specs: {
@@ -332,7 +690,7 @@ const SEED: SeedProduct[] = [
     name: "MacBook Air M3",
     brand: "Apple",
     model: "MacBook Air M3",
-    category: "mac",
+    category: "notebook",
     description:
       'MacBook Air de 13" con chip M3. Silencioso, delgado y con casi 18 horas de batería.',
     specs: {
@@ -400,33 +758,6 @@ const SEED: SeedProduct[] = [
         priceUsd: 540,
         costUsd: 452,
         stock: 1,
-      },
-    ],
-  },
-  {
-    name: "Nintendo Switch OLED",
-    brand: "Nintendo",
-    model: "Nintendo Switch OLED",
-    category: "consola",
-    description:
-      "Pantalla OLED de 7 pulgadas, dock con puerto de red y 64 GB de almacenamiento.",
-    specs: {
-      Pantalla: '7" OLED',
-      Almacenamiento: "64 GB",
-      Batería: "4.5 a 9 h",
-      Incluye: "Dock y Joy-Con",
-    },
-    photo: PHOTOS.consola,
-    variants: [
-      {
-        storage: "64GB",
-        color: "Blanco",
-        colorHex: "#f2f2f2",
-        grade: "sellado",
-        batteryHealth: null,
-        priceUsd: 390,
-        costUsd: 325,
-        stock: 3,
       },
     ],
   },
@@ -531,7 +862,7 @@ function buildProducts(): Product[] {
       category: seed.category,
       description: seed.description,
       specs: seed.specs,
-      images: [img(seed.photo, seed.name)],
+      images: fotosDe(slug, seed),
       variants,
       isFeatured: seed.featured ?? false,
       // Escalonadas hacia atrás para que "más nuevo" tenga un orden estable.

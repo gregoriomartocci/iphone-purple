@@ -6,7 +6,7 @@ import { auth } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/data";
 import { parseSupplierList, sellPrice } from "@/lib/whatsapp/parser";
-import { GRADES, type ParsedRow } from "@/types";
+import { CATEGORIES, GRADES, type ParsedRow } from "@/types";
 import { slugify } from "@/utils/format";
 
 export type ActionResult<T = undefined> =
@@ -34,6 +34,8 @@ async function requireAdmin(): Promise<{ id: string } | null> {
 const ParsedRowSchema = z.object({
   brand: z.string().min(1),
   model: z.string().min(1),
+  category: z.enum(CATEGORIES as [string, ...string[]]),
+  authenticity: z.enum(["original", "replica"]),
   storage: z.string(),
   color: z.string().nullable(),
   grade: z.enum(GRADES as [string, ...string[]]),
@@ -127,13 +129,7 @@ export async function publishImportAction(
             slug,
             brand: row.brand,
             model: row.model,
-            category: row.model.toLowerCase().includes("ipad")
-              ? "ipad"
-              : row.model.toLowerCase().includes("watch")
-                ? "watch"
-                : row.model.toLowerCase().includes("macbook")
-                  ? "mac"
-                  : "iphone",
+            category: row.category,
             description: "",
             specs: {},
             status: "active",
@@ -160,6 +156,7 @@ export async function publishImportAction(
         color: row.color ?? "Sin especificar",
         color_hex: "#cccccc",
         grade: row.grade,
+        authenticity: row.authenticity,
         battery_health: row.batteryHealth,
         price_ars: price.priceArs,
         price_usd: price.priceUsd,

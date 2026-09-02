@@ -65,17 +65,18 @@ const toGrade = (value: string | null): Grade =>
   VALID_GRADES.includes(value as Grade) ? (value as Grade) : "a";
 
 const VALID_CATEGORIES: Category[] = [
-  "iphone",
-  "ipad",
-  "mac",
-  "watch",
+  "celular",
+  "tablet",
+  "notebook",
+  "reloj",
   "audio",
   "consola",
+  "hogar",
   "accesorio",
 ];
 
 const toCategory = (value: string | null): Category =>
-  VALID_CATEGORIES.includes(value as Category) ? (value as Category) : "iphone";
+  VALID_CATEGORIES.includes(value as Category) ? (value as Category) : "celular";
 
 function mapVariant(row: VariantRow): Variant {
   return {

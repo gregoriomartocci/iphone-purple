@@ -13,27 +13,43 @@ export type UserRole = "customer" | "admin" | "super_admin";
 //   capacidad      128GB, 256GB…             → filtro
 // ─────────────────────────────────────────────────────────────
 
-/** Qué es el producto. Es el nivel de navegación del catálogo. */
+/**
+ * Qué es el producto.
+ *
+ * Va por tipo y no por marca: "Celulares" y no "iPhone". La marca es un eje
+ * aparte, así que un iPhone se encuentra con Apple + Celulares, y un Redmi
+ * con Xiaomi + Celulares. Con categorías por marca, sumar Motorola o Dyson
+ * obligaría a inventar una categoría nueva cada vez.
+ */
 export type Category =
-  "iphone" | "ipad" | "mac" | "watch" | "audio" | "consola" | "accesorio";
+  | "celular"
+  | "tablet"
+  | "notebook"
+  | "reloj"
+  | "audio"
+  | "consola"
+  | "hogar"
+  | "accesorio";
 
 export const CATEGORIES: Category[] = [
-  "iphone",
-  "ipad",
-  "mac",
-  "watch",
+  "celular",
+  "tablet",
+  "notebook",
+  "reloj",
   "audio",
   "consola",
+  "hogar",
   "accesorio",
 ];
 
 export const CATEGORY_LABELS: Record<Category, string> = {
-  iphone: "iPhone",
-  ipad: "iPad",
-  mac: "Mac",
-  watch: "Apple Watch",
-  audio: "AirPods",
-  consola: "Consolas",
+  celular: "Celulares",
+  tablet: "Tablets",
+  notebook: "Notebooks",
+  reloj: "Relojes",
+  audio: "Audio",
+  consola: "Consolas y gaming",
+  hogar: "Hogar y belleza",
   accesorio: "Accesorios",
 };
 

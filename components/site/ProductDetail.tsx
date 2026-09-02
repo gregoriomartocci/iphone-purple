@@ -6,6 +6,7 @@ import { BatteryMedium, Check, ShieldCheck, Truck, Wrench } from "lucide-react";
 import { WhatsAppLink } from "./WhatsAppLink";
 import { AddToCart } from "@/components/cart/AddToCart";
 import { savingsVsNew } from "@/lib/catalog";
+import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
 import { productMessage } from "@/lib/whatsapp";
 import { formatARS, formatUSD } from "@/utils/format";
 import {
@@ -65,6 +66,14 @@ export function ProductDetail({
   const storages = [...new Set(product.variants.map((v) => v.storage))];
   const image = product.images[imageIndex] ?? product.images[0];
 
+  /**
+   * Fotos del producto real, con su autoría. Cuando existen se encuadran
+   * enteras y se muestra el crédito; cuando no, lo que hay es una foto
+   * ambiental de la familia y no corresponde acreditar a nadie.
+   */
+  const propias = FOTOS_PRODUCTO[product.slug];
+  const credito = propias?.[imageIndex] ?? propias?.[0];
+
   /** Variantes de la capacidad elegida: definen los grados y colores ofrecidos. */
   const sameStorage = product.variants.filter((v) => v.storage === selected?.storage);
 
@@ -86,7 +95,10 @@ export function ProductDetail({
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 620px"
-              className="object-cover"
+              // Las fotos propias del producto entran completas: recortarlas
+              // le come el borde al equipo. Las genéricas son ambientales y sí
+              // se recortan, porque encuadrarlas enteras deja aire muerto.
+              className={cn(propias ? "object-contain p-6" : "object-cover")}
             />
           )}
 
@@ -117,10 +129,33 @@ export function ProductDetail({
                     : "border-line hover:border-foreground/30"
                 )}
               >
-                <Image src={img.url} alt="" fill sizes="80px" className="object-cover" />
+                <Image
+                  src={img.url}
+                  alt=""
+                  fill
+                  sizes="80px"
+                  className={cn(propias ? "object-contain p-1.5" : "object-cover")}
+                />
               </button>
             ))}
           </div>
+        )}
+
+        {credito && (
+          // Las licencias Creative Commons obligan a dar crédito. Va discreto
+          // pero visible, y se cae solo cuando la foto es propia del local.
+          <p className="text-muted-foreground mt-3 text-xs">
+            Foto:{" "}
+            <a
+              href={credito.origen}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-foreground underline underline-offset-2"
+            >
+              {credito.autor}
+            </a>{" "}
+            · {credito.licencia}
+          </p>
         )}
       </div>
 
@@ -258,9 +293,17 @@ export function ProductDetail({
                         {variant.color} · {GRADE_LABELS[variant.grade]}
                       </span>
                       <span className="text-muted-foreground block text-xs">
-                        {variant.batteryHealth !== null
-                          ? `Batería ${variant.batteryHealth}%`
-                          : "Sellado, sin uso"}
+                        {/*
+                          La aclaración sale del grado, no de si hay batería:
+                          una consola o un accesorio seminuevo no reporta
+                          batería, y guiarse por eso los describía como
+                          "sellado, sin uso" aunque fueran usados.
+                        */}
+                        {variant.grade === "sellado"
+                          ? "Sellado, sin uso"
+                          : variant.batteryHealth !== null
+                            ? `Batería ${variant.batteryHealth}%`
+                            : GRADE_SPECS[variant.grade].cosmetic}
                         {variant.stock === 0 && " · sin stock"}
                       </span>
                     </span>

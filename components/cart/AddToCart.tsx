@@ -40,7 +40,10 @@ export function AddToCart({
         window.setTimeout(() => setAdded(false), 1600);
       }}
       className={cn(
-        "bg-ink hover:bg-ink/85 inline-flex h-13 items-center justify-center gap-2 rounded-full px-7 text-[15px] font-medium text-white transition-colors",
+        "inline-flex h-13 items-center justify-center gap-2 rounded-full px-7 text-[15px] font-medium text-white transition-colors",
+        // Al confirmar vira a púrpura de marca y rebota: el cambio de color
+        // se ve incluso de reojo, que es cuando la mirada ya se fue al carrito.
+        added ? "bg-purple pop" : "bg-ink hover:bg-ink/85",
         className
       )}
     >

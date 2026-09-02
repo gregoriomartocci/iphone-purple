@@ -46,7 +46,7 @@ function product(overrides: Partial<Product> = {}): Product {
     model: "iPhone 15 Test",
     generation: 15,
     line: "base" as const,
-    category: "iphone" as const,
+    category: "celular" as const,
     description: "",
     specs: {},
     images: [],
@@ -397,9 +397,9 @@ describe("getCatalogFacets", () => {
 
   it("los contadores respetan los filtros ya aplicados", async () => {
     // Con un filtro activo, cada opción cuenta la intersección, no el total.
-    const facets = await getCatalogFacets({ category: "iphone" });
+    const facets = await getCatalogFacets({ category: "celular" });
     for (const facet of facets.storages) {
-      const filtered = await getProducts({ category: "iphone", storage: facet.value });
+      const filtered = await getProducts({ category: "celular", storage: facet.value });
       expect(filtered.length).toBe(facet.count);
     }
   });
@@ -407,14 +407,14 @@ describe("getCatalogFacets", () => {
   it("un eje no se bloquea por lo que se eligió debajo", async () => {
     // Con "iPhone" elegido, Sony no tiene iPhones y su contador daría cero:
     // si se descartara, la persona ya no podría volver a cambiar de marca.
-    const facets = await getCatalogFacets({ brand: "Apple", category: "iphone" });
+    const facets = await getCatalogFacets({ brand: "Apple", category: "celular" });
     expect(facets.brands.length).toBeGreaterThan(1);
     expect(facets.brands.map((f) => f.value)).toContain("Sony");
   });
 
   it("la categoría tampoco se bloquea por el modelo elegido", async () => {
     const facets = await getCatalogFacets({
-      category: "iphone",
+      category: "celular",
       model: "iPhone 15 Pro",
     });
     expect(facets.categories.length).toBeGreaterThan(1);

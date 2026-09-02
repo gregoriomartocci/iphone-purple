@@ -2,33 +2,74 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCart } from "./CartProvider";
 import { formatARS } from "@/utils/format";
+import { cn } from "@/lib/utils";
+
+/** Lo que dura la animación de salida, en sincronía con `.drawer-out`. */
+const SALIDA_MS = 280;
 
 /**
  * Panel lateral del carrito.
  *
  * Se abre solo al agregar algo: confirma la acción sin sacar a la persona del
  * catálogo, que es donde suele querer seguir mirando.
+ *
+ * Entra deslizándose desde la derecha y sale por el mismo lado. El cierre no
+ * es inmediato: se marca `cerrando`, se deja correr la animación y recién
+ * después se desmonta, porque un panel que desaparece de golpe se lee como un
+ * error y no como una acción.
  */
 export function CartDrawer() {
   const { items, count, total, remove, setQuantity, open, setOpen } = useCart();
+  const [cerrando, setCerrando] = useState(false);
+
+  const cerrar = useCallback(() => {
+    setCerrando(true);
+    window.setTimeout(() => {
+      setCerrando(false);
+      setOpen(false);
+    }, SALIDA_MS);
+  }, [setOpen]);
+
+  // Escape cierra, y mientras está abierto se bloquea el scroll del fondo:
+  // sin esto la página de atrás se mueve bajo el panel al usar la rueda.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") cerrar();
+    };
+    const previo = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previo;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open, cerrar]);
 
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-[70]">
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={() => setOpen(false)}
+        className={cn(
+          "absolute inset-0 bg-black/50 backdrop-blur-sm",
+          cerrando ? "fade-out" : "fade-in"
+        )}
+        onClick={cerrar}
         aria-hidden
       />
 
       <aside
         role="dialog"
         aria-label="Carrito"
-        className="bg-background absolute inset-y-0 right-0 flex w-full max-w-md flex-col shadow-2xl"
+        className={cn(
+          "bg-background absolute inset-y-0 right-0 flex w-full max-w-md flex-col shadow-2xl",
+          cerrando ? "drawer-out" : "drawer-in"
+        )}
       >
         <header className="border-line flex items-center justify-between border-b px-5 py-4">
           <h2 className="flex items-center gap-2 text-lg font-semibold">
@@ -40,7 +81,7 @@ export function CartDrawer() {
           </h2>
           <button
             type="button"
-            onClick={() => setOpen(false)}
+            onClick={cerrar}
             aria-label="Cerrar carrito"
             className="text-muted-foreground hover:text-foreground hover:bg-elevated rounded-lg p-2 transition-colors"
           >
@@ -61,7 +102,7 @@ export function CartDrawer() {
             </p>
             <Link
               href="/catalogo"
-              onClick={() => setOpen(false)}
+              onClick={cerrar}
               className="bg-ink hover:bg-ink/85 mt-6 inline-flex h-12 items-center rounded-full px-7 text-[15px] font-medium text-white transition-colors"
             >
               Ver catálogo
@@ -74,7 +115,7 @@ export function CartDrawer() {
                 <li key={item.variantId} className="flex gap-4 py-4">
                   <Link
                     href={`/catalogo/${item.slug}`}
-                    onClick={() => setOpen(false)}
+                    onClick={cerrar}
                     className="bg-elevated relative size-20 shrink-0 overflow-hidden rounded-xl"
                   >
                     {item.image && (
@@ -91,7 +132,7 @@ export function CartDrawer() {
                   <div className="min-w-0 flex-1">
                     <Link
                       href={`/catalogo/${item.slug}`}
-                      onClick={() => setOpen(false)}
+                      onClick={cerrar}
                       className="text-foreground hover:text-purple block font-medium transition-colors"
                     >
                       {item.name}
@@ -153,7 +194,7 @@ export function CartDrawer() {
 
               <Link
                 href="/checkout"
-                onClick={() => setOpen(false)}
+                onClick={cerrar}
                 className="bg-ink hover:bg-ink/85 mt-4 flex h-13 w-full items-center justify-center rounded-full text-[15px] font-medium text-white transition-colors"
               >
                 Finalizar compra

@@ -56,8 +56,11 @@ export function PageHero({
  * cuando haya fotos propias del local.
  */
 export const PAGE_PHOTOS = {
+  // MacBook encendida en penumbra: pantalla, luz y color, que es la estética
+  // que buscamos. La foto de escritorio con los dos monitores pasó a ser la
+  // portada de la landing, así catálogo no repite la misma imagen.
   catalogo:
-    "https://images.unsplash.com/photo-1588508065123-287b28e013da?auto=format&fit=crop&w=2000&q=80",
+    "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=2000&q=80",
   planCanje:
     "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=2000&q=80",
   reparaciones:
