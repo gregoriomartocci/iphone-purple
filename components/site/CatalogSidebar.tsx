@@ -39,6 +39,20 @@ export function CatalogSidebar({
   const [pending, startTransition] = useTransition();
   const [openOnMobile, setOpenOnMobile] = useState(false);
 
+  /**
+   * Secciones abiertas. Arrancan abiertas las que todavía no tienen elección:
+   * si ya filtraste por marca, esa sección no necesita seguir ocupando lugar.
+   */
+  const [closed, setClosed] = useState<Record<string, boolean>>({});
+  const isOpen = (key: string, hasValue: boolean) =>
+    closed[key] === undefined ? !hasValue : !closed[key];
+  const toggleSection = (key: string, hasValue: boolean) =>
+    setClosed((c) => ({ ...c, [key]: c[key] === undefined ? hasValue : !c[key] }));
+
+  /** Al elegir una opción la sección se cierra; al desmarcar, se queda abierta. */
+  const afterPick = (key: string, selecting: boolean) =>
+    setClosed((c) => ({ ...c, [key]: selecting }));
+
   function navigate(next: CatalogFilters) {
     const params = new URLSearchParams();
     if (next.q) params.set("q", next.q);
@@ -62,15 +76,27 @@ export function CatalogSidebar({
   }
 
   /** Volver a tocar la opción activa la desmarca: sirve de atajo para limpiar. */
-  const toggle = (key: keyof CatalogFilters, value: string | number) =>
-    navigate({ ...filters, [key]: filters[key] === value ? undefined : value });
+  const toggle = (
+    key: keyof CatalogFilters,
+    value: string | number,
+    section = key as string
+  ) => {
+    const selecting = filters[key] !== value;
+    afterPick(section, selecting);
+    navigate({ ...filters, [key]: selecting ? value : undefined });
+  };
 
   const esSeminuevo = filters.state === "seminuevo";
 
   const panel = (
     <div className={cn("space-y-2 transition-opacity", pending && "opacity-60")}>
       {facets.brands.length > 1 && (
-        <Section title="Marca" defaultOpen>
+        <Section
+          title="Marca"
+          summary={filters.brand}
+          open={isOpen("brand", Boolean(filters.brand))}
+          onToggle={() => toggleSection("brand", Boolean(filters.brand))}
+        >
           {facets.brands.map((f) => (
             <FilterRow
               key={f.value}
@@ -94,7 +120,12 @@ export function CatalogSidebar({
       )}
 
       {facets.categories.length > 1 && (
-        <Section title="Categoría" defaultOpen>
+        <Section
+          title="Categoría"
+          summary={filters.category && CATEGORY_LABELS[filters.category]}
+          open={isOpen("category", Boolean(filters.category))}
+          onToggle={() => toggleSection("category", Boolean(filters.category))}
+        >
           {facets.categories.map((f) => (
             <FilterRow
               key={f.value}
@@ -117,7 +148,12 @@ export function CatalogSidebar({
       {/* El modelo solo tiene sentido dentro de una categoría: sin ese corte
           la lista mezcla iPhones, iPads y consolas. */}
       {filters.category && facets.models.length > 1 && (
-        <Section title="Modelo" defaultOpen>
+        <Section
+          title="Modelo"
+          summary={filters.model}
+          open={isOpen("model", Boolean(filters.model))}
+          onToggle={() => toggleSection("model", Boolean(filters.model))}
+        >
           {facets.models.map((f) => (
             <FilterRow
               key={f.value}
@@ -131,7 +167,12 @@ export function CatalogSidebar({
       )}
 
       {facets.states.length > 0 && (
-        <Section title="Condición" defaultOpen>
+        <Section
+          title="Condición"
+          summary={filters.state && STATE_LABELS[filters.state]}
+          open={isOpen("state", Boolean(filters.state))}
+          onToggle={() => toggleSection("state", Boolean(filters.state))}
+        >
           {facets.states.map((f) => (
             <FilterRow
               key={f.value}
@@ -154,7 +195,12 @@ export function CatalogSidebar({
 
       {/* La condición y la batería solo existen dentro de "seminuevo". */}
       {esSeminuevo && facets.grades.length > 0 && (
-        <Section title="Grado" defaultOpen>
+        <Section
+          title="Grado"
+          summary={filters.grade && GRADE_LABELS[filters.grade]}
+          open={isOpen("grade", Boolean(filters.grade))}
+          onToggle={() => toggleSection("grade", Boolean(filters.grade))}
+        >
           {facets.grades.map((f) => (
             <FilterRow
               key={f.value}
@@ -171,7 +217,12 @@ export function CatalogSidebar({
       )}
 
       {esSeminuevo && facets.batteryTiers.length > 0 && (
-        <Section title="Batería" defaultOpen>
+        <Section
+          title="Batería"
+          summary={filters.minBattery ? `${filters.minBattery}% o más` : undefined}
+          open={isOpen("battery", Boolean(filters.minBattery))}
+          onToggle={() => toggleSection("battery", Boolean(filters.minBattery))}
+        >
           {facets.batteryTiers.map((f) => (
             <FilterRow
               key={f.value}
@@ -185,7 +236,12 @@ export function CatalogSidebar({
       )}
 
       {facets.storages.length > 1 && (
-        <Section title="Almacenamiento" defaultOpen>
+        <Section
+          title="Almacenamiento"
+          summary={filters.storage}
+          open={isOpen("storage", Boolean(filters.storage))}
+          onToggle={() => toggleSection("storage", Boolean(filters.storage))}
+        >
           {facets.storages.map((f) => (
             <FilterRow
               key={f.value}
@@ -199,7 +255,12 @@ export function CatalogSidebar({
       )}
 
       {facets.colors.length > 1 && (
-        <Section title="Color">
+        <Section
+          title="Color"
+          summary={filters.color}
+          open={isOpen("color", Boolean(filters.color))}
+          onToggle={() => toggleSection("color", Boolean(filters.color))}
+        >
           {facets.colors.map((f) => (
             <FilterRow
               key={f.value}
@@ -292,35 +353,65 @@ export function CatalogSidebar({
   );
 }
 
-/** Bloque plegable del panel. */
+/**
+ * Bloque plegable del panel.
+ *
+ * El estado de apertura lo maneja el padre: al elegir una opción, la sección
+ * se cierra sola y muestra lo elegido en el encabezado. Así el panel no crece
+ * indefinidamente a medida que se filtra y siempre se ve qué está aplicado.
+ */
 function Section({
   title,
+  summary,
+  open,
+  onToggle,
   children,
-  defaultOpen = false,
 }: {
   title: string;
+  /** Lo elegido, que se muestra cuando la sección está cerrada. */
+  summary?: string;
+  open: boolean;
+  onToggle: () => void;
   children: React.ReactNode;
-  defaultOpen?: boolean;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
-
   return (
     <div>
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={onToggle}
         aria-expanded={open}
-        className="bg-elevated text-foreground flex w-full items-center justify-between gap-2 rounded-xl px-3.5 py-3 text-[15px] font-medium"
+        className={cn(
+          "flex w-full items-center justify-between gap-2 rounded-xl px-3.5 py-3 text-left text-[15px] font-medium transition-colors",
+          summary && !open
+            ? "bg-purple/10 text-foreground"
+            : "bg-elevated text-foreground hover:bg-line/60"
+        )}
       >
-        {title}
+        <span className="min-w-0">
+          {title}
+          {summary && !open && (
+            <span className="text-purple mt-0.5 block truncate text-xs font-normal">
+              {summary}
+            </span>
+          )}
+        </span>
         <ChevronDown
           className={cn(
-            "text-muted-foreground size-4 transition-transform",
+            "text-muted-foreground size-4 shrink-0 transition-transform duration-200",
             open && "rotate-180"
           )}
         />
       </button>
-      {open && <ul className="mt-1.5 mb-1 space-y-0.5 px-1">{children}</ul>}
+
+      {/* La lista se despliega con una transición de altura, no de golpe. */}
+      <div
+        className={cn(
+          "grid transition-[grid-template-rows,opacity] duration-300 ease-out",
+          open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        )}
+      >
+        <ul className="mt-1.5 mb-1 space-y-0.5 overflow-hidden px-1">{children}</ul>
+      </div>
     </div>
   );
 }

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ShieldCheck, RefreshCcw, Wrench } from "lucide-react";
+import { ArrowRight, RefreshCcw, ShieldCheck, Smartphone, Wrench } from "lucide-react";
 import { Hero } from "@/components/site/Hero";
 import { ProductCard } from "@/components/site/ProductCard";
 import { getFeaturedProducts, getPosts } from "@/lib/data";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "iPhone Purple — Equipos Apple con garantía en Argentina",
@@ -17,7 +18,7 @@ export const revalidate = 600;
 const SHORTCUTS = [
   {
     href: "/catalogo",
-    icon: ArrowRight,
+    icon: Smartphone,
     title: "Ver el catálogo",
     text: "Todo lo que tenemos hoy, con precio y stock actualizado.",
   },
@@ -59,7 +60,7 @@ const TRUST = [
 ];
 
 export default async function HomePage() {
-  const [featured, posts] = await Promise.all([getFeaturedProducts(6), getPosts()]);
+  const [featured, posts] = await Promise.all([getFeaturedProducts(8), getPosts()]);
   const latestPosts = posts.slice(0, 3);
 
   return (
@@ -67,22 +68,32 @@ export default async function HomePage() {
       <Hero />
 
       {/* Tres accesos: el 90 % de las visitas viene por una de estas tres puertas. */}
-      <section className="shell border-line border-b py-14">
-        <div className="grid gap-3 sm:grid-cols-3">
-          {SHORTCUTS.map(({ href, icon: Icon, title, text }) => (
+      <section className="shell py-16">
+        <div className="grid gap-5 sm:grid-cols-3">
+          {SHORTCUTS.map(({ href, icon: Icon, title, text }, i) => (
             <Link
               key={href}
               href={href}
-              className="group border-line hover:border-foreground/25 rounded-2xl border p-6 transition-colors"
+              style={{ "--delay": `${i * 70}ms` } as React.CSSProperties}
+              className={cn(
+                "group border-line bg-surface rise-in flex flex-col rounded-2xl border p-7 shadow-sm",
+                "transition-[transform,box-shadow,border-color] duration-300 ease-out",
+                "hover:-translate-y-1.5 hover:border-transparent",
+                "hover:shadow-[0_22px_45px_-18px_rgba(16,16,22,0.35)]"
+              )}
             >
-              <Icon className="text-purple size-5" />
-              <h2 className="text-foreground mt-4 font-medium">{title}</h2>
-              <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
-                {text}
-              </p>
-              <span className="text-foreground mt-4 inline-flex items-center gap-1.5 text-sm">
+              {/* El ícono se llena de violeta al pasar el mouse: da señal de
+                  que la tarjeta entera es clickeable. */}
+              <span className="bg-purple/10 text-purple group-hover:bg-purple flex size-12 items-center justify-center rounded-xl transition-colors duration-300 group-hover:text-white">
+                <Icon className="size-5" />
+              </span>
+
+              <h2 className="text-foreground mt-5 text-xl font-semibold">{title}</h2>
+              <p className="text-muted-foreground mt-2 leading-relaxed">{text}</p>
+
+              <span className="text-foreground mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-medium">
                 Entrar
-                <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
               </span>
             </Link>
           ))}
@@ -107,7 +118,7 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="mt-10 grid grid-cols-2 gap-5 lg:grid-cols-3">
+          <div className="mt-10 grid grid-cols-2 gap-5 lg:grid-cols-3 xl:grid-cols-4">
             {featured.map((product, i) => (
               <ProductCard key={product.id} product={product} index={i} />
             ))}

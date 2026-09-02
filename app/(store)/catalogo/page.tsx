@@ -91,7 +91,7 @@ export default async function CatalogPage({
         image={PAGE_PHOTOS.catalogo}
       />
 
-      <div className="shell py-8 sm:py-12">
+      <div className="shell-wide py-8 sm:py-12">
         <nav
           aria-label="Migas de pan"
           className="text-muted-foreground flex items-center gap-1.5 text-sm"
@@ -103,7 +103,7 @@ export default async function CatalogPage({
           <span className="text-foreground">Catálogo</span>
         </nav>
 
-        <div className="mt-8 grid gap-8 md:grid-cols-[240px_1fr] md:gap-10 lg:grid-cols-[260px_1fr]">
+        <div className="mt-8 grid gap-8 md:grid-cols-[240px_minmax(0,1fr)] md:gap-10 lg:grid-cols-[260px_minmax(0,1fr)]">
           <div className="md:sticky md:top-24 md:self-start">
             <CatalogSidebar filters={filters} facets={facets} />
           </div>
@@ -116,7 +116,7 @@ export default async function CatalogPage({
             />
 
             {products.length > 0 ? (
-              <div className="mt-8 grid grid-cols-2 gap-5 xl:grid-cols-3">
+              <div className="mt-8 grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                 {products.map((product, i) => (
                   <ProductCard
                     key={product.id}

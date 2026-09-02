@@ -114,9 +114,16 @@
 }
 
 @layer utilities {
-  /* Contenedor único de todo el sitio */
+  /* Contenedor del sitio: ancho cómodo de lectura para texto y contenido. */
   .shell {
     @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+
+  /* Contenedor ancho para las grillas de producto. Encajonar el catálogo en
+     el ancho de lectura desperdicia media pantalla en un monitor grande y
+     deja tres equipos por fila donde entran cinco. */
+  .shell-wide {
+    @apply mx-auto w-full max-w-[1560px] px-5 sm:px-8;
   }
 
   /* Ritmo vertical entre secciones */

@@ -77,7 +77,7 @@ export function ProductCard({
             src={image.url}
             alt={image.alt}
             fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1280px) 33vw, 340px"
+            sizes="(max-width: 640px) 50vw, (max-width: 1280px) 33vw, (max-width: 1536px) 25vw, 20vw"
             className="object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.06]"
           />
         ) : (
@@ -87,12 +87,12 @@ export function ProductCard({
         )}
       </div>
 
-      <div className="flex flex-1 flex-col p-5">
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
         <p className="eyebrow text-muted-foreground">
           {CATEGORY_LABELS[product.category]}
         </p>
 
-        <h3 className="text-foreground mt-2 text-lg leading-snug font-medium">
+        <h3 className="text-foreground mt-2 text-base leading-snug font-medium sm:text-lg">
           {product.name}
         </h3>
 

@@ -36,7 +36,7 @@ export function SiteFooter({ settings }: { settings: StoreSettings }) {
 
   return (
     <footer className="bg-ink mt-auto text-white">
-      <div className="shell py-16">
+      <div className="shell-wide py-16">
         <div className="grid gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
             <Link href="/" aria-label="iPhone Purple — inicio">

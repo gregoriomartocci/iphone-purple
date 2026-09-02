@@ -12,9 +12,9 @@ import { ArrowRight } from "lucide-react";
  */
 export function Hero() {
   return (
-    // Centrado en vez de anclado abajo: así compone bien con video de fondo y
-    // también sin él, que es como arranca el proyecto hasta que cargues el tuyo.
-    <section className="bg-ink relative isolate -mt-16 flex min-h-[88svh] items-center overflow-hidden">
+    // Ocupa la pantalla entera: al entrar se ve solo la foto. El -mt-16 la mete
+    // por debajo del header, que arranca transparente sobre ella.
+    <section className="bg-ink relative isolate -mt-16 flex min-h-svh items-center overflow-hidden">
       <video
         autoPlay
         muted
@@ -24,16 +24,21 @@ export function Hero() {
         poster="/hero-poster.jpg"
         aria-hidden
         tabIndex={-1}
-        className="absolute inset-0 -z-10 size-full object-cover"
+        className="absolute inset-0 -z-10 size-full object-cover object-center"
       >
         <source src="/hero.mp4" type="video/mp4" />
       </video>
 
-      {/* Oscurece el video lo justo para que el texto tenga contraste real.
-          El halo violeta le da profundidad al fondo cuando todavía no hay video. */}
+      {/*
+        Dos capas de oscurecimiento, calibradas para que el titular se lea
+        sobre CUALQUIER foto, también una clara como un escritorio junto a una
+        ventana: un velo parejo que baja el brillo general, y encima un
+        degradé más fuerte desde abajo, que es donde apoya el texto.
+      */}
+      <div aria-hidden className="absolute inset-0 -z-10 bg-black/45" />
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-linear-to-t from-black/85 via-black/45 to-black/25"
+        className="absolute inset-0 -z-10 bg-linear-to-t from-black/85 via-black/40 to-transparent"
       />
       <div
         aria-hidden
