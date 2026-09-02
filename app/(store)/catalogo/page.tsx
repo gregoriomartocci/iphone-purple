@@ -77,8 +77,8 @@ export default async function CatalogPage({
           <span className="text-foreground">Catálogo</span>
         </nav>
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-[260px_1fr] lg:gap-10">
-          <div className="lg:sticky lg:top-24 lg:self-start">
+        <div className="mt-8 grid gap-8 md:grid-cols-[240px_1fr] md:gap-10 lg:grid-cols-[260px_1fr]">
+          <div className="md:sticky md:top-24 md:self-start">
             <CatalogSidebar filters={filters} facets={facets} />
           </div>
 
@@ -113,7 +113,7 @@ export default async function CatalogPage({
                   </Link>
                   <Link
                     href="/contacto"
-                    className="border-line text-foreground inline-flex h-11 items-center justify-center rounded-full border px-6 text-sm font-medium transition-colors hover:border-white/40"
+                    className="border-line text-foreground hover:border-foreground/35 inline-flex h-11 items-center justify-center rounded-full border px-6 text-sm font-medium transition-colors"
                   >
                     Pedir un equipo
                   </Link>

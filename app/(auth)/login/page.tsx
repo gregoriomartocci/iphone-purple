@@ -71,7 +71,7 @@ function LoginContent() {
           <button
             type="button"
             onClick={() => signIn("google", { callbackUrl: redirect })}
-            className="border-line text-foreground mt-6 flex h-12 w-full items-center justify-center gap-2.5 rounded-xl border text-sm font-medium transition-colors hover:border-white/40"
+            className="border-line text-foreground hover:border-foreground/35 mt-6 flex h-12 w-full items-center justify-center gap-2.5 rounded-xl border text-sm font-medium transition-colors"
           >
             <svg className="size-4" viewBox="0 0 24 24" aria-hidden>
               <path

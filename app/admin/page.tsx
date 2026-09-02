@@ -157,7 +157,7 @@ export default async function AdminDashboard() {
       {stats.pendingLeads > 0 && (
         <Link
           href="/admin/plan-canje"
-          className="border-line mt-6 flex items-center justify-between gap-4 rounded-xl border p-5 transition-colors hover:border-white/25"
+          className="border-line hover:border-foreground/25 mt-6 flex items-center justify-between gap-4 rounded-xl border p-5 transition-colors"
         >
           <div>
             <p className="text-foreground font-medium">

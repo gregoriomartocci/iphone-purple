@@ -34,7 +34,7 @@ export default function Error({
         </button>
         <Link
           href="/"
-          className="border-line text-foreground inline-flex h-12 items-center justify-center rounded-full border px-7 text-sm font-medium transition-colors hover:border-white/40"
+          className="border-line text-foreground hover:border-foreground/35 inline-flex h-12 items-center justify-center rounded-full border px-7 text-sm font-medium transition-colors"
         >
           Ir al inicio
         </Link>

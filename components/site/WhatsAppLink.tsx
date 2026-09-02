@@ -15,9 +15,9 @@ type Props = {
 
 const VARIANTS = {
   solid:
-    "bg-ink text-white hover:bg-ink/85 px-6 h-12 rounded-full inline-flex items-center justify-center gap-2 text-sm font-medium transition-colors",
+    "bg-purple text-white hover:bg-purple/85 px-6 h-12 rounded-full inline-flex items-center justify-center gap-2 text-sm font-medium transition-colors",
   outline:
-    "border border-line text-foreground hover:border-white/40 px-6 h-12 rounded-full inline-flex items-center justify-center gap-2 text-sm font-medium transition-colors",
+    "border border-line text-foreground hover:border-foreground/35 px-6 h-12 rounded-full inline-flex items-center justify-center gap-2 text-sm font-medium transition-colors",
   bare: "inline-flex items-center gap-2 text-sm text-foreground hover:text-purple transition-colors",
 } as const;
 

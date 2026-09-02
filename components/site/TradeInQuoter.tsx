@@ -194,7 +194,7 @@ export function TradeInQuoter({
                 "rounded-xl border p-4 text-left transition-colors",
                 condition === c
                   ? "border-purple bg-purple/10"
-                  : "border-line hover:border-white/30"
+                  : "border-line hover:border-foreground/30"
               )}
             >
               <span className="text-foreground block text-sm font-medium">

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BatteryMedium, ArrowRight } from "lucide-react";
+import { BatteryMedium } from "lucide-react";
 import { formatARS } from "@/utils/format";
 import { leadVariant, savingsVsNew, totalStock } from "@/lib/catalog";
 import {
@@ -21,13 +21,15 @@ const CONDITION_STYLES: Record<Condition, string> = {
   nuevo: "bg-purple text-white",
   "como-nuevo": "bg-emerald-600 text-white",
   "muy-bueno": "bg-sky-600 text-white",
-  bueno: "bg-amber-500 text-[#1f1f26]",
+  bueno: "bg-amber-500 text-ink",
 };
 
 /** Etiqueta de disponibilidad. Poco stock es información útil, no urgencia falsa. */
 export function StockBadge({ stock, className }: { stock: number; className?: string }) {
   if (stock === 0) {
-    return <span className={cn("text-xs text-neutral-400", className)}>Sin stock</span>;
+    return (
+      <span className={cn("text-muted-foreground text-xs", className)}>Sin stock</span>
+    );
   }
   if (stock <= 2) {
     return (
@@ -37,7 +39,7 @@ export function StockBadge({ stock, className }: { stock: number; className?: st
     );
   }
   return (
-    <span className={cn("text-xs text-neutral-500", className)}>
+    <span className={cn("text-muted-foreground text-xs", className)}>
       <span className="mr-1.5 inline-block size-1.5 rounded-full bg-emerald-500 align-middle" />
       En stock
     </span>
@@ -47,9 +49,10 @@ export function StockBadge({ stock, className }: { stock: number; className?: st
 /**
  * Tarjeta de producto.
  *
- * Va en blanco sobre el fondo oscuro del sitio: es lo que hace que la foto y el
- * precio se lean de un saque y le da el aire comercial de una tienda. El hover
- * levanta la tarjeta con una sombra, sin resplandores de color.
+ * Sin caja alrededor: la foto va suelta con esquinas redondeadas y el texto
+ * debajo, apoyado en el fondo de la página. Encajonar cada producto en un
+ * recuadro blanco recarga la grilla; así los equipos respiran y la vista se lee
+ * como una vidriera.
  */
 export function ProductCard({
   product,
@@ -69,23 +72,19 @@ export function ProductCard({
   return (
     <Link
       href={`/catalogo/${product.slug}`}
-      className={cn(
-        "group flex flex-col overflow-hidden rounded-2xl bg-white transition-all duration-200",
-        "hover:-translate-y-1 hover:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.45)]",
-        stock === 0 && "opacity-60"
-      )}
+      className={cn("group block", stock === 0 && "opacity-55")}
     >
-      <div className="relative aspect-square overflow-hidden bg-neutral-100">
+      <div className="bg-elevated relative aspect-square overflow-hidden rounded-2xl">
         {image ? (
           <Image
             src={image.url}
             alt={image.alt}
             fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 380px"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+            sizes="(max-width: 640px) 50vw, (max-width: 1280px) 33vw, 340px"
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-sm text-neutral-400">
+          <div className="text-muted-foreground flex h-full items-center justify-center text-sm">
             Sin foto
           </div>
         )}
@@ -108,12 +107,14 @@ export function ProductCard({
         )}
       </div>
 
-      <div className="flex flex-1 flex-col p-5">
-        <h3 className="text-lg leading-tight font-medium text-neutral-900">
+      <div className="mt-4">
+        <p className="eyebrow text-muted-foreground">{product.category}</p>
+
+        <h3 className="group-hover:text-purple mt-1.5 text-lg leading-tight font-medium transition-colors">
           {product.name}
         </h3>
 
-        <p className="mt-1.5 flex flex-wrap items-center gap-x-2.5 text-sm text-neutral-500">
+        <p className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2.5 text-sm">
           <span>{lead ? lead.storage : product.model}</span>
           {lead?.batteryHealth != null && (
             <span className="inline-flex items-center gap-1">
@@ -123,29 +124,19 @@ export function ProductCard({
           )}
         </p>
 
-        <div className="mt-auto pt-5">
-          {multiplePrices && (
-            <span className="block text-xs text-neutral-400">Desde</span>
+        <div className="mt-2.5 flex flex-wrap items-baseline gap-2">
+          {multiplePrices && <span className="text-muted-foreground text-xs">Desde</span>}
+          <span className="tnum text-purple text-xl font-semibold">
+            {formatARS(lead?.priceArs ?? 0)}
+          </span>
+          {fullPrice !== null && (
+            <span className="tnum text-muted-foreground text-sm line-through">
+              {formatARS(fullPrice)}
+            </span>
           )}
-          <div className="flex flex-wrap items-baseline gap-2">
-            <span className="tnum text-2xl font-semibold text-neutral-900">
-              {formatARS(lead?.priceArs ?? 0)}
-            </span>
-            {fullPrice !== null && (
-              <span className="tnum text-sm text-neutral-400 line-through">
-                {formatARS(fullPrice)}
-              </span>
-            )}
-          </div>
-
-          <div className="mt-3 flex items-center justify-between gap-2 border-t border-neutral-100 pt-3">
-            <StockBadge stock={stock} />
-            <span className="text-purple inline-flex items-center gap-1 text-sm font-medium">
-              Ver
-              <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
-            </span>
-          </div>
         </div>
+
+        <StockBadge stock={stock} className="mt-2 block" />
       </div>
     </Link>
   );

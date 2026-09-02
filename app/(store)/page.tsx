@@ -73,7 +73,7 @@ export default async function HomePage() {
             <Link
               key={href}
               href={href}
-              className="group border-line rounded-2xl border p-6 transition-colors hover:border-white/25"
+              className="group border-line hover:border-foreground/25 rounded-2xl border p-6 transition-colors"
             >
               <Icon className="text-purple size-5" />
               <h2 className="text-foreground mt-4 font-medium">{title}</h2>
@@ -115,7 +115,7 @@ export default async function HomePage() {
 
           <Link
             href="/catalogo"
-            className="border-line text-foreground mt-8 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border text-sm font-medium transition-colors hover:border-white/40 sm:hidden"
+            className="border-line text-foreground hover:border-foreground/35 mt-8 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border text-sm font-medium transition-colors sm:hidden"
           >
             Ver todo el catálogo
             <ArrowRight className="size-3.5" />
@@ -125,7 +125,7 @@ export default async function HomePage() {
 
       {/* Banda oscura: corta el blanco de la página y le da respiro visual al
           medio, además de empujar el canje, que es lo que más consultas trae. */}
-      <section className="bg-surface glow-purple border-line border-y">
+      <section className="bg-ink text-white">
         <div className="shell py-20 sm:py-24">
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div>

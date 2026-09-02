@@ -103,19 +103,19 @@ export function CatalogSidebar({
       <button
         type="button"
         onClick={() => setOpenOnMobile(true)}
-        className="border-line bg-surface text-foreground inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border text-sm font-medium lg:hidden"
+        className="border-line bg-surface text-foreground inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border text-sm font-medium md:hidden"
       >
         <SlidersHorizontal className="size-4" />
         Filtrar
       </button>
 
-      <aside className="border-line bg-surface hidden rounded-2xl border p-5 lg:block">
+      <aside className="border-line bg-surface hidden rounded-2xl border p-5 md:block">
         <h2 className="eyebrow text-muted-foreground mb-4">Filtrar equipos</h2>
         {panel}
       </aside>
 
       {openOnMobile && (
-        <div className="fixed inset-0 z-[60] lg:hidden">
+        <div className="fixed inset-0 z-[60] md:hidden">
           <div
             className="absolute inset-0 bg-black/60"
             onClick={() => setOpenOnMobile(false)}

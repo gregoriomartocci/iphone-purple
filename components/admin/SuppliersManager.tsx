@@ -107,7 +107,7 @@ export function SuppliersManager({
             <button
               type="button"
               onClick={() => setDraft(null)}
-              className="border-line text-foreground inline-flex h-10 items-center rounded-full border px-5 text-sm transition-colors hover:border-white/40"
+              className="border-line text-foreground hover:border-foreground/35 inline-flex h-10 items-center rounded-full border px-5 text-sm transition-colors"
             >
               Cancelar
             </button>

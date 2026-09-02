@@ -4,20 +4,17 @@
 /*
   iPhone Purple — sistema visual
 
-  Grafito, no negro. Un fondo casi negro come las fotos y cansa la vista; este
-  gris medio deja respirar los equipos y mantiene la identidad oscura del logo.
+  Base clara, cortada por bloques oscuros. La página es gris claro (no blanco
+  puro, que cansa), las tarjetas y paneles van en blanco, y lo que corta la luz
+  es el navbar, las fotos de portada de cada vista, alguna banda del medio y el
+  footer.
 
-  Cuatro niveles de profundidad, de más hondo a más claro:
-    ink       #16161b  hero y footer
-    fondo     #1f1f26  la página
-    surface   #2b2b34  bandas y superficies que "suben"
-    elevated  #363641  inputs y estados activos
+    ink       #101014  navbar, portadas, bandas y footer
+    fondo     #f2f2f4  la página
+    surface   #ffffff  tarjetas y paneles
+    elevated  #f7f7f9  rellenos suaves dentro del blanco
 
-  Las tarjetas de producto van en BLANCO sobre este fondo: es lo que hace que
-  las fotos y los precios se lean de un saque, y le da el aire comercial que
-  un catálogo necesita.
-
-  Una sola tipografía (Inter) en todo el sitio: la jerarquía la dan el tamaño
+  Una sola tipografía (Jost) en todo el sitio: la jerarquía la dan el tamaño
   y el peso, no mezclar familias.
 */
 
@@ -49,34 +46,34 @@
   --radius-2xl: calc(var(--radius) * 1.8);
 
   /* Escala de la marca */
-  --color-ink: #16161b;
-  --color-line: #43434f;
-  --color-surface: #2b2b34;
-  --color-elevated: #363641;
+  --color-ink: #101014;
+  --color-line: #e4e4e8;
+  --color-surface: #ffffff;
+  --color-elevated: #f7f7f9;
   --color-purple: #5e16eb;
   --color-purple-deep: #4a0fc0;
   --color-purple-light: #a97bf5;
 }
 
 :root {
-  --background: #1f1f26;
-  --foreground: #f7f7f9;
-  --card: #2b2b34;
-  --card-foreground: #f7f7f9;
-  --popover: #2b2b34;
-  --popover-foreground: #f7f7f9;
+  --background: #f2f2f4;
+  --foreground: #16161a;
+  --card: #ffffff;
+  --card-foreground: #16161a;
+  --popover: #ffffff;
+  --popover-foreground: #16161a;
   /* El violeta es el color de acción: botones primarios, foco, estados activos. */
   --primary: #5e16eb;
   --primary-foreground: #ffffff;
-  --secondary: #363641;
-  --secondary-foreground: #f7f7f9;
-  --muted: #2b2b34;
-  --muted-foreground: #bcbcc6;
-  --accent: #363641;
-  --accent-foreground: #f7f7f9;
-  --destructive: #f87171;
-  --border: #43434f;
-  --input: #43434f;
+  --secondary: #f7f7f9;
+  --secondary-foreground: #16161a;
+  --muted: #f7f7f9;
+  --muted-foreground: #6e6e78;
+  --accent: #f7f7f9;
+  --accent-foreground: #16161a;
+  --destructive: #dc2626;
+  --border: #e4e4e8;
+  --input: #e4e4e8;
   --ring: #5e16eb;
   --radius: 0.625rem;
 }
@@ -97,7 +94,7 @@
   html {
     @apply font-sans;
     scroll-behavior: smooth;
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   /* La jerarquía viene del tamaño y el tracking, no de otra familia. */
@@ -143,10 +140,6 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Halo violeta detrás de una sección. Da profundidad sin ensuciar el negro. */
-  .glow-purple {
-    position: relative;
-  }
   .glow-purple::before {
     content: "";
     position: absolute;

@@ -70,7 +70,9 @@ export function ProductDetail({
                 aria-label={`Ver foto ${i + 1}`}
                 className={cn(
                   "relative size-16 overflow-hidden rounded-lg border transition-colors",
-                  i === imageIndex ? "border-purple" : "border-line hover:border-white/30"
+                  i === imageIndex
+                    ? "border-purple"
+                    : "border-line hover:border-foreground/30"
                 )}
               >
                 <Image src={img.url} alt="" fill sizes="64px" className="object-cover" />
@@ -117,7 +119,7 @@ export function ProductDetail({
                       "h-10 rounded-full border px-5 text-sm transition-colors",
                       active
                         ? "border-purple bg-purple text-white"
-                        : "border-line text-foreground hover:border-white/30"
+                        : "border-line text-foreground hover:border-foreground/30"
                     )}
                   >
                     {storage}
@@ -142,7 +144,7 @@ export function ProductDetail({
                     disabled={variant.stock === 0}
                     className={cn(
                       "flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-colors",
-                      active ? "border-purple" : "border-line hover:border-white/30",
+                      active ? "border-purple" : "border-line hover:border-foreground/30",
                       variant.stock === 0 && "cursor-not-allowed opacity-45"
                     )}
                   >
