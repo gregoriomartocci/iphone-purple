@@ -4,15 +4,16 @@
 /*
   iPhone Purple — sistema visual
 
-  Base clara, cortada por bloques oscuros. La página es gris claro (no blanco
-  puro, que cansa), las tarjetas y paneles van en blanco, y lo que corta la luz
-  es el navbar, las fotos de portada de cada vista, alguna banda del medio y el
-  footer.
+  Fondo blanco. Las fotos de los equipos son oscuras y sobre blanco saltan;
+  el contraste lo aportan ellas, no el fondo.
 
-    ink       #101014  navbar, portadas, bandas y footer
-    fondo     #f2f2f4  la página
-    surface   #ffffff  tarjetas y paneles
-    elevated  #f7f7f9  rellenos suaves dentro del blanco
+  Lo que corta la luz son bloques concretos: el navbar, la foto de portada de
+  cada vista, la banda del medio en la home y el footer.
+
+    ink       #0c0c10  navbar, portadas, bandas y footer
+    fondo     #ffffff  la página
+    elevated  #f4f4f6  fondo de las fotos y rellenos suaves
+    line      #e8e8ec  bordes
 
   Una sola tipografía (Jost) en todo el sitio: la jerarquía la dan el tamaño
   y el peso, no mezclar familias.
@@ -46,18 +47,18 @@
   --radius-2xl: calc(var(--radius) * 1.8);
 
   /* Escala de la marca */
-  --color-ink: #101014;
-  --color-line: #e4e4e8;
+  --color-ink: #0c0c10;
+  --color-line: #e8e8ec;
   --color-surface: #ffffff;
-  --color-elevated: #f7f7f9;
+  --color-elevated: #f4f4f6;
   --color-purple: #5e16eb;
   --color-purple-deep: #4a0fc0;
   --color-purple-light: #a97bf5;
 }
 
 :root {
-  --background: #f2f2f4;
-  --foreground: #16161a;
+  --background: #ffffff;
+  --foreground: #101014;
   --card: #ffffff;
   --card-foreground: #16161a;
   --popover: #ffffff;
@@ -65,15 +66,15 @@
   /* El violeta es el color de acción: botones primarios, foco, estados activos. */
   --primary: #5e16eb;
   --primary-foreground: #ffffff;
-  --secondary: #f7f7f9;
+  --secondary: #f4f4f6;
   --secondary-foreground: #16161a;
-  --muted: #f7f7f9;
-  --muted-foreground: #6e6e78;
-  --accent: #f7f7f9;
+  --muted: #f4f4f6;
+  --muted-foreground: #6b6b75;
+  --accent: #f4f4f6;
   --accent-foreground: #16161a;
   --destructive: #dc2626;
-  --border: #e4e4e8;
-  --input: #e4e4e8;
+  --border: #e8e8ec;
+  --input: #e8e8ec;
   --ring: #5e16eb;
   --radius: 0.625rem;
 }

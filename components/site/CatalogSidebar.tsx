@@ -153,12 +153,12 @@ function Section({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className="border-line border-b py-3 last:border-0">
+    <div className="mb-2">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="text-foreground flex w-full items-center justify-between gap-2 text-sm font-medium"
+        className="bg-elevated text-foreground flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium"
       >
         {title}
         <ChevronDown
@@ -168,7 +168,7 @@ function Section({
           )}
         />
       </button>
-      {open && <div className="mt-3">{children}</div>}
+      {open && <div className="mt-2 px-1">{children}</div>}
     </div>
   );
 }
@@ -191,7 +191,7 @@ function FilterRow({
         className={cn(
           "flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm transition-colors",
           checked
-            ? "text-foreground font-medium"
+            ? "bg-purple/8 text-foreground font-medium"
             : "text-muted-foreground hover:text-foreground"
         )}
       >
