@@ -5,9 +5,10 @@ import { getProducts, getSettings, getTradeInPrices } from "@/lib/data";
 import { GRADE_MULTIPLIER, leadVariant } from "@/lib/catalog";
 
 export const metadata: Metadata = {
-  title: "Plan Canje",
+  title: "Plan Canje: entregá tu iPhone usado",
   description:
-    "Cotizá tu equipo usado en dos minutos y descontalo del que te quieras llevar. Te decimos cuánto te tomamos y cuánto ponés de diferencia.",
+    "Cotizá tu iPhone usado en dos minutos y descontalo del que te quieras llevar. Te decimos cuánto te tomamos por tu equipo y cuánto ponés de diferencia. Tomamos equipos en La Plata.",
+  alternates: { canonical: "/plan-canje" },
 };
 
 export const revalidate = 600;

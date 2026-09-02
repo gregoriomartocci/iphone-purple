@@ -30,9 +30,10 @@ export const SETTINGS: StoreSettings = {
   instagram: "https://instagram.com/iphonepurple",
   tiktok: "https://tiktok.com/@iphonepurple",
   email: "hola@iphonepurple.com.ar",
-  address: "Av. Corrientes 1234, CABA",
+  // TODO: reemplazar por la dirección real del local.
+  address: "Calle 7 1234, La Plata",
   hours: "Lunes a sábado de 10 a 19 h",
-  mapsUrl: "https://maps.google.com/?q=Av.+Corrientes+1234,+CABA",
+  mapsUrl: "https://maps.google.com/?q=Calle+7+1234,+La+Plata",
 };
 
 const img = (url: string, alt: string): ProductImage => ({
@@ -50,13 +51,17 @@ const img = (url: string, alt: string): ProductImage => ({
  *    tenga huecos, pero no es el equipo: se reemplaza en cuanto haya la propia.
  */
 function fotosDe(slug: string, seed: SeedProduct): ProductImage[] {
+  // El texto alternativo describe el equipo y dónde se consigue: lo lee quien
+  // usa lector de pantalla, y también es lo que indexa la búsqueda de
+  // imágenes, por donde entra bastante tráfico en este rubro.
+  const alt = `${seed.name} ${seed.brand} en venta en La Plata`;
   const propias = FOTOS_PRODUCTO[slug];
   if (propias?.length) {
     // Ya están servidas desde el propio dominio: no llevan los parámetros de
     // recorte de Unsplash.
-    return propias.map((f) => ({ url: f.url, alt: seed.name }));
+    return propias.map((f) => ({ url: f.url, alt }));
   }
-  return [img(seed.photo, seed.name)];
+  return [img(seed.photo, alt)];
 }
 
 /** Fotos genéricas por familia de producto. Se reemplazan al cargar las reales. */

@@ -26,38 +26,70 @@ const geistMono = Geist_Mono({
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://iphonepurple.com.ar";
 
+/**
+ * Metadatos del sitio, orientados a búsqueda local.
+ *
+ * El negocio compite en La Plata, no en todo el país: quien busca "iPhone La
+ * Plata" está a un mensaje de comprar, y quien busca "iPhone" a secas está
+ * comparando contra Mercado Libre y Frávega, que siempre van a salir primero.
+ * Por eso la ciudad aparece en el título, en la descripción y en los datos
+ * estructurados, que es lo que Google usa para el paquete local del mapa.
+ */
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "iPhone Purple — Equipos Apple con garantía en Argentina",
-    template: "%s | iPhone Purple",
+    default: "iPhone Purple — iPhone y productos Apple en La Plata",
+    template: "%s | iPhone Purple La Plata",
   },
   description:
-    "iPhone, iPad, Mac y Apple Watch con garantía escrita. Mirá el stock real, cotizá tu equipo usado con el Plan Canje y consultá por WhatsApp.",
+    "Venta de iPhone, iPad, Mac, Apple Watch y celulares en La Plata, con garantía escrita y factura. Stock real publicado, Plan Canje por tu equipo usado, servicio técnico propio y envíos a todo el país.",
+  // Van del término más específico al más general: primero cómo busca alguien
+  // de la zona, después el modelo concreto, y al final la categoría amplia.
   keywords: [
-    "iPhone",
-    "Apple",
-    "celulares",
-    "Argentina",
-    "plan canje",
-    "reparación iPhone",
-    "iPhone usado",
+    "iPhone La Plata",
+    "celulares La Plata",
+    "Apple La Plata",
+    "comprar iPhone La Plata",
+    "iPhone usado La Plata",
+    "reparación de iPhone La Plata",
+    "servicio técnico Apple La Plata",
+    "plan canje iPhone",
+    "iPhone 17",
+    "iPhone 16",
+    "iPhone 15",
+    "iPad",
+    "MacBook",
+    "Apple Watch",
+    "AirPods",
+    "celulares Xiaomi Motorola",
+    "iPhone sellado y seminuevo",
+    "iPhone con garantía Argentina",
   ],
+  // Le dice al buscador dónde está el negocio, además del JSON-LD.
+  other: {
+    "geo.region": "AR-B",
+    "geo.placename": "La Plata, Buenos Aires",
+  },
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "es_AR",
     url: SITE_URL,
     siteName: "iPhone Purple",
-    title: "iPhone Purple — Equipos Apple con garantía en Argentina",
+    title: "iPhone Purple — iPhone y productos Apple en La Plata",
     description:
-      "Stock real, Plan Canje y servicio técnico propio. Consultá por WhatsApp.",
+      "iPhone, iPad, Mac y Apple Watch con garantía escrita en La Plata. Stock real, Plan Canje y servicio técnico propio.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "iPhone Purple",
-    description: "Equipos Apple con garantía en Argentina.",
+    title: "iPhone Purple — Apple en La Plata",
+    description: "iPhone, iPad y Mac con garantía en La Plata. Stock real y Plan Canje.",
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
 };
 
 export const viewport: Viewport = {

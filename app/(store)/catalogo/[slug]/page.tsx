@@ -13,6 +13,7 @@ import {
   getSettings,
 } from "@/lib/data";
 import { leadVariant, totalStock } from "@/lib/catalog";
+import { CATEGORY_LABELS, GRADE_LABELS } from "@/types";
 
 export const revalidate = 600;
 
@@ -32,15 +33,24 @@ export async function generateMetadata({
   if (!product) return { title: "Equipo no encontrado" };
 
   const lead = leadVariant(product);
+  // El título de la ficha es lo que compite en el buscador contra el mismo
+  // modelo en otros comercios: lleva capacidad, condición y ciudad, que es
+  // como la gente busca de verdad ("iphone 15 128gb la plata").
+  const detalle = [lead?.storage, lead && GRADE_LABELS[lead.grade]]
+    .filter(Boolean)
+    .join(" ");
+  const title = `${product.name}${detalle ? ` ${detalle}` : ""} en La Plata`;
   const description =
-    product.description ||
-    `${product.name} ${lead?.storage ?? ""} disponible con garantía en iPhone Purple.`;
+    `${product.name}${detalle ? ` ${detalle}` : ""} con garantía escrita y factura, en La Plata. ` +
+    (product.description || "Consultá stock y precio por WhatsApp.");
 
   return {
-    title: product.name,
+    title,
     description,
+    alternates: { canonical: `/catalogo/${slug}` },
     openGraph: {
-      title: product.name,
+      type: "website",
+      title,
       description,
       images: product.images[0] ? [{ url: product.images[0].url }] : undefined,
     },
@@ -65,21 +75,50 @@ export default async function ProductPage({
   const lead = leadVariant(product);
   const inStock = totalStock(product) > 0;
 
+  const precios = product.variants.map((v) => v.priceArs).filter((p) => p > 0);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
     description: product.description,
     brand: { "@type": "Brand", name: product.brand },
+    category: CATEGORY_LABELS[product.category],
     image: product.images.map((i) => i.url),
+    // Cada variante es una oferta distinta: con el rango, el buscador puede
+    // mostrar "desde $X" en vez de un precio suelto que puede no ser el que
+    // la persona termina viendo.
     offers: {
-      "@type": "Offer",
+      "@type": "AggregateOffer",
       priceCurrency: "ARS",
-      price: lead?.priceArs ?? 0,
+      lowPrice: precios.length ? Math.min(...precios) : 0,
+      highPrice: precios.length ? Math.max(...precios) : 0,
+      offerCount: product.variants.length,
       availability: inStock
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
+      itemCondition:
+        lead?.grade === "sellado"
+          ? "https://schema.org/NewCondition"
+          : "https://schema.org/RefurbishedCondition",
+      seller: { "@type": "Organization", name: "iPhone Purple" },
     },
+  };
+
+  // Migas de pan: Google las muestra en lugar de la URL cruda.
+  const jsonLdMigas = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: "/" },
+      { "@type": "ListItem", position: 2, name: "Catálogo", item: "/catalogo" },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: product.name,
+        item: `/catalogo/${product.slug}`,
+      },
+    ],
   };
 
   return (
@@ -87,6 +126,10 @@ export default async function ProductPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdMigas) }}
       />
 
       <Link

@@ -5,9 +5,10 @@ import { getPosts } from "@/lib/data";
 import { PageHero, PAGE_PHOTOS } from "@/components/site/PageHero";
 
 export const metadata: Metadata = {
-  title: "Notas",
+  title: "Notas y guías sobre iPhone",
   description:
-    "Guías y novedades sobre equipos Apple: comparativas, cómo revisar un usado, baterías y Plan Canje.",
+    "Guías para comprar mejor: comparativas entre modelos, cómo revisar un iPhone usado antes de pagarlo, cuánto dura la batería y cómo se calcula el Plan Canje.",
+  alternates: { canonical: "/blog" },
 };
 
 export const revalidate = 3600;

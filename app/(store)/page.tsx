@@ -4,13 +4,20 @@ import Image from "next/image";
 import { ArrowRight, RefreshCcw, ShieldCheck, Smartphone, Wrench } from "lucide-react";
 import { Hero } from "@/components/site/Hero";
 import { ProductCard } from "@/components/site/ProductCard";
-import { getFeaturedProducts, getPosts } from "@/lib/data";
+import { ProductRail, ProductRanking } from "@/components/site/ProductRail";
+import { Faq, faqJsonLd } from "@/components/site/Faq";
+import { getBestValue, getBestsellers, getFeaturedProducts, getPosts } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "iPhone Purple — Equipos Apple con garantía en Argentina",
+  // La portada es la que compite por "iPhone La Plata", así que lleva el
+  // título completo y no el de la plantilla.
+  title: {
+    absolute: "iPhone Purple — Comprar iPhone y productos Apple en La Plata",
+  },
   description:
-    "Mirá el stock real de iPhone, iPad y Mac. Cotizá tu equipo usado con el Plan Canje y consultá por WhatsApp.",
+    "Venta de iPhone, iPad, Mac y Apple Watch en La Plata, con garantía escrita y factura. Stock real publicado, Plan Canje por tu usado y servicio técnico propio.",
+  alternates: { canonical: "/" },
 };
 
 export const revalidate = 600;
@@ -60,11 +67,23 @@ const TRUST = [
 ];
 
 export default async function HomePage() {
-  const [featured, posts] = await Promise.all([getFeaturedProducts(8), getPosts()]);
+  const [featured, masVendidos, calidadPrecio, posts] = await Promise.all([
+    getFeaturedProducts(8),
+    getBestsellers(6),
+    getBestValue(5),
+    getPosts(),
+  ]);
   const latestPosts = posts.slice(0, 3);
 
   return (
     <>
+      {/* Las preguntas frecuentes también van en formato estructurado: es lo
+          que habilita el desplegable de respuestas en el resultado de Google. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+
       <Hero />
 
       {/* Tres accesos: el 90 % de las visitas viene por una de estas tres puertas. */}
@@ -99,6 +118,18 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      <ProductRail
+        title="Los más vendidos"
+        subtitle="Los equipos que más salen del mostrador."
+        products={masVendidos}
+      />
+
+      <ProductRanking
+        title="Top 5 calidad-precio"
+        subtitle="Modelos de generaciones anteriores que andan igual de bien y cuestan bastante menos que el del año."
+        products={calidadPrecio}
+      />
 
       {featured.length > 0 && (
         <section className="shell band">
@@ -222,6 +253,55 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/*
+        Cierre con el detalle de qué se vende y dónde.
+
+        Está para dos lectores a la vez: quien llegó buscando "iPhone La
+        Plata" y necesita confirmar en una línea que este es el lugar, y el
+        buscador, que sin texto real en la página no tiene con qué asociar el
+        sitio a la ciudad ni al rubro. Por eso es información concreta y no
+        relleno de palabras clave.
+      */}
+      <section className="border-line border-t">
+        <div className="shell py-16 sm:py-20">
+          <div className="grid gap-10 lg:grid-cols-3 lg:gap-14">
+            <div>
+              <h2 className="text-2xl font-semibold sm:text-3xl">
+                Venta de iPhone y productos Apple en La Plata
+              </h2>
+              <p className="text-muted-foreground prosa mt-4 leading-relaxed">
+                Somos un local de La Plata dedicado a equipos Apple. Vendemos iPhone del
+                11 al 17 —sellados y seminuevos—, iPad, MacBook, Apple Watch y AirPods,
+                además de celulares Xiaomi y Motorola, consolas y accesorios. Todo con
+                garantía escrita de seis meses y factura.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-medium">Cómo comprar</h3>
+              <p className="text-muted-foreground mt-3 leading-relaxed">
+                Los precios y el stock del catálogo son los reales y se actualizan a
+                medida que entran y salen equipos. Podés reservar por el carrito sin crear
+                una cuenta, o escribirnos por WhatsApp con el modelo que te interesa.
+                Retirás en La Plata o te lo enviamos a todo el país.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-medium">Canje y servicio técnico</h3>
+              <p className="text-muted-foreground mt-3 leading-relaxed">
+                Tomamos tu iPhone usado como parte de pago: cotizalo en el sitio y pagás
+                solo la diferencia. Y si lo que necesitás es arreglarlo, tenemos servicio
+                técnico propio para pantalla, batería, pin de carga y cámara, con
+                diagnóstico sin cargo.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Faq />
     </>
   );
 }

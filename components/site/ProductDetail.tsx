@@ -98,7 +98,7 @@ export function ProductDetail({
               // Las fotos propias del producto entran completas: recortarlas
               // le come el borde al equipo. Las genéricas son ambientales y sí
               // se recortan, porque encuadrarlas enteras deja aire muerto.
-              className={cn(propias ? "object-contain p-6" : "object-cover")}
+              className={cn(propias ? "object-contain p-4" : "object-cover")}
             />
           )}
 

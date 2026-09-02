@@ -44,7 +44,7 @@ export function SiteFooter({ settings }: { settings: StoreSettings }) {
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/60">
               Equipos Apple con garantía escrita, Plan Canje y servicio técnico propio.
-              Atendemos en CABA y enviamos a todo el país.
+              Atendemos en La Plata y enviamos a todo el país.
             </p>
 
             <div className="mt-6 flex items-center gap-2">

@@ -20,9 +20,10 @@ import {
 } from "@/types";
 
 export const metadata: Metadata = {
-  title: "Catálogo",
+  title: "Catálogo de iPhone y celulares",
   description:
-    "Todos los equipos Apple disponibles hoy, con precio, estado y stock real. Buscá por modelo, capacidad o estado.",
+    "Todos los equipos disponibles hoy en La Plata: iPhone del 11 al 17, iPad, Mac, Apple Watch y celulares Xiaomi y Motorola. Precio, condición y stock real, actualizado a diario.",
+  alternates: { canonical: "/catalogo" },
 };
 
 type SearchParams = Record<string, string | string[] | undefined>;

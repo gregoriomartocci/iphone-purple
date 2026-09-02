@@ -43,6 +43,33 @@ const FOTOS = {
   ],
   "redmi-15c": ["Redmi 15C front.jpg", "Redmi 15C back.jpg"],
   "garmin-instinct-2s-solar": ["Garmin Instinct 2s.jpg"],
+
+  // Línea de iPhone. Son renders vectoriales del equipo solo y sin fondo:
+  // Commons los entrega rasterizados a PNG con transparencia, así que sobre
+  // la tarjeta blanca quedan como una foto de producto de catálogo, y toda
+  // la grilla se ve pareja en vez de mezclar fotos ambientales.
+  //
+  // Faltan los Pro Max del 12 al 14: en Commons con ese nombre lo único que
+  // hay es el logotipo del modelo —el texto "iPhone 14 Pro Max"—, no el
+  // equipo. Quedan con foto ambiental hasta que haya una propia.
+  "iphone-17": ["IPhone 17 Vector.svg"],
+  "iphone-17-pro": ["IPhone 17 Pro Vector.svg"],
+  "iphone-17-pro-max": ["IPhone 17 Pro Max Vector.svg"],
+  "iphone-16": ["IPhone 16 Vector.svg"],
+  "iphone-16-pro": ["IPhone 16 Pro Vector.svg"],
+  "iphone-16-pro-max": ["IPhone 16 Pro Max Vector.svg"],
+  "iphone-15": ["IPhone 15 Vector.svg"],
+  "iphone-15-pro": ["IPhone 15 Pro Vector.svg"],
+  "iphone-15-pro-max": ["IPhone 15 Pro Max Vector.svg"],
+  "iphone-14": ["IPhone 14 vector.svg"],
+  "iphone-14-pro": ["IPhone 14 Pro vector.svg"],
+  "iphone-13": ["IPhone 13 vector.svg"],
+  "iphone-13-pro": ["IPhone 13 Pro vector.svg"],
+  "iphone-12": ["IPhone 12 Blue.svg"],
+  "iphone-12-pro": ["IPhone 12 Pro Gold.svg"],
+  "iphone-11": ["IPhone 11 White.svg"],
+  "iphone-11-pro": ["IPhone 11 Pro Midnight Green.svg"],
+  "iphone-11-pro-max": ["IPhone 11 Pro Max Midnight Green.svg"],
 };
 
 const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -91,6 +118,17 @@ async function ficha(archivo) {
   };
 }
 
+/**
+ * Ancho y alto de un PNG, leídos del encabezado IHDR.
+ *
+ * Son 8 bytes de firma, 8 de largo y tipo de bloque, y ahí vienen los dos
+ * enteros de 32 bits. No hace falta una librería para esto.
+ */
+function medirPng(buf) {
+  if (buf.length < 24 || buf.toString("ascii", 12, 16) !== "IHDR") return null;
+  return { ancho: buf.readUInt32BE(16), alto: buf.readUInt32BE(20) };
+}
+
 const indice = {};
 
 for (const [slug, archivos] of Object.entries(FOTOS)) {
@@ -100,9 +138,30 @@ for (const [slug, archivos] of Object.entries(FOTOS)) {
   for (const [i, archivo] of archivos.entries()) {
     const { descarga, autor, licencia, origen } = await ficha(archivo);
     const r = await pedir(descarga);
-    const nombre = `${i + 1}.jpg`;
-    await writeFile(path.join(RAIZ, slug, nombre), Buffer.from(await r.arrayBuffer()));
-    indice[slug].push({ url: `/productos/${slug}/${nombre}`, autor, licencia, origen });
+    const ext = descarga.split("?")[0].toLowerCase().endsWith(".png") ? "png" : "jpg";
+    const nombre = `${i + 1}.${ext}`;
+    const datos = Buffer.from(await r.arrayBuffer());
+
+    // Una pieza mucho más ancha que alta no es un equipo sino el logotipo del
+    // modelo: en Commons conviven con el mismo nombre y ya se coló uno al
+    // catálogo. Frenarlo acá es más barato que descubrirlo mirando la grilla.
+    const medidas = medirPng(datos);
+    if (medidas && medidas.ancho / medidas.alto > 2.5) {
+      throw new Error(
+        `${archivo} mide ${medidas.ancho}x${medidas.alto}: con esa proporción no ` +
+          `es una foto del equipo sino el logotipo del modelo. Elegí otro archivo.`
+      );
+    }
+
+    await writeFile(path.join(RAIZ, slug, nombre), datos);
+    indice[slug].push({
+      url: `/productos/${slug}/${nombre}`,
+      autor,
+      licencia,
+      origen,
+      // Un render sin fondo se muestra sobre blanco; una foto ambiental no.
+      recorte: ext === "png" ? "render" : "foto",
+    });
     console.log(`✓ ${slug}/${nombre}  ${licencia} — ${autor}`);
   }
 }
@@ -117,6 +176,8 @@ export type CreditoFoto = {
   autor: string;
   licencia: string;
   origen: string;
+  /** "render" es el equipo recortado sobre transparente; "foto", una toma real. */
+  recorte: "render" | "foto";
 };
 
 export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = `;

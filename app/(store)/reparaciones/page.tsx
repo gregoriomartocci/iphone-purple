@@ -20,9 +20,10 @@ import { formatARS } from "@/utils/format";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Reparaciones",
+  title: "Reparación de iPhone en La Plata",
   description:
-    "Servicio técnico propio para iPhone y iPad: pantalla, batería, pin de carga y más. Diagnóstico sin cargo y garantía sobre la reparación.",
+    "Servicio técnico propio en La Plata para iPhone y iPad: cambio de pantalla, batería, pin de carga, cámara y daño por líquido. Diagnóstico sin cargo y garantía escrita sobre la reparación.",
+  alternates: { canonical: "/reparaciones" },
 };
 
 export const revalidate = 3600;

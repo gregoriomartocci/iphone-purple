@@ -8,9 +8,10 @@ import { getSettings } from "@/lib/data";
 import { GENERAL_MESSAGE } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
-  title: "Contacto",
+  title: "Contacto y dónde estamos en La Plata",
   description:
-    "Dónde estamos, horarios de atención y cómo escribirnos. Respondemos por WhatsApp dentro del horario del local.",
+    "Dirección del local en La Plata, horarios de atención y WhatsApp. Respondemos dentro del horario y enviamos a todo el país.",
+  alternates: { canonical: "/contacto" },
 };
 
 export const revalidate = 3600;

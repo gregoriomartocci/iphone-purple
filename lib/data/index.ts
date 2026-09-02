@@ -8,6 +8,7 @@ import type {
   TradeInPrice,
 } from "@/types";
 import * as seed from "./seed";
+import { CALIDAD_PRECIO, MAS_VENDIDOS } from "./destacados";
 import * as db from "./supabase";
 import {
   capacityInGb,
@@ -166,6 +167,32 @@ export async function getProduct(slug: string): Promise<Product | null> {
 export async function getFeaturedProducts(limit = 6): Promise<Product[]> {
   const items = await allProducts();
   return items.filter((p) => p.isFeatured && totalStock(p) > 0).slice(0, limit);
+}
+
+/**
+ * Resuelve una lista curada de slugs a productos, respetando ese orden.
+ *
+ * Los que no existen o quedaron sin stock se descartan: la portada no puede
+ * ofrecer algo que no se puede vender, y una lista desactualizada tiene que
+ * degradar mostrando menos, nunca rompiendo.
+ */
+async function porSlugs(slugs: readonly string[], limit: number): Promise<Product[]> {
+  const items = await allProducts();
+  const porSlug = new Map(items.map((p) => [p.slug, p]));
+  return slugs
+    .map((slug) => porSlug.get(slug))
+    .filter((p): p is Product => p !== undefined && totalStock(p) > 0)
+    .slice(0, limit);
+}
+
+/** Los que más salen, en el orden en que los ordenó el local. */
+export async function getBestsellers(limit = 6): Promise<Product[]> {
+  return porSlugs(MAS_VENDIDOS, limit);
+}
+
+/** Los que mejor rinden por lo que cuestan. */
+export async function getBestValue(limit = 5): Promise<Product[]> {
+  return porSlugs(CALIDAD_PRECIO, limit);
 }
 
 export async function getRelatedProducts(

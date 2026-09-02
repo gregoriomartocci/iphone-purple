@@ -3,6 +3,7 @@ import Link from "next/link";
 import { formatARS } from "@/utils/format";
 import { leadVariant, totalStock } from "@/lib/catalog";
 import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
+import { CON_ETIQUETA_VENDIDO } from "@/lib/data/destacados";
 import type { VariantFilters } from "@/lib/catalog";
 import { CATEGORY_LABELS, GRADE_LABELS, type Product } from "@/types";
 import { cn } from "@/lib/utils";
@@ -50,6 +51,9 @@ export function ProductCard({
   const lead = leadVariant(product, filters);
   const stock = totalStock(product);
   const image = product.images[0];
+  // Foto del equipo recortado sobre transparente: se muestra sobre blanco.
+  const propia = FOTOS_PRODUCTO[product.slug]?.[0]?.recorte === "render";
+  const masVendido = CON_ETIQUETA_VENDIDO.has(product.slug);
   const multiplePrices = new Set(product.variants.map((v) => v.priceArs)).size > 1;
 
   const detalle = [
@@ -72,7 +76,15 @@ export function ProductCard({
         stock === 0 && "opacity-55"
       )}
     >
-      <div className="bg-elevated relative aspect-square overflow-hidden">
+      {/* Fondo blanco cuando la imagen es el equipo recortado: así se ve como
+          una foto de catálogo y todas las tarjetas quedan parejas. Las fotos
+          ambientales van sobre el gris, que las contiene mejor. */}
+      <div
+        className={cn(
+          "relative aspect-square overflow-hidden",
+          propia ? "bg-white" : "bg-elevated"
+        )}
+      >
         {image ? (
           <Image
             src={image.url}
@@ -83,13 +95,21 @@ export function ProductCard({
               "transition-transform duration-[600ms] ease-out group-hover:scale-[1.06]",
               // Igual que en la ficha: la foto del producto entra completa,
               // la ambiental se recorta.
-              FOTOS_PRODUCTO[product.slug] ? "object-contain p-5" : "object-cover"
+              propia ? "object-contain p-3" : "object-cover"
             )}
           />
         ) : (
           <div className="text-muted-foreground flex h-full items-center justify-center text-sm">
             Sin foto
           </div>
+        )}
+
+        {masVendido && (
+          // Va sobre la foto y no arriba del nombre: es una señal de qué mirar
+          // mientras se recorre la grilla, no un dato del equipo.
+          <span className="bg-purple absolute bottom-3 left-3 rounded-md px-2.5 py-1 text-[11px] font-semibold tracking-wide text-white uppercase">
+            Más vendido
+          </span>
         )}
       </div>
 
