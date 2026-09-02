@@ -117,7 +117,10 @@ export default async function CatalogPage({
             />
 
             {products.length > 0 ? (
-              <div className="mt-8 grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+              // Cuatro por fila como techo: con cinco las tarjetas quedan
+              // angostas y altas, y el equipo se ve chico. Cuatro mantiene
+              // varias por fila y deja la tarjeta con proporción pareja.
+              <div className="mt-8 grid grid-cols-2 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {products.map((product, i) => (
                   <ProductCard
                     key={product.id}

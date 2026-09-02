@@ -3,9 +3,8 @@ import Link from "next/link";
 import { formatARS } from "@/utils/format";
 import { leadVariant, totalStock } from "@/lib/catalog";
 import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
-import { CON_ETIQUETA_VENDIDO } from "@/lib/data/destacados";
 import type { VariantFilters } from "@/lib/catalog";
-import { CATEGORY_LABELS, GRADE_LABELS, type Product } from "@/types";
+import { GRADE_LABELS, type Product } from "@/types";
 import { cn } from "@/lib/utils";
 
 /** Etiqueta de disponibilidad, en texto y sin color. */
@@ -53,7 +52,6 @@ export function ProductCard({
   const image = product.images[0];
   // Foto del equipo recortado sobre transparente: se muestra sobre blanco.
   const propia = FOTOS_PRODUCTO[product.slug]?.[0]?.recorte === "render";
-  const masVendido = CON_ETIQUETA_VENDIDO.has(product.slug);
   const multiplePrices = new Set(product.variants.map((v) => v.priceArs)).size > 1;
 
   const detalle = [
@@ -76,12 +74,16 @@ export function ProductCard({
         stock === 0 && "opacity-55"
       )}
     >
-      {/* Fondo blanco cuando la imagen es el equipo recortado: así se ve como
+      {/* La foto va más ancha que alta y el texto ocupa lo mínimo: así la
+          tarjeta entera queda con proporción pareja en vez de alargada, que
+          es lo que pasaba con una foto cuadrada más cuatro líneas debajo.
+
+          Fondo blanco cuando la imagen es el equipo recortado: así se ve como
           una foto de catálogo y todas las tarjetas quedan parejas. Las fotos
           ambientales van sobre el gris, que las contiene mejor. */}
       <div
         className={cn(
-          "relative aspect-square overflow-hidden",
+          "relative aspect-4/3 overflow-hidden",
           propia ? "bg-white" : "bg-elevated"
         )}
       >
@@ -103,29 +105,17 @@ export function ProductCard({
             Sin foto
           </div>
         )}
-
-        {masVendido && (
-          // Va sobre la foto y no arriba del nombre: es una señal de qué mirar
-          // mientras se recorre la grilla, no un dato del equipo.
-          <span className="bg-purple absolute bottom-3 left-3 rounded-md px-2.5 py-1 text-[11px] font-semibold tracking-wide text-white uppercase">
-            Más vendido
-          </span>
-        )}
       </div>
 
-      <div className="flex flex-1 flex-col p-4 sm:p-5">
-        <p className="eyebrow text-muted-foreground">
-          {CATEGORY_LABELS[product.category]}
-        </p>
-
-        <h3 className="text-foreground mt-2 text-base leading-snug font-medium sm:text-lg">
+      <div className="flex flex-1 flex-col p-3.5">
+        <h3 className="text-foreground text-base leading-snug font-medium">
           {product.name}
         </h3>
 
-        <p className="text-muted-foreground mt-1 text-sm">{detalle.join(" · ")}</p>
+        <p className="text-muted-foreground mt-0.5 text-sm">{detalle.join(" · ")}</p>
 
-        <div className="mt-auto flex items-baseline gap-2 pt-5">
-          {multiplePrices && <span className="text-muted-foreground text-sm">Desde</span>}
+        <div className="mt-auto flex items-baseline gap-1.5 pt-3">
+          {multiplePrices && <span className="text-muted-foreground text-xs">Desde</span>}
           <span className="tnum text-foreground text-xl font-semibold">
             {formatARS(lead?.priceArs ?? 0)}
           </span>

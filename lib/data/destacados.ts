@@ -13,7 +13,7 @@
  * lista desactualizada nunca rompe la página: como mucho muestra menos.
  */
 
-/** Los que más salen. El primero lleva la etiqueta destacada en el catálogo. */
+/** Los que más salen, en el orden en que se muestran en la portada. */
 export const MAS_VENDIDOS = [
   "iphone-17-pro",
   "iphone-14-pro-max",
@@ -34,13 +34,3 @@ export const CALIDAD_PRECIO = [
   "iphone-12-pro",
   "iphone-11-pro",
 ] as const;
-
-/**
- * Equipos que llevan la etiqueta "Más vendido" en la tarjeta.
- *
- * Es un Set y no la lista entera: la etiqueta pierde sentido si la tienen
- * todos, así que la llevan solo los tres primeros.
- */
-export const CON_ETIQUETA_VENDIDO: ReadonlySet<string> = new Set(
-  MAS_VENDIDOS.slice(0, 3)
-);
