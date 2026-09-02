@@ -3,8 +3,10 @@ export type UserRole = "customer" | "admin" | "super_admin";
 // ─────────────────────────────────────────────────────────────
 // Taxonomía del catálogo
 //
-// Cinco ejes que se combinan, en vez de una sola lista de "categorías":
-//   categoría      qué es el producto        → navegación
+// Los ejes se combinan y se revelan de a poco, de lo general a lo específico:
+//   marca          Apple, Sony, Nintendo     → primer corte
+//   categoría      qué es el producto        → aparece dentro de la marca
+//   modelo         iPhone 15 Pro Max         → aparece dentro de la categoría
 //   autenticidad   original o réplica        → filtro, y separación por defecto
 //   grado          sellado / A+ / A / B      → filtro
 //   batería        tramos de salud           → filtro
@@ -305,6 +307,8 @@ export interface StoreSettings {
 /** Filtros del catálogo. Todos llegan desde la URL. */
 export interface CatalogFilters {
   q?: string;
+  /** Marca: Apple, Sony, Nintendo… Es el primer eje del filtrado. */
+  brand?: string;
   category?: Category;
   model?: string;
   generation?: number;

@@ -87,6 +87,10 @@ export async function getProducts(filters: CatalogFilters = {}): Promise<Product
     });
   }
 
+  if (filters.brand) {
+    items = items.filter((p) => normalize(p.brand) === normalize(filters.brand!));
+  }
+
   if (filters.category) {
     items = items.filter((p) => p.category === filters.category);
   }
@@ -183,6 +187,7 @@ export async function getRelatedProducts(
 export type Facet = { value: string; count: number };
 
 export type CatalogFacets = {
+  brands: Facet[];
   categories: Facet[];
   generations: Facet[];
   lines: Facet[];
@@ -211,8 +216,22 @@ export async function getCatalogFacets(
   const all = await allProducts();
   const authenticity = filters.authenticity ?? "original";
 
-  const countWith = async (extra: Partial<CatalogFilters>) =>
-    (await getProducts({ ...filters, ...extra })).length;
+  /**
+   * Cuenta cuántos productos quedarían aplicando los filtros actuales más uno.
+   *
+   * `drop` saca los filtros que están POR DEBAJO del eje que se cuenta. Si no,
+   * al elegir "iPhone" el contador de la marca Sony daría cero —no hay iPhones
+   * Sony—, la opción se descartaría y la persona se quedaría sin poder cambiar
+   * de marca. Un eje nunca puede quedar bloqueado por lo que se eligió después.
+   */
+  const countWith = async (
+    extra: Partial<CatalogFilters>,
+    drop: (keyof CatalogFilters)[] = []
+  ) => {
+    const base = { ...filters };
+    for (const key of drop) delete base[key];
+    return (await getProducts({ ...base, ...extra })).length;
+  };
 
   // El universo de opciones sale de lo que existe con esta autenticidad.
   const visible = all.filter((p) =>
@@ -220,13 +239,29 @@ export async function getCatalogFacets(
   );
   const visibleVariants = visible.flatMap((p) => p.variants);
 
+  const brands = [...new Set(visible.map((p) => p.brand))].sort((a, b) =>
+    // Apple primero: es la especialidad del negocio.
+    a === "Apple" ? -1 : b === "Apple" ? 1 : a.localeCompare(b)
+  );
   const categories = CATEGORIES.filter((c) => visible.some((p) => p.category === c));
   // De la generación más nueva a la más vieja, que es como se busca.
   const generations = [
     ...new Set(visible.map((p) => p.generation).filter((g): g is number => g !== null)),
   ].sort((a, b) => b - a);
   const lines = LINES.filter((l) => visible.some((p) => p.line === l));
-  const models = [...new Set(visible.map((p) => p.model))].sort();
+  /**
+   * Modelos de la generación más nueva a la más vieja, y dentro de cada una
+   * de la línea base a la Pro Max. Alfabético pondría "iPhone 11" antes que
+   * "iPhone 9", que no es como nadie busca un teléfono.
+   */
+  const models = [...new Set(visible.map((p) => p.model))].sort((a, b) => {
+    const pa = visible.find((p) => p.model === a)!;
+    const pb = visible.find((p) => p.model === b)!;
+    if (pa.generation !== pb.generation) {
+      return (pb.generation ?? -1) - (pa.generation ?? -1);
+    }
+    return LINES.indexOf(pa.line ?? "base") - LINES.indexOf(pb.line ?? "base");
+  });
   // Solo capacidades reales: el campo también guarda tamaños de caja de Watch
   // y conectores de AirPods, que no son almacenamiento.
   const storages = [...new Set(visibleVariants.map((v) => v.storage))]
@@ -245,13 +280,22 @@ export async function getCatalogFacets(
 
   const count = async <T extends string | number>(
     values: T[],
-    toFilter: (v: T) => Partial<CatalogFilters>
+    toFilter: (v: T) => Partial<CatalogFilters>,
+    drop: (keyof CatalogFilters)[] = []
   ): Promise<Facet[]> =>
     Promise.all(
-      values.map(async (v) => ({ value: String(v), count: await countWith(toFilter(v)) }))
+      values.map(async (v) => ({
+        value: String(v),
+        count: await countWith(toFilter(v), drop),
+      }))
     );
 
+  // Los ejes van de lo general a lo específico; cada uno ignora los de abajo.
+  const bajoMarca: (keyof CatalogFilters)[] = ["category", "model"];
+  const bajoCategoria: (keyof CatalogFilters)[] = ["model"];
+
   const [
+    brandCounts,
     categoryCounts,
     generationCounts,
     lineCounts,
@@ -263,7 +307,8 @@ export async function getCatalogFacets(
     batteryCounts,
     replicas,
   ] = await Promise.all([
-    count(categories, (c) => ({ category: c })),
+    count(brands, (b) => ({ brand: b }), bajoMarca),
+    count(categories, (c) => ({ category: c }), bajoCategoria),
     count(generations, (g) => ({ generation: g })),
     count(lines, (l) => ({ line: l })),
     count(models, (m) => ({ model: m })),
@@ -279,6 +324,7 @@ export async function getCatalogFacets(
   const used = (list: Facet[]) => list.filter((f) => f.count > 0);
 
   return {
+    brands: used(brandCounts),
     categories: used(categoryCounts),
     generations: used(generationCounts),
     lines: used(lineCounts),

@@ -404,6 +404,22 @@ describe("getCatalogFacets", () => {
     }
   });
 
+  it("un eje no se bloquea por lo que se eligió debajo", async () => {
+    // Con "iPhone" elegido, Sony no tiene iPhones y su contador daría cero:
+    // si se descartara, la persona ya no podría volver a cambiar de marca.
+    const facets = await getCatalogFacets({ brand: "Apple", category: "iphone" });
+    expect(facets.brands.length).toBeGreaterThan(1);
+    expect(facets.brands.map((f) => f.value)).toContain("Sony");
+  });
+
+  it("la categoría tampoco se bloquea por el modelo elegido", async () => {
+    const facets = await getCatalogFacets({
+      category: "iphone",
+      model: "iPhone 15 Pro",
+    });
+    expect(facets.categories.length).toBeGreaterThan(1);
+  });
+
   it("descarta las opciones que no dejarían ningún resultado", async () => {
     const facets = await getCatalogFacets({ model: "iPhone 16" });
     for (const list of [facets.models, facets.storages, facets.grades]) {

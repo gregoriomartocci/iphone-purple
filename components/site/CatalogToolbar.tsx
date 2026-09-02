@@ -45,6 +45,7 @@ export function CatalogToolbar({
   function navigate(next: CatalogFilters) {
     const params = new URLSearchParams();
     if (next.q) params.set("q", next.q);
+    if (next.brand) params.set("marca", next.brand);
     if (next.category) params.set("category", next.category);
     if (next.generation) params.set("gen", String(next.generation));
     if (next.line) params.set("linea", next.line);
@@ -63,6 +64,7 @@ export function CatalogToolbar({
 
   const chips = [
     filters.q && { label: `"${filters.q}"`, clear: { q: undefined } },
+    filters.brand && { label: filters.brand, clear: { brand: undefined } },
     filters.category && {
       label: CATEGORY_LABELS[filters.category as Category],
       clear: { category: undefined },

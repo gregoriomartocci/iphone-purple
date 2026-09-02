@@ -9,12 +9,10 @@ import {
   CATEGORY_LABELS,
   GRADE_LABELS,
   GRADE_SPECS,
-  LINE_LABELS,
   STATE_LABELS,
   type CatalogFilters,
   type Category,
   type Grade,
-  type Line,
   type State,
 } from "@/types";
 import { cn } from "@/lib/utils";
@@ -44,9 +42,8 @@ export function CatalogSidebar({
   function navigate(next: CatalogFilters) {
     const params = new URLSearchParams();
     if (next.q) params.set("q", next.q);
+    if (next.brand) params.set("marca", next.brand);
     if (next.category) params.set("category", next.category);
-    if (next.generation) params.set("gen", String(next.generation));
-    if (next.line) params.set("linea", next.line);
     if (next.model) params.set("model", next.model);
     if (next.state) params.set("estado", next.state);
     if (next.grade) params.set("grade", next.grade);
@@ -68,6 +65,30 @@ export function CatalogSidebar({
 
   const panel = (
     <div className={cn("space-y-2 transition-opacity", pending && "opacity-60")}>
+      {facets.brands.length > 1 && (
+        <Section title="Marca" defaultOpen>
+          {facets.brands.map((f) => (
+            <FilterRow
+              key={f.value}
+              label={f.value}
+              count={f.count}
+              checked={filters.brand === f.value}
+              onChange={() =>
+                // Cambiar de marca invalida todo lo de abajo.
+                navigate({
+                  ...filters,
+                  brand: filters.brand === f.value ? undefined : f.value,
+                  category: undefined,
+                  model: undefined,
+                  generation: undefined,
+                  line: undefined,
+                })
+              }
+            />
+          ))}
+        </Section>
+      )}
+
       {facets.categories.length > 1 && (
         <Section title="Categoría" defaultOpen>
           {facets.categories.map((f) => (
@@ -76,35 +97,30 @@ export function CatalogSidebar({
               label={CATEGORY_LABELS[f.value as Category]}
               count={f.count}
               checked={filters.category === f.value}
-              onChange={() => toggle("category", f.value)}
+              onChange={() =>
+                navigate({
+                  ...filters,
+                  category:
+                    filters.category === f.value ? undefined : (f.value as Category),
+                  model: undefined,
+                })
+              }
             />
           ))}
         </Section>
       )}
 
-      {facets.generations.length > 1 && (
-        <Section title="Generación" defaultOpen>
-          {facets.generations.map((f) => (
+      {/* El modelo solo tiene sentido dentro de una categoría: sin ese corte
+          la lista mezcla iPhones, iPads y consolas. */}
+      {filters.category && facets.models.length > 1 && (
+        <Section title="Modelo" defaultOpen>
+          {facets.models.map((f) => (
             <FilterRow
               key={f.value}
               label={f.value}
               count={f.count}
-              checked={filters.generation === Number(f.value)}
-              onChange={() => toggle("generation", Number(f.value))}
-            />
-          ))}
-        </Section>
-      )}
-
-      {facets.lines.length > 1 && (
-        <Section title="Línea" defaultOpen>
-          {facets.lines.map((f) => (
-            <FilterRow
-              key={f.value}
-              label={LINE_LABELS[f.value as Line]}
-              count={f.count}
-              checked={filters.line === f.value}
-              onChange={() => toggle("line", f.value)}
+              checked={filters.model === f.value}
+              onChange={() => toggle("model", f.value)}
             />
           ))}
         </Section>

@@ -20,7 +20,7 @@ export function PageHero({
   image: string;
 }) {
   return (
-    <section className="bg-ink relative isolate flex min-h-[320px] items-end overflow-hidden sm:min-h-[380px]">
+    <section className="bg-ink relative isolate -mt-16 flex min-h-[400px] items-end overflow-hidden sm:min-h-[460px]">
       <Image
         src={image}
         // Decorativa: el sentido lo aporta el <h1>, así que un alt acá sería ruido
@@ -37,7 +37,7 @@ export function PageHero({
         className="absolute inset-0 -z-10 bg-linear-to-t from-black/90 via-black/60 to-black/40"
       />
 
-      <div className="shell w-full pt-24 pb-12 sm:pb-14">
+      <div className="shell w-full pt-28 pb-12 sm:pb-14">
         <h1 className="text-4xl font-semibold text-white sm:text-5xl">{title}</h1>
         {subtitle && (
           <p className="mt-4 max-w-xl leading-relaxed text-white/75">{subtitle}</p>

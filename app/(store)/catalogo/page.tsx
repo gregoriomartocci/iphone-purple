@@ -44,6 +44,7 @@ function parseFilters(params: SearchParams): CatalogFilters {
 
   return {
     q: first(params.q),
+    brand: first(params.marca),
     model: first(params.model),
     storage: first(params.storage),
     // Solo aceptamos valores conocidos: una URL manipulada no debe romper el filtro.

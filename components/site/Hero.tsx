@@ -14,7 +14,7 @@ export function Hero() {
   return (
     // Centrado en vez de anclado abajo: así compone bien con video de fondo y
     // también sin él, que es como arranca el proyecto hasta que cargues el tuyo.
-    <section className="bg-ink relative isolate flex min-h-[78svh] items-center overflow-hidden">
+    <section className="bg-ink relative isolate -mt-16 flex min-h-[88svh] items-center overflow-hidden">
       <video
         autoPlay
         muted
