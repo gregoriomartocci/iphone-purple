@@ -226,6 +226,68 @@
   }
 
   /**
+   * Aparición escalonada de los hijos de un bloque.
+   *
+   * Cada hijo entra un poco después que el anterior, así una fila de tarjetas
+   * se arma de izquierda a derecha en vez de aparecer entera de golpe. El
+   * retraso lo pone el CSS con `nth-child`, no el componente: escalonar desde
+   * React obliga a pasar el índice a cada hijo solo para esto.
+   */
+  @supports (animation-timeline: view()) {
+    .aparece-escalonado > * {
+      animation: rise-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+    .aparece-escalonado > *:nth-child(2) {
+      animation-range: entry 4% entry 44%;
+    }
+    .aparece-escalonado > *:nth-child(3) {
+      animation-range: entry 8% entry 48%;
+    }
+    .aparece-escalonado > *:nth-child(4) {
+      animation-range: entry 12% entry 52%;
+    }
+    .aparece-escalonado > *:nth-child(n + 5) {
+      animation-range: entry 16% entry 56%;
+    }
+  }
+
+  /**
+   * Acercamiento lentísimo de una foto de fondo.
+   *
+   * Le saca a la portada la sensación de lámina pegada: el movimiento es tan
+   * lento que no se percibe como animación, solo se nota que la imagen está
+   * viva. Va sobre la foto, no sobre el texto, para no arrastrar el titular.
+   */
+  .respira {
+    animation: respira 24s ease-in-out infinite alternate;
+  }
+
+  /**
+   * Subrayado que crece desde la izquierda al pasar el mouse.
+   * Se usa en los links de sección, que antes solo cambiaban de color.
+   */
+  .subraya {
+    position: relative;
+  }
+  .subraya::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
+    width: 100%;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .subraya:hover::after {
+    transform: scaleX(1);
+  }
+
+  /**
    * Carrito lateral. La curva es la misma que usa iOS para las hojas
    * modales: arranca rápido y frena largo, que es lo que hace que el panel
    * se sienta empujado y no disparado.
@@ -292,6 +354,15 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes respira {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.07);
   }
 }
 

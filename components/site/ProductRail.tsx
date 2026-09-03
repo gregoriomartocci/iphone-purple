@@ -38,7 +38,7 @@ export function ProductRail({
         </div>
         <Link
           href={href}
-          className="text-foreground hover:text-purple hidden shrink-0 items-center gap-1.5 text-sm sm:inline-flex"
+          className="text-foreground hover:text-purple subraya hidden shrink-0 items-center gap-1.5 text-sm sm:inline-flex"
         >
           Ver todo
           <ArrowRight className="size-3.5" />
@@ -103,9 +103,9 @@ export function ProductRanking({
         {subtitle && <p className="text-muted-foreground mt-2 max-w-xl">{subtitle}</p>}
       </div>
 
-      <ol className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+      <ol className="aparece-escalonado mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
         {products.map((product, i) => (
-          <li key={product.id} className="aparece relative">
+          <li key={product.id} className="relative">
             {/* La posición flota sobre la esquina de la tarjeta: ocupa cero
                 espacio del layout y se lee de un vistazo al recorrer la fila. */}
             <span

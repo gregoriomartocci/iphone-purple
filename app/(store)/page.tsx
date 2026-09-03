@@ -86,7 +86,7 @@ export default async function HomePage() {
 
       {/* Tres accesos: el 90 % de las visitas viene por una de estas tres puertas. */}
       <section className="shell py-16">
-        <div className="grid gap-5 sm:grid-cols-3">
+        <div className="aparece-escalonado grid gap-5 sm:grid-cols-3">
           {SHORTCUTS.map(({ href, icon: Icon, title, text }, i) => (
             <Link
               key={href}
@@ -165,7 +165,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="mt-20 grid gap-8 border-t border-white/10 pt-12 sm:grid-cols-3">
+          <div className="aparece-escalonado mt-20 grid gap-8 border-t border-white/10 pt-12 sm:grid-cols-3">
             {TRUST.map((item) => (
               <div key={item.title}>
                 <ShieldCheck className="text-purple size-5" />
@@ -185,14 +185,14 @@ export default async function HomePage() {
             <h2 className="text-3xl font-semibold sm:text-4xl">Blog</h2>
             <Link
               href="/blog"
-              className="text-foreground hover:text-purple inline-flex shrink-0 items-center gap-1.5 text-sm"
+              className="text-foreground hover:text-purple subraya inline-flex shrink-0 items-center gap-1.5 text-sm"
             >
               Ver todas
               <ArrowRight className="size-3.5" />
             </Link>
           </div>
 
-          <div className="aparece mt-10 grid gap-6 sm:grid-cols-3">
+          <div className="aparece-escalonado mt-10 grid gap-6 sm:grid-cols-3">
             {latestPosts.map((post) => (
               <Link key={post.id} href={`/blog/${post.slug}`} className="group">
                 <div className="bg-surface relative aspect-16/10 overflow-hidden rounded-xl">

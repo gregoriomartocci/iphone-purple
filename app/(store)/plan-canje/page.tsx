@@ -71,7 +71,7 @@ export default async function TradeInPage() {
             párrafos y no como una secuencia de tres. */}
         <section className="mt-16 sm:mt-20">
           <h2 className="text-2xl font-semibold sm:text-3xl">Cómo funciona</h2>
-          <ol className="mt-8 grid gap-5 sm:grid-cols-3">
+          <ol className="aparece-escalonado mt-8 grid gap-5 sm:grid-cols-3">
             {STEPS.map((step, i) => (
               <li
                 key={step.title}
@@ -89,7 +89,7 @@ export default async function TradeInPage() {
 
         <section className="mt-16 sm:mt-20">
           <h2 className="text-2xl font-semibold sm:text-3xl">Lo que conviene saber</h2>
-          <dl className="mt-8 grid gap-5 sm:grid-cols-2">
+          <dl className="aparece-escalonado mt-8 grid gap-5 sm:grid-cols-2">
             <div className="border-line bg-surface rounded-2xl border p-6 shadow-sm">
               <dt className="text-foreground font-medium">
                 ¿Recibís equipos con la pantalla rota?

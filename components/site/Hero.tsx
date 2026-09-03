@@ -27,7 +27,7 @@ export function Hero() {
         poster="/hero-poster.jpg"
         aria-hidden
         tabIndex={-1}
-        className="absolute inset-0 -z-10 size-full object-cover object-center"
+        className="respira absolute inset-0 -z-10 size-full object-cover object-center"
       >
         <source src="/hero.mp4" type="video/mp4" />
       </video>

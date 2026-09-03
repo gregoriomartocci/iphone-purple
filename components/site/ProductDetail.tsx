@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import { BatteryMedium, Check, ShieldCheck, Truck, Wrench } from "lucide-react";
 import { WhatsAppLink } from "./WhatsAppLink";
 import { AddToCart } from "@/components/cart/AddToCart";
+import { Galeria } from "./Galeria";
 import { savingsVsNew } from "@/lib/catalog";
 import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
 import { productMessage } from "@/lib/whatsapp";
@@ -61,10 +61,8 @@ export function ProductDetail({
   }, [product.variants]);
 
   const [selected, setSelected] = useState<Variant | undefined>(initial);
-  const [imageIndex, setImageIndex] = useState(0);
 
   const storages = [...new Set(product.variants.map((v) => v.storage))];
-  const image = product.images[imageIndex] ?? product.images[0];
 
   /**
    * Fotos del producto real, con su autoría. Cuando existen se muestra el
@@ -72,17 +70,19 @@ export function ProductDetail({
    * corresponde acreditar a nadie.
    */
   const propias = FOTOS_PRODUCTO[product.slug];
-  const credito = propias?.[imageIndex] ?? propias?.[0];
+  const credito = propias?.[0];
 
   /**
-   * Cómo encuadrar cada foto, decidido una por una y no por producto.
+   * Piezas de la galería.
    *
-   * Un render recortado tiene que entrar entero sobre blanco —recortarlo le
-   * come el borde al equipo—, mientras que una foto real se recorta, porque
-   * encuadrarla completa deja franjas vacías a los costados. Una misma ficha
-   * mezcla las dos cosas: el render primero y fotos del dorso después.
+   * El video va último a propósito: primero se quiere ver el equipo quieto y
+   * desde todos los ángulos, y recién después cómo se ve andando.
    */
-  const esRender = (i: number) => propias?.[i]?.recorte === "render";
+  const piezas = product.images.map((img, i) => ({
+    url: img.url,
+    alt: img.alt,
+    render: propias?.[i]?.recorte === "render",
+  }));
 
   /** Variantes de la capacidad elegida: definen los grados y colores ofrecidos. */
   const sameStorage = product.variants.filter((v) => v.storage === selected?.storage);
@@ -97,24 +97,13 @@ export function ProductDetail({
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_460px] lg:gap-14">
       <div className="lg:sticky lg:top-24 lg:self-start">
-        <div className="border-line bg-surface relative aspect-square overflow-hidden rounded-3xl border shadow-sm">
-          {image && (
-            <Image
-              src={image.url}
-              alt={image.alt}
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 620px"
-              className={cn(
-                esRender(imageIndex) ? "bg-white object-contain p-4" : "object-cover"
-              )}
-            />
-          )}
+        <div className="relative">
+          <Galeria piezas={piezas} />
 
           {selected && (
             <span
               className={cn(
-                "absolute top-5 left-5 rounded-full px-3.5 py-1.5 text-xs font-semibold tracking-wide uppercase",
+                "pointer-events-none absolute top-5 left-5 z-10 rounded-full px-3.5 py-1.5 text-xs font-semibold tracking-wide uppercase",
                 GRADE_STYLES[selected.grade]
               )}
             >
@@ -122,35 +111,6 @@ export function ProductDetail({
             </span>
           )}
         </div>
-
-        {product.images.length > 1 && (
-          <div className="mt-3 flex gap-2">
-            {product.images.map((img, i) => (
-              <button
-                key={img.url}
-                type="button"
-                onClick={() => setImageIndex(i)}
-                aria-label={`Ver foto ${i + 1}`}
-                className={cn(
-                  "relative size-20 overflow-hidden rounded-xl border transition-colors",
-                  i === imageIndex
-                    ? "border-purple"
-                    : "border-line hover:border-foreground/30"
-                )}
-              >
-                <Image
-                  src={img.url}
-                  alt=""
-                  fill
-                  sizes="80px"
-                  className={cn(
-                    esRender(i) ? "bg-white object-contain p-1.5" : "object-cover"
-                  )}
-                />
-              </button>
-            ))}
-          </div>
-        )}
 
         {credito && (
           // Las licencias Creative Commons obligan a dar crédito. Va discreto
