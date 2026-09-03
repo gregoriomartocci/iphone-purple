@@ -16,22 +16,6 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "nintendo-switch-oled": [
     {
       url: "/productos/nintendo-switch-oled/1.jpg",
-      autor: "KKPCW",
-      licencia: "CC BY-SA 4.0",
-      origen:
-        "https://commons.wikimedia.org/wiki/File:Nintendo_switch_OLED_model_-_1.jpg",
-      recorte: "foto",
-    },
-    {
-      url: "/productos/nintendo-switch-oled/2.jpg",
-      autor: "KKPCW",
-      licencia: "CC BY-SA 4.0",
-      origen:
-        "https://commons.wikimedia.org/wiki/File:Nintendo_switch_OLED_model_-_2.jpg",
-      recorte: "foto",
-    },
-    {
-      url: "/productos/nintendo-switch-oled/3.jpg",
       autor: "Grandmaster Huon",
       licencia: "CC0",
       origen: "https://commons.wikimedia.org/wiki/File:Switch_oled_console.jpg",
@@ -122,34 +106,207 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "foto",
     },
   ],
-  "iphone-17": [
+  "macbook-pro-m5-max-16": [
     {
-      url: "/productos/iphone-17/1.jpg",
-      autor: "Ahmad Ali Karim",
-      licencia: "CC0",
-      origen: "https://commons.wikimedia.org/wiki/File:White_iPhone_17.jpg",
+      url: "/productos/macbook-pro-m5-max-16/1.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max.jpg",
       recorte: "foto",
     },
     {
-      url: "/productos/iphone-17/2.png",
+      url: "/productos/macbook-pro-m5-max-16/2.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max_closeup.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-max-16/3.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max_with_Headset_and_Mouse.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-max-16/4.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max_with_Drone.jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-pro-m5-pro-16": [
+    {
+      url: "/productos/macbook-pro-m5-pro-16/1.jpg",
+      autor: "Premeditated",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Pro_16_(M1_Pro,_2021)_-_Wikipedia.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-pro-16/2.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-pro-16/3.jpg",
+      autor: "Premeditated",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Pro_16_(M1_Pro,_2021)_-_Wikipedia_(2).jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-pro-16/4.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max_closeup.jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-pro-m5-14": [
+    {
+      url: "/productos/macbook-pro-m5-14/1.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-14/2.jpg",
+      autor: "Mark Solarski marksolarski",
+      licencia: "CC0",
+      origen: "https://commons.wikimedia.org/wiki/File:Apple_Macbook_Pro_(Unsplash).jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-14/3.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation_(blue).jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-pro-m5-pro-14": [
+    {
+      url: "/productos/macbook-pro-m5-pro-14/1.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation_(blue).jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-pro-14/2.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-pro-14/3.jpg",
+      autor: "Mark Solarski marksolarski",
+      licencia: "CC0",
+      origen: "https://commons.wikimedia.org/wiki/File:Apple_Macbook_Pro_(Unsplash).jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-pro-m5-max-14": [
+    {
+      url: "/productos/macbook-pro-m5-max-14/1.jpg",
+      autor: "Mark Solarski marksolarski",
+      licencia: "CC0",
+      origen: "https://commons.wikimedia.org/wiki/File:Apple_Macbook_Pro_(Unsplash).jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-max-14/2.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-max-14/3.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation_(blue).jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-pro-m4-pro-14": [
+    {
+      url: "/productos/macbook-pro-m4-pro-14/1.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m4-pro-14/2.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation_(blue).jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m4-pro-14/3.jpg",
+      autor: "Mark Solarski marksolarski",
+      licencia: "CC0",
+      origen: "https://commons.wikimedia.org/wiki/File:Apple_Macbook_Pro_(Unsplash).jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-air-m5-13": [
+    {
+      url: "/productos/macbook-air-m5-13/1.jpg",
+      autor: "AzureSaturn",
+      licencia: "CC0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Air_(13-inch,_M4,_Silver).jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-air-m5-15": [
+    {
+      url: "/productos/macbook-air-m5-15/1.jpg",
+      autor: "AzureSaturn",
+      licencia: "CC0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Air_(15-inch,_M4,_Silver).jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-air-m3": [
+    {
+      url: "/productos/macbook-air-m3/1.jpg",
+      autor: "AzureSaturn",
+      licencia: "CC0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Air_(13-inch,_M4,_Silver).jpg",
+      recorte: "foto",
+    },
+  ],
+  "iphone-17": [
+    {
+      url: "/productos/iphone-17/1.png",
       autor: "Rafael Fernandez",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_17_Vector.svg",
       recorte: "render",
-    },
-    {
-      url: "/productos/iphone-17/3.jpg",
-      autor: "Ahmad Ali Karim",
-      licencia: "CC0",
-      origen: "https://commons.wikimedia.org/wiki/File:Black_iPhone_17.jpg",
-      recorte: "foto",
-    },
-    {
-      url: "/productos/iphone-17/4.jpg",
-      autor: "Ahmad Ali Karim",
-      licencia: "CC0",
-      origen: "https://commons.wikimedia.org/wiki/File:Sage_iPhone_17.jpg",
-      recorte: "foto",
     },
   ],
   "iphone-17-pro": [
@@ -168,56 +325,19 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_17_Pro_Vector.svg",
       recorte: "render",
     },
-    {
-      url: "/productos/iphone-17-pro/3.jpg",
-      autor: "Kyu3a",
-      licencia: "CC BY-SA 4.0",
-      origen:
-        "https://commons.wikimedia.org/wiki/File:IPhone_17_Pro_(Deep_Blue_model).jpg",
-      recorte: "foto",
-    },
   ],
   "iphone-17-pro-max": [
     {
-      url: "/productos/iphone-17-pro-max/1.jpg",
-      autor: "Ahmad Ali Karim",
-      licencia: "CC0",
-      origen:
-        "https://commons.wikimedia.org/wiki/File:Cosmic_Orange_iPhone_17_Pro_Max.jpg",
-      recorte: "foto",
-    },
-    {
-      url: "/productos/iphone-17-pro-max/2.png",
+      url: "/productos/iphone-17-pro-max/1.png",
       autor: "Rafael Fernandez",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_17_Pro_Max_Vector.svg",
       recorte: "render",
     },
-    {
-      url: "/productos/iphone-17-pro-max/3.jpg",
-      autor: "Ahmad Ali Karim",
-      licencia: "CC0",
-      origen: "https://commons.wikimedia.org/wiki/File:Silver_iPhone_17_Pro_Max.jpg",
-      recorte: "foto",
-    },
-    {
-      url: "/productos/iphone-17-pro-max/4.jpg",
-      autor: "Ahmad Ali Karim",
-      licencia: "CC0",
-      origen: "https://commons.wikimedia.org/wiki/File:Deep_Blue_iPhone_17_Pro_Max.jpg",
-      recorte: "foto",
-    },
   ],
   "iphone-16": [
     {
-      url: "/productos/iphone-16/1.jpg",
-      autor: "Kyu3a",
-      licencia: "CC BY-SA 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:Back_of_iPhone_16_Blue_model.jpg",
-      recorte: "foto",
-    },
-    {
-      url: "/productos/iphone-16/2.png",
+      url: "/productos/iphone-16/1.png",
       autor: "Rafael Fernandez",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_16_Vector.svg",
@@ -289,13 +409,6 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_15_Vector.svg",
       recorte: "render",
     },
-    {
-      url: "/productos/iphone-15/3.jpg",
-      autor: "Kyu3",
-      licencia: "CC BY-SA 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:Back_and_side_of_iPhone_15.jpg",
-      recorte: "foto",
-    },
   ],
   "iphone-15-pro": [
     {
@@ -312,13 +425,6 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_15_Pro_Vector.svg",
       recorte: "render",
-    },
-    {
-      url: "/productos/iphone-15-pro/3.jpg",
-      autor: "Kyu3",
-      licencia: "CC BY-SA 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:IPhone_15_Pro.jpg",
-      recorte: "foto",
     },
   ],
   "iphone-15-pro-max": [

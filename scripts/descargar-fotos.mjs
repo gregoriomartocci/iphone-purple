@@ -44,6 +44,53 @@ const FOTOS = {
   "redmi-15c": ["Redmi 15C front.jpg", "Redmi 15C back.jpg"],
   "garmin-instinct-2s-solar": ["Garmin Instinct 2s.jpg"],
 
+  // ── Línea de MacBook
+  //
+  // Acá sí vale usar la foto de otra generación, y es la diferencia con los
+  // teléfonos: el chasis de la MacBook Pro no cambió desde el rediseño de
+  // 2021 —mismo cuerpo, mismo tamaño, misma muesca, mismos puertos— así que
+  // una foto de la de 16" con M2 Max muestra exactamente el equipo que se
+  // vende con M5. Con un iPhone eso no pasa: cada generación cambia el dorso.
+  "macbook-pro-m5-max-16": [
+    'Apple MacBook Pro 16" M2 Max.jpg',
+    'Apple MacBook Pro 16" M2 Max closeup.jpg',
+    'Apple MacBook Pro 16" M2 Max with Headset and Mouse.jpg',
+    'Apple MacBook Pro 16" M2 Max with Drone.jpg',
+  ],
+  "macbook-pro-m5-pro-16": [
+    "MacBook Pro 16 (M1 Pro, 2021) - Wikipedia.jpg",
+    'Apple MacBook Pro 16" M2 Max.jpg',
+    "MacBook Pro 16 (M1 Pro, 2021) - Wikipedia (2).jpg",
+    'Apple MacBook Pro 16" M2 Max closeup.jpg',
+  ],
+  "macbook-pro-m5-14": [
+    "MacBook Pro 3rd Generation.jpg",
+    "Apple Macbook Pro (Unsplash).jpg",
+    "MacBook Pro 3rd Generation (blue).jpg",
+  ],
+  "macbook-pro-m5-pro-14": [
+    "MacBook Pro 3rd Generation (blue).jpg",
+    "MacBook Pro 3rd Generation.jpg",
+    "Apple Macbook Pro (Unsplash).jpg",
+  ],
+  "macbook-pro-m5-max-14": [
+    "Apple Macbook Pro (Unsplash).jpg",
+    "MacBook Pro 3rd Generation.jpg",
+    "MacBook Pro 3rd Generation (blue).jpg",
+  ],
+  "macbook-pro-m4-pro-14": [
+    "MacBook Pro 3rd Generation.jpg",
+    "MacBook Pro 3rd Generation (blue).jpg",
+    "Apple Macbook Pro (Unsplash).jpg",
+  ],
+  // El chasis del Air tampoco cambió entre M4 y M5.
+  "macbook-air-m5-13": [
+    "M5 Macbook Air 13 Sky Blue model.jpg",
+    "MacBook Air (13-inch, M4, Silver).jpg",
+  ],
+  "macbook-air-m5-15": ["MacBook Air (15-inch, M4, Silver).jpg"],
+  "macbook-air-m3": ["MacBook Air (13-inch, M4, Silver).jpg"],
+
   // Línea de iPhone.
   //
   // El dorso va PRIMERO donde exista una foto de él, y no el render de
