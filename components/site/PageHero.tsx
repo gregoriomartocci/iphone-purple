@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 /**
  * Cabecera con foto a todo el ancho para las páginas internas.
@@ -10,21 +11,42 @@ import Image from "next/image";
  * Las fotos van elegidas oscuras a propósito: sobre una clara el título pierde
  * contraste y el corte visual deja de funcionar.
  */
+/**
+ * Clases de encuadre, en un mapa y no armadas con plantilla.
+ *
+ * Tailwind analiza el código como texto: una clase construida con
+ * `object-${foco}` no aparece en ningún lado y no se genera, así que en
+ * producción el encuadre quedaría sin efecto.
+ */
+const FOCO = {
+  top: "object-top",
+  center: "object-center",
+  bottom: "object-bottom",
+} as const;
+
 export function PageHero({
   title,
   subtitle,
   image,
+  foco = "center",
 }: {
   title: string;
   subtitle?: string;
   image: string;
+  /**
+   * Desde dónde recorta la foto. La banda es mucho más ancha que alta, así que
+   * `cover` descarta más de la mitad del alto; sin decirle de dónde, corta por
+   * el centro y a veces deja afuera justo lo que importa.
+   */
+  foco?: "top" | "center" | "bottom";
 }) {
   return (
     <section
       data-hero
-      // Más baja en teléfono: 400 px se comían casi la mitad de la pantalla
-      // y había que scrollear 750 px para ver el primer equipo.
-      className="bg-ink relative isolate -mt-16 flex min-h-[300px] items-end overflow-hidden sm:min-h-[420px] lg:min-h-[460px]"
+      // Baja en teléfono, para no comerse media pantalla antes del contenido;
+      // más alta en escritorio, porque cuanto más chata la banda más agresivo
+      // es el recorte de la foto y peor el encuadre que queda.
+      className="bg-ink relative isolate -mt-16 flex min-h-[300px] items-end overflow-hidden sm:min-h-[440px] lg:min-h-[520px]"
     >
       <Image
         src={image}
@@ -34,7 +56,7 @@ export function PageHero({
         fill
         priority
         sizes="100vw"
-        className="-z-10 object-cover"
+        className={cn("-z-10 object-cover", FOCO[foco])}
       />
 
       <div aria-hidden className="absolute inset-0 -z-10 bg-black/40" />
@@ -58,20 +80,24 @@ export function PageHero({
 }
 
 /**
- * Foto de cada sección. Centralizadas acá para que se cambien en un solo lugar
- * cuando haya fotos propias del local.
+ * Foto de cada sección.
+ *
+ * Se piden ya recortadas a la proporción de la banda y con `crop=entropy`:
+ * así el recorte lo elige Unsplash mirando dónde está la información de la
+ * imagen, en vez de cortar por el centro a ciegas y dejar afuera el motivo.
+ * Además viaja bastante menos peso, porque no se descarga alto que no se ve.
+ *
+ * Centralizadas acá para cambiarlas en un solo lugar cuando haya fotos
+ * propias del local.
  */
+const RECORTE = "auto=format&fit=crop&crop=entropy&w=2000&h=640&q=80";
 export const PAGE_PHOTOS = {
   // MacBook encendida en penumbra: pantalla, luz y color, que es la estética
   // que buscamos. La foto de escritorio con los dos monitores pasó a ser la
   // portada de la landing, así catálogo no repite la misma imagen.
-  catalogo:
-    "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=2000&q=80",
-  planCanje:
-    "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=2000&q=80",
-  reparaciones:
-    "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=2000&q=80",
-  blog: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=2000&q=80",
-  contacto:
-    "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=2000&q=80",
+  catalogo: `https://images.unsplash.com/photo-1531297484001-80022131f5a1?${RECORTE}`,
+  planCanje: `https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?${RECORTE}`,
+  reparaciones: `https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?${RECORTE}`,
+  blog: `https://images.unsplash.com/photo-1519389950473-47ba0277781c?${RECORTE}`,
+  contacto: `https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?${RECORTE}`,
 } as const;
