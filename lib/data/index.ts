@@ -8,7 +8,7 @@ import type {
   TradeInPrice,
 } from "@/types";
 import * as seed from "./seed";
-import { CALIDAD_PRECIO, MAS_VENDIDOS } from "./destacados";
+import { MAS_VENDIDOS } from "./destacados";
 import * as db from "./supabase";
 import {
   capacityInGb,
@@ -190,9 +190,13 @@ export async function getBestsellers(limit = 6): Promise<Product[]> {
   return porSlugs(MAS_VENDIDOS, limit);
 }
 
-/** Los que mejor rinden por lo que cuestan. */
-export async function getBestValue(limit = 5): Promise<Product[]> {
-  return porSlugs(CALIDAD_PRECIO, limit);
+/** Lo último que entró y se puede llevar hoy. */
+export async function getNewArrivals(limit = 8): Promise<Product[]> {
+  const items = await allProducts();
+  return items
+    .filter((p) => totalStock(p) > 0)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .slice(0, limit);
 }
 
 export async function getRelatedProducts(

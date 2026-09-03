@@ -22,15 +22,3 @@ export const MAS_VENDIDOS = [
   "iphone-15-pro",
   "iphone-12",
 ] as const;
-
-/**
- * Los que mejor rinden por lo que cuestan: generaciones anteriores que siguen
- * andando igual de bien y cuestan bastante menos que el modelo del año.
- */
-export const CALIDAD_PRECIO = [
-  "iphone-14-pro-max",
-  "iphone-13-pro",
-  "iphone-13-pro-max",
-  "iphone-12-pro",
-  "iphone-11-pro",
-] as const;

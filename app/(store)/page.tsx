@@ -3,9 +3,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, RefreshCcw, ShieldCheck, Smartphone, Wrench } from "lucide-react";
 import { Hero } from "@/components/site/Hero";
-import { ProductRail, ProductRanking } from "@/components/site/ProductRail";
+import { ProductRail } from "@/components/site/ProductRail";
 import { Faq, faqJsonLd } from "@/components/site/Faq";
-import { getBestValue, getBestsellers, getPosts } from "@/lib/data";
+import { getBestsellers, getNewArrivals, getPosts } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -66,9 +66,9 @@ const TRUST = [
 ];
 
 export default async function HomePage() {
-  const [masVendidos, calidadPrecio, posts] = await Promise.all([
+  const [masVendidos, nuevosIngresos, posts] = await Promise.all([
     getBestsellers(6),
-    getBestValue(5),
+    getNewArrivals(8),
     getPosts(),
   ]);
   const latestPosts = posts.slice(0, 3);
@@ -121,12 +121,15 @@ export default async function HomePage() {
         title="Los más vendidos"
         subtitle="Los equipos que más salen del mostrador."
         products={masVendidos}
+        auto
       />
 
-      <ProductRanking
-        title="Top 5 calidad-precio"
-        subtitle="Modelos de generaciones anteriores que andan igual de bien y cuestan bastante menos que el del año."
-        products={calidadPrecio}
+      <ProductRail
+        title="Nuevos ingresos"
+        subtitle="Lo último que entró y ya se puede llevar."
+        products={nuevosIngresos}
+        href="/catalogo?sort=nuevo"
+        auto
       />
 
       {/* Banda oscura: corta el blanco de la página y le da respiro visual al
