@@ -62,6 +62,18 @@ export async function crearPreferencia({
         currency_id: "ARS",
       })),
       payer: { email },
+      /**
+       * Sin restricciones de medio de pago ni de cuotas.
+       *
+       * `installments` alto deja que Mercado Pago ofrezca todos los planes que
+       * la tarjeta admita, incluidas las cuotas sin interés que estén vigentes.
+       * Acotarlo acá sería decidir por la persona cuántas cuotas puede pagar.
+       */
+      payment_methods: {
+        excluded_payment_types: [],
+        excluded_payment_methods: [],
+        installments: 12,
+      },
       external_reference: referencia,
       back_urls: {
         success: `${urlBase}/checkout/gracias?estado=aprobado`,

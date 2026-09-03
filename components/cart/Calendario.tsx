@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { CalendarDays, Clock } from "lucide-react";
+import { TiraArrastrable } from "@/components/site/TiraArrastrable";
 import { diasDisponibles, fechaCorta, fechaLarga, horariosDe } from "@/lib/turnos";
 import { cn } from "@/lib/utils";
 
@@ -41,7 +42,7 @@ export function Calendario({
           Desde cuatro días en adelante, para tener el equipo listo y revisado.
         </p>
 
-        <div className="scrollbar-hide -mx-1 mt-3 flex gap-2 overflow-x-auto px-1 pb-1">
+        <TiraArrastrable className="-mx-1 mt-3 gap-2 px-1 pb-1">
           {dias.map((d) => {
             const { dia, numero, mes } = fechaCorta(d);
             const elegido = fecha === d;
@@ -71,7 +72,7 @@ export function Calendario({
               </button>
             );
           })}
-        </div>
+        </TiraArrastrable>
       </div>
 
       {fecha && (

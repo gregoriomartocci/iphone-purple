@@ -90,14 +90,26 @@ export function PageHero({
  * Centralizadas acá para cambiarlas en un solo lugar cuando haya fotos
  * propias del local.
  */
-const RECORTE = "auto=format&fit=crop&crop=entropy&w=2000&h=640&q=80";
+/**
+ * Recorte de las portadas.
+ *
+ * `fp-y` decide desde qué altura de la foto original se toma la banda: 0.5 es
+ * el medio, más chico sube y más grande baja. Con `entropy` el recorte lo
+ * elegía el algoritmo mirando dónde hay más detalle, y en fotos con una zona
+ * muy brillante —una pantalla encendida en la oscuridad— eso empujaba el
+ * motivo contra el borde de arriba.
+ */
+const recorte = (fpY = 0.5) =>
+  `auto=format&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=${fpY}&w=2000&h=640&q=80`;
 export const PAGE_PHOTOS = {
   // MacBook encendida en penumbra: pantalla, luz y color, que es la estética
   // que buscamos. La foto de escritorio con los dos monitores pasó a ser la
   // portada de la landing, así catálogo no repite la misma imagen.
-  catalogo: `https://images.unsplash.com/photo-1531297484001-80022131f5a1?${RECORTE}`,
-  planCanje: `https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?${RECORTE}`,
-  reparaciones: `https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?${RECORTE}`,
-  blog: `https://images.unsplash.com/photo-1519389950473-47ba0277781c?${RECORTE}`,
-  contacto: `https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?${RECORTE}`,
+  // La MacBook quedaba pegada al borde de arriba: el foco baja para que el
+  // equipo caiga más cerca del centro de la banda.
+  catalogo: `https://images.unsplash.com/photo-1531297484001-80022131f5a1?${recorte(0.62)}`,
+  planCanje: `https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?${recorte()}`,
+  reparaciones: `https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?${recorte()}`,
+  blog: `https://images.unsplash.com/photo-1519389950473-47ba0277781c?${recorte()}`,
+  contacto: `https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?${recorte()}`,
 } as const;
