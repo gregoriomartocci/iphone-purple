@@ -69,8 +69,11 @@ export function ProductRail({
   if (products.length === 0) return null;
 
   return (
+    // Sin padding abajo: el propio riel ya reserva el espacio que necesita
+    // la sombra de la tarjeta al levantarse, y sumarle el de la sección
+    // dejaba un hueco enorme contra el título siguiente.
     <section
-      className="shell band"
+      className="shell band pb-0 sm:pb-0"
       onMouseEnter={() => setQuieto(true)}
       onMouseLeave={() => setQuieto(false)}
       onFocusCapture={() => setQuieto(true)}

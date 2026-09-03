@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CheckoutForm } from "@/components/cart/CheckoutForm";
+import { pagoConfigurado } from "@/lib/mercadopago";
 import { getSettings } from "@/lib/data";
 
 export const metadata: Metadata = {
@@ -19,7 +20,10 @@ export default async function CheckoutPage() {
       </p>
 
       <div className="mt-10">
-        <CheckoutForm whatsappNumber={settings.whatsappNumber} />
+        <CheckoutForm
+          whatsappNumber={settings.whatsappNumber}
+          pagoDisponible={pagoConfigurado()}
+        />
       </div>
     </div>
   );

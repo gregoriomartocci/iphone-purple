@@ -2,8 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { ShoppingBag } from "lucide-react";
+import { useState, useTransition } from "react";
+import { AlertCircle, CheckCircle2, Loader2, ShoppingBag } from "lucide-react";
+import { Calendario } from "./Calendario";
+import { confirmarPedido } from "@/app/(store)/checkout/actions";
+import { fechaLarga } from "@/lib/turnos";
 import { useCart } from "./CartProvider";
 import { WhatsAppLink } from "@/components/site/WhatsAppLink";
 import { formatARS } from "@/utils/format";
@@ -15,7 +18,11 @@ const ENTREGAS = [
     label: "Retiro en el local",
     detalle: "Sin costo, coordinamos el día",
   },
-  { value: "envio", label: "Envío a domicilio", detalle: "Se cotiza según la zona" },
+  {
+    value: "envio",
+    label: "Envío a domicilio",
+    detalle: "Pagás online y te lo mandamos",
+  },
 ] as const;
 
 /**
@@ -25,12 +32,37 @@ const ENTREGAS = [
  * teléfono, y la cuenta queda como algo opcional para después, si la persona
  * quiere seguir sus compras o guardar favoritos.
  */
-export function CheckoutForm({ whatsappNumber }: { whatsappNumber: string }) {
+export function CheckoutForm({
+  whatsappNumber,
+  pagoDisponible,
+}: {
+  whatsappNumber: string;
+  /** Si la pasarela está configurada. Si no, el envío se cierra por WhatsApp. */
+  pagoDisponible: boolean;
+}) {
   const { items, total, count } = useCart();
   const [nombre, setNombre] = useState("");
+  const [email, setEmail] = useState("");
   const [telefono, setTelefono] = useState("");
   const [entrega, setEntrega] = useState<(typeof ENTREGAS)[number]["value"]>("retiro");
+  const [direccion, setDireccion] = useState("");
+  const [fecha, setFecha] = useState("");
+  const [hora, setHora] = useState("");
   const [notas, setNotas] = useState("");
+  const [tocadoEmail, setTocadoEmail] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [referencia, setReferencia] = useState<string | null>(null);
+  const [enviando, startTransition] = useTransition();
+
+  /**
+   * Validación de correo.
+   *
+   * Alcanza para atajar lo que de verdad pasa —el punto que falta, el espacio
+   * pegado, el dominio sin punto— y no pretende decidir si la casilla existe:
+   * eso solo lo sabe un mail de verificación. El servidor vuelve a validar,
+   * así que esto es para dar buen feedback, no para confiar.
+   */
+  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
 
   if (items.length === 0) {
     return (
@@ -62,12 +94,51 @@ export function CheckoutForm({ whatsappNumber }: { whatsappNumber: string }) {
     "",
     `Total: ${formatARS(total)}`,
     `Entrega: ${ENTREGAS.find((e) => e.value === entrega)!.label}`,
+    entrega === "retiro" && fecha && hora
+      ? `Turno: ${fechaLarga(fecha)} a las ${hora}`
+      : null,
+    entrega === "envio" && direccion.trim() ? `Dirección: ${direccion.trim()}` : null,
+    email.trim() ? `Correo: ${email.trim()}` : null,
     nombre.trim() ? `Nombre: ${nombre.trim()}` : null,
     telefono.trim() ? `Teléfono: ${telefono.trim()}` : null,
     notas.trim() ? `Notas: ${notas.trim()}` : null,
   ]
     .filter((linea): linea is string => linea !== null)
     .join("\n");
+
+  /** Qué falta para poder confirmar, según el camino elegido. */
+  const listo =
+    nombre.trim().length >= 2 &&
+    telefono.trim().length >= 6 &&
+    emailValido &&
+    (entrega === "envio" ? direccion.trim().length >= 8 : Boolean(fecha && hora));
+
+  const confirmar = () => {
+    setError(null);
+    startTransition(async () => {
+      const r = await confirmarPedido({
+        items: items.map((i) => ({
+          nombre: i.name,
+          variante: i.variantLabel,
+          cantidad: i.quantity,
+          precioArs: i.priceArs,
+        })),
+        nombre,
+        email,
+        telefono,
+        entrega,
+        direccion: direccion || undefined,
+        fecha: fecha || undefined,
+        hora: hora || undefined,
+        notas: notas || undefined,
+      });
+
+      if (!r.ok) return setError(r.error);
+      // Con pasarela configurada se sale del sitio a completar el pago.
+      if (r.modo === "pagar") window.location.href = r.url;
+      else setReferencia(r.referencia);
+    });
+  };
 
   const fieldClass =
     "h-13 w-full rounded-xl border border-line bg-surface px-4 text-base text-foreground shadow-sm outline-none transition-colors focus-visible:border-purple";
@@ -99,6 +170,32 @@ export function CheckoutForm({ whatsappNumber }: { whatsappNumber: string }) {
                 className={fieldClass}
               />
             </label>
+
+            <label className="block sm:col-span-2">
+              <span className="text-muted-foreground mb-1.5 block text-sm">Correo</span>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => setTocadoEmail(true)}
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                placeholder="Para mandarte el comprobante"
+                aria-invalid={tocadoEmail && email.length > 0 && !emailValido}
+                className={cn(
+                  fieldClass,
+                  tocadoEmail && email.length > 0 && !emailValido && "border-destructive"
+                )}
+              />
+              {/* El aviso aparece recién al salir del campo: marcar en rojo
+                  mientras alguien todavía está escribiendo su mail molesta. */}
+              {tocadoEmail && email.length > 0 && !emailValido && (
+                <span className="text-destructive mt-1.5 flex items-center gap-1.5 text-sm">
+                  <AlertCircle className="size-3.5" />
+                  Revisá el correo, no parece válido.
+                </span>
+              )}
+            </label>
           </div>
         </section>
 
@@ -127,6 +224,42 @@ export function CheckoutForm({ whatsappNumber }: { whatsappNumber: string }) {
             ))}
           </div>
         </section>
+
+        {/* Lo que se pide cambia según cómo lo recibe: una dirección para el
+            envío, un turno para el retiro. Pedir las dos cosas siempre obliga
+            a completar campos que no van a usarse. */}
+        {entrega === "envio" ? (
+          <section className="border-line bg-surface rounded-2xl border p-6 shadow-sm">
+            <h2 className="text-lg font-semibold">¿A dónde te lo mandamos?</h2>
+            <label className="mt-4 block">
+              <span className="text-muted-foreground mb-1.5 block text-sm">
+                Dirección completa
+              </span>
+              <input
+                value={direccion}
+                onChange={(e) => setDireccion(e.target.value)}
+                autoComplete="street-address"
+                placeholder="Calle, número, piso, localidad y código postal"
+                className={fieldClass}
+              />
+            </label>
+            <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
+              {pagoDisponible
+                ? "Al confirmar te llevamos a Mercado Pago para completar el pago. El envío se coordina apenas se acredita."
+                : "Te escribimos para cotizar el envío según la zona y coordinar el pago."}
+            </p>
+          </section>
+        ) : (
+          <section className="border-line bg-surface rounded-2xl border p-6 shadow-sm">
+            <h2 className="text-lg font-semibold">Agendá tu retiro</h2>
+            <p className="text-muted-foreground mt-1 text-sm">
+              Reservá el día y la hora que mejor te quede. Pagás en el local al retirarlo.
+            </p>
+            <div className="mt-5">
+              <Calendario fecha={fecha} hora={hora} onFecha={setFecha} onHora={setHora} />
+            </div>
+          </section>
+        )}
 
         <section>
           <h2 className="text-xl font-semibold">
@@ -180,14 +313,71 @@ export function CheckoutForm({ whatsappNumber }: { whatsappNumber: string }) {
             <span className="tnum text-2xl font-semibold">{formatARS(total)}</span>
           </div>
 
-          <WhatsAppLink number={whatsappNumber} message={mensaje} className="mt-5 w-full">
-            Confirmar pedido
-          </WhatsAppLink>
+          {referencia ? (
+            // Pedido tomado: se muestra la referencia y se ofrece seguir por
+            // WhatsApp, que es donde el local realmente responde.
+            <div className="border-line bg-elevated mt-5 rounded-xl border p-4">
+              <p className="text-foreground flex items-center gap-2 font-medium">
+                <CheckCircle2 className="size-4 text-emerald-600" />
+                Pedido {referencia}
+              </p>
+              <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+                {entrega === "retiro"
+                  ? `Te esperamos el ${fechaLarga(fecha)} a las ${hora}. Te lo confirmamos por WhatsApp.`
+                  : "Te escribimos para cerrar el envío y el pago."}
+              </p>
+              <WhatsAppLink
+                number={whatsappNumber}
+                message={mensaje}
+                className="mt-4 w-full"
+              >
+                Seguir por WhatsApp
+              </WhatsAppLink>
+            </div>
+          ) : (
+            <>
+              <button
+                type="button"
+                disabled={!listo || enviando}
+                onClick={confirmar}
+                className="bg-ink hover:bg-ink/85 mt-5 inline-flex h-13 w-full items-center justify-center gap-2 rounded-full text-[15px] font-medium text-white transition-colors disabled:opacity-50"
+              >
+                {enviando ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : entrega === "envio" && pagoDisponible ? (
+                  "Ir a pagar"
+                ) : entrega === "retiro" ? (
+                  "Reservar el turno"
+                ) : (
+                  "Confirmar pedido"
+                )}
+              </button>
 
-          <p className="text-muted-foreground mt-3 text-center text-sm leading-relaxed">
-            Se abre WhatsApp con el pedido listo. Te confirmamos stock y coordinamos el
-            pago, que podés hacer en el local o por transferencia.
-          </p>
+              {error && (
+                <p className="text-destructive mt-3 flex items-start gap-1.5 text-sm">
+                  <AlertCircle className="mt-0.5 size-3.5 shrink-0" />
+                  {error}
+                </p>
+              )}
+
+              <p className="text-muted-foreground mt-3 text-center text-sm leading-relaxed">
+                {entrega === "envio" && pagoDisponible
+                  ? "Te llevamos a Mercado Pago para completar el pago de forma segura."
+                  : entrega === "retiro"
+                    ? "Reservás el turno ahora y pagás en el local al retirarlo."
+                    : "Te confirmamos stock y coordinamos el pago por WhatsApp."}
+              </p>
+
+              <WhatsAppLink
+                number={whatsappNumber}
+                message={mensaje}
+                variant="outline"
+                className="mt-3 w-full"
+              >
+                Prefiero escribir directo
+              </WhatsAppLink>
+            </>
+          )}
         </div>
       </aside>
     </div>

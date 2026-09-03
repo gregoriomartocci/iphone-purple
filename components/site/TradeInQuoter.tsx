@@ -5,6 +5,7 @@ import { ArrowRight, Calculator, Loader2 } from "lucide-react";
 import { WhatsAppLink } from "./WhatsAppLink";
 import { Buscador } from "./Buscador";
 import { submitTradeIn } from "@/app/(store)/plan-canje/actions";
+import { capacityInGb } from "@/lib/catalog";
 import { tradeInMessage } from "@/lib/whatsapp";
 import { formatARS, formatUSD } from "@/utils/format";
 import {
@@ -77,7 +78,9 @@ export function TradeInQuoter({
             .filter((p) => p.brand === brand && p.model === model)
             .map((p) => p.storage)
         ),
-      ].sort((a, b) => parseInt(a, 10) - parseInt(b, 10)),
+        // Ordenar por el número suelto pone "1TB" antes que "256GB": hay que
+        // pasar todo a la misma unidad, que es lo que hace `capacityInGb`.
+      ].sort((a, b) => capacityInGb(a) - capacityInGb(b)),
     [prices, brand, model]
   );
 
@@ -203,8 +206,11 @@ export function TradeInQuoter({
 
           <div>
             <StepTitle n={3}>¿En qué estado está?</StepTitle>
+            {/* Sin "Sellado": nadie entrega un equipo sin abrir como parte de
+                pago. Ofrecerlo solo agrega una opción que no se elige nunca y
+                encima cotiza al valor de un equipo nuevo. */}
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
-              {GRADES.map((c) => (
+              {GRADES.filter((c) => c !== "sellado").map((c) => (
                 <button
                   key={c}
                   type="button"

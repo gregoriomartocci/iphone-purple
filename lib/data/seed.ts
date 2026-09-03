@@ -990,17 +990,29 @@ export const TRADE_IN_PRICES: TradeInPrice[] = Object.keys(IPHONE_PRICES)
     // Cuanto más viejo el equipo, más castigada la toma: se revende peor.
     const ratio = 0.72 - i * 0.02;
 
-    return [
-      { line: "", price: base, storage: "128GB" },
-      { line: " Pro", price: pro, storage: "128GB" },
-      { line: " Pro Max", price: proMax, storage: "256GB" },
-    ].map(({ line, price, storage }) => ({
-      id: `t-${generation}${line.trim().toLowerCase().replace(/\s+/g, "-") || "base"}`,
-      brand: "Apple",
-      model: `iPhone ${generation}${line}`,
-      storage,
-      baseValue: Math.round((price * ratio) / 5) * 5,
-    }));
+    /**
+     * Todas las capacidades de cada modelo, no solo la base.
+     *
+     * Antes había una sola fila por modelo y quien tenía un 256 GB no podía
+     * elegir su equipo: le quedaba una capacidad que no era la suya. El valor
+     * de la toma acompaña el mismo escalón de precio que usa el catálogo, así
+     * un 512 GB no se cotiza igual que un 128 GB.
+     */
+    return (
+      [
+        { line: "", price: base, key: "base" as const },
+        { line: " Pro", price: pro, key: "pro" as const },
+        { line: " Pro Max", price: proMax, key: "proMax" as const },
+      ] as const
+    ).flatMap(({ line, price, key }) =>
+      IPHONE_STORAGES[key].map((storage) => ({
+        id: `t-${generation}${line.trim().toLowerCase().replace(/\s+/g, "-") || "base"}-${storage.toLowerCase()}`,
+        brand: "Apple",
+        model: `iPhone ${generation}${line}`,
+        storage,
+        baseValue: Math.round(((price + STORAGE_STEP[storage]) * ratio) / 5) * 5,
+      }))
+    );
   });
 
 export const SUPPLIERS: Supplier[] = [

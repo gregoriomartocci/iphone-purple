@@ -85,7 +85,7 @@ export default async function HomePage() {
       <Hero />
 
       {/* Tres accesos: el 90 % de las visitas viene por una de estas tres puertas. */}
-      <section className="shell py-16">
+      <section className="shell py-12 sm:py-14">
         <div className="aparece-escalonado grid gap-5 sm:grid-cols-3">
           {SHORTCUTS.map(({ href, icon: Icon, title, text }, i) => (
             <Link

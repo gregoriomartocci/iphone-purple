@@ -151,11 +151,13 @@
 
   /* Ritmo vertical entre secciones.
 
-     Dos secciones seguidas suman el doble de este valor: con py-28 quedaban
-     224 px de aire entre una fila de productos y la siguiente, y la página se
-     leía como bloques desconectados en vez de un recorrido continuo. */
+     Dos secciones seguidas suman el doble de este valor, así que conviene
+     pecar de poco: con py-28 quedaban 224 px de aire entre una fila y la
+     siguiente y la página se leía como bloques desconectados. Los rieles
+     además aportan su propio espacio abajo —el que necesita la sombra de la
+     tarjeta al levantarse— y ese se suma a este. */
   .band {
-    @apply py-14 sm:py-20;
+    @apply py-10 sm:py-14;
   }
 
   /* Antetítulos: mayúsculas con tracking abierto, el recurso que usan las

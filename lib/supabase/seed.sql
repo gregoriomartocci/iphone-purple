@@ -1029,64 +1029,169 @@ INSERT INTO trade_in_prices (brand, model, storage, base_value)
   VALUES ('Apple', 'iPhone 17', '128GB', 755)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 17', '256GB', 835)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
   VALUES ('Apple', 'iPhone 17 Pro', '128GB', 970)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
-  VALUES ('Apple', 'iPhone 17 Pro Max', '256GB', 1115)
+  VALUES ('Apple', 'iPhone 17 Pro', '256GB', 1050)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 17 Pro', '512GB', 1190)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 17 Pro Max', '256GB', 1195)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 17 Pro Max', '512GB', 1330)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 17 Pro Max', '1TB', 1490)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
   VALUES ('Apple', 'iPhone 16', '128GB', 665)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 16', '256GB', 740)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
   VALUES ('Apple', 'iPhone 16 Pro', '128GB', 875)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
-  VALUES ('Apple', 'iPhone 16 Pro Max', '256GB', 1015)
+  VALUES ('Apple', 'iPhone 16 Pro', '256GB', 950)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 16 Pro', '512GB', 1085)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 16 Pro Max', '256GB', 1090)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 16 Pro Max', '512GB', 1225)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 16 Pro Max', '1TB', 1380)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
   VALUES ('Apple', 'iPhone 15', '128GB', 545)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 15', '256GB', 620)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
   VALUES ('Apple', 'iPhone 15 Pro', '128GB', 715)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
-  VALUES ('Apple', 'iPhone 15 Pro Max', '256GB', 850)
+  VALUES ('Apple', 'iPhone 15 Pro', '256GB', 790)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 15 Pro', '512GB', 920)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 15 Pro Max', '256GB', 925)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 15 Pro Max', '512GB', 1055)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 15 Pro Max', '1TB', 1205)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
   VALUES ('Apple', 'iPhone 14', '128GB', 430)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 14', '256GB', 500)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
   VALUES ('Apple', 'iPhone 14 Pro', '128GB', 560)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
-  VALUES ('Apple', 'iPhone 14 Pro Max', '256GB', 660)
+  VALUES ('Apple', 'iPhone 14 Pro', '256GB', 635)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 14 Pro', '512GB', 760)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 14 Pro Max', '256GB', 735)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 14 Pro Max', '512GB', 860)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 14 Pro Max', '1TB', 1005)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
   VALUES ('Apple', 'iPhone 13', '128GB', 335)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 13', '256GB', 405)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
   VALUES ('Apple', 'iPhone 13 Pro', '128GB', 450)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
-  VALUES ('Apple', 'iPhone 13 Pro Max', '256GB', 525)
+  VALUES ('Apple', 'iPhone 13 Pro', '256GB', 520)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 13 Pro', '512GB', 640)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 13 Pro Max', '256GB', 595)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 13 Pro Max', '512GB', 715)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 13 Pro Max', '1TB', 860)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
   VALUES ('Apple', 'iPhone 12', '128GB', 250)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 12', '256GB', 315)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
   VALUES ('Apple', 'iPhone 12 Pro', '128GB', 340)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
-  VALUES ('Apple', 'iPhone 12 Pro Max', '256GB', 405)
+  VALUES ('Apple', 'iPhone 12 Pro', '256GB', 410)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 12 Pro', '512GB', 525)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 12 Pro Max', '256GB', 470)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 12 Pro Max', '512GB', 590)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 12 Pro Max', '1TB', 725)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
   VALUES ('Apple', 'iPhone 11', '128GB', 180)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 11', '256GB', 245)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
   VALUES ('Apple', 'iPhone 11 Pro', '128GB', 250)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 INSERT INTO trade_in_prices (brand, model, storage, base_value)
-  VALUES ('Apple', 'iPhone 11 Pro Max', '256GB', 300)
+  VALUES ('Apple', 'iPhone 11 Pro', '256GB', 320)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 11 Pro', '512GB', 430)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 11 Pro Max', '256GB', 365)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 11 Pro Max', '512GB', 480)
+  ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
+INSERT INTO trade_in_prices (brand, model, storage, base_value)
+  VALUES ('Apple', 'iPhone 11 Pro Max', '1TB', 610)
   ON CONFLICT (brand, model, storage) DO UPDATE SET base_value = EXCLUDED.base_value;
 
 -- Notas del blog
