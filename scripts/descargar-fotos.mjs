@@ -46,68 +46,69 @@ const FOTOS = {
 
   // Línea de iPhone.
   //
-  // La primera es el render vectorial del equipo solo y sin fondo: es la que
-  // se ve en la grilla, y al ser todas del mismo trazo la hace pareja. Las
-  // que siguen son fotos reales —dorso, perfil, otro color— para que la ficha
-  // tenga una galería y no una sola toma.
+  // El dorso va PRIMERO donde exista una foto de él, y no el render de
+  // frente. De frente todos los iPhone son casi la misma silueta con la
+  // pantalla apagada, así que la grilla quedaba con veintiún equipos
+  // indistinguibles. El dorso cambia de color y de disposición de cámaras: es
+  // lo que deja reconocer el modelo de un vistazo.
   //
-  // Los Pro Max del 12 al 14 y el 13 Pro Max no tienen render en Commons; con
-  // ese nombre lo único que hay es el logotipo del modelo, no el equipo.
+  // Nueve modelos se quedan con el render de frente porque no hay foto libre
+  // de su dorso. Mejor una grilla despareja que veintiún equipos iguales.
   "iphone-17": [
-    "IPhone 17 Vector.svg",
     "White iPhone 17.jpg",
+    "IPhone 17 Vector.svg",
     "Black iPhone 17.jpg",
     "Sage iPhone 17.jpg",
   ],
   "iphone-17-pro": [
-    "IPhone 17 Pro Vector.svg",
     "IPhone 17 Pro (Silver) - Backside.jpg",
+    "IPhone 17 Pro Vector.svg",
     "IPhone 17 Pro (Deep Blue model).jpg",
   ],
   "iphone-17-pro-max": [
+    "Cosmic Orange iPhone 17 Pro Max.jpg",
     "IPhone 17 Pro Max Vector.svg",
     "Silver iPhone 17 Pro Max.jpg",
-    "Cosmic Orange iPhone 17 Pro Max.jpg",
     "Deep Blue iPhone 17 Pro Max.jpg",
   ],
-  "iphone-16": ["IPhone 16 Vector.svg", "Back of iPhone 16 Blue model.jpg"],
+  "iphone-16": ["Back of iPhone 16 Blue model.jpg", "IPhone 16 Vector.svg"],
   "iphone-16-pro": [
-    "IPhone 16 Pro Vector.svg",
     "Back view of iPhone 16 Pro White Titanium.jpg",
+    "IPhone 16 Pro Vector.svg",
     "Right view of iPhone 16 Pro White Titanium.jpg",
   ],
   "iphone-16-pro-max": [
-    "IPhone 16 Pro Max Vector.svg",
     "Back view of iPhone 16 Pro Max Natural Titanium.jpg",
+    "IPhone 16 Pro Max Vector.svg",
     "Right view of iPhone 16 Pro Max Natural Titanium.jpg",
   ],
   "iphone-15": [
-    "IPhone 15 Vector.svg",
     "Back of iPhone 15.jpg",
+    "IPhone 15 Vector.svg",
     "Back and side of iPhone 15.jpg",
   ],
   "iphone-15-pro": [
-    "IPhone 15 Pro Vector.svg",
     "Back view of iPhone 15 Pro Natural titanium.jpg",
+    "IPhone 15 Pro Vector.svg",
     "IPhone 15 Pro.jpg",
   ],
   "iphone-15-pro-max": [
-    "IPhone 15 Pro Max Vector.svg",
     "Back view of iPhone 15 Pro Max Natural Titanium.jpg",
+    "IPhone 15 Pro Max Vector.svg",
     "Front of iPhone 15 Pro Max.jpg",
   ],
-  "iphone-14": ["IPhone 14 vector.svg", "Back view of iPhone 14 Blue.jpg"],
+  "iphone-14": ["Back view of iPhone 14 Blue.jpg", "IPhone 14 vector.svg"],
   "iphone-14-pro": [
-    "IPhone 14 Pro vector.svg",
     "Back of the iPhone 14 Pro.jpg",
+    "IPhone 14 Pro vector.svg",
     "IPhone 14 Pro - black.jpg",
   ],
   "iphone-13": ["IPhone 13 vector.svg"],
   "iphone-13-pro": ["IPhone 13 Pro vector.svg"],
   "iphone-12": ["IPhone 12 Blue.svg"],
   "iphone-12-pro": [
-    "IPhone 12 Pro Gold.svg",
     "IPhone 12 Pro backside.jpg",
+    "IPhone 12 Pro Gold.svg",
     "IPhone 12 Pro Pacific Blue 256g.jpg",
   ],
   "iphone-11": ["IPhone 11 White.svg"],
