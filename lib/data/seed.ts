@@ -38,19 +38,18 @@ export const SETTINGS: StoreSettings = {
   mapsUrl: "https://maps.google.com/?q=Calle+7+1234,+La+Plata",
 };
 
-const img = (url: string, alt: string): ProductImage => ({
-  url: `${url}?auto=format&fit=crop&w=1200&q=80`,
-  alt,
-});
-
 /**
- * Fotos de un producto, de la más específica a la más genérica.
+ * Fotos de un producto.
  *
- * 1. Las que estén en public/productos/<slug>/, listadas en fotos.generado.ts
- *    por `npm run fotos`. Son del producto exacto y pueden ser varias, así la
- *    ficha muestra una galería y no una sola toma.
- * 2. Si no hay, la foto genérica de la familia. Sirve para que la grilla no
- *    tenga huecos, pero no es el equipo: se reemplaza en cuanto haya la propia.
+ * O están las del producto exacto —en public/productos/<slug>/, listadas por
+ * `npm run fotos`— o no hay ninguna. No se rellena con una foto genérica de la
+ * familia: mostrar un iPhone cualquiera donde va un Motorola, o un secador
+ * distinto del que se vende, es peor que no mostrar nada. Quien compra confía
+ * en que la foto es del equipo.
+ *
+ * Sin fotos, la tarjeta muestra un espacio con el nombre del equipo y avisa
+ * que la foto está en camino. Es información honesta, y encima empuja a
+ * cargar las propias.
  */
 function fotosDe(slug: string, seed: SeedProduct): ProductImage[] {
   // El texto alternativo describe el equipo y dónde se consigue: lo lee quien
@@ -58,26 +57,25 @@ function fotosDe(slug: string, seed: SeedProduct): ProductImage[] {
   // imágenes, por donde entra bastante tráfico en este rubro.
   const alt = `${seed.name} ${seed.brand} en venta en La Plata`;
   const propias = FOTOS_PRODUCTO[slug];
-  if (propias?.length) {
-    // Ya están servidas desde el propio dominio: no llevan los parámetros de
-    // recorte de Unsplash.
-    return propias.map((f) => ({ url: f.url, alt }));
-  }
-  return [img(seed.photo, alt)];
+  // Ya están servidas desde el propio dominio: no llevan los parámetros de
+  // recorte de Unsplash.
+  return propias?.length ? propias.map((f) => ({ url: f.url, alt })) : [];
 }
 
-/** Fotos genéricas por familia de producto. Se reemplazan al cargar las reales. */
-const PHOTOS: Record<string, string> = {
-  iphonePro: "https://images.unsplash.com/photo-1695048133142-1a20484d2569",
+/**
+ * Fotos de portada de las notas del blog.
+ *
+ * Acá una foto ambiental sí corresponde: la portada de una nota ilustra un
+ * tema, no representa un producto que alguien va a comprar. Es la diferencia
+ * con el catálogo, donde una foto que no es del equipo exacto directamente no
+ * se muestra.
+ */
+const PORTADAS_BLOG = {
   iphone: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab",
-  iphoneOlder: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5",
-  ipad: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0",
-  watch: "https://images.unsplash.com/photo-1546868871-7041f2a55e12",
-  airpods: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434",
-  mac: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8",
-  consola: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3",
-  replica: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5",
-};
+  iphonePro: "https://images.unsplash.com/photo-1695048133142-1a20484d2569",
+  bateria: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5",
+  taller: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789",
+} as const;
 
 type SeedVariant = {
   storage: string;
@@ -99,7 +97,6 @@ type SeedProduct = {
   category: Category;
   description: string;
   specs: Record<string, string>;
-  photo: string;
   featured?: boolean;
   variants: SeedVariant[];
 };
@@ -252,7 +249,6 @@ const IPHONE_SEED: SeedProduct[] = Object.keys(IPHONE_PRICES)
           Cámara: line === "base" ? "48 MP dual" : "48 MP + teleobjetivo",
           Material: generation >= 15 && line !== "base" ? "Titanio" : "Aluminio",
         },
-        photo: line === "base" ? PHOTOS.iphone : PHOTOS.iphonePro,
         featured: generation >= 16,
         variants: iphoneVariants(generation, line),
       };
@@ -563,18 +559,6 @@ const LISTA_PROVEEDOR: ItemProveedor[] = [
   },
 ];
 
-/** Foto genérica por categoría, hasta que se carguen las propias. */
-const FOTO_CATEGORIA: Record<Category, string> = {
-  celular: PHOTOS.iphone,
-  tablet: PHOTOS.ipad,
-  notebook: PHOTOS.mac,
-  reloj: PHOTOS.watch,
-  audio: PHOTOS.airpods,
-  consola: PHOTOS.consola,
-  hogar: PHOTOS.consola,
-  accesorio: PHOTOS.consola,
-};
-
 const PROVEEDOR_SEED: SeedProduct[] = LISTA_PROVEEDOR.map((item) => ({
   name: item.nombre,
   brand: item.marca,
@@ -582,7 +566,6 @@ const PROVEEDOR_SEED: SeedProduct[] = LISTA_PROVEEDOR.map((item) => ({
   category: item.categoria,
   description: `${item.nombre} nuevo, sellado y con garantía. Consultanos por disponibilidad de color.`,
   specs: item.specs ?? {},
-  photo: FOTO_CATEGORIA[item.categoria],
   // Un color por variante: es lo que distingue las unidades en stock.
   variants: item.colores.map(([color, colorHex]) => ({
     storage: item.variante,
@@ -613,7 +596,6 @@ const SEED: SeedProduct[] = [
       Batería: "Hasta 10 h de navegación",
       Conectividad: "Wi-Fi 6E",
     },
-    photo: PHOTOS.ipad,
     variants: [
       {
         storage: "128GB",
@@ -651,7 +633,6 @@ const SEED: SeedProduct[] = [
       Batería: "Hasta 18 h",
       Resistencia: "50 m",
     },
-    photo: PHOTOS.watch,
     variants: [
       {
         storage: "46mm GPS",
@@ -689,7 +670,6 @@ const SEED: SeedProduct[] = [
       Estuche: "USB-C con MagSafe",
       Resistencia: "IP54",
     },
-    photo: PHOTOS.airpods,
     featured: true,
     variants: [
       {
@@ -718,7 +698,6 @@ const SEED: SeedProduct[] = [
       Batería: "Hasta 18 h",
       Puertos: "2× Thunderbolt, MagSafe 3",
     },
-    photo: PHOTOS.mac,
     variants: [
       {
         storage: "256GB",
@@ -755,7 +734,6 @@ const SEED: SeedProduct[] = [
       Lectora: "Blu-ray Ultra HD",
       Incluye: "Un joystick DualSense",
     },
-    photo: PHOTOS.consola,
     variants: [
       {
         storage: "1TB",
@@ -792,7 +770,6 @@ const SEED: SeedProduct[] = [
       Compatibilidad: "Android e iOS por app propia",
       Resistencia: "IP68",
     },
-    photo: PHOTOS.watch,
     variants: [
       {
         storage: "49mm",
@@ -820,7 +797,6 @@ const SEED: SeedProduct[] = [
       Conexión: "Bluetooth 5.3",
       Estuche: "USB-C",
     },
-    photo: PHOTOS.airpods,
     variants: [
       {
         storage: "USB-C",
@@ -1063,7 +1039,7 @@ El 16 rinde alrededor de dos horas más de video. Si tu 15 ya tiene la batería 
 ## Conclusión
 
 Si venís de un iPhone 13 o anterior, el salto al 16 se siente muchísimo. Si tenés un 15 en buen estado, esperá una generación más — o traelo por Plan Canje cuando salga el 17.`,
-    coverUrl: `${PHOTOS.iphone}?auto=format&fit=crop&w=1200&q=80`,
+    coverUrl: `${PORTADAS_BLOG.iphone}?auto=format&fit=crop&w=1200&q=80`,
     author: "Equipo iPhone Purple",
     publishedAt: "2026-08-18",
   },
@@ -1100,7 +1076,7 @@ Sacá una foto con cada lente, probá el Face ID y hacé una llamada. Son treint
 Enchufalo y movelo. Si la carga se corta al mover el cable, el pin está gastado.
 
 Todos los equipos que vendemos pasan por estos seis pasos y van con garantía escrita.`,
-    coverUrl: `${PHOTOS.iphoneOlder}?auto=format&fit=crop&w=1200&q=80`,
+    coverUrl: `${PORTADAS_BLOG.bateria}?auto=format&fit=crop&w=1200&q=80`,
     author: "Equipo iPhone Purple",
     publishedAt: "2026-07-30",
   },
@@ -1134,7 +1110,7 @@ Caja, cable original y accesorios suman un poco. La factura de compra también, 
 Bloqueo de iCloud pendiente, pantalla no original o daño por líquido cambian bastante el número. Nada de esto lo descubrimos después: lo revisamos con vos en el mostrador.
 
 Podés cotizar online en dos minutos y después traerlo para confirmar. El valor que te damos online se respeta si el equipo está como lo describiste.`,
-    coverUrl: `${PHOTOS.iphonePro}?auto=format&fit=crop&w=1200&q=80`,
+    coverUrl: `${PORTADAS_BLOG.iphonePro}?auto=format&fit=crop&w=1200&q=80`,
     author: "Equipo iPhone Purple",
     publishedAt: "2026-07-12",
   },
@@ -1161,7 +1137,7 @@ El calor, sobre todo. Dejar el equipo al sol o cargarlo dentro de una funda grue
 ## Cuándo cambiarla
 
 Si estás por debajo de 85 % y te queda corto el día, el cambio de batería es la mejor inversión posible: por una fracción del precio de un equipo nuevo, recuperás la autonomía original.`,
-    coverUrl: `${PHOTOS.airpods}?auto=format&fit=crop&w=1200&q=80`,
+    coverUrl: `${PORTADAS_BLOG.iphone}?auto=format&fit=crop&w=1200&q=80`,
     author: "Equipo iPhone Purple",
     publishedAt: "2026-06-25",
   },

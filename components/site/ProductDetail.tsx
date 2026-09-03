@@ -98,7 +98,7 @@ export function ProductDetail({
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_460px] lg:gap-14">
       <div className="lg:sticky lg:top-24 lg:self-start">
         <div className="relative">
-          <Galeria piezas={piezas} />
+          <Galeria piezas={piezas} nombre={product.name} />
 
           {selected && (
             <span

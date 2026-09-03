@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Camera } from "lucide-react";
 import { formatARS } from "@/utils/format";
 import { leadVariant, totalStock } from "@/lib/catalog";
 import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
@@ -104,8 +105,15 @@ export function ProductCard({
             )}
           />
         ) : (
-          <div className="text-muted-foreground flex h-full items-center justify-center text-sm">
-            Sin foto
+          // Sin foto propia no se rellena con una genérica: mostrar otro equipo
+          // donde va este engaña a quien compra. Se dice que falta, con el
+          // nombre bien grande para que la tarjeta siga siendo reconocible.
+          <div className="bg-elevated flex h-full flex-col items-center justify-center gap-2 px-4 text-center">
+            <Camera className="text-muted-foreground/50 size-7" />
+            <span className="text-foreground text-sm leading-snug font-medium">
+              {product.name}
+            </span>
+            <span className="text-muted-foreground text-xs">Foto en camino</span>
           </div>
         )}
       </div>

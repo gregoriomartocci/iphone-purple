@@ -395,7 +395,14 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   ],
   "iphone-13-pro": [
     {
-      url: "/productos/iphone-13-pro/1.png",
+      url: "/productos/iphone-13-pro/1.jpg",
+      autor: "Hajoon0102",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:Back_of_the_iPhone_13_Pro.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/iphone-13-pro/2.png",
       autor: "Rafael Fernandez",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_13_Pro_vector.svg",
@@ -437,7 +444,14 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   ],
   "iphone-11": [
     {
-      url: "/productos/iphone-11/1.png",
+      url: "/productos/iphone-11/1.jpg",
+      autor: "メイド理世",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:Back_view_of_iPhone_11_white.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/iphone-11/2.png",
       autor: "Rafael Fernandez",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_11_White.svg",
@@ -455,12 +469,29 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   ],
   "iphone-11-pro-max": [
     {
-      url: "/productos/iphone-11-pro-max/1.png",
+      url: "/productos/iphone-11-pro-max/1.jpg",
+      autor: "Dllu",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Scan_of_back_of_iPhone_11_Pro_Max_Space_Grey.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/iphone-11-pro-max/2.png",
       autor: "Rafael Fernandez",
       licencia: "CC BY-SA 4.0",
       origen:
         "https://commons.wikimedia.org/wiki/File:IPhone_11_Pro_Max_Midnight_Green.svg",
       recorte: "render",
+    },
+  ],
+  "iphone-14-pro-max": [
+    {
+      url: "/productos/iphone-14-pro-max/1.jpg",
+      autor: "Hajoon0102",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:Back_of_the_iPhone_14_Pro_Max.jpg",
+      recorte: "foto",
     },
   ],
 };

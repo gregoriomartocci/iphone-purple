@@ -104,16 +104,22 @@ const FOTOS = {
     "IPhone 14 Pro - black.jpg",
   ],
   "iphone-13": ["IPhone 13 vector.svg"],
-  "iphone-13-pro": ["IPhone 13 Pro vector.svg"],
+  "iphone-13-pro": ["Back of the iPhone 13 Pro.jpg", "IPhone 13 Pro vector.svg"],
   "iphone-12": ["IPhone 12 Blue.svg"],
   "iphone-12-pro": [
     "IPhone 12 Pro backside.jpg",
     "IPhone 12 Pro Gold.svg",
     "IPhone 12 Pro Pacific Blue 256g.jpg",
   ],
-  "iphone-11": ["IPhone 11 White.svg"],
+  "iphone-11": ["Back view of iPhone 11 white.jpg", "IPhone 11 White.svg"],
   "iphone-11-pro": ["IPhone 11 Pro Midnight Green.svg"],
-  "iphone-11-pro-max": ["IPhone 11 Pro Max Midnight Green.svg"],
+  "iphone-11-pro-max": [
+    "Scan of back of iPhone 11 Pro Max Space Grey.jpg",
+    "IPhone 11 Pro Max Midnight Green.svg",
+  ],
+  // No tenía ninguna foto propia: no existe su render de frente, así que
+  // mostraba la genérica de la familia.
+  "iphone-14-pro-max": ["Back of the iPhone 14 Pro Max.jpg"],
 };
 
 const esperar = (ms) => new Promise((r) => setTimeout(r, ms));

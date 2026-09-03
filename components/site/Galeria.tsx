@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { Camera, ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type PiezaGaleria = {
@@ -26,7 +26,7 @@ export type PiezaGaleria = {
  * táctil, y además así el cambio de foto es discreto —una por gesto— en vez de
  * quedar a mitad de camino entre dos.
  */
-export function Galeria({ piezas }: { piezas: PiezaGaleria[] }) {
+export function Galeria({ piezas, nombre }: { piezas: PiezaGaleria[]; nombre: string }) {
   const [indice, setIndice] = useState(0);
   const [arrastre, setArrastre] = useState(0);
   // En estado y no solo en el ref: la transición depende de si se está
@@ -64,6 +64,21 @@ export function Galeria({ piezas }: { piezas: PiezaGaleria[] }) {
     setArrastrando(false);
     setArrastre(0);
   };
+
+  if (total === 0) {
+    // Igual que en la tarjeta: falta la foto y se dice, en vez de poner una
+    // genérica que no es este equipo.
+    return (
+      <div className="border-line bg-elevated flex aspect-square flex-col items-center justify-center gap-3 rounded-3xl border px-6 text-center">
+        <Camera className="text-muted-foreground/50 size-10" />
+        <p className="text-foreground font-medium">{nombre}</p>
+        <p className="text-muted-foreground max-w-xs text-sm leading-relaxed">
+          Todavía no tenemos foto propia de este equipo. Escribinos y te mandamos fotos
+          reales del que está en stock.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
