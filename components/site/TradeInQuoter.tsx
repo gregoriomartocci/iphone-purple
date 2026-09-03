@@ -139,8 +139,11 @@ export function TradeInQuoter({
       {/* Todo lo que se completa vive en una tarjeta blanca sobre el fondo
           gris: antes eran campos sueltos y el formulario no se distinguía de
           la página. */}
-      <div className="border-line bg-surface overflow-hidden rounded-2xl border shadow-sm">
-        <div className="border-line bg-elevated border-b px-6 py-5 sm:px-8">
+      {/* Sin `overflow-hidden`: los buscadores abren una lista posicionada
+          por encima de la tarjeta, y recortar el padre la hacía desaparecer.
+          El redondeo de la cabecera lo resuelve la cabecera misma. */}
+      <div className="border-line bg-surface rounded-2xl border shadow-sm">
+        <div className="border-line bg-elevated rounded-t-2xl border-b px-6 py-5 sm:px-8">
           <p className="eyebrow text-muted-foreground">Tu equipo</p>
           <h2 className="mt-1.5 text-xl font-semibold">¿Qué nos entregás?</h2>
           {brand && (
