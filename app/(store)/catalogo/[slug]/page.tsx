@@ -5,6 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { ProductDetail } from "@/components/site/ProductDetail";
 import { ProductCard } from "@/components/site/ProductCard";
 import { ProductComparison } from "@/components/site/ProductComparison";
+import { Descripcion } from "@/components/site/Descripcion";
 import { FichaTecnica, Respaldos } from "@/components/site/FichaTecnica";
 import { FaqProducto } from "@/components/site/FaqProducto";
 import {
@@ -146,15 +147,17 @@ export default async function ProductPage({
         <ProductDetail product={product} whatsappNumber={settings.whatsappNumber} />
       </div>
 
-      {/* El orden de abajo sigue el de las preguntas de quien está mirando:
-          primero qué trae el equipo, después con qué respaldo lo compra, luego
-          cómo se compara con los modelos vecinos, y al final las dudas de
-          cerrar la operación. */}
+      {/* El orden sigue cómo se decide una compra: primero qué es y qué trae
+          este modelo, después el detalle técnico, luego cómo se compara contra
+          los vecinos, con qué respaldo se compra, las dudas de cerrar la
+          operación, y al final qué otra cosa mirar. */}
+      <Descripcion product={product} />
+
       <FichaTecnica product={product} variante={lead} />
 
-      <Respaldos />
-
       <ProductComparison products={comparison} currentId={product.id} />
+
+      <Respaldos />
 
       <FaqProducto product={product} esSellado={lead?.grade === "sellado"} />
 

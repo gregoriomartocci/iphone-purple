@@ -311,12 +311,6 @@ export function ProductDetail({
             </li>
           ))}
         </ul>
-
-        {product.description && (
-          <p className="text-muted-foreground mt-8 leading-relaxed">
-            {product.description}
-          </p>
-        )}
       </div>
     </div>
   );
