@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { alternar, estaAbierta, type Plegadas } from "@/lib/plegables";
 import { Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import type { CatalogFacets } from "@/lib/data";
 import {
@@ -43,11 +44,10 @@ export function CatalogSidebar({
    * Secciones abiertas. Arrancan abiertas las que todavía no tienen elección:
    * si ya filtraste por marca, esa sección no necesita seguir ocupando lugar.
    */
-  const [closed, setClosed] = useState<Record<string, boolean>>({});
-  const isOpen = (key: string, hasValue: boolean) =>
-    closed[key] === undefined ? !hasValue : !closed[key];
+  const [closed, setClosed] = useState<Plegadas>({});
+  const isOpen = (key: string, hasValue: boolean) => estaAbierta(closed, key, hasValue);
   const toggleSection = (key: string, hasValue: boolean) =>
-    setClosed((c) => ({ ...c, [key]: c[key] === undefined ? hasValue : !c[key] }));
+    setClosed((c) => alternar(c, key, hasValue));
 
   /** Al elegir una opción la sección se cierra; al desmarcar, se queda abierta. */
   const afterPick = (key: string, selecting: boolean) =>
@@ -286,7 +286,7 @@ export function CatalogSidebar({
                     "relative size-9 rounded-full border transition-all duration-200",
                     "hover:scale-110",
                     activo
-                      ? "border-purple ring-purple/30 ring-2"
+                      ? "border-ink ring-ink/20 ring-2"
                       : "border-black/15 hover:border-black/35"
                   )}
                   style={{ background: f.hex ?? "#cccccc" }}
@@ -411,17 +411,17 @@ function Section({
         type="button"
         onClick={onToggle}
         aria-expanded={open}
+        // Sin fondo de color: el filtro aplicado se dice con texto. Un panel
+        // con varias secciones marcadas en violeta se volvía un semáforo.
         className={cn(
-          "flex w-full items-center justify-between gap-2 rounded-xl px-3.5 py-3 text-left text-[15px] font-medium transition-colors",
-          summary && !open
-            ? "bg-purple/10 text-foreground"
-            : "bg-elevated text-foreground hover:bg-line/60"
+          "text-foreground flex w-full items-center justify-between gap-2 rounded-xl px-3 py-3 text-left text-[15px] font-medium",
+          "hover:bg-elevated transition-colors"
         )}
       >
         <span className="min-w-0">
           {title}
           {summary && !open && (
-            <span className="text-purple mt-0.5 block truncate text-xs font-normal">
+            <span className="text-muted-foreground mt-0.5 block truncate text-xs font-normal">
               {summary}
             </span>
           )}
@@ -467,18 +467,32 @@ function FilterRow({
       <label
         title={hint}
         className={cn(
-          "flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-[15px] transition-colors",
+          "group flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-[15px] transition-colors",
           checked
-            ? "border-purple/40 text-foreground border bg-white font-medium"
-            : "text-muted-foreground hover:text-foreground"
+            ? "text-foreground font-medium"
+            : "text-muted-foreground hover:text-foreground hover:bg-elevated/70"
         )}
       >
+        {/* La casilla se dibuja acá en vez de usar la del navegador: así sigue
+            la forma y el color del resto del sitio. Marcada va en tinta, no en
+            violeta — el violeta es de la marca, no de "seleccionado". */}
         <input
           type="checkbox"
           checked={checked}
           onChange={onChange}
-          className="size-4 shrink-0 accent-[#5e16eb]"
+          className="sr-only"
         />
+        <span
+          aria-hidden
+          className={cn(
+            "flex size-[18px] shrink-0 items-center justify-center rounded-[6px] border transition-colors",
+            checked
+              ? "border-ink bg-ink text-white"
+              : "border-line group-hover:border-foreground/40 bg-white"
+          )}
+        >
+          {checked && <Check className="size-3" strokeWidth={3} />}
+        </span>
         <span className="min-w-0 flex-1 truncate">{label}</span>
         {count !== undefined && (
           <span className="tnum text-muted-foreground shrink-0 text-xs">{count}</span>

@@ -54,23 +54,19 @@ const FOTOS = {
   //
   // Nueve modelos se quedan con el render de frente porque no hay foto libre
   // de su dorso. Mejor una grilla despareja que veintiún equipos iguales.
-  "iphone-17": [
-    "White iPhone 17.jpg",
-    "IPhone 17 Vector.svg",
-    "Black iPhone 17.jpg",
-    "Sage iPhone 17.jpg",
-  ],
+  //
+  // No entran fotos de equipos en exhibición: en el mostrador de una tienda
+  // el teléfono va enganchado a un cable con imán antirrobo, y ese cable sale
+  // en la foto. La descripción de cada archivo en Commons dice dónde fue
+  // tomada, así que se puede verificar antes de bajarla en vez de
+  // descubrirlo mirando el catálogo.
+  "iphone-17": ["IPhone 17 Vector.svg"],
   "iphone-17-pro": [
     "IPhone 17 Pro (Silver) - Backside.jpg",
     "IPhone 17 Pro Vector.svg",
     "IPhone 17 Pro (Deep Blue model).jpg",
   ],
-  "iphone-17-pro-max": [
-    "Cosmic Orange iPhone 17 Pro Max.jpg",
-    "IPhone 17 Pro Max Vector.svg",
-    "Silver iPhone 17 Pro Max.jpg",
-    "Deep Blue iPhone 17 Pro Max.jpg",
-  ],
+  "iphone-17-pro-max": ["IPhone 17 Pro Max Vector.svg"],
   "iphone-16": ["Back of iPhone 16 Blue model.jpg", "IPhone 16 Vector.svg"],
   "iphone-16-pro": [
     "Back view of iPhone 16 Pro White Titanium.jpg",
@@ -82,11 +78,7 @@ const FOTOS = {
     "IPhone 16 Pro Max Vector.svg",
     "Right view of iPhone 16 Pro Max Natural Titanium.jpg",
   ],
-  "iphone-15": [
-    "Back of iPhone 15.jpg",
-    "IPhone 15 Vector.svg",
-    "Back and side of iPhone 15.jpg",
-  ],
+  "iphone-15": ["Back of iPhone 15.jpg", "IPhone 15 Vector.svg"],
   "iphone-15-pro": [
     "Back view of iPhone 15 Pro Natural titanium.jpg",
     "IPhone 15 Pro Vector.svg",

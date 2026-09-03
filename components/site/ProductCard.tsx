@@ -76,18 +76,17 @@ export function ProductCard({
         stock === 0 && "opacity-55"
       )}
     >
-      {/* En teléfono la foto va cuadrada y la tarjeta ocupa todo el ancho:
-          ahí el equipo tiene que verse grande, que es lo único que se mira
-          scrolleando con el pulgar. De tablet para arriba pasa a más ancha
-          que alta, para que la tarjeta quede pareja dentro de la grilla y no
-          alargada, que es lo que pasaba con foto cuadrada más cuatro líneas.
+      {/* La foto va cuadrada en todos los tamaños. Más ancha que alta la
+          tarjeta quedaba más compacta, pero el equipo —que es vertical— se
+          veía diminuto en el medio, con aire a los costados. Acá lo que
+          importa es que se vea el teléfono.
 
           Fondo blanco cuando la imagen es el equipo recortado: así se ve como
           una foto de catálogo y todas las tarjetas quedan parejas. Las fotos
           ambientales van sobre el gris, que las contiene mejor. */}
       <div
         className={cn(
-          "relative aspect-square overflow-hidden sm:aspect-4/3",
+          "relative aspect-square overflow-hidden",
           propia ? "bg-white" : "bg-elevated"
         )}
       >
