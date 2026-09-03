@@ -523,6 +523,54 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-11-PRO-MAX-512GB-2');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('Acer Aspire Go 15 AG15-42P', 'acer-aspire-go-15-ag15-42p', 'Acer', 'Acer Aspire Go 15 AG15-42P', 'notebook', 'Acer Aspire Go 15 AG15-42P nuevo, sellado y con garantía. Consultanos por disponibilidad de color.', '{"Procesador":"AMD Ryzen 7 7730U","Memoria":"16 GB DDR4","Almacenamiento":"512 GB SSD","Pantalla":"15.6\" Full HD","Sistema operativo":"Windows 11"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '16GB · 512GB', 'Pure Silver', '#c9ccd1', 'sellado', 'original', NULL, 1334000, 920, 780, 2, 'ACER-ASPIRE-GO-15-AG15-42P-16GB · 512GB-1'
+  FROM products WHERE slug = 'acer-aspire-go-15-ag15-42p'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'ACER-ASPIRE-GO-15-AG15-42P-16GB · 512GB-1');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('Acer Swift Go SFG16-72', 'acer-swift-go-sfg16-72', 'Acer', 'Acer Swift Go SFG16-72', 'notebook', 'Acer Swift Go SFG16-72 nuevo, sellado y con garantía. Consultanos por disponibilidad de color.', '{"Procesador":"Intel Core Ultra 5 125H","Memoria":"8 GB DDR5","Almacenamiento":"512 GB SSD","Pantalla":"16\" 3.2K OLED, 120 Hz","Sistema operativo":"Windows 11 Home"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '8GB · 512GB', 'Steel Gray', '#6b6f76', 'sellado', 'original', NULL, 1363000, 940, 800, 2, 'ACER-SWIFT-GO-SFG16-72-8GB · 512GB-1'
+  FROM products WHERE slug = 'acer-swift-go-sfg16-72'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'ACER-SWIFT-GO-SFG16-72-8GB · 512GB-1');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('Asus Vivobook Go E1504FA', 'asus-vivobook-go-e1504fa', 'Asus', 'Asus Vivobook Go E1504FA', 'notebook', 'Asus Vivobook Go E1504FA nuevo, sellado y con garantía. Consultanos por disponibilidad de color.', '{"Procesador":"AMD Ryzen 5","Memoria":"8 GB","Almacenamiento":"512 GB SSD","Pantalla":"15.6\" Full HD","Sistema operativo":"Windows 11"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '8GB · 512GB', 'Mixed Black', '#2c2c2e', 'sellado', 'original', NULL, 986000, 680, 575, 2, 'ASUS-VIVOBOOK-GO-E1504FA-8GB · 512GB-1'
+  FROM products WHERE slug = 'asus-vivobook-go-e1504fa'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'ASUS-VIVOBOOK-GO-E1504FA-8GB · 512GB-1');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('Asus X1404VA', 'asus-x1404va', 'Asus', 'Asus X1404VA', 'notebook', 'Asus X1404VA nuevo, sellado y con garantía. Consultanos por disponibilidad de color.', '{"Procesador":"Intel Core i7-1355U","Memoria":"12 GB","Almacenamiento":"512 GB SSD","Pantalla":"14\" Full HD","Sistema operativo":"Windows 11"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '12GB · 512GB', 'Azul', '#3f5878', 'sellado', 'original', NULL, 1305000, 900, 765, 2, 'ASUS-X1404VA-12GB · 512GB-1'
+  FROM products WHERE slug = 'asus-x1404va'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'ASUS-X1404VA-12GB · 512GB-1');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('Asus Vivobook X1407QA', 'asus-vivobook-x1407qa', 'Asus', 'Asus Vivobook X1407QA', 'notebook', 'Asus Vivobook X1407QA nuevo, sellado y con garantía. Consultanos por disponibilidad de color.', '{"Procesador":"Snapdragon X8 X1-26-100","Memoria":"16 GB LPDDR5X","Almacenamiento":"512 GB SSD","Pantalla":"14\" 1920 × 1200","Sistema operativo":"Windows 11"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '16GB · 512GB', 'Cool Silver', '#c9ccd1', 'sellado', 'original', NULL, 1276000, 880, 745, 2, 'ASUS-VIVOBOOK-X1407QA-16GB · 512GB-1'
+  FROM products WHERE slug = 'asus-vivobook-x1407qa'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'ASUS-VIVOBOOK-X1407QA-16GB · 512GB-1');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('Asus Vivobook Go F1504VAP', 'asus-vivobook-go-f1504vap', 'Asus', 'Asus Vivobook Go F1504VAP', 'notebook', 'Asus Vivobook Go F1504VAP nuevo, sellado y con garantía. Consultanos por disponibilidad de color.', '{"Procesador":"Intel Core 7 150U","Memoria":"16 GB","Almacenamiento":"1 TB SSD","Pantalla":"15.6\" Full HD táctil","Sistema operativo":"Windows 11 Home"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '16GB · 1TB', 'Cool Silver', '#c9ccd1', 'sellado', 'original', NULL, 1755000, 1210, 1025, 2, 'ASUS-VIVOBOOK-GO-F1504VAP-16GB · 1TB-1'
+  FROM products WHERE slug = 'asus-vivobook-go-f1504vap'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'ASUS-VIVOBOOK-GO-F1504VAP-16GB · 1TB-1');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
   VALUES ('Nintendo Switch OLED', 'nintendo-switch-oled', 'Nintendo', 'Nintendo Switch OLED', 'consola', 'Nintendo Switch OLED nuevo, sellado y con garantía. Consultanos por disponibilidad de color.', '{"Pantalla":"7\" OLED","Almacenamiento":"64 GB","Incluye":"Dock y Joy-Con"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
@@ -809,6 +857,298 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   SELECT id, 'Elite', 'Titan Black', '#2c2c34', 'sellado', 'original', NULL, 131000, 90, 79, 6, 'KIESLECT-AL-WATCH-ELITE-2-Elite-1'
   FROM products WHERE slug = 'kieslect-al-watch-elite-2'
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'KIESLECT-AL-WATCH-ELITE-2-Elite-1');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('MacBook Neo 13', 'macbook-neo-13', 'Apple', 'MacBook Neo 13', 'notebook', 'MacBook Neo 13 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple A18 Pro, 6 núcleos de CPU y 5 de GPU","Pantalla":"13\" Liquid Retina (2408 × 1506)","Memoria":"8 GB"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 1421000, 980, 830, 2, 'MACBOOK-NEO-13-256GB-1'
+  FROM products WHERE slug = 'macbook-neo-13'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-NEO-13-256GB-1');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Indigo', '#4a5578', 'sellado', 'original', NULL, 1421000, 980, 830, 2, 'MACBOOK-NEO-13-256GB-2'
+  FROM products WHERE slug = 'macbook-neo-13'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-NEO-13-256GB-2');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Blush', '#e8c6c0', 'sellado', 'original', NULL, 1421000, 980, 830, 2, 'MACBOOK-NEO-13-256GB-3'
+  FROM products WHERE slug = 'macbook-neo-13'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-NEO-13-256GB-3');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Citrus', '#e5c063', 'sellado', 'original', NULL, 1421000, 980, 830, 2, 'MACBOOK-NEO-13-256GB-4'
+  FROM products WHERE slug = 'macbook-neo-13'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-NEO-13-256GB-4');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '512GB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 1610000, 1110, 940, 2, 'MACBOOK-NEO-13-512GB-5'
+  FROM products WHERE slug = 'macbook-neo-13'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-NEO-13-512GB-5');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '512GB', 'Indigo', '#4a5578', 'sellado', 'original', NULL, 1610000, 1110, 940, 2, 'MACBOOK-NEO-13-512GB-6'
+  FROM products WHERE slug = 'macbook-neo-13'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-NEO-13-512GB-6');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '512GB', 'Blush', '#e8c6c0', 'sellado', 'original', NULL, 1610000, 1110, 940, 2, 'MACBOOK-NEO-13-512GB-7'
+  FROM products WHERE slug = 'macbook-neo-13'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-NEO-13-512GB-7');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('MacBook Air M5 13', 'macbook-air-m5-13', 'Apple', 'MacBook Air M5 13', 'notebook', 'MacBook Air M5 13 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple M5, 10 núcleos de CPU y 10 de GPU","Pantalla":"13.6\" Liquid Retina"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '16GB · 512GB', 'Midnight', '#2e3642', 'sellado', 'original', NULL, 2451000, 1690, 1430, 2, 'MACBOOK-AIR-M5-13-16GB · 512GB-1'
+  FROM products WHERE slug = 'macbook-air-m5-13'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-AIR-M5-13-16GB · 512GB-1');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '16GB · 512GB', 'Starlight', '#e9dfd0', 'sellado', 'original', NULL, 2451000, 1690, 1430, 2, 'MACBOOK-AIR-M5-13-16GB · 512GB-2'
+  FROM products WHERE slug = 'macbook-air-m5-13'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-AIR-M5-13-16GB · 512GB-2');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '16GB · 1TB', 'Midnight', '#2e3642', 'sellado', 'original', NULL, 2741000, 1890, 1600, 2, 'MACBOOK-AIR-M5-13-16GB · 1TB-3'
+  FROM products WHERE slug = 'macbook-air-m5-13'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-AIR-M5-13-16GB · 1TB-3');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '16GB · 1TB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 2741000, 1890, 1600, 2, 'MACBOOK-AIR-M5-13-16GB · 1TB-4'
+  FROM products WHERE slug = 'macbook-air-m5-13'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-AIR-M5-13-16GB · 1TB-4');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '24GB · 1TB', 'Starlight', '#e9dfd0', 'sellado', 'original', NULL, 3335000, 2300, 1950, 2, 'MACBOOK-AIR-M5-13-24GB · 1TB-5'
+  FROM products WHERE slug = 'macbook-air-m5-13'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-AIR-M5-13-24GB · 1TB-5');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('MacBook Air M5 15', 'macbook-air-m5-15', 'Apple', 'MacBook Air M5 15', 'notebook', 'MacBook Air M5 15 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple M5, 10 núcleos de CPU y 10 de GPU","Pantalla":"15.3\" Liquid Retina"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '16GB · 512GB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 2886000, 1990, 1690, 2, 'MACBOOK-AIR-M5-15-16GB · 512GB-1'
+  FROM products WHERE slug = 'macbook-air-m5-15'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-AIR-M5-15-16GB · 512GB-1');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '16GB · 512GB', 'Sky Blue', '#a9c3d8', 'sellado', 'original', NULL, 2886000, 1990, 1690, 2, 'MACBOOK-AIR-M5-15-16GB · 512GB-2'
+  FROM products WHERE slug = 'macbook-air-m5-15'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-AIR-M5-15-16GB · 512GB-2');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '16GB · 512GB', 'Midnight', '#2e3642', 'sellado', 'original', NULL, 2886000, 1990, 1690, 2, 'MACBOOK-AIR-M5-15-16GB · 512GB-3'
+  FROM products WHERE slug = 'macbook-air-m5-15'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-AIR-M5-15-16GB · 512GB-3');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '24GB · 1TB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 3930000, 2710, 2300, 2, 'MACBOOK-AIR-M5-15-24GB · 1TB-4'
+  FROM products WHERE slug = 'macbook-air-m5-15'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-AIR-M5-15-24GB · 1TB-4');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '24GB · 1TB', 'Sky Blue', '#a9c3d8', 'sellado', 'original', NULL, 3930000, 2710, 2300, 2, 'MACBOOK-AIR-M5-15-24GB · 1TB-5'
+  FROM products WHERE slug = 'macbook-air-m5-15'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-AIR-M5-15-24GB · 1TB-5');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '24GB · 1TB', 'Midnight', '#2e3642', 'sellado', 'original', NULL, 3930000, 2710, 2300, 2, 'MACBOOK-AIR-M5-15-24GB · 1TB-6'
+  FROM products WHERE slug = 'macbook-air-m5-15'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-AIR-M5-15-24GB · 1TB-6');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '24GB · 1TB', 'Starlight', '#e9dfd0', 'sellado', 'original', NULL, 3930000, 2710, 2300, 2, 'MACBOOK-AIR-M5-15-24GB · 1TB-7'
+  FROM products WHERE slug = 'macbook-air-m5-15'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-AIR-M5-15-24GB · 1TB-7');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('MacBook Pro M4 Pro 14', 'macbook-pro-m4-pro-14', 'Apple', 'MacBook Pro M4 Pro 14', 'notebook', 'MacBook Pro M4 Pro 14 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple M4 Pro","Pantalla":"14.2\" Liquid Retina XDR"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '12 CPU · 16 GPU · 24GB · 512GB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 3741000, 2580, 2190, 2, 'MACBOOK-PRO-M4-PRO-14-12 CPU · 16 GPU · 24GB · 512GB-1'
+  FROM products WHERE slug = 'macbook-pro-m4-pro-14'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M4-PRO-14-12 CPU · 16 GPU · 24GB · 512GB-1');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '14 CPU · 20 GPU · 24GB · 1TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 4191000, 2890, 2450, 2, 'MACBOOK-PRO-M4-PRO-14-14 CPU · 20 GPU · 24GB · 1TB-2'
+  FROM products WHERE slug = 'macbook-pro-m4-pro-14'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M4-PRO-14-14 CPU · 20 GPU · 24GB · 1TB-2');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('MacBook Pro M5 14', 'macbook-pro-m5-14', 'Apple', 'MacBook Pro M5 14', 'notebook', 'MacBook Pro M5 14 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple M5, 10 núcleos de CPU y 10 de GPU","Pantalla":"14.2\" Liquid Retina XDR"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '16GB · 1TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 3480000, 2400, 2030, 2, 'MACBOOK-PRO-M5-14-16GB · 1TB-1'
+  FROM products WHERE slug = 'macbook-pro-m5-14'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-14-16GB · 1TB-1');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '16GB · 1TB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 3480000, 2400, 2030, 2, 'MACBOOK-PRO-M5-14-16GB · 1TB-2'
+  FROM products WHERE slug = 'macbook-pro-m5-14'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-14-16GB · 1TB-2');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '24GB · 1TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 4104000, 2830, 2400, 2, 'MACBOOK-PRO-M5-14-24GB · 1TB-3'
+  FROM products WHERE slug = 'macbook-pro-m5-14'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-14-24GB · 1TB-3');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '24GB · 1TB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 4104000, 2830, 2400, 2, 'MACBOOK-PRO-M5-14-24GB · 1TB-4'
+  FROM products WHERE slug = 'macbook-pro-m5-14'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-14-24GB · 1TB-4');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '24GB · 1TB · teclado español', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 4278000, 2950, 2500, 2, 'MACBOOK-PRO-M5-14-24GB · 1TB · teclado español-5'
+  FROM products WHERE slug = 'macbook-pro-m5-14'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-14-24GB · 1TB · teclado español-5');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '32GB · 1TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 4713000, 3250, 2750, 2, 'MACBOOK-PRO-M5-14-32GB · 1TB-6'
+  FROM products WHERE slug = 'macbook-pro-m5-14'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-14-32GB · 1TB-6');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '32GB · 1TB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 4713000, 3250, 2750, 2, 'MACBOOK-PRO-M5-14-32GB · 1TB-7'
+  FROM products WHERE slug = 'macbook-pro-m5-14'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-14-32GB · 1TB-7');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('MacBook Pro M5 Pro 14', 'macbook-pro-m5-pro-14', 'Apple', 'MacBook Pro M5 Pro 14', 'notebook', 'MacBook Pro M5 Pro 14 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple M5 Pro","Pantalla":"14.2\" Liquid Retina XDR"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '15 CPU · 16 GPU · 24GB · 1TB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 4539000, 3130, 2650, 2, 'MACBOOK-PRO-M5-PRO-14-15 CPU · 16 GPU · 24GB · 1TB-1'
+  FROM products WHERE slug = 'macbook-pro-m5-pro-14'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-PRO-14-15 CPU · 16 GPU · 24GB · 1TB-1');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '15 CPU · 16 GPU · 24GB · 1TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 4539000, 3130, 2650, 2, 'MACBOOK-PRO-M5-PRO-14-15 CPU · 16 GPU · 24GB · 1TB-2'
+  FROM products WHERE slug = 'macbook-pro-m5-pro-14'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-PRO-14-15 CPU · 16 GPU · 24GB · 1TB-2');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '18 CPU · 20 GPU · 24GB · 2TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 5699000, 3930, 3330, 2, 'MACBOOK-PRO-M5-PRO-14-18 CPU · 20 GPU · 24GB · 2TB-3'
+  FROM products WHERE slug = 'macbook-pro-m5-pro-14'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-PRO-14-18 CPU · 20 GPU · 24GB · 2TB-3');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('MacBook Pro M5 Max 14', 'macbook-pro-m5-max-14', 'Apple', 'MacBook Pro M5 Max 14', 'notebook', 'MacBook Pro M5 Max 14 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple M5 Max","Pantalla":"14.2\" Liquid Retina XDR"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '18 CPU · 32 GPU · 36GB · 2TB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 7105000, 4900, 4150, 1, 'MACBOOK-PRO-M5-MAX-14-18 CPU · 32 GPU · 36GB · 2TB-1'
+  FROM products WHERE slug = 'macbook-pro-m5-max-14'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-MAX-14-18 CPU · 32 GPU · 36GB · 2TB-1');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('MacBook Pro M5 Pro 16', 'macbook-pro-m5-pro-16', 'Apple', 'MacBook Pro M5 Pro 16', 'notebook', 'MacBook Pro M5 Pro 16 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple M5 Pro, 18 núcleos de CPU y 20 de GPU","Pantalla":"16.2\" Liquid Retina XDR"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '24GB · 1TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 5264000, 3630, 3080, 2, 'MACBOOK-PRO-M5-PRO-16-24GB · 1TB-1'
+  FROM products WHERE slug = 'macbook-pro-m5-pro-16'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-PRO-16-24GB · 1TB-1');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '24GB · 1TB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 5264000, 3630, 3080, 2, 'MACBOOK-PRO-M5-PRO-16-24GB · 1TB-2'
+  FROM products WHERE slug = 'macbook-pro-m5-pro-16'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-PRO-16-24GB · 1TB-2');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '48GB · 1TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 6757000, 4660, 3950, 2, 'MACBOOK-PRO-M5-PRO-16-48GB · 1TB-3'
+  FROM products WHERE slug = 'macbook-pro-m5-pro-16'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-PRO-16-48GB · 1TB-3');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '48GB · 1TB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 6757000, 4660, 3950, 2, 'MACBOOK-PRO-M5-PRO-16-48GB · 1TB-4'
+  FROM products WHERE slug = 'macbook-pro-m5-pro-16'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-PRO-16-48GB · 1TB-4');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '48GB · 1TB · Nano Texture', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 7105000, 4900, 4150, 2, 'MACBOOK-PRO-M5-PRO-16-48GB · 1TB · Nano Texture-5'
+  FROM products WHERE slug = 'macbook-pro-m5-pro-16'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-PRO-16-48GB · 1TB · Nano Texture-5');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '48GB · 1TB · Nano Texture', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 7105000, 4900, 4150, 2, 'MACBOOK-PRO-M5-PRO-16-48GB · 1TB · Nano Texture-6'
+  FROM products WHERE slug = 'macbook-pro-m5-pro-16'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-PRO-16-48GB · 1TB · Nano Texture-6');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('MacBook Pro M5 Max 16', 'macbook-pro-m5-max-16', 'Apple', 'MacBook Pro M5 Max 16', 'notebook', 'MacBook Pro M5 Max 16 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple M5 Max","Pantalla":"16.2\" Liquid Retina XDR"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '18 CPU · 32 GPU · 36GB · 2TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 7352000, 5070, 4300, 2, 'MACBOOK-PRO-M5-MAX-16-18 CPU · 32 GPU · 36GB · 2TB-1'
+  FROM products WHERE slug = 'macbook-pro-m5-max-16'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-MAX-16-18 CPU · 32 GPU · 36GB · 2TB-1');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '18 CPU · 40 GPU · 48GB · 2TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 9063000, 6250, 5300, 2, 'MACBOOK-PRO-M5-MAX-16-18 CPU · 40 GPU · 48GB · 2TB-2'
+  FROM products WHERE slug = 'macbook-pro-m5-max-16'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-MAX-16-18 CPU · 40 GPU · 48GB · 2TB-2');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '18 CPU · 40 GPU · 64GB · 2TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 11209000, 7730, 6550, 2, 'MACBOOK-PRO-M5-MAX-16-18 CPU · 40 GPU · 64GB · 2TB-3'
+  FROM products WHERE slug = 'macbook-pro-m5-max-16'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-MAX-16-18 CPU · 40 GPU · 64GB · 2TB-3');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '18 CPU · 40 GPU · 128GB · 2TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 14718000, 10150, 8600, 1, 'MACBOOK-PRO-M5-MAX-16-18 CPU · 40 GPU · 128GB · 2TB-4'
+  FROM products WHERE slug = 'macbook-pro-m5-max-16'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'MACBOOK-PRO-M5-MAX-16-18 CPU · 40 GPU · 128GB · 2TB-4');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('iPad 11ª generación', 'ipad-11-generacion', 'Apple', 'iPad 11ª generación', 'tablet', 'iPad 11ª generación nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple A16","Pantalla":"11\" Liquid Retina"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 870000, 600, 510, 2, 'IPAD-11-GENERACION-128GB-1'
+  FROM products WHERE slug = 'ipad-11-generacion'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-11-GENERACION-128GB-1');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Blue', '#7f9cc0', 'sellado', 'original', NULL, 870000, 600, 510, 2, 'IPAD-11-GENERACION-128GB-2'
+  FROM products WHERE slug = 'ipad-11-generacion'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-11-GENERACION-128GB-2');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Yellow', '#e8d07a', 'sellado', 'original', NULL, 870000, 600, 510, 2, 'IPAD-11-GENERACION-128GB-3'
+  FROM products WHERE slug = 'ipad-11-generacion'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-11-GENERACION-128GB-3');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Blue', '#7f9cc0', 'sellado', 'original', NULL, 1015000, 700, 590, 2, 'IPAD-11-GENERACION-256GB-4'
+  FROM products WHERE slug = 'ipad-11-generacion'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-11-GENERACION-256GB-4');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 1015000, 700, 590, 2, 'IPAD-11-GENERACION-256GB-5'
+  FROM products WHERE slug = 'ipad-11-generacion'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-11-GENERACION-256GB-5');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('iPad Air 11 M4', 'ipad-air-11-m4', 'Apple', 'iPad Air 11 M4', 'tablet', 'iPad Air 11 M4 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple M4","Pantalla":"11\" Liquid Retina"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Blue', '#7f9cc0', 'sellado', 'original', NULL, 1349000, 930, 790, 2, 'IPAD-AIR-11-M4-128GB-1'
+  FROM products WHERE slug = 'ipad-air-11-m4'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-11-M4-128GB-1');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Purple', '#b3a7cd', 'sellado', 'original', NULL, 1349000, 930, 790, 2, 'IPAD-AIR-11-M4-128GB-2'
+  FROM products WHERE slug = 'ipad-air-11-m4'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-11-M4-128GB-2');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Space Gray', '#5c5c5e', 'sellado', 'original', NULL, 1349000, 930, 790, 2, 'IPAD-AIR-11-M4-128GB-3'
+  FROM products WHERE slug = 'ipad-air-11-m4'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-11-M4-128GB-3');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Blue', '#7f9cc0', 'sellado', 'original', NULL, 1581000, 1090, 920, 2, 'IPAD-AIR-11-M4-256GB-4'
+  FROM products WHERE slug = 'ipad-air-11-m4'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-11-M4-256GB-4');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Space Gray', '#5c5c5e', 'sellado', 'original', NULL, 1581000, 1090, 920, 2, 'IPAD-AIR-11-M4-256GB-5'
+  FROM products WHERE slug = 'ipad-air-11-m4'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-11-M4-256GB-5');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('iPad Air 13 M3', 'ipad-air-13-m3', 'Apple', 'iPad Air 13 M3', 'tablet', 'iPad Air 13 M3 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple M3","Pantalla":"13\" Liquid Retina"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Starlight', '#e9dfd0', 'sellado', 'original', NULL, 1494000, 1030, 870, 2, 'IPAD-AIR-13-M3-128GB-1'
+  FROM products WHERE slug = 'ipad-air-13-m3'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-13-M3-128GB-1');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Blue', '#7f9cc0', 'sellado', 'original', NULL, 1595000, 1100, 930, 2, 'IPAD-AIR-13-M3-256GB-2'
+  FROM products WHERE slug = 'ipad-air-13-m3'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-13-M3-256GB-2');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Purple', '#b3a7cd', 'sellado', 'original', NULL, 1595000, 1100, 930, 2, 'IPAD-AIR-13-M3-256GB-3'
+  FROM products WHERE slug = 'ipad-air-13-m3'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-13-M3-256GB-3');
+
+INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
+  VALUES ('iPad Air 13 M4', 'ipad-air-13-m4', 'Apple', 'iPad Air 13 M4', 'tablet', 'iPad Air 13 M4 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple M4","Pantalla":"13\" Liquid Retina"}'::jsonb, 'active', FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Space Gray', '#5c5c5e', 'sellado', 'original', NULL, 1639000, 1130, 955, 2, 'IPAD-AIR-13-M4-128GB-1'
+  FROM products WHERE slug = 'ipad-air-13-m4'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-13-M4-128GB-1');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Blue', '#7f9cc0', 'sellado', 'original', NULL, 1639000, 1130, 955, 2, 'IPAD-AIR-13-M4-128GB-2'
+  FROM products WHERE slug = 'ipad-air-13-m4'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-13-M4-128GB-2');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '128GB', 'Starlight', '#e9dfd0', 'sellado', 'original', NULL, 1639000, 1130, 955, 2, 'IPAD-AIR-13-M4-128GB-3'
+  FROM products WHERE slug = 'ipad-air-13-m4'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-13-M4-128GB-3');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Space Gray', '#5c5c5e', 'sellado', 'original', NULL, 1914000, 1320, 1120, 2, 'IPAD-AIR-13-M4-256GB-4'
+  FROM products WHERE slug = 'ipad-air-13-m4'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-13-M4-256GB-4');
+INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
+  SELECT id, '256GB', 'Starlight', '#e9dfd0', 'sellado', 'original', NULL, 1914000, 1320, 1120, 2, 'IPAD-AIR-13-M4-256GB-5'
+  FROM products WHERE slug = 'ipad-air-13-m4'
+  AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPAD-AIR-13-M4-256GB-5');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
   VALUES ('iPad Air M2', 'ipad-air-m2', 'Apple', 'iPad Air M2', 'tablet', 'iPad Air de 11" con chip M2. Compatible con Apple Pencil Pro y Magic Keyboard.', '{"Pantalla":"11\" Liquid Retina","Chip":"M2","Cámara":"12 MP gran angular","Batería":"Hasta 10 h de navegación","Conectividad":"Wi-Fi 6E"}'::jsonb, 'active', FALSE)

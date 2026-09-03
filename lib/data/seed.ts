@@ -285,6 +285,98 @@ type ItemProveedor = {
 };
 
 const LISTA_PROVEEDOR: ItemProveedor[] = [
+  // ── Notebooks de oficina y uso general
+  {
+    marca: "Acer",
+    nombre: "Acer Aspire Go 15 AG15-42P",
+    categoria: "notebook",
+    variante: "16GB · 512GB",
+    colores: [["Pure Silver", "#c9ccd1"]],
+    costoUsd: 780,
+    specs: {
+      Procesador: "AMD Ryzen 7 7730U",
+      Memoria: "16 GB DDR4",
+      Almacenamiento: "512 GB SSD",
+      Pantalla: '15.6" Full HD',
+      "Sistema operativo": "Windows 11",
+    },
+  },
+  {
+    marca: "Acer",
+    nombre: "Acer Swift Go SFG16-72",
+    categoria: "notebook",
+    variante: "8GB · 512GB",
+    colores: [["Steel Gray", "#6b6f76"]],
+    costoUsd: 800,
+    specs: {
+      Procesador: "Intel Core Ultra 5 125H",
+      Memoria: "8 GB DDR5",
+      Almacenamiento: "512 GB SSD",
+      Pantalla: '16" 3.2K OLED, 120 Hz',
+      "Sistema operativo": "Windows 11 Home",
+    },
+  },
+  {
+    marca: "Asus",
+    nombre: "Asus Vivobook Go E1504FA",
+    categoria: "notebook",
+    variante: "8GB · 512GB",
+    colores: [["Mixed Black", "#2c2c2e"]],
+    costoUsd: 575,
+    specs: {
+      Procesador: "AMD Ryzen 5",
+      Memoria: "8 GB",
+      Almacenamiento: "512 GB SSD",
+      Pantalla: '15.6" Full HD',
+      "Sistema operativo": "Windows 11",
+    },
+  },
+  {
+    marca: "Asus",
+    nombre: "Asus X1404VA",
+    categoria: "notebook",
+    variante: "12GB · 512GB",
+    colores: [["Azul", "#3f5878"]],
+    costoUsd: 765,
+    specs: {
+      Procesador: "Intel Core i7-1355U",
+      Memoria: "12 GB",
+      Almacenamiento: "512 GB SSD",
+      Pantalla: '14" Full HD',
+      "Sistema operativo": "Windows 11",
+    },
+  },
+  {
+    marca: "Asus",
+    nombre: "Asus Vivobook X1407QA",
+    categoria: "notebook",
+    variante: "16GB · 512GB",
+    colores: [["Cool Silver", "#c9ccd1"]],
+    costoUsd: 745,
+    specs: {
+      Procesador: "Snapdragon X8 X1-26-100",
+      Memoria: "16 GB LPDDR5X",
+      Almacenamiento: "512 GB SSD",
+      Pantalla: '14" 1920 × 1200',
+      "Sistema operativo": "Windows 11",
+    },
+  },
+  {
+    marca: "Asus",
+    nombre: "Asus Vivobook Go F1504VAP",
+    categoria: "notebook",
+    variante: "16GB · 1TB",
+    colores: [["Cool Silver", "#c9ccd1"]],
+    costoUsd: 1025,
+    specs: {
+      Procesador: "Intel Core 7 150U",
+      Memoria: "16 GB",
+      Almacenamiento: "1 TB SSD",
+      Pantalla: '15.6" Full HD táctil',
+      "Sistema operativo": "Windows 11 Home",
+    },
+  },
+
   // ── Consolas y gaming
   {
     marca: "Nintendo",
@@ -579,9 +671,384 @@ const PROVEEDOR_SEED: SeedProduct[] = LISTA_PROVEEDOR.map((item) => ({
   })),
 }));
 
+/**
+ * Línea Apple de la lista mayorista.
+ *
+ * Van aparte de `LISTA_PROVEEDOR` porque acá un mismo modelo tiene varias
+ * configuraciones —memoria, disco y color cambian el precio— y agruparlas bajo
+ * un solo producto es lo que deja comparar: quien busca una MacBook Pro de 14"
+ * quiere ver las opciones juntas, no seis fichas casi iguales compitiendo
+ * entre sí en la grilla.
+ */
+type ConfigApple = {
+  /** Lo que distingue esta configuración dentro del modelo. */
+  config: string;
+  colores: [string, string][];
+  costoUsd: number;
+  stock?: number;
+};
+
+type ModeloApple = {
+  nombre: string;
+  categoria: Category;
+  specs: Record<string, string>;
+  configs: ConfigApple[];
+};
+
+const LINEA_APPLE: ModeloApple[] = [
+  {
+    nombre: "MacBook Neo 13",
+    categoria: "notebook",
+    specs: {
+      Chip: "Apple A18 Pro, 6 núcleos de CPU y 5 de GPU",
+      Pantalla: '13" Liquid Retina (2408 × 1506)',
+      Memoria: "8 GB",
+    },
+    configs: [
+      {
+        config: "256GB",
+        colores: [
+          ["Silver", "#dcdee1"],
+          ["Indigo", "#4a5578"],
+          ["Blush", "#e8c6c0"],
+          ["Citrus", "#e5c063"],
+        ],
+        costoUsd: 830,
+      },
+      {
+        config: "512GB",
+        colores: [
+          ["Silver", "#dcdee1"],
+          ["Indigo", "#4a5578"],
+          ["Blush", "#e8c6c0"],
+        ],
+        costoUsd: 940,
+      },
+    ],
+  },
+  {
+    nombre: "MacBook Air M5 13",
+    categoria: "notebook",
+    specs: {
+      Chip: "Apple M5, 10 núcleos de CPU y 10 de GPU",
+      Pantalla: '13.6" Liquid Retina',
+    },
+    configs: [
+      {
+        config: "16GB · 512GB",
+        colores: [
+          ["Midnight", "#2e3642"],
+          ["Starlight", "#e9dfd0"],
+        ],
+        costoUsd: 1430,
+      },
+      {
+        config: "16GB · 1TB",
+        colores: [
+          ["Midnight", "#2e3642"],
+          ["Silver", "#dcdee1"],
+        ],
+        costoUsd: 1600,
+      },
+      { config: "24GB · 1TB", colores: [["Starlight", "#e9dfd0"]], costoUsd: 1950 },
+    ],
+  },
+  {
+    nombre: "MacBook Air M5 15",
+    categoria: "notebook",
+    specs: {
+      Chip: "Apple M5, 10 núcleos de CPU y 10 de GPU",
+      Pantalla: '15.3" Liquid Retina',
+    },
+    configs: [
+      {
+        config: "16GB · 512GB",
+        colores: [
+          ["Silver", "#dcdee1"],
+          ["Sky Blue", "#a9c3d8"],
+          ["Midnight", "#2e3642"],
+        ],
+        costoUsd: 1690,
+      },
+      {
+        config: "24GB · 1TB",
+        colores: [
+          ["Silver", "#dcdee1"],
+          ["Sky Blue", "#a9c3d8"],
+          ["Midnight", "#2e3642"],
+          ["Starlight", "#e9dfd0"],
+        ],
+        costoUsd: 2300,
+      },
+    ],
+  },
+  {
+    nombre: "MacBook Pro M4 Pro 14",
+    categoria: "notebook",
+    specs: { Chip: "Apple M4 Pro", Pantalla: '14.2" Liquid Retina XDR' },
+    configs: [
+      {
+        config: "12 CPU · 16 GPU · 24GB · 512GB",
+        colores: [["Silver", "#dcdee1"]],
+        costoUsd: 2190,
+      },
+      {
+        config: "14 CPU · 20 GPU · 24GB · 1TB",
+        colores: [["Space Black", "#2b2b2d"]],
+        costoUsd: 2450,
+      },
+    ],
+  },
+  {
+    nombre: "MacBook Pro M5 14",
+    categoria: "notebook",
+    specs: {
+      Chip: "Apple M5, 10 núcleos de CPU y 10 de GPU",
+      Pantalla: '14.2" Liquid Retina XDR',
+    },
+    configs: [
+      {
+        config: "16GB · 1TB",
+        colores: [
+          ["Space Black", "#2b2b2d"],
+          ["Silver", "#dcdee1"],
+        ],
+        costoUsd: 2030,
+      },
+      {
+        config: "24GB · 1TB",
+        colores: [
+          ["Space Black", "#2b2b2d"],
+          ["Silver", "#dcdee1"],
+        ],
+        costoUsd: 2400,
+      },
+      {
+        config: "24GB · 1TB · teclado español",
+        colores: [["Space Black", "#2b2b2d"]],
+        costoUsd: 2500,
+      },
+      {
+        config: "32GB · 1TB",
+        colores: [
+          ["Space Black", "#2b2b2d"],
+          ["Silver", "#dcdee1"],
+        ],
+        costoUsd: 2750,
+      },
+    ],
+  },
+  {
+    nombre: "MacBook Pro M5 Pro 14",
+    categoria: "notebook",
+    specs: { Chip: "Apple M5 Pro", Pantalla: '14.2" Liquid Retina XDR' },
+    configs: [
+      {
+        config: "15 CPU · 16 GPU · 24GB · 1TB",
+        colores: [
+          ["Silver", "#dcdee1"],
+          ["Space Black", "#2b2b2d"],
+        ],
+        costoUsd: 2650,
+      },
+      {
+        config: "18 CPU · 20 GPU · 24GB · 2TB",
+        colores: [["Space Black", "#2b2b2d"]],
+        costoUsd: 3330,
+      },
+    ],
+  },
+  {
+    nombre: "MacBook Pro M5 Max 14",
+    categoria: "notebook",
+    specs: { Chip: "Apple M5 Max", Pantalla: '14.2" Liquid Retina XDR' },
+    configs: [
+      {
+        config: "18 CPU · 32 GPU · 36GB · 2TB",
+        colores: [["Silver", "#dcdee1"]],
+        costoUsd: 4150,
+        stock: 1,
+      },
+    ],
+  },
+  {
+    nombre: "MacBook Pro M5 Pro 16",
+    categoria: "notebook",
+    specs: {
+      Chip: "Apple M5 Pro, 18 núcleos de CPU y 20 de GPU",
+      Pantalla: '16.2" Liquid Retina XDR',
+    },
+    configs: [
+      {
+        config: "24GB · 1TB",
+        colores: [
+          ["Space Black", "#2b2b2d"],
+          ["Silver", "#dcdee1"],
+        ],
+        costoUsd: 3080,
+      },
+      {
+        config: "48GB · 1TB",
+        colores: [
+          ["Space Black", "#2b2b2d"],
+          ["Silver", "#dcdee1"],
+        ],
+        costoUsd: 3950,
+      },
+      {
+        config: "48GB · 1TB · Nano Texture",
+        colores: [
+          ["Space Black", "#2b2b2d"],
+          ["Silver", "#dcdee1"],
+        ],
+        costoUsd: 4150,
+      },
+    ],
+  },
+  {
+    nombre: "MacBook Pro M5 Max 16",
+    categoria: "notebook",
+    specs: { Chip: "Apple M5 Max", Pantalla: '16.2" Liquid Retina XDR' },
+    configs: [
+      {
+        config: "18 CPU · 32 GPU · 36GB · 2TB",
+        colores: [["Space Black", "#2b2b2d"]],
+        costoUsd: 4300,
+      },
+      {
+        config: "18 CPU · 40 GPU · 48GB · 2TB",
+        colores: [["Space Black", "#2b2b2d"]],
+        costoUsd: 5300,
+      },
+      {
+        config: "18 CPU · 40 GPU · 64GB · 2TB",
+        colores: [["Space Black", "#2b2b2d"]],
+        costoUsd: 6550,
+      },
+      {
+        config: "18 CPU · 40 GPU · 128GB · 2TB",
+        colores: [["Space Black", "#2b2b2d"]],
+        costoUsd: 8600,
+        stock: 1,
+      },
+    ],
+  },
+  {
+    nombre: "iPad 11ª generación",
+    categoria: "tablet",
+    specs: { Chip: "Apple A16", Pantalla: '11" Liquid Retina' },
+    configs: [
+      {
+        config: "128GB",
+        colores: [
+          ["Silver", "#dcdee1"],
+          ["Blue", "#7f9cc0"],
+          ["Yellow", "#e8d07a"],
+        ],
+        costoUsd: 510,
+      },
+      {
+        config: "256GB",
+        colores: [
+          ["Blue", "#7f9cc0"],
+          ["Silver", "#dcdee1"],
+        ],
+        costoUsd: 590,
+      },
+    ],
+  },
+  {
+    nombre: "iPad Air 11 M4",
+    categoria: "tablet",
+    specs: { Chip: "Apple M4", Pantalla: '11" Liquid Retina' },
+    configs: [
+      {
+        config: "128GB",
+        colores: [
+          ["Blue", "#7f9cc0"],
+          ["Purple", "#b3a7cd"],
+          ["Space Gray", "#5c5c5e"],
+        ],
+        costoUsd: 790,
+      },
+      {
+        config: "256GB",
+        colores: [
+          ["Blue", "#7f9cc0"],
+          ["Space Gray", "#5c5c5e"],
+        ],
+        costoUsd: 920,
+      },
+    ],
+  },
+  {
+    nombre: "iPad Air 13 M3",
+    categoria: "tablet",
+    specs: { Chip: "Apple M3", Pantalla: '13" Liquid Retina' },
+    configs: [
+      { config: "128GB", colores: [["Starlight", "#e9dfd0"]], costoUsd: 870 },
+      {
+        config: "256GB",
+        colores: [
+          ["Blue", "#7f9cc0"],
+          ["Purple", "#b3a7cd"],
+        ],
+        costoUsd: 930,
+      },
+    ],
+  },
+  {
+    nombre: "iPad Air 13 M4",
+    categoria: "tablet",
+    specs: { Chip: "Apple M4", Pantalla: '13" Liquid Retina' },
+    configs: [
+      {
+        config: "128GB",
+        colores: [
+          ["Space Gray", "#5c5c5e"],
+          ["Blue", "#7f9cc0"],
+          ["Starlight", "#e9dfd0"],
+        ],
+        costoUsd: 955,
+      },
+      {
+        config: "256GB",
+        colores: [
+          ["Space Gray", "#5c5c5e"],
+          ["Starlight", "#e9dfd0"],
+        ],
+        costoUsd: 1120,
+      },
+    ],
+  },
+];
+
+/** Cada modelo Apple es un producto, y cada configuración por color, una variante. */
+const APPLE_SEED: SeedProduct[] = LINEA_APPLE.map((modelo) => ({
+  name: modelo.nombre,
+  brand: "Apple",
+  model: modelo.nombre,
+  category: modelo.categoria,
+  description: `${modelo.nombre} nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.`,
+  specs: modelo.specs,
+  variants: modelo.configs.flatMap((c) =>
+    c.colores.map(([color, colorHex]) => ({
+      storage: c.config,
+      color,
+      colorHex,
+      grade: "sellado" as Grade,
+      batteryHealth: null,
+      priceUsd: conMargen(c.costoUsd),
+      costUsd: c.costoUsd,
+      stock: c.stock ?? 2,
+    }))
+  ),
+}));
+
 const SEED: SeedProduct[] = [
   ...IPHONE_SEED,
   ...PROVEEDOR_SEED,
+  ...APPLE_SEED,
   {
     name: "iPad Air M2",
     brand: "Apple",

@@ -155,11 +155,25 @@ describe("getProducts", () => {
     expect(conAcento.length).toBeGreaterThan(0);
   });
 
+  /**
+   * La búsqueda libre es por subcadena, así que se comprueba eso y no una
+   * igualdad exacta: en una notebook la variante no es una capacidad suelta
+   * sino la configuración entera —"16GB · 512GB"—, y exigir igualdad dejaba
+   * afuera resultados que la persona sí quería ver al buscar "512GB".
+   */
   it("busca también dentro de las variantes", async () => {
     const result = await getProducts({ q: "512GB" });
     expect(result.length).toBeGreaterThan(0);
     for (const p of result) {
-      expect(p.variants.some((v) => v.storage === "512GB")).toBe(true);
+      expect(p.variants.some((v) => v.storage.includes("512GB"))).toBe(true);
+    }
+  });
+
+  /** Una configuración de notebook no puede colarse como opción de capacidad. */
+  it("no ofrece configuraciones enteras en el filtro de capacidad", async () => {
+    const facets = await getCatalogFacets({ model: "MacBook Pro M5 14" });
+    for (const f of facets.storages) {
+      expect(f.value).toMatch(/^\d+(GB|TB)$/);
     }
   });
 

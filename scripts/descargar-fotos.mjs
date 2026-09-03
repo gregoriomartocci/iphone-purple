@@ -67,7 +67,7 @@ const FOTOS = {
     "IPhone 17 Pro (Deep Blue model).jpg",
   ],
   "iphone-17-pro-max": ["IPhone 17 Pro Max Vector.svg"],
-  "iphone-16": ["Back of iPhone 16 Blue model.jpg", "IPhone 16 Vector.svg"],
+  "iphone-16": ["IPhone 16 Vector.svg"],
   "iphone-16-pro": [
     "Back view of iPhone 16 Pro White Titanium.jpg",
     "IPhone 16 Pro Vector.svg",
@@ -82,7 +82,6 @@ const FOTOS = {
   "iphone-15-pro": [
     "Back view of iPhone 15 Pro Natural titanium.jpg",
     "IPhone 15 Pro Vector.svg",
-    "IPhone 15 Pro.jpg",
   ],
   "iphone-15-pro-max": [
     "Back view of iPhone 15 Pro Max Natural Titanium.jpg",
@@ -114,6 +113,10 @@ const FOTOS = {
   "iphone-14-pro-max": ["Back of the iPhone 14 Pro Max.jpg"],
 };
 
+/** Señales, en varios idiomas, de que la foto es de un equipo en exhibición. */
+const EXHIBICION =
+  /店頭|展示|量販店|apple store|store display|on display|retail|launching event|showroom|display unit/i;
+
 const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /**
@@ -125,10 +128,19 @@ async function pedir(url) {
   // llega a cortar. Son pocas decenas de archivos, la espera no molesta.
   await esperar(1200);
   for (let intento = 0; intento < 6; intento++) {
-    const r = await fetch(url, { headers: { "User-Agent": "iphonepurple-fotos/1.0" } });
-    if (r.ok) return r;
-    if (r.status !== 429 && r.status < 500)
-      throw new Error(`Commons respondió ${r.status}`);
+    try {
+      const r = await fetch(url, {
+        headers: { "User-Agent": "iphonepurple-fotos/1.0" },
+      });
+      if (r.ok) return r;
+      if (r.status !== 429 && r.status < 500)
+        throw new Error(`Commons respondió ${r.status}`);
+    } catch (err) {
+      // También se reintenta ante un corte de red: una corrida de varios
+      // minutos contra un servidor ajeno se topa con alguno, y perder todo
+      // por el último archivo obliga a bajar los cincuenta de nuevo.
+      if (intento === 5) throw err;
+    }
     await esperar(4000 * (intento + 1));
   }
   throw new Error("Commons sigue rechazando pedidos; probá de nuevo más tarde");
@@ -157,6 +169,7 @@ async function ficha(archivo) {
     autor: limpiar(meta.Artist?.value) || "Wikimedia Commons",
     licencia: limpiar(meta.LicenseShortName?.value) || "ver Commons",
     origen: info.descriptionurl,
+    descripcion: limpiar(meta.ImageDescription?.value),
   };
 }
 
@@ -172,17 +185,31 @@ function medirPng(buf) {
 }
 
 const indice = {};
+/** Lo que se descartó, para revisarlo al final. */
+const descartadas = [];
 
 for (const [slug, archivos] of Object.entries(FOTOS)) {
   await mkdir(path.join(RAIZ, slug), { recursive: true });
   indice[slug] = [];
 
-  for (const [i, archivo] of archivos.entries()) {
-    const { descarga, autor, licencia, origen } = await ficha(archivo);
+  let guardadas = 0;
+  for (const archivo of archivos) {
+    const { descarga, autor, licencia, origen, descripcion } = await ficha(archivo);
     const r = await pedir(descarga);
     const ext = descarga.split("?")[0].toLowerCase().endsWith(".png") ? "png" : "jpg";
-    const nombre = `${i + 1}.${ext}`;
+    const nombre = `${guardadas + 1}.${ext}`;
     const datos = Buffer.from(await r.arrayBuffer());
+
+    // Equipo en exhibición: en el mostrador de una tienda el teléfono va
+    // enganchado a un cable con imán antirrobo, y ese cable sale en la foto.
+    // La descripción de Commons dice dónde fue tomada, así que se frena acá
+    // en vez de descubrirlo mirando el catálogo. Ya se colaron tres así.
+    // Se saltea y se sigue, en vez de cortar la corrida entera: un archivo
+    // descartado no puede dejar sin fotos a los otros veinte productos.
+    if (EXHIBICION.test(descripcion)) {
+      descartadas.push(`${slug}: ${archivo} — "${descripcion.slice(0, 50)}"`);
+      continue;
+    }
 
     // Una pieza mucho más ancha que alta no es un equipo sino el logotipo del
     // modelo: en Commons conviven con el mismo nombre y ya se coló uno al
@@ -204,6 +231,7 @@ for (const [slug, archivos] of Object.entries(FOTOS)) {
       // Un render sin fondo se muestra sobre blanco; una foto ambiental no.
       recorte: ext === "png" ? "render" : "foto",
     });
+    guardadas++;
     console.log(`✓ ${slug}/${nombre}  ${licencia} — ${autor}`);
   }
 }
@@ -230,4 +258,9 @@ await writeFile(
 );
 
 const total = Object.values(indice).reduce((n, l) => n + l.length, 0);
-console.log(`\n${total} fotos en ${Object.keys(indice).length} productos.`);
+const conFotos = Object.values(indice).filter((f) => f.length > 0).length;
+console.log(`\n${total} fotos en ${conFotos} productos.`);
+if (descartadas.length) {
+  console.log(`\n${descartadas.length} descartadas por ser de equipos en exhibición:`);
+  for (const d of descartadas) console.log(`  · ${d}`);
+}
