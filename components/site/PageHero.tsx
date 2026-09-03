@@ -105,9 +105,11 @@ export const PAGE_PHOTOS = {
   // MacBook encendida en penumbra: pantalla, luz y color, que es la estética
   // que buscamos. La foto de escritorio con los dos monitores pasó a ser la
   // portada de la landing, así catálogo no repite la misma imagen.
-  // La MacBook quedaba pegada al borde de arriba: el foco baja para que el
-  // equipo caiga más cerca del centro de la banda.
-  catalogo: `https://images.unsplash.com/photo-1531297484001-80022131f5a1?${recorte(0.62)}`,
+  // 0.565 no es a ojo: es la altura donde está la MacBook dentro de la foto,
+  // medida como el centro de masa del brillo —el equipo es lo iluminado en una
+  // escena oscura—. Con ese foco el equipo cae en 0.498 de la banda, o sea
+  // centrado. Con 0.62 quedaba en 0.409, empujado contra el borde de arriba.
+  catalogo: `https://images.unsplash.com/photo-1531297484001-80022131f5a1?${recorte(0.565)}`,
   planCanje: `https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?${recorte()}`,
   reparaciones: `https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?${recorte()}`,
   blog: `https://images.unsplash.com/photo-1519389950473-47ba0277781c?${recorte()}`,
