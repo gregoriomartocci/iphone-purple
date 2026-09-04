@@ -43,18 +43,15 @@ const SHORTCUTS = [
 ];
 
 /**
- * Ilustración de la banda de Plan Canje.
+ * Foto de la banda de Plan Canje.
  *
- * No es una foto: son los dos renders del equipo que entra y el que sale, uno
- * al lado del otro sobre la banda oscura. Es exactamente lo que cuenta el
- * canje —entregás uno, te llevás otro— y evita la foto de archivo genérica que
- * había antes, que no decía nada.
- *
- * Salen del mismo índice que el catálogo, así que si mañana hay una foto mejor
- * de esos modelos, esto la usa sin tocar nada.
+ * Cuenta el canje sin tener que explicarlo: a la izquierda el equipo que se
+ * entrega —dorso rayado, pantalla partida—, a la derecha el que se lleva,
+ * impecable. Antes eran dos renders del catálogo con una flecha en el medio;
+ * decían lo mismo, pero sin el contraste de ver un equipo gastado al lado de
+ * uno nuevo, que es todo el argumento del canje.
  */
-const CANJE_ENTREGA = "/productos/iphone-13/1.png";
-const CANJE_LLEVA = "/productos/iphone-17-pro/1.png";
+const CANJE_FOTO = "/plan-canje.jpg";
 
 const TRUST = [
   {
@@ -163,31 +160,24 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            {/* El de la izquierda, más chico y atrás: es el que se entrega. */}
-            <div className="relative flex items-end justify-center gap-4 sm:gap-8">
-              <div className="relative aspect-2/3 w-[38%] max-w-[190px] opacity-70">
+            {/* La narración ya está adentro de la foto —gastado a la izquierda,
+                nuevo a la derecha—, así que reemplaza a los dos renders y a la
+                flecha que los separaba. El pie lo dice en palabras para quien
+                no llega a leer el detalle de las pantallas. */}
+            <figure className="m-0">
+              <div className="relative aspect-3/2 overflow-hidden rounded-2xl ring-1 ring-white/10">
                 <Image
-                  src={CANJE_ENTREGA}
-                  alt="El equipo que entregás"
+                  src={CANJE_FOTO}
+                  alt="Dos iPhone usados, con el dorso rayado y la pantalla partida, al lado de dos iPhone impecables"
                   fill
-                  sizes="190px"
-                  className="object-contain"
+                  sizes="(min-width: 1024px) 46vw, 90vw"
+                  className="object-cover"
                 />
               </div>
-              <ArrowRight
-                aria-hidden
-                className="mb-16 size-7 shrink-0 text-white/40 sm:size-9"
-              />
-              <div className="relative aspect-2/3 w-[46%] max-w-[240px]">
-                <Image
-                  src={CANJE_LLEVA}
-                  alt="El equipo que te llevás"
-                  fill
-                  sizes="240px"
-                  className="object-contain"
-                />
-              </div>
-            </div>
+              <figcaption className="mt-3 text-sm leading-relaxed text-white/50">
+                Entregás el de la izquierda. Te llevás el de la derecha.
+              </figcaption>
+            </figure>
           </div>
 
           <div className="aparece-escalonado mt-20 grid gap-8 border-t border-white/10 pt-12 sm:grid-cols-3">
