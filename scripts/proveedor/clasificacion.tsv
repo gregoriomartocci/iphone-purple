@@ -29,3 +29,33 @@ lote-septiembre-a	f012	iphone-17-pro	iphone-17-pro-cuatro-colores-en-abanico	8
 lote-septiembre-a	f013	iphone-16	iphone-16-negro-lila-y-azul-en-abanico	3
 lote-septiembre-a	f014	iphone-17-pro	iphone-17-pro-silver-en-abanico	9
 lote-septiembre-b	f012	airpods-pro-2	airpods-pro-2-cajas-selladas
+# --- segunda pasada: se publica también lo que tiene etiqueta de código de
+# barras, por decisión del negocio. Queda fuera lo que no muestra el equipo:
+# flyers del proveedor, cajas de cartón, capturas de pantalla, mesas de
+# depósito y todo aquello donde no se puede confirmar el modelo exacto.
+lote-agosto	f003	iphone-16	iphone-16-cajas-tres-colores	4
+lote-agosto	f009	iphone-13	iphone-13-midnight-dorso-en-mano	4
+lote-agosto	f024	iphone-13	iphone-13-midnight-dorso-sobre-madera	5
+lote-agosto	f033	iphone-13	iphone-13-midnight-dorso-pared-clara	6
+lote-agosto	f034	iphone-13	iphone-13-midnight-tres-cuartos	7
+lote-agosto	f035	iphone-13	iphone-13-pink-dorso-en-mano	8
+lote-agosto	f053	iphone-13	iphone-13-pink-y-starlight-en-mano	9
+lote-agosto	v017	iphone-13	iphone-13-midnight-giro-360-ventana	10
+lote-agosto	f030	iphone-13-pro	iphone-13-pro-sierra-blue-tres-unidades	2
+lote-agosto	f036	iphone-13-pro	iphone-13-pro-silver-dorso-en-mano	3
+lote-agosto	f018	iphone-13-pro	iphone-13-pro-grafito-dorso-en-mano	4
+lote-agosto	f022	iphone-13-pro	iphone-13-pro-grafito-pared-clara	5
+lote-agosto	v010	iphone-13-pro	iphone-13-pro-sierra-blue-giro-360	6
+lote-agosto	f029	iphone-14-pro	iphone-14-pro-deep-purple-perfil-apilados	4
+lote-agosto	v006	iphone-14-pro	iphone-14-pro-deep-purple-pantalla	5
+lote-agosto	f039	playstation-5-slim	ps5-slim-digital-caja-exterior	3
+lote-agosto	f050	playstation-5-slim	ps5-slim-digital-caja-sobre-madera	4
+lote-septiembre-c	f001	iphone-16	iphone-16-cajas-azul-negro-y-verde	5
+lote-septiembre-c	f002	iphone-16	iphone-16-caja-lila-en-mano	6
+lote-septiembre-c	f003	iphone-15	iphone-15-cajas-apiladas	2
+lote-septiembre-c	f004	iphone-16-pro	iphone-16-pro-natural-titanium-cajas	2
+lote-septiembre-c	f009	playstation-5-slim	ps5-slim-digital-caja-con-dualsense	5
+lote-septiembre-c	f012	playstation-5-slim	ps5-slim-digital-caja-y-joystick	6
+lote-septiembre-c	f016	macbook-air-m3	macbook-air-amarillo-cerrada	2
+lote-septiembre-c	f017	apple-watch-series-10	apple-watch-negro-con-caja-y-malla	2
+lote-septiembre-c	f018	apple-watch-series-10	apple-watch-negro-esfera-y-caja	3

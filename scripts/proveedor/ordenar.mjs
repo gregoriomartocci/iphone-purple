@@ -22,7 +22,7 @@
  *
  * Uso: npm run proveedor:ordenar
  */
-import { mkdir, readFile, rename, writeFile, rm } from "node:fs/promises";
+import { mkdir, readdir, readFile, rename, writeFile, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 
@@ -34,6 +34,7 @@ const LOTES = {
   "whatsapp-2026-09": "lote-agosto",
   "WhatsApp Unknown 2026-09-03 at 23.33.51": "lote-septiembre-a",
   "WhatsApp Unknown 2026-09-03 at 23.40.07": "lote-septiembre-b",
+  "WhatsApp Unknown 2026-09-03 at 23.47.51": "lote-septiembre-c",
 };
 
 const filas = (await readFile(TABLA, "utf8"))
@@ -42,6 +43,9 @@ const filas = (await readFile(TABLA, "utf8"))
   .filter((l) => l && !l.startsWith("#"))
   .map((l) => l.split("\t"));
 
+const origenes = new Map();
+const paraCatalogo = [];
+
 /** lote → id → { destino, nombre, orden } */
 const decidido = new Map();
 for (const [lote, id, destino, nombre, orden] of filas) {
@@ -49,8 +53,30 @@ for (const [lote, id, destino, nombre, orden] of filas) {
   decidido.get(lote).set(id, { destino, nombre, orden });
 }
 
-const origenes = new Map();
-const paraCatalogo = [];
+// Segunda pasada sobre lo que ya se había ordenado antes y quedó pendiente.
+// Ahí los archivos ya se llaman <lote>-<id>, así que el id sale del nombre y no
+// hace falta el mapa del lote original, que se borró al ordenarlo.
+const pendientes = path.join(RAIZ, "_por-revisar");
+if (existsSync(pendientes)) {
+  for (const lote of await readdir(pendientes)) {
+    const carpeta = path.join(pendientes, lote);
+    for (const archivo of await readdir(carpeta)) {
+      if (archivo === "origen.tsv") continue;
+      const id = path.basename(archivo, path.extname(archivo)).replace(`${lote}-`, "");
+      const elegido = decidido.get(lote)?.get(id);
+      if (!elegido) continue;
+
+      const destino = path.join(RAIZ, elegido.destino);
+      await mkdir(destino, { recursive: true });
+      const nombre = elegido.nombre + path.extname(archivo);
+      await rename(path.join(carpeta, archivo), path.join(destino, nombre));
+
+      if (!origenes.has(destino)) origenes.set(destino, []);
+      origenes.get(destino).push([nombre, lote, archivo]);
+      if (elegido.orden) paraCatalogo.push([elegido.destino, nombre, elegido.orden]);
+    }
+  }
+}
 
 for (const [carpeta, lote] of Object.entries(LOTES)) {
   const base = path.join(RAIZ, carpeta);
