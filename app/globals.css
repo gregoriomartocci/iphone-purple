@@ -78,7 +78,8 @@
   --destructive: #dc2626;
   --border: #d5d6de;
   --input: #d5d6de;
-  --ring: #5e16eb;
+  /* Tinta, no violeta: el anillo de foco aparece sobre el contenido. */
+  --ring: #101014;
   --radius: 0.625rem;
 }
 
@@ -111,7 +112,7 @@
   }
 
   ::selection {
-    background: #5e16eb;
+    background: #101014;
     color: #fff;
   }
 }
@@ -176,18 +177,6 @@
   .price {
     @apply tracking-[-0.02em];
     font-variant-numeric: tabular-nums;
-  }
-
-  .glow-purple::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(
-      ellipse 60% 50% at 50% 0%,
-      rgba(94, 22, 235, 0.13),
-      transparent 70%
-    );
   }
 
   /**

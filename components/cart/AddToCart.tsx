@@ -41,9 +41,9 @@ export function AddToCart({
       }}
       className={cn(
         "inline-flex h-13 items-center justify-center gap-2 rounded-full px-7 text-[15px] font-medium text-white transition-colors",
-        // Al confirmar vira a púrpura de marca y rebota: el cambio de color
-        // se ve incluso de reojo, que es cuando la mirada ya se fue al carrito.
-        added ? "bg-purple pop" : "bg-ink hover:bg-ink/85",
+        // Al confirmar rebota y muestra el tilde. El color no cambia: el
+        // violeta es de la marca —logo y carrito— y no del contenido.
+        added ? "bg-ink pop" : "bg-ink hover:bg-ink/85",
         className
       )}
     >

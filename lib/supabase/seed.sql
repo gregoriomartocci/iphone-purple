@@ -39,7 +39,7 @@ INSERT INTO suppliers (name, phone, default_margin_pct, is_active)
 
 -- Catálogo
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 17', 'iphone-17', 'Apple', 'iPhone 17', 'celular', 'iPhone 17 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.3\" Super Retina XDR","Chip":"A18","Cámara":"48 MP dual","Material":"Aluminio"}'::jsonb, 'active', TRUE)
+  VALUES ('iPhone 17', 'iphone-17', 'Apple', 'iPhone 17', 'celular', 'iPhone 17 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.3\" Super Retina XDR","Chip":"Apple A19","Cámara":"48 MP Fusion · Doble: gran angular y ultra gran angular","Material":"Aluminio"}'::jsonb, 'active', TRUE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-17/1.png', 'iPhone 17 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-17'
@@ -63,7 +63,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-17-128GB-3');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 17 Pro', 'iphone-17-pro', 'Apple', 'iPhone 17 Pro', 'celular', 'iPhone 17 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.3\" Super Retina XDR","Chip":"A18 Pro","Cámara":"48 MP + teleobjetivo","Material":"Titanio"}'::jsonb, 'active', TRUE)
+  VALUES ('iPhone 17 Pro', 'iphone-17-pro', 'Apple', 'iPhone 17 Pro', 'celular', 'iPhone 17 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.3\" Super Retina XDR","Chip":"Apple A19 Pro","Cámara":"48 MP Fusion · Triple 48 MP con teleobjetivo","Material":"Titanio"}'::jsonb, 'active', TRUE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-17-pro/1.png', 'iPhone 17 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-17-pro'
@@ -91,7 +91,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-17-PRO-512GB-3');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 17 Pro Max', 'iphone-17-pro-max', 'Apple', 'iPhone 17 Pro Max', 'celular', 'iPhone 17 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.9\" Super Retina XDR","Chip":"A18 Pro","Cámara":"48 MP + teleobjetivo","Material":"Titanio"}'::jsonb, 'active', TRUE)
+  VALUES ('iPhone 17 Pro Max', 'iphone-17-pro-max', 'Apple', 'iPhone 17 Pro Max', 'celular', 'iPhone 17 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.9\" Super Retina XDR","Chip":"Apple A19 Pro","Cámara":"48 MP Fusion · Triple 48 MP con teleobjetivo","Material":"Titanio"}'::jsonb, 'active', TRUE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-17-pro-max/1.png', 'iPhone 17 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-17-pro-max'
@@ -115,7 +115,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-17-PRO-MAX-1TB-3');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 16', 'iphone-16', 'Apple', 'iPhone 16', 'celular', 'iPhone 16 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A17","Cámara":"48 MP dual","Material":"Aluminio"}'::jsonb, 'active', TRUE)
+  VALUES ('iPhone 16', 'iphone-16', 'Apple', 'iPhone 16', 'celular', 'iPhone 16 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"Apple A18","Cámara":"48 MP Fusion · Doble: gran angular y ultra gran angular","Material":"Aluminio"}'::jsonb, 'active', TRUE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-16/1.png', 'iPhone 16 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-16'
@@ -135,7 +135,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-16-128GB-3');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 16 Pro', 'iphone-16-pro', 'Apple', 'iPhone 16 Pro', 'celular', 'iPhone 16 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.3\" Super Retina XDR","Chip":"A17 Pro","Cámara":"48 MP + teleobjetivo","Material":"Titanio"}'::jsonb, 'active', TRUE)
+  VALUES ('iPhone 16 Pro', 'iphone-16-pro', 'Apple', 'iPhone 16 Pro', 'celular', 'iPhone 16 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.3\" Super Retina XDR","Chip":"Apple A18 Pro","Cámara":"48 MP Fusion · Triple con teleobjetivo 5×","Material":"Titanio"}'::jsonb, 'active', TRUE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-16-pro/1.png', 'iPhone 16 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-16-pro'
@@ -155,7 +155,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-16-PRO-512GB-3');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 16 Pro Max', 'iphone-16-pro-max', 'Apple', 'iPhone 16 Pro Max', 'celular', 'iPhone 16 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.9\" Super Retina XDR","Chip":"A17 Pro","Cámara":"48 MP + teleobjetivo","Material":"Titanio"}'::jsonb, 'active', TRUE)
+  VALUES ('iPhone 16 Pro Max', 'iphone-16-pro-max', 'Apple', 'iPhone 16 Pro Max', 'celular', 'iPhone 16 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.9\" Super Retina XDR","Chip":"Apple A18 Pro","Cámara":"48 MP Fusion · Triple con teleobjetivo 5×","Material":"Titanio"}'::jsonb, 'active', TRUE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-16-pro-max/1.png', 'iPhone 16 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-16-pro-max'
@@ -175,7 +175,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-16-PRO-MAX-1TB-3');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 15', 'iphone-15', 'Apple', 'iPhone 15', 'celular', 'iPhone 15 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A16","Cámara":"48 MP dual","Material":"Aluminio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 15', 'iphone-15', 'Apple', 'iPhone 15', 'celular', 'iPhone 15 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"Apple A16 Bionic","Cámara":"48 MP · Doble: gran angular y ultra gran angular","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-15/1.png', 'iPhone 15 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15'
@@ -195,7 +195,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-15-128GB-3');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 15 Pro', 'iphone-15-pro', 'Apple', 'iPhone 15 Pro', 'celular', 'iPhone 15 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A16 Pro","Cámara":"48 MP + teleobjetivo","Material":"Titanio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 15 Pro', 'iphone-15-pro', 'Apple', 'iPhone 15 Pro', 'celular', 'iPhone 15 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"Apple A17 Pro","Cámara":"48 MP · Triple con teleobjetivo 3×","Material":"Titanio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-15-pro/1.png', 'iPhone 15 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15-pro'
@@ -215,7 +215,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-15-PRO-512GB-3');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 15 Pro Max', 'iphone-15-pro-max', 'Apple', 'iPhone 15 Pro Max', 'celular', 'iPhone 15 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.7\" Super Retina XDR","Chip":"A16 Pro","Cámara":"48 MP + teleobjetivo","Material":"Titanio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 15 Pro Max', 'iphone-15-pro-max', 'Apple', 'iPhone 15 Pro Max', 'celular', 'iPhone 15 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.7\" Super Retina XDR","Chip":"Apple A17 Pro","Cámara":"48 MP · Triple con teleobjetivo 5×","Material":"Titanio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-15-pro-max/1.png', 'iPhone 15 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15-pro-max'
@@ -235,7 +235,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-15-PRO-MAX-1TB-3');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 14', 'iphone-14', 'Apple', 'iPhone 14', 'celular', 'iPhone 14 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A15","Cámara":"48 MP dual","Material":"Aluminio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 14', 'iphone-14', 'Apple', 'iPhone 14', 'celular', 'iPhone 14 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"Apple A15 Bionic","Cámara":"12 MP · Doble: gran angular y ultra gran angular","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-14/1.png', 'iPhone 14 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-14'
@@ -255,7 +255,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-14-128GB-3');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 14 Pro', 'iphone-14-pro', 'Apple', 'iPhone 14 Pro', 'celular', 'iPhone 14 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A15 Pro","Cámara":"48 MP + teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 14 Pro', 'iphone-14-pro', 'Apple', 'iPhone 14 Pro', 'celular', 'iPhone 14 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"Apple A16 Bionic","Cámara":"48 MP · Triple con teleobjetivo 3× y LiDAR","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-14-pro/1.png', 'iPhone 14 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-14-pro'
@@ -275,7 +275,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-14-PRO-512GB-3');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 14 Pro Max', 'iphone-14-pro-max', 'Apple', 'iPhone 14 Pro Max', 'celular', 'iPhone 14 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.7\" Super Retina XDR","Chip":"A15 Pro","Cámara":"48 MP + teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 14 Pro Max', 'iphone-14-pro-max', 'Apple', 'iPhone 14 Pro Max', 'celular', 'iPhone 14 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.7\" Super Retina XDR","Chip":"Apple A16 Bionic","Cámara":"48 MP · Triple con teleobjetivo 3× y LiDAR","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-14-pro-max/1.jpg', 'iPhone 14 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-14-pro-max'
@@ -299,7 +299,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-14-PRO-MAX-1TB-3');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 13', 'iphone-13', 'Apple', 'iPhone 13', 'celular', 'iPhone 13 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A14","Cámara":"48 MP dual","Material":"Aluminio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 13', 'iphone-13', 'Apple', 'iPhone 13', 'celular', 'iPhone 13 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"Apple A15 Bionic","Cámara":"12 MP · Doble: gran angular y ultra gran angular","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-13/1.png', 'iPhone 13 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-13'
@@ -315,7 +315,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-13-256GB-2');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 13 Pro', 'iphone-13-pro', 'Apple', 'iPhone 13 Pro', 'celular', 'iPhone 13 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A14 Pro","Cámara":"48 MP + teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 13 Pro', 'iphone-13-pro', 'Apple', 'iPhone 13 Pro', 'celular', 'iPhone 13 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"Apple A15 Bionic","Cámara":"12 MP · Triple con teleobjetivo 3× y LiDAR","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-13-pro/1.png', 'iPhone 13 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-13-pro'
@@ -331,7 +331,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-13-PRO-256GB-2');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 13 Pro Max', 'iphone-13-pro-max', 'Apple', 'iPhone 13 Pro Max', 'celular', 'iPhone 13 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.7\" Super Retina XDR","Chip":"A14 Pro","Cámara":"48 MP + teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 13 Pro Max', 'iphone-13-pro-max', 'Apple', 'iPhone 13 Pro Max', 'celular', 'iPhone 13 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.7\" Super Retina XDR","Chip":"Apple A15 Bionic","Cámara":"12 MP · Triple con teleobjetivo 3× y LiDAR","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-13-pro-max/1.jpg', 'iPhone 13 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-13-pro-max'
@@ -347,7 +347,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-13-PRO-MAX-512GB-2');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 12', 'iphone-12', 'Apple', 'iPhone 12', 'celular', 'iPhone 12 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A13","Cámara":"48 MP dual","Material":"Aluminio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 12', 'iphone-12', 'Apple', 'iPhone 12', 'celular', 'iPhone 12 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"Apple A14 Bionic","Cámara":"12 MP · Doble: gran angular y ultra gran angular","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-12/1.png', 'iPhone 12 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-12'
@@ -363,7 +363,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-12-256GB-2');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 12 Pro', 'iphone-12-pro', 'Apple', 'iPhone 12 Pro', 'celular', 'iPhone 12 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A13 Pro","Cámara":"48 MP + teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 12 Pro', 'iphone-12-pro', 'Apple', 'iPhone 12 Pro', 'celular', 'iPhone 12 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"Apple A14 Bionic","Cámara":"12 MP · Triple con teleobjetivo y LiDAR","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-12-pro/1.png', 'iPhone 12 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-12-pro'
@@ -379,7 +379,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-12-PRO-256GB-2');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 12 Pro Max', 'iphone-12-pro-max', 'Apple', 'iPhone 12 Pro Max', 'celular', 'iPhone 12 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.7\" Super Retina XDR","Chip":"A13 Pro","Cámara":"48 MP + teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 12 Pro Max', 'iphone-12-pro-max', 'Apple', 'iPhone 12 Pro Max', 'celular', 'iPhone 12 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.7\" Super Retina XDR","Chip":"Apple A14 Bionic","Cámara":"12 MP · Triple con teleobjetivo y LiDAR","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '256GB', 'Negro', '#2c2c2e', 'a', 'original', 91, 882000, 608, 511, 1, 'IPHONE-12-PRO-MAX-256GB-1'
@@ -391,7 +391,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-12-PRO-MAX-512GB-2');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 11', 'iphone-11', 'Apple', 'iPhone 11', 'celular', 'iPhone 11 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A12","Cámara":"48 MP dual","Material":"Aluminio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 11', 'iphone-11', 'Apple', 'iPhone 11', 'celular', 'iPhone 11 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"Apple A13 Bionic","Cámara":"12 MP · Doble: gran angular y ultra gran angular","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-11/1.png', 'iPhone 11 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-11'
@@ -407,7 +407,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-11-256GB-2');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 11 Pro', 'iphone-11-pro', 'Apple', 'iPhone 11 Pro', 'celular', 'iPhone 11 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"5.8\" Super Retina XDR","Chip":"A12 Pro","Cámara":"48 MP + teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 11 Pro', 'iphone-11-pro', 'Apple', 'iPhone 11 Pro', 'celular', 'iPhone 11 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"5.8\" Super Retina XDR","Chip":"Apple A13 Bionic","Cámara":"12 MP · Triple con teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-11-pro/1.png', 'iPhone 11 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-11-pro'
@@ -423,7 +423,7 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
   AND NOT EXISTS (SELECT 1 FROM product_variants WHERE sku = 'IPHONE-11-PRO-256GB-2');
 
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
-  VALUES ('iPhone 11 Pro Max', 'iphone-11-pro-max', 'Apple', 'iPhone 11 Pro Max', 'celular', 'iPhone 11 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.5\" Super Retina XDR","Chip":"A12 Pro","Cámara":"48 MP + teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
+  VALUES ('iPhone 11 Pro Max', 'iphone-11-pro-max', 'Apple', 'iPhone 11 Pro Max', 'celular', 'iPhone 11 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.5\" Super Retina XDR","Chip":"Apple A13 Bionic","Cámara":"12 MP · Triple con teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-11-pro-max/1.png', 'iPhone 11 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-11-pro-max'

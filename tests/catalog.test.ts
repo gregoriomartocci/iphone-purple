@@ -156,16 +156,20 @@ describe("getProducts", () => {
   });
 
   /**
-   * La búsqueda libre es por subcadena, así que se comprueba eso y no una
-   * igualdad exacta: en una notebook la variante no es una capacidad suelta
-   * sino la configuración entera —"16GB · 512GB"—, y exigir igualdad dejaba
-   * afuera resultados que la persona sí quería ver al buscar "512GB".
+   * Lo que se comprueba es que el número aparezca en alguna variante, no que
+   * esté escrito igual que en la consulta.
+   *
+   * El buscador es generoso a propósito: parte la consulta donde cambia de
+   * letras a números, así "512GB" busca "512" y "gb" por separado. Gracias a
+   * eso encuentra el Xiaomi 17 Ultra, cuya variante dice "12+512 5G" —tiene
+   * 512 GB, solo que escrito distinto—. Exigir la cadena "512GB" literal
+   * dejaría afuera justo el resultado que la persona quería.
    */
   it("busca también dentro de las variantes", async () => {
     const result = await getProducts({ q: "512GB" });
     expect(result.length).toBeGreaterThan(0);
     for (const p of result) {
-      expect(p.variants.some((v) => v.storage.includes("512GB"))).toBe(true);
+      expect(p.variants.some((v) => v.storage.includes("512"))).toBe(true);
     }
   });
 

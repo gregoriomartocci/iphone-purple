@@ -1,6 +1,6 @@
 import { parseModel } from "@/lib/catalog";
 import { FOTOS_PRODUCTO } from "./fotos.generado";
-import { pulgadasDe } from "./ficha-tecnica";
+import { camaraDe, chipDe, pulgadasDe } from "./ficha-tecnica";
 import type {
   Authenticity,
   Category,
@@ -245,8 +245,10 @@ const IPHONE_SEED: SeedProduct[] = Object.keys(IPHONE_PRICES)
         description: `${name} revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.`,
         specs: {
           Pantalla: pulgadas ? `${pulgadas} Super Retina XDR` : "Super Retina XDR",
-          Chip: `A${generation + 1}${line === "base" ? "" : " Pro"}`,
-          Cámara: line === "base" ? "48 MP dual" : "48 MP + teleobjetivo",
+          // Chip y cámara salen de la ficha técnica, que es la fuente única:
+          // acá había una fórmula que inventaba el nombre del chip.
+          Chip: chipDe(generation, LINE_KEY[line]) ?? "Apple",
+          Cámara: camaraDe(generation, LINE_KEY[line]) ?? "Sistema de cámaras",
           Material: generation >= 15 && line !== "base" ? "Titanio" : "Aluminio",
         },
         featured: generation >= 16,

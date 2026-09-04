@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Search, X } from "lucide-react";
 import {
   CATEGORY_LABELS,
@@ -41,6 +41,27 @@ export function CatalogToolbar({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [query, setQuery] = useState(filters.q ?? "");
+
+  /**
+   * Busca mientras se escribe, sin apretar Enter.
+   *
+   * Espera un cuarto de segundo desde la última tecla: sin esa espera, cada
+   * letra dispararía una navegación y escribir "iphone" haría seis. Con ella
+   * alcanza con dejar de tipear.
+   *
+   * No corre en el primer render ni cuando el texto ya coincide con la URL,
+   * para no volver a navegar al mismo lugar al entrar o al usar el historial.
+   */
+  useEffect(() => {
+    const actual = filters.q ?? "";
+    if (query.trim() === actual) return;
+    const id = window.setTimeout(() => {
+      navigate({ ...filters, q: query.trim() || undefined });
+    }, 250);
+    return () => window.clearTimeout(id);
+    // `navigate` se recrea en cada render; incluirlo reiniciaría el temporizador.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, filters.q]);
 
   function navigate(next: CatalogFilters) {
     const params = new URLSearchParams();
@@ -100,6 +121,8 @@ export function CatalogToolbar({
 
   return (
     <div className={cn("transition-opacity", pending && "opacity-60")}>
+      {/* El formulario queda para quien apriete Enter o busque sin JavaScript;
+          con JavaScript la búsqueda ya salió sola al dejar de escribir. */}
       <form
         action="/catalogo"
         method="get"

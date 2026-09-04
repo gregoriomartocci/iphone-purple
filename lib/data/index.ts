@@ -100,11 +100,36 @@ export async function getProducts(filters: CatalogFilters = {}): Promise<Product
   }
 
   if (filters.q) {
-    // Cada palabra tiene que aparecer: "15 pro" no debe traer todos los "pro".
-    const terms = normalize(filters.q).split(/\s+/).filter(Boolean);
+    /**
+     * Búsqueda libre, generosa a propósito.
+     *
+     * Cada palabra tiene que aparecer —"15 pro" no debe traer todos los
+     * "pro"—, pero se busca en dos textos: el normal y el mismo sin espacios
+     * ni guiones. Así "m5air" e "iphone15pro" encuentran lo mismo que "m5
+     * air" e "iphone 15 pro", que es como escribe la gente apurada.
+     */
+    const consulta = normalize(filters.q);
+    const pegado = (t: string) => t.replace(/[^a-z0-9]/g, "");
+
+    /**
+     * Parte la consulta también donde cambia de letras a números.
+     *
+     * "m5air" se vuelve ["m5", "air"] e "iphone15pro" se vuelve
+     * ["iphone", "15", "pro"], así encuentran lo mismo que si se hubieran
+     * escrito separados. Sin esto, escribir de corrido no devolvía nada.
+     */
+    const terms = consulta
+      .split(/\s+/)
+      .flatMap((t) => t.split(/(?<=\d)(?=[a-z])|(?<=[a-z])(?=\d)/))
+      .map(pegado)
+      .filter(Boolean);
+
     items = items.filter((p) => {
       const text = haystack(p);
-      return terms.every((term) => text.includes(term));
+      if (terms.every((term) => text.includes(term))) return true;
+      // Segunda pasada, todo junto: cubre lo que quedó pegado en el catálogo.
+      const junto = pegado(text);
+      return terms.every((term) => junto.includes(term));
     });
   }
 

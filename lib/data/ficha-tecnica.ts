@@ -111,6 +111,23 @@ export function pulgadasDe(generation: number, line: Line | null): string | null
 }
 
 /**
+ * Chip de un iPhone. Lo usa también la semilla: tenía una fórmula ingenua
+ * —"A" más la generación más uno— que daba A13 para el iPhone 12, que lleva
+ * A14, y A18 para el 17, que lleva A19.
+ */
+export function chipDe(generation: number, line: Line | null): string | null {
+  const c = CHIP[generation];
+  if (!c) return null;
+  return lineaDe(line) === "base" ? c.base : c.pro;
+}
+
+/** Sistema de cámaras, en una línea. */
+export function camaraDe(generation: number, line: Line | null): string | null {
+  const c = CAMARA[generation]?.[lineaDe(line)];
+  return c ? `${c.principal} · ${c.sistema}` : null;
+}
+
+/**
  * Ficha técnica de un iPhone, por generación y línea.
  *
  * Devuelve `null` para cualquier otro equipo: preferimos no mostrar sección a
