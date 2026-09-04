@@ -366,34 +366,62 @@
     display: inline;
   }
 
-  /* El selector marca cuál está activa. Mismo mecanismo: sin JavaScript de por
-     medio, así el botón no queda un cuadro mostrando la opción equivocada.
-
-     La base es el estado apagado, y encima van las dos reglas que encienden la
-     que corresponde. Sin la base, el botón de dólares quedaba sin estilo
-     propio mientras el sitio estaba en pesos. */
-  .marca-moneda {
-    background: transparent;
-    color: var(--muted-foreground);
+  /**
+   * Selector de moneda.
+   *
+   * Un control segmentado con un bloque que se desliza detrás de la opción
+   * elegida. El bloque es un pseudoelemento del contenedor y se mueve con
+   * `transform`, no con estado de React: así el movimiento lo hace el
+   * compositor —no hay reflow— y, sobre todo, la posición correcta ya está
+   * puesta en el primer pintado, sin que el indicador arranque de la izquierda
+   * y se acomode después delante de quien mira.
+   *
+   * Las dos opciones miden lo mismo a propósito: el desplazamiento es
+   * exactamente la mitad del ancho útil, y con etiquetas de distinto largo
+   * habría que medirlas en JavaScript.
+   */
+  .selector-moneda {
+    position: relative;
+    isolation: isolate;
   }
-  .marca-moneda:hover {
+  .selector-moneda::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0.1875rem;
+    bottom: 0.1875rem;
+    left: 0.1875rem;
+    width: calc(50% - 0.1875rem);
+    border-radius: 0.55rem;
+    background: var(--foreground);
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  :root[data-moneda="usd"] .selector-moneda::before {
+    transform: translateX(100%);
+  }
+
+  .selector-moneda button {
+    color: var(--muted-foreground);
+    transition: color 0.2s ease;
+  }
+  .selector-moneda button:hover {
     color: var(--foreground);
   }
-  .marca-moneda[data-para="ars"] {
-    background: var(--foreground);
+  .selector-moneda button[data-para="ars"],
+  :root[data-moneda="usd"] .selector-moneda button[data-para="usd"] {
     color: var(--background);
   }
-  :root[data-moneda="usd"] .marca-moneda[data-para="ars"] {
-    background: transparent;
+  :root[data-moneda="usd"] .selector-moneda button[data-para="ars"] {
     color: var(--muted-foreground);
   }
-  :root[data-moneda="usd"] .marca-moneda[data-para="usd"] {
-    background: var(--foreground);
-    color: var(--background);
+  :root[data-moneda="usd"] .selector-moneda button[data-para="ars"]:hover {
+    color: var(--foreground);
   }
-  .marca-moneda[data-para="ars"]:hover,
-  :root[data-moneda="usd"] .marca-moneda[data-para="usd"]:hover {
-    color: var(--background);
+
+  @media (prefers-reduced-motion: reduce) {
+    .selector-moneda::before {
+      transition: none;
+    }
   }
 
   .scrollbar-hide {

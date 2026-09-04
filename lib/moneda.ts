@@ -19,6 +19,18 @@ export const MONEDA_POR_DEFECTO: Moneda = "ars";
 
 export const CLAVE_MONEDA = "iphone-purple:moneda";
 
+/**
+ * La moneda también viaja en la dirección: /catalogo?moneda=usd
+ *
+ * Es lo que hace que el enlace se pueda mandar. Quien lo recibe abre la página
+ * ya en dólares aunque nunca haya tocado el selector, y sin esperar a que
+ * cargue nada: el parámetro se lee antes del primer pintado.
+ *
+ * Cuando está en la dirección manda sobre lo guardado, porque es una elección
+ * más reciente y más explícita que la preferencia vieja del navegador.
+ */
+export const PARAM_MONEDA = "moneda";
+
 /** El atributo que lee el CSS para decidir qué precio va grande. */
 export const ATRIBUTO_MONEDA = "data-moneda";
 
@@ -36,6 +48,10 @@ export function esMoneda(valor: unknown): valor is Moneda {
  */
 export function leerMoneda(): Moneda {
   if (typeof window === "undefined") return MONEDA_POR_DEFECTO;
+
+  const enLaUrl = new URLSearchParams(window.location.search).get(PARAM_MONEDA);
+  if (esMoneda(enLaUrl)) return enLaUrl;
+
   try {
     const guardada = window.localStorage.getItem(CLAVE_MONEDA);
     return esMoneda(guardada) ? guardada : MONEDA_POR_DEFECTO;
@@ -62,11 +78,12 @@ export function guardarMoneda(moneda: Moneda): void {
  * React tome el control: si esperáramos al montaje, quien eligió dólares vería
  * los precios en pesos durante un cuadro y saltarían solos.
  */
-export const SCRIPT_MONEDA = `try{var m=localStorage.getItem(${JSON.stringify(
-  CLAVE_MONEDA
-)});if(m==="usd")document.documentElement.setAttribute(${JSON.stringify(
-  ATRIBUTO_MONEDA
-)},"usd")}catch(e){}`;
+export const SCRIPT_MONEDA = `(function(){try{
+var u=new URLSearchParams(location.search).get(${JSON.stringify(PARAM_MONEDA)});
+var m=u==="usd"||u==="ars"?u:localStorage.getItem(${JSON.stringify(CLAVE_MONEDA)});
+if(m==="usd")document.documentElement.setAttribute(${JSON.stringify(ATRIBUTO_MONEDA)},"usd");
+if(u==="usd"||u==="ars")localStorage.setItem(${JSON.stringify(CLAVE_MONEDA)},u);
+}catch(e){}})()`;
 
 /**
  * Hace cuánto se actualizó la cotización, en palabras.

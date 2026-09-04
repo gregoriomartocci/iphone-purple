@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { Search, X } from "lucide-react";
 import { SelectorMoneda } from "./SelectorMoneda";
+import { PARAM_MONEDA, esMoneda } from "@/lib/moneda";
 import {
   CATEGORY_LABELS,
   GRADE_LABELS,
@@ -80,6 +81,12 @@ export function CatalogToolbar({
     if (next.minBattery) params.set("bateria", String(next.minBattery));
     if (next.sort && next.sort !== "relevancia") params.set("sort", next.sort);
 
+    // La moneda no es un filtro, pero si estaba en la dirección se queda: sin
+    // esto, tocar cualquier filtro dejaba el enlace sin la moneda y quien lo
+    // recibía lo abría en pesos aunque se hubiera compartido en dólares.
+    const moneda = new URLSearchParams(window.location.search).get(PARAM_MONEDA);
+    if (esMoneda(moneda)) params.set(PARAM_MONEDA, moneda);
+
     const qs = params.toString();
     // `scroll: false` mantiene la posición: por defecto Next salta al tope
     // en cada navegación, y tocar un filtro te devolvía arriba de todo.
@@ -151,13 +158,16 @@ export function CatalogToolbar({
           de {totalCount} equipos
         </p>
 
-        <div className="flex items-center gap-3">
-          {/* La moneda al lado del orden: las dos son maneras de mirar la misma
-              lista, y las dos se quedan como quedaron. */}
+        {/* Los dos controles son maneras de mirar la misma lista, así que van
+            juntos, a la misma altura y con el mismo radio. Antes la moneda era
+            más baja que el desplegable y la fila quedaba escalonada. */}
+        <div className="flex items-center gap-2.5">
           <SelectorMoneda />
 
+          <span className="bg-line hidden h-6 w-px sm:block" aria-hidden />
+
           <label className="flex items-center gap-2 text-sm">
-            <span className="text-muted-foreground">Ordenar por</span>
+            <span className="text-muted-foreground hidden sm:inline">Ordenar por</span>
             <select
               value={filters.sort ?? "relevancia"}
               onChange={(e) =>
