@@ -223,7 +223,7 @@ function Favoritos() {
           <div className="min-w-0 flex-1">
             <Link
               href={`/catalogo/${f.slug}`}
-              className="text-foreground hover:text-purple block font-medium transition-colors"
+              className="text-foreground block font-medium transition-colors"
             >
               {f.nombre}
             </Link>
@@ -246,7 +246,7 @@ function Favoritos() {
 }
 
 const campo =
-  "h-12 w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-foreground outline-none transition-colors focus-visible:border-purple";
+  "h-12 w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-foreground outline-none transition-colors focus-visible:border-ink";
 
 function Direcciones() {
   const { direcciones, agregarDireccion, quitarDireccion } = useCuenta();

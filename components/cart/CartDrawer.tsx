@@ -133,7 +133,7 @@ export function CartDrawer() {
                     <Link
                       href={`/catalogo/${item.slug}`}
                       onClick={cerrar}
-                      className="text-foreground hover:text-purple block font-medium transition-colors"
+                      className="text-foreground block font-medium transition-colors"
                     >
                       {item.name}
                     </Link>

@@ -92,7 +92,7 @@ export default async function ContactPage() {
                     href={settings.mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-purple hover:text-purple/80 subraya mt-1 inline-block text-sm font-medium transition-colors"
+                    className="text-foreground hover:text-foreground/80 subraya mt-1 inline-block text-sm font-medium transition-colors"
                   >
                     Ver en el mapa
                   </a>
@@ -106,7 +106,7 @@ export default async function ContactPage() {
               <Dato icono={Mail} titulo="Mail">
                 <a
                   href={`mailto:${settings.email}`}
-                  className="text-foreground hover:text-purple subraya transition-colors"
+                  className="text-foreground subraya transition-colors"
                 >
                   {settings.email}
                 </a>

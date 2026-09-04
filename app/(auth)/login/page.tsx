@@ -49,7 +49,7 @@ function LoginContent() {
   }
 
   const fieldClass =
-    "h-12 w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-purple";
+    "h-12 w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ink";
 
   return (
     <div className="bg-surface flex min-h-dvh items-center justify-center px-5">

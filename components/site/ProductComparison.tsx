@@ -87,7 +87,7 @@ export function ProductComparison({
                         </span>
                       )}
                       {actual && (
-                        <span className="text-purple mt-1.5 inline-flex items-center gap-1 text-xs font-semibold">
+                        <span className="text-foreground mt-1.5 inline-flex items-center gap-1 text-xs font-semibold">
                           <Check className="size-3.5" />
                           Estás viendo este
                         </span>

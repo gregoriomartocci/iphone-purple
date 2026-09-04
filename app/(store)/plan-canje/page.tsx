@@ -77,7 +77,7 @@ export default async function TradeInPage() {
                 key={step.title}
                 className="border-line bg-surface rounded-2xl border p-6 shadow-sm"
               >
-                <span className="tnum border-purple/25 bg-purple/8 text-purple inline-flex size-10 items-center justify-center rounded-xl border text-sm font-semibold">
+                <span className="tnum border-line bg-elevated text-foreground inline-flex size-10 items-center justify-center rounded-xl border text-sm font-semibold">
                   {i + 1}
                 </span>
                 <h3 className="text-foreground mt-4 font-medium">{step.title}</h3>

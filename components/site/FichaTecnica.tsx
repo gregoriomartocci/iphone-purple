@@ -138,7 +138,7 @@ export function Respaldos() {
             key={titulo}
             className="border-line bg-surface rounded-2xl border p-5 shadow-sm"
           >
-            <span className="border-purple/25 bg-purple/8 text-purple flex size-10 items-center justify-center rounded-xl border">
+            <span className="border-line bg-elevated text-foreground flex size-10 items-center justify-center rounded-xl border">
               <Icon className="size-[18px]" />
             </span>
             <h3 className="text-foreground mt-4 font-medium">{titulo}</h3>

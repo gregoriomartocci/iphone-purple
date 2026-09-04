@@ -35,7 +35,7 @@ export function Calendario({
     <div className="space-y-6">
       <div>
         <p className="text-foreground flex items-center gap-2 text-sm font-medium">
-          <CalendarDays className="text-purple size-4" />
+          <CalendarDays className="text-foreground size-4" />
           Elegí el día
         </p>
         <p className="text-muted-foreground mt-1 text-sm">
@@ -58,7 +58,7 @@ export function Calendario({
                 className={cn(
                   "flex w-16 shrink-0 flex-col items-center rounded-xl border py-2.5 transition-colors",
                   elegido
-                    ? "border-purple bg-purple/8"
+                    ? "border-ink bg-elevated"
                     : "border-line hover:border-foreground/30"
                 )}
               >
@@ -78,7 +78,7 @@ export function Calendario({
       {fecha && (
         <div>
           <p className="text-foreground flex items-center gap-2 text-sm font-medium">
-            <Clock className="text-purple size-4" />
+            <Clock className="text-foreground size-4" />
             Elegí el horario
           </p>
           <p className="text-muted-foreground mt-1 text-sm">
@@ -96,7 +96,7 @@ export function Calendario({
                 className={cn(
                   "tnum h-11 rounded-xl border px-4 text-[15px] font-medium transition-colors",
                   hora === h
-                    ? "border-purple bg-purple/8 text-foreground"
+                    ? "border-ink bg-elevated text-foreground"
                     : "border-line text-muted-foreground hover:border-foreground/30 hover:text-foreground"
                 )}
               >

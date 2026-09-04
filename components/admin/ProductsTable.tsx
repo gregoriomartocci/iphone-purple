@@ -75,7 +75,7 @@ export function ProductsTable({
   }
 
   const inputClass =
-    "h-9 rounded-lg border border-line bg-surface px-2.5 text-sm text-foreground outline-none transition-colors focus-visible:border-purple";
+    "h-9 rounded-lg border border-line bg-surface px-2.5 text-sm text-foreground outline-none transition-colors focus-visible:border-ink";
 
   return (
     <div>
@@ -85,7 +85,7 @@ export function ProductsTable({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Buscar modelo, color o SKU…"
-          className="border-line text-foreground focus-visible:border-purple bg-surface h-10 w-full rounded-lg border pr-3 pl-9 text-sm transition-colors outline-none"
+          className="border-line text-foreground focus-visible:border-ink bg-surface h-10 w-full rounded-lg border pr-3 pl-9 text-sm transition-colors outline-none"
         />
       </div>
 

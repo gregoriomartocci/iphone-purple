@@ -117,7 +117,7 @@ export function CatalogToolbar({
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Buscar: iPhone 15, 256GB, sellado…"
           aria-label="Buscar en el catálogo"
-          className="border-line bg-surface text-foreground placeholder:text-muted-foreground focus-visible:border-purple h-14 w-full rounded-2xl border pr-4 pl-12 text-base shadow-sm transition-colors outline-none"
+          className="border-line bg-surface text-foreground placeholder:text-muted-foreground focus-visible:border-ink h-14 w-full rounded-2xl border pr-4 pl-12 text-base shadow-sm transition-colors outline-none"
         />
       </form>
 
@@ -134,7 +134,7 @@ export function CatalogToolbar({
             onChange={(e) =>
               navigate({ ...filters, sort: e.target.value as CatalogFilters["sort"] })
             }
-            className="border-line bg-surface text-foreground focus-visible:border-purple h-11 rounded-xl border px-3.5 text-[15px] shadow-sm transition-colors outline-none"
+            className="border-line bg-surface text-foreground focus-visible:border-ink h-11 rounded-xl border px-3.5 text-[15px] shadow-sm transition-colors outline-none"
           >
             {SORTS.map((s) => (
               <option key={s.value} value={s.value}>
@@ -156,7 +156,7 @@ export function CatalogToolbar({
                 if ("q" in chip.clear) setQuery("");
                 navigate({ ...filters, ...chip.clear });
               }}
-              className="border-line bg-surface text-foreground hover:border-purple inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm shadow-sm transition-colors"
+              className="border-line bg-surface text-foreground hover:border-ink inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm shadow-sm transition-colors"
             >
               {chip.label}
               <X className="size-3" />

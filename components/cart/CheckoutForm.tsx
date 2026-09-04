@@ -141,7 +141,7 @@ export function CheckoutForm({
   };
 
   const fieldClass =
-    "h-13 w-full rounded-xl border border-line bg-surface px-4 text-base text-foreground shadow-sm outline-none transition-colors focus-visible:border-purple";
+    "h-13 w-full rounded-xl border border-line bg-surface px-4 text-base text-foreground shadow-sm outline-none transition-colors focus-visible:border-ink";
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-12">
@@ -210,7 +210,7 @@ export function CheckoutForm({
                 className={cn(
                   "bg-surface rounded-2xl border p-5 text-left shadow-sm transition-all duration-200",
                   entrega === opcion.value
-                    ? "border-purple ring-purple/20 ring-2"
+                    ? "border-ink ring-ink/20 ring-2"
                     : "border-line hover:border-foreground/30"
                 )}
               >
@@ -270,7 +270,7 @@ export function CheckoutForm({
             onChange={(e) => setNotas(e.target.value)}
             rows={3}
             placeholder="Dirección, horario preferido, cualquier cosa que nos sirva."
-            className="border-line bg-surface text-foreground focus-visible:border-purple mt-4 w-full resize-y rounded-xl border p-4 text-base shadow-sm transition-colors outline-none"
+            className="border-line bg-surface text-foreground focus-visible:border-ink mt-4 w-full resize-y rounded-xl border p-4 text-base shadow-sm transition-colors outline-none"
           />
         </section>
       </div>

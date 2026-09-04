@@ -87,7 +87,7 @@ export function Galeria({ piezas, nombre }: { piezas: PiezaGaleria[]; nombre: st
         tabIndex={0}
         role="group"
         aria-label={`Fotos del producto, ${indice + 1} de ${total}`}
-        className="border-line bg-surface focus-visible:ring-purple/40 relative aspect-square touch-pan-y overflow-hidden rounded-3xl border shadow-sm outline-none focus-visible:ring-2"
+        className="border-line bg-surface focus-visible:ring-ink/30 relative aspect-square touch-pan-y overflow-hidden rounded-3xl border shadow-sm outline-none focus-visible:ring-2"
         onPointerDown={(e) => {
           if (total < 2) return;
           // Las flechas viven dentro del marco: si el gesto arranca sobre una,
@@ -175,7 +175,7 @@ export function Galeria({ piezas, nombre }: { piezas: PiezaGaleria[]; nombre: st
               aria-current={i === indice}
               className={cn(
                 "relative size-20 shrink-0 overflow-hidden rounded-xl border transition-colors",
-                i === indice ? "border-purple" : "border-line hover:border-foreground/30"
+                i === indice ? "border-ink" : "border-line hover:border-foreground/30"
               )}
             >
               {pieza.video ? (

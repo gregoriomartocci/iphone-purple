@@ -33,7 +33,7 @@ export function ContactForm({ whatsappNumber }: { whatsappNumber: string }) {
     .join(" ");
 
   const fieldClass =
-    "w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-purple";
+    "w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ink";
 
   return (
     <div className="border-line rounded-2xl border p-6 sm:p-8">

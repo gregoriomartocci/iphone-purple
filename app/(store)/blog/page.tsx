@@ -66,7 +66,9 @@ export default async function BlogPage() {
                   <p className="text-muted-foreground mt-3 leading-relaxed">
                     {lead.excerpt}
                   </p>
-                  <span className="text-purple mt-4 inline-block text-sm">Leer nota</span>
+                  <span className="text-foreground mt-4 inline-block text-sm">
+                    Leer nota
+                  </span>
                 </div>
               </div>
             </Link>

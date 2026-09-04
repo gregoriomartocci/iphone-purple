@@ -135,7 +135,7 @@ export default async function CatalogPage({
             ) : (
               <div className="border-line bg-surface mt-8 overflow-hidden rounded-2xl border shadow-sm">
                 <div className="bg-elevated flex flex-col items-center px-6 py-14 text-center">
-                  <span className="border-purple/35 text-purple flex size-14 items-center justify-center rounded-2xl border bg-white">
+                  <span className="border-line text-foreground flex size-14 items-center justify-center rounded-2xl border bg-white">
                     <SearchX className="size-7" />
                   </span>
                   <h2 className="mt-5 text-2xl font-semibold">

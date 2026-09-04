@@ -84,7 +84,7 @@ export function SettingsForm({
                     field.type === "number" ? Number(e.target.value) : e.target.value,
                 }))
               }
-              className="border-line text-foreground focus-visible:border-purple bg-surface h-10 w-full rounded-lg border px-3 text-sm transition-colors outline-none"
+              className="border-line text-foreground focus-visible:border-ink bg-surface h-10 w-full rounded-lg border px-3 text-sm transition-colors outline-none"
             />
             {field.hint && (
               <span className="text-muted-foreground mt-1 block text-xs">

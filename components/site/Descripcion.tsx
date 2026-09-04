@@ -32,7 +32,7 @@ export function Descripcion({ product }: { product: Product }) {
       <div className="border-line bg-surface overflow-hidden rounded-2xl border shadow-sm">
         <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.4fr_1fr] lg:gap-12">
           <div>
-            <p className="eyebrow text-purple">Sobre este equipo</p>
+            <p className="eyebrow text-foreground">Sobre este equipo</p>
             <h2 className="mt-2 text-2xl leading-snug font-semibold sm:text-3xl">
               {d.titular}
             </h2>
@@ -44,7 +44,7 @@ export function Descripcion({ product }: { product: Product }) {
           <ul className="divide-line border-line divide-y rounded-xl border">
             {d.destacados.map((punto) => (
               <li key={punto} className="flex items-start gap-3 px-4 py-3.5">
-                <Sparkles className="text-purple mt-0.5 size-4 shrink-0" />
+                <Sparkles className="text-foreground mt-0.5 size-4 shrink-0" />
                 <span className="text-foreground text-sm leading-relaxed">{punto}</span>
               </li>
             ))}

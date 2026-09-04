@@ -87,7 +87,7 @@ export function FaqProducto({
       <div className="border-line mt-8 border-t">
         {lista.map(({ q, a }) => (
           <details key={q} className="border-line group border-b">
-            <summary className="hover:text-purple flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-medium transition-colors">
+            <summary className="hover:text-foreground flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-medium transition-colors">
               {q}
               <span
                 aria-hidden

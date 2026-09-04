@@ -108,15 +108,15 @@ export default async function RepairsPage() {
                   "rise-in flex flex-col rounded-2xl border p-6 shadow-sm",
                   "transition-[transform,box-shadow] duration-300 ease-out",
                   "hover:-translate-y-1 hover:shadow-[0_20px_40px_-18px_rgba(16,16,22,0.3)]",
-                  destacado ? "border-purple/40 bg-surface" : "border-line bg-surface"
+                  destacado ? "border-ink/40 bg-surface" : "border-line bg-surface"
                 )}
               >
                 <span
                   className={cn(
                     "flex size-11 items-center justify-center rounded-xl",
                     destacado
-                      ? "border-purple text-purple bg-white"
-                      : "border-purple/25 text-purple bg-white"
+                      ? "border-ink text-foreground bg-white"
+                      : "border-line text-foreground bg-white"
                   )}
                 >
                   <Icon className="size-5" />
@@ -149,7 +149,9 @@ export default async function RepairsPage() {
                         </span>
                       </>
                     ) : (
-                      <span className="text-purple text-xl font-semibold">Sin cargo</span>
+                      <span className="text-foreground text-xl font-semibold">
+                        Sin cargo
+                      </span>
                     )}
                   </div>
 

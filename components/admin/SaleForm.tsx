@@ -99,7 +99,7 @@ export function SaleForm({
   }
 
   const fieldClass =
-    "h-10 w-full rounded-lg border border-line bg-surface px-3 text-sm text-foreground outline-none transition-colors focus-visible:border-purple";
+    "h-10 w-full rounded-lg border border-line bg-surface px-3 text-sm text-foreground outline-none transition-colors focus-visible:border-ink";
 
   if (!open) {
     return (

@@ -135,7 +135,7 @@ export function TradeInQuoter({
   }
 
   const fieldClass =
-    "h-12 w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-foreground outline-none transition-colors focus-visible:border-purple disabled:bg-surface disabled:text-muted-foreground";
+    "h-12 w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-foreground outline-none transition-colors focus-visible:border-ink disabled:bg-surface disabled:text-muted-foreground";
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1.15fr_1fr] lg:gap-8">
@@ -189,7 +189,7 @@ export function TradeInQuoter({
                     className={cn(
                       "h-11 rounded-xl border px-5 text-[15px] font-medium transition-colors",
                       storage === s
-                        ? "border-purple bg-purple/8 text-foreground"
+                        ? "border-ink bg-elevated text-foreground"
                         : "border-line text-muted-foreground hover:border-foreground/30 hover:text-foreground"
                     )}
                   >
@@ -218,7 +218,7 @@ export function TradeInQuoter({
                   className={cn(
                     "rounded-xl border p-4 text-left transition-colors",
                     grade === c
-                      ? "border-purple bg-purple/8"
+                      ? "border-ink bg-elevated"
                       : "border-line hover:border-foreground/30"
                   )}
                 >
@@ -268,7 +268,7 @@ export function TradeInQuoter({
         <div className="border-line bg-surface overflow-hidden rounded-2xl border shadow-sm">
           {!ready ? (
             <div className="px-6 py-12 text-center sm:px-8">
-              <span className="border-purple/25 bg-purple/8 text-purple mx-auto flex size-12 items-center justify-center rounded-2xl border">
+              <span className="border-line bg-elevated text-foreground mx-auto flex size-12 items-center justify-center rounded-2xl border">
                 <Calculator className="size-5" />
               </span>
               <p className="text-foreground mt-5 font-medium">
@@ -400,7 +400,7 @@ function StepTitle({
         className
       )}
     >
-      <span className="border-purple text-purple flex size-7 shrink-0 items-center justify-center rounded-full border bg-white text-sm font-semibold">
+      <span className="border-ink text-foreground flex size-7 shrink-0 items-center justify-center rounded-full border bg-white text-sm font-semibold">
         {n}
       </span>
       {children}

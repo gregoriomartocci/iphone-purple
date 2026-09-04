@@ -50,7 +50,7 @@ export function Faq() {
         <div className="border-line mt-8 border-t">
           {PREGUNTAS.map(({ q, a }) => (
             <details key={q} className="border-line group border-b">
-              <summary className="hover:text-purple flex cursor-pointer list-none items-center justify-between gap-4 py-5 font-medium transition-colors">
+              <summary className="hover:text-foreground flex cursor-pointer list-none items-center justify-between gap-4 py-5 font-medium transition-colors">
                 {q}
                 {/* Un signo que rota: no hace falta traer un ícono para esto. */}
                 <span

@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 type Row = ParsedRow & { include: boolean; key: string };
 
 const inputClass =
-  "h-9 w-full rounded-lg border border-line bg-surface px-2.5 text-sm text-foreground outline-none transition-colors focus-visible:border-purple";
+  "h-9 w-full rounded-lg border border-line bg-surface px-2.5 text-sm text-foreground outline-none transition-colors focus-visible:border-ink";
 
 /** Mismo cálculo que `sellPrice` del servidor, para previsualizar sin ida y vuelta. */
 function preview(row: ParsedRow, marginPct: number, dollarRate: number) {
@@ -142,7 +142,7 @@ export function ImportWizard({
           placeholder={
             "Ejemplo:\n\nBUEN DÍA! LISTA DE HOY 🔥\niPhone 13 128 impecable bat 89 — 470\n15 pro max 256 sellado 1290 (x2)\nip 14 128gb usado 9/10 600 u$d"
           }
-          className="border-line text-foreground focus-visible:border-purple bg-surface mt-4 w-full resize-y rounded-lg border p-3 font-mono text-[13px] leading-relaxed transition-colors outline-none"
+          className="border-line text-foreground focus-visible:border-ink bg-surface mt-4 w-full resize-y rounded-lg border p-3 font-mono text-[13px] leading-relaxed transition-colors outline-none"
         />
 
         <div className="mt-4 grid gap-3 sm:grid-cols-3">

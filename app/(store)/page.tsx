@@ -43,12 +43,18 @@ const SHORTCUTS = [
 ];
 
 /**
- * Foto de la banda de Plan Canje. Va sobre fondo negro, así que tiene que ser
- * una imagen oscura: una clara abre un agujero de luz y arruina el corte.
- * Reemplazable por una del local.
+ * Ilustración de la banda de Plan Canje.
+ *
+ * No es una foto: son los dos renders del equipo que entra y el que sale, uno
+ * al lado del otro sobre la banda oscura. Es exactamente lo que cuenta el
+ * canje —entregás uno, te llevás otro— y evita la foto de archivo genérica que
+ * había antes, que no decía nada.
+ *
+ * Salen del mismo índice que el catálogo, así que si mañana hay una foto mejor
+ * de esos modelos, esto la usa sin tocar nada.
  */
-const TRADE_IN_PHOTO =
-  "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1200&q=80";
+const CANJE_ENTREGA = "/productos/iphone-13/1.png";
+const CANJE_LLEVA = "/productos/iphone-17-pro/1.png";
 
 const TRUST = [
   {
@@ -101,7 +107,7 @@ export default async function HomePage() {
             >
               {/* El ícono se llena de violeta al pasar el mouse: da señal de
                   que la tarjeta entera es clickeable. */}
-              <span className="border-purple/35 text-purple group-hover:border-purple group-hover:bg-purple/8 flex size-12 items-center justify-center rounded-xl border bg-white transition-colors duration-300">
+              <span className="border-line text-foreground group-hover:border-foreground/40 group-hover:bg-elevated flex size-12 items-center justify-center rounded-xl border bg-white transition-colors duration-300">
                 <Icon className="size-5" />
               </span>
 
@@ -138,7 +144,7 @@ export default async function HomePage() {
         <div className="shell py-20 sm:py-24">
           <div className="aparece grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div>
-              <p className="eyebrow text-purple">Plan Canje</p>
+              <p className="eyebrow text-foreground">Plan Canje</p>
               <h2 className="mt-3 text-3xl leading-[1.1] font-semibold sm:text-4xl">
                 Tu equipo usado vale más
                 <br />
@@ -157,21 +163,37 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <div className="relative aspect-4/3 overflow-hidden rounded-2xl">
-              <Image
-                src={TRADE_IN_PHOTO}
-                alt="Cotización de un equipo usado en el local"
-                fill
-                sizes="(max-width: 1024px) 100vw, 520px"
-                className="object-cover"
+            {/* El de la izquierda, más chico y atrás: es el que se entrega. */}
+            <div className="relative flex items-end justify-center gap-4 sm:gap-8">
+              <div className="relative aspect-2/3 w-[38%] max-w-[190px] opacity-70">
+                <Image
+                  src={CANJE_ENTREGA}
+                  alt="El equipo que entregás"
+                  fill
+                  sizes="190px"
+                  className="object-contain"
+                />
+              </div>
+              <ArrowRight
+                aria-hidden
+                className="mb-16 size-7 shrink-0 text-white/40 sm:size-9"
               />
+              <div className="relative aspect-2/3 w-[46%] max-w-[240px]">
+                <Image
+                  src={CANJE_LLEVA}
+                  alt="El equipo que te llevás"
+                  fill
+                  sizes="240px"
+                  className="object-contain"
+                />
+              </div>
             </div>
           </div>
 
           <div className="aparece-escalonado mt-20 grid gap-8 border-t border-white/10 pt-12 sm:grid-cols-3">
             {TRUST.map((item) => (
               <div key={item.title}>
-                <ShieldCheck className="text-purple size-5" />
+                <ShieldCheck className="text-foreground size-5" />
                 <h3 className="mt-3 font-medium">{item.title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-white/60">
                   {item.text}
@@ -188,7 +210,7 @@ export default async function HomePage() {
             <h2 className="text-3xl font-semibold sm:text-4xl">Blog</h2>
             <Link
               href="/blog"
-              className="text-foreground hover:text-purple subraya inline-flex shrink-0 items-center gap-1.5 text-sm"
+              className="text-foreground subraya inline-flex shrink-0 items-center gap-1.5 text-sm"
             >
               Ver todas
               <ArrowRight className="size-3.5" />

@@ -111,7 +111,7 @@ export function Buscador({
             setResaltado(0);
           }}
           onKeyDown={alTeclear}
-          className="border-line bg-surface text-foreground focus-visible:border-purple h-12 w-full rounded-xl border pr-11 pl-11 text-[15px] transition-colors outline-none"
+          className="border-line bg-surface text-foreground focus-visible:border-ink h-12 w-full rounded-xl border pr-11 pl-11 text-[15px] transition-colors outline-none"
         />
 
         {elegida && !abierto ? (
@@ -169,7 +169,7 @@ export function Buscador({
                     </span>
                   )}
                 </span>
-                {o.id === valor && <Check className="text-purple size-4 shrink-0" />}
+                {o.id === valor && <Check className="text-foreground size-4 shrink-0" />}
               </button>
             </li>
           ))}

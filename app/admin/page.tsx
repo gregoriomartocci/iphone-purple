@@ -108,7 +108,7 @@ export default async function AdminDashboard() {
                       {item.variant}
                     </p>
                   </div>
-                  <span className="text-purple inline-flex shrink-0 items-center gap-1.5 text-sm font-medium">
+                  <span className="text-foreground inline-flex shrink-0 items-center gap-1.5 text-sm font-medium">
                     <AlertTriangle className="size-3.5" />
                     {item.stock}
                   </span>

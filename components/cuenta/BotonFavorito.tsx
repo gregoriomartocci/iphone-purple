@@ -48,7 +48,7 @@ export function BotonFavorito({
       <Heart
         className={cn(
           "size-[18px] transition-colors",
-          marcado ? "fill-purple text-purple" : "text-muted-foreground"
+          marcado ? "fill-ink text-ink" : "text-muted-foreground"
         )}
       />
     </button>

@@ -88,7 +88,7 @@ export function ProductRail({
         <div className="flex shrink-0 items-center gap-2">
           <Link
             href={href}
-            className="text-foreground hover:text-purple subraya hidden items-center gap-1.5 text-sm sm:inline-flex"
+            className="text-foreground subraya hidden items-center gap-1.5 text-sm sm:inline-flex"
           >
             Ver todo
             <ArrowRight className="size-3.5" />

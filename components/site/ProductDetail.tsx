@@ -19,7 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const GRADE_STYLES: Record<Grade, string> = {
-  sellado: "bg-purple text-white",
+  sellado: "bg-ink text-white",
   "a-plus": "bg-emerald-600 text-white",
   a: "bg-sky-600 text-white",
   "a-minus": "bg-amber-500 text-ink",
@@ -281,7 +281,7 @@ export function ProductDetail({
                     <span className="tnum text-foreground shrink-0 text-sm font-semibold">
                       {formatARS(variant.priceArs)}
                     </span>
-                    {active && <Check className="text-purple size-4 shrink-0" />}
+                    {active && <Check className="text-foreground size-4 shrink-0" />}
                   </button>
                 );
               })}
@@ -306,7 +306,7 @@ export function ProductDetail({
               key={text}
               className="text-muted-foreground flex items-start gap-3 text-sm"
             >
-              <Icon className="text-purple mt-0.5 size-4 shrink-0" />
+              <Icon className="text-foreground mt-0.5 size-4 shrink-0" />
               {text}
             </li>
           ))}
