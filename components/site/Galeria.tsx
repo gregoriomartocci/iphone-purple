@@ -8,8 +8,10 @@ import { cn } from "@/lib/utils";
 export type PiezaGaleria = {
   url: string;
   alt: string;
-  /** Un render recortado se muestra entero sobre blanco; una foto se recorta. */
+  /** Un recorte de estudio se muestra entero sobre su fondo; una foto se recorta. */
   render?: boolean;
+  /** Color del fondo del recorte, medido de la propia imagen. */
+  fondo?: string | null;
   /** Los videos van al final: primero se quiere ver el equipo quieto. */
   video?: boolean;
 };
@@ -121,7 +123,13 @@ export function Galeria({ piezas, nombre }: { piezas: PiezaGaleria[]; nombre: st
             <div
               key={pieza.url}
               className="relative h-full"
-              style={{ width: `${100 / total}%` }}
+              style={{
+                width: `${100 / total}%`,
+                // El recorte se muestra entero, así que hay fondo a la vista:
+                // va el color medido de la propia imagen para que no se note
+                // dónde termina la foto.
+                background: pieza.render ? (pieza.fondo ?? "#ffffff") : undefined,
+              }}
             >
               {pieza.video ? (
                 <video
@@ -142,7 +150,7 @@ export function Galeria({ piezas, nombre }: { piezas: PiezaGaleria[]; nombre: st
                   draggable={false}
                   className={cn(
                     "select-none",
-                    pieza.render ? "bg-white object-contain p-4" : "object-cover"
+                    pieza.render ? "object-contain p-4" : "object-cover"
                   )}
                 />
               )}
@@ -177,6 +185,9 @@ export function Galeria({ piezas, nombre }: { piezas: PiezaGaleria[]; nombre: st
                 "relative size-20 shrink-0 overflow-hidden rounded-xl border transition-colors",
                 i === indice ? "border-ink" : "border-line hover:border-foreground/30"
               )}
+              style={{
+                background: pieza.render ? (pieza.fondo ?? "#ffffff") : undefined,
+              }}
             >
               {pieza.video ? (
                 <span className="bg-ink flex h-full w-full items-center justify-center text-white">
@@ -188,9 +199,7 @@ export function Galeria({ piezas, nombre }: { piezas: PiezaGaleria[]; nombre: st
                   alt=""
                   fill
                   sizes="80px"
-                  className={cn(
-                    pieza.render ? "bg-white object-contain p-1.5" : "object-cover"
-                  )}
+                  className={cn(pieza.render ? "object-contain p-1.5" : "object-cover")}
                 />
               )}
             </button>

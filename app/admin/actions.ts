@@ -366,6 +366,13 @@ export async function saveSupplierAction(
 
 const SettingsSchema = z.object({
   dollarRate: z.number().positive("La cotización tiene que ser mayor a cero"),
+  /**
+   * Cuándo se tocó la cotización. Lo sella el formulario al detectar que el
+   * número cambió, no se escribe a mano: una fecha que hay que acordarse de
+   * poner es una fecha que en dos semanas miente, y la ficha de producto la
+   * muestra al cliente.
+   */
+  dollarRateUpdatedAt: z.iso.datetime("La fecha de la cotización no es válida"),
   defaultMarginPct: z.number().min(0).max(300),
   whatsappNumber: z.string().min(8, "El número de WhatsApp parece incompleto"),
   whatsappDisplay: z.string().min(4),

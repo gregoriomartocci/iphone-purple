@@ -94,6 +94,7 @@ export function ProductDetail({
     url: img.url,
     alt: img.alt,
     render: propias?.[i]?.recorte === "render",
+    fondo: propias?.[i]?.fondo ?? null,
     video: propias?.[i]?.video ?? false,
   }));
 

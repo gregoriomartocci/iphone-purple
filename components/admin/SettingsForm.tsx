@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { saveSettingsAction } from "@/app/admin/actions";
 import type { StoreSettings } from "@/types";
+import { antiguedadCotizacion } from "@/lib/moneda";
 
 const FIELDS: {
   key: keyof StoreSettings;
@@ -57,10 +58,24 @@ export function SettingsForm({
   function submit(e: React.FormEvent) {
     e.preventDefault();
     startTransition(async () => {
+      /*
+       * La fecha de la cotización se sella sola cuando el número cambia.
+       *
+       * Es lo que ve el cliente en la ficha —"actualizada hace 3 días"— y si
+       * dependiera de acordarse de tocar un campo aparte, en dos semanas
+       * estaría mintiendo. Si el valor no cambió, se respeta la fecha anterior:
+       * guardar el teléfono del local no debería hacer parecer fresca una
+       * cotización vieja.
+       */
+      const cambio = Number(values.dollarRate) !== Number(settings.dollarRate);
+
       const result = await saveSettingsAction({
         ...values,
         dollarRate: Number(values.dollarRate),
         defaultMarginPct: Number(values.defaultMarginPct),
+        dollarRateUpdatedAt: cambio
+          ? new Date().toISOString()
+          : settings.dollarRateUpdatedAt,
       });
 
       if (result.ok) toast.success("Ajustes guardados.");
@@ -89,6 +104,17 @@ export function SettingsForm({
             {field.hint && (
               <span className="text-muted-foreground mt-1 block text-xs">
                 {field.hint}
+                {field.key === "dollarRate" && (
+                  <>
+                    {" "}
+                    La ficha de cada producto muestra esta cotización y hace cuánto se
+                    actualizó:{" "}
+                    <strong className="text-foreground font-medium">
+                      {antiguedadCotizacion(settings.dollarRateUpdatedAt)}
+                    </strong>
+                    . La fecha se sella sola al cambiar el número.
+                  </>
+                )}
               </span>
             )}
           </label>

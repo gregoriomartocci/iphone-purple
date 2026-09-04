@@ -3,7 +3,7 @@
 GENERADO por `npm run fotos:pedido`. Se regenera solo cada vez que entran
 fotos nuevas, así no se piden las que ya tenemos.
 
-Son **34 productos sin ninguna imagen**: hoy su ficha sale vacía.
+Son **16 productos sin ninguna imagen**: hoy su ficha sale vacía.
 
 Copiá todo lo que está entre las líneas y pegalo en la extensión de Claude en
 Chrome. Cuando termine:
@@ -48,38 +48,14 @@ Si uno se resiste, anotalo y seguí con el siguiente.
 **Celulares**
 
 - `iphone-17-1.jpg` `-2` `-3` · Apple iPhone 17 — Naranja Cósmico, Blanco Nube
-- `iphone-17-pro-max-1.jpg` `-2` `-3` · Apple iPhone 17 Pro Max — Naranja Cósmico, Blanco Nube
-- `iphone-15-pro-max-1.jpg` `-2` `-3` · Apple iPhone 15 Pro Max — Titanio Azul, Titanio Natural
 - `iphone-12-pro-1.jpg` `-2` `-3` · Apple iPhone 12 Pro — Negro, Verde
 - `iphone-12-pro-max-1.jpg` `-2` `-3` · Apple iPhone 12 Pro Max — Negro, Verde
 - `iphone-11-1.jpg` `-2` `-3` · Apple iPhone 11 — Blanco, Negro
 - `iphone-11-pro-1.jpg` `-2` `-3` · Apple iPhone 11 Pro — Blanco, Negro
 - `iphone-11-pro-max-1.jpg` `-2` `-3` · Apple iPhone 11 Pro Max — Blanco, Negro
-- `poco-f8-ultra-1.jpg` `-2` `-3` · Xiaomi Poco F8 Ultra — Azul
-- `moto-g06-1.jpg` `-2` `-3` · Motorola Moto G06 — Azul
-- `moto-g15-1.jpg` `-2` `-3` · Motorola Moto G15 — Azul
-- `moto-g17-1.jpg` `-2` `-3` · Motorola Moto G17 — Arándano, Celeste
-- `moto-g67-1.jpg` `-2` `-3` · Motorola Moto G67 — Gris
-
-**Notebooks**
-
-- `acer-aspire-go-15-ag15-42p-1.jpg` `-2` `-3` · Acer Aspire Go 15 AG15-42P — Pure Silver
-- `acer-swift-go-sfg16-72-1.jpg` `-2` `-3` · Acer Swift Go SFG16-72 — Steel Gray
-- `asus-vivobook-go-e1504fa-1.jpg` `-2` `-3` · Asus Vivobook Go E1504FA — Mixed Black
-- `asus-x1404va-1.jpg` `-2` `-3` · Asus X1404VA — Azul
-- `asus-vivobook-x1407qa-1.jpg` `-2` `-3` · Asus Vivobook X1407QA — Cool Silver
-- `asus-vivobook-go-f1504vap-1.jpg` `-2` `-3` · Asus Vivobook Go F1504VAP — Cool Silver
-
-**Accesorios**
-
-- `wdblack-nvme-ssd-para-ps5-1.jpg` `-2` `-3` · Western Digital WD_Black NVMe SSD para PS5 — Negro
-- `smartwatch-estilo-watch-ultra-1.jpg` `-2` `-3` · Genérico Smartwatch estilo Watch Ultra — Titanio
-- `auriculares-estilo-airpods-pro-1.jpg` `-2` `-3` · Genérico Auriculares estilo AirPods Pro — Blanco
 
 **Hogar y belleza**
 
-- `dyson-hd18-hair-dryer-r-professional-1.jpg` `-2` `-3` · Dyson HD18 Hair Dryer R Professional — Vinca Blue, Topaz
-- `dyson-hd16-hair-dryer-nural-1.jpg` `-2` `-3` · Dyson HD16 Hair Dryer Nural — Vinca Blue, Ceramic
 - `dyson-hs08-id-straightwavy-1.jpg` `-2` `-3` · Dyson HS08 I.d Straight+Wavy — Jasper Plum
 - `xiaomi-aspiradora-mijia-2-1.jpg` `-2` `-3` · Xiaomi Aspiradora Mijia 2 — Blanco
 

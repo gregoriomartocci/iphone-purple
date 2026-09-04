@@ -13,13 +13,42 @@ export type CreditoFoto = {
   autor: string | null;
   licencia: string | null;
   origen: string | null;
-  /** "render" es el equipo recortado sobre blanco o transparente; "foto", una toma real. */
+  /** "render" es el equipo recortado sobre un fondo parejo; "foto", una toma real. */
   recorte: "render" | "foto";
+  /**
+   * Color del fondo cuando el recorte lo tiene parejo, para pintarlo detrás.
+   *
+   * Un recorte sobre negro puesto encima de blanco queda con un marco oscuro
+   * alrededor; con el color medido no se nota dónde termina la foto.
+   */
+  fondo: string | null;
   /** Los videos van al final de la galería. */
   video: boolean;
 };
 
 export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
+  "acer-aspire-go-15-ag15-42p": [
+    {
+      url: "/productos/acer-aspire-go-15-ag15-42p/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
+  "acer-swift-go-sfg16-72": [
+    {
+      url: "/productos/acer-swift-go-sfg16-72/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
   "airpods-pro-2": [
     {
       url: "/productos/airpods-pro-2/1.jpg",
@@ -27,6 +56,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:AirPods_Pro_(2nd_generation).jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -35,6 +65,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -43,6 +74,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -51,6 +83,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -61,6 +94,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "Public domain",
       origen: "https://commons.wikimedia.org/wiki/File:Apple_Watch_Series_10.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -69,6 +103,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -77,6 +112,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -85,6 +121,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -93,6 +130,93 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
+      video: false,
+    },
+  ],
+  "asus-vivobook-go-e1504fa": [
+    {
+      url: "/productos/asus-vivobook-go-e1504fa/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
+  "asus-vivobook-go-f1504vap": [
+    {
+      url: "/productos/asus-vivobook-go-f1504vap/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
+  "asus-vivobook-x1407qa": [
+    {
+      url: "/productos/asus-vivobook-x1407qa/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
+  "asus-x1404va": [
+    {
+      url: "/productos/asus-x1404va/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
+  "auriculares-estilo-airpods-pro": [
+    {
+      url: "/productos/auriculares-estilo-airpods-pro/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
+  "dyson-hd16-hair-dryer-nural": [
+    {
+      url: "/productos/dyson-hd16-hair-dryer-nural/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+    {
+      url: "/productos/dyson-hd16-hair-dryer-nural/2.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
+  "dyson-hd18-hair-dryer-r-professional": [
+    {
+      url: "/productos/dyson-hd18-hair-dryer-r-professional/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#000000",
       video: false,
     },
   ],
@@ -103,6 +227,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:Garmin_Instinct_2s.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -114,6 +239,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3)_backside.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -122,6 +248,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3).jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -133,6 +260,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3)_backside.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -141,6 +269,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3).jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -151,6 +280,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:About_iPad_Air_13-inch_(M2).jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -161,6 +291,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:About_iPad_Air_11-inch_(M2).jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -169,6 +300,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:About_iPad_Air_13-inch_(M2).jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -177,6 +309,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -190,6 +323,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -202,6 +336,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -210,6 +345,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -218,6 +354,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -226,6 +363,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -234,6 +372,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -242,6 +381,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -250,6 +390,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -258,6 +399,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -266,6 +408,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -274,6 +417,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -282,6 +426,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -290,6 +435,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -298,6 +444,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -306,6 +453,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -314,6 +462,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -322,6 +471,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -330,6 +480,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -338,6 +489,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -346,6 +498,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
   ],
@@ -356,6 +509,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -364,6 +518,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -372,6 +527,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -380,6 +536,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -388,6 +545,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -396,6 +554,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -404,6 +563,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -412,6 +572,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -420,6 +581,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -428,6 +590,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -436,6 +599,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -444,6 +608,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
   ],
@@ -455,6 +620,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:Back_view_of_iPhone_13_Pro_Max_Gold.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -465,6 +631,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -473,6 +640,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -483,6 +651,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -491,6 +660,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -499,6 +669,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -507,6 +678,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -515,6 +687,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -523,6 +696,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
   ],
@@ -534,6 +708,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:IPhone_14_Pro_Max_Deep_purple_A2896_China,_Hong_Kong_and_Macao_version_rear.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -542,6 +717,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:Back_of_the_iPhone_14_Pro_Max.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -550,6 +726,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -560,6 +737,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -568,6 +746,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -576,6 +755,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -584,6 +764,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -592,6 +773,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
   ],
@@ -602,6 +784,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -610,6 +793,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -618,10 +802,21 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
-  "iphone-15-pro-max": [],
+  "iphone-15-pro-max": [
+    {
+      url: "/productos/iphone-15-pro-max/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#000000",
+      video: false,
+    },
+  ],
   "iphone-16": [
     {
       url: "/productos/iphone-16/1.jpg",
@@ -629,6 +824,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -637,6 +833,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -645,6 +842,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -653,6 +851,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -661,6 +860,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -669,6 +869,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -677,6 +878,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -685,6 +887,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -693,6 +896,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -701,6 +905,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -709,6 +914,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -717,6 +923,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -725,6 +932,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -733,6 +941,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -741,6 +950,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -749,6 +959,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -757,6 +968,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -765,6 +977,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -773,6 +986,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -781,6 +995,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -789,6 +1004,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -797,6 +1013,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
   ],
@@ -807,6 +1024,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -815,6 +1033,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -823,6 +1042,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -831,6 +1051,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -839,6 +1060,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -847,6 +1069,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -855,6 +1078,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
     {
@@ -863,6 +1087,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: true,
     },
   ],
@@ -873,6 +1098,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "render",
+      fondo: "#f8f8fa",
       video: false,
     },
     {
@@ -881,6 +1107,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "render",
+      fondo: "#ffffff",
       video: false,
     },
     {
@@ -889,6 +1116,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -900,6 +1128,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -908,6 +1137,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -916,6 +1146,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -924,6 +1155,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -932,6 +1164,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -940,6 +1173,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -948,6 +1182,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -956,6 +1191,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -964,6 +1200,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -972,6 +1209,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -980,10 +1218,21 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
-  "iphone-17-pro-max": [],
+  "iphone-17-pro-max": [
+    {
+      url: "/productos/iphone-17-pro-max/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "foto",
+      fondo: null,
+      video: false,
+    },
+  ],
   "logitech-g29-driving-force": [
     {
       url: "/productos/logitech-g29-driving-force/1.jpg",
@@ -991,6 +1240,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:Logitech_G29_steering_wheel.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -1002,6 +1252,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:MacBook_Air_(13-inch,_M4,_Silver).jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1010,6 +1261,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1018,6 +1270,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1026,6 +1279,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1034,6 +1288,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1042,6 +1297,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -1053,6 +1309,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:MacBook_Air_(13-inch,_M4,_Silver).jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -1064,6 +1321,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:MacBook_Air_(15-inch,_M4,_Silver).jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -1074,6 +1332,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -1084,6 +1343,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1093,6 +1353,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation_(blue).jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -1103,6 +1364,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1111,6 +1373,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC0",
       origen: "https://commons.wikimedia.org/wiki/File:Apple_Macbook_Pro_(Unsplash).jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -1121,6 +1384,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC0",
       origen: "https://commons.wikimedia.org/wiki/File:Apple_Macbook_Pro_(Unsplash).jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1129,6 +1393,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -1140,6 +1405,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1149,6 +1415,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max_closeup.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1158,6 +1425,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max_with_Headset_and_Mouse.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -1169,6 +1437,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation_(blue).jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1177,6 +1446,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -1188,6 +1458,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:MacBook_Pro_16_(M1_Pro,_2021)_-_Wikipedia.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1197,6 +1468,49 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max.jpg",
       recorte: "foto",
+      fondo: null,
+      video: false,
+    },
+  ],
+  "moto-g06": [
+    {
+      url: "/productos/moto-g06/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
+  "moto-g15": [
+    {
+      url: "/productos/moto-g15/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#000000",
+      video: false,
+    },
+  ],
+  "moto-g17": [
+    {
+      url: "/productos/moto-g17/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+    {
+      url: "/productos/moto-g17/2.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
       video: false,
     },
   ],
@@ -1207,6 +1521,18 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC0",
       origen: "https://commons.wikimedia.org/wiki/File:Motorola_Moto_G35_5G.jpg",
       recorte: "foto",
+      fondo: null,
+      video: false,
+    },
+  ],
+  "moto-g67": [
+    {
+      url: "/productos/moto-g67/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#000000",
       video: false,
     },
   ],
@@ -1218,6 +1544,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:Nintendo_Switch_2_in_Docking_Console.jpg",
       recorte: "foto",
+      fondo: "#fdfcfc",
       video: false,
     },
     {
@@ -1227,6 +1554,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:Nintendo_Switch_2_in_Handheld_Mode.jpg",
       recorte: "foto",
+      fondo: "#fcfcfc",
       video: false,
     },
   ],
@@ -1237,6 +1565,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC0",
       origen: "https://commons.wikimedia.org/wiki/File:Switch_oled_console.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -1247,6 +1576,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:PlayStation_5_and_DualSense.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1255,6 +1585,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:Playstation_5.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1263,6 +1594,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1271,6 +1603,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1279,6 +1612,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1287,6 +1621,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1295,6 +1630,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1303,6 +1639,18 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
+      video: false,
+    },
+  ],
+  "poco-f8-ultra": [
+    {
+      url: "/productos/poco-f8-ultra/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#000000",
       video: false,
     },
   ],
@@ -1313,6 +1661,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:Redmi_15C_back.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1321,6 +1670,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:Redmi_15C_front.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -1331,6 +1681,29 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: null,
       origen: null,
       recorte: "foto",
+      fondo: null,
+      video: false,
+    },
+  ],
+  "smartwatch-estilo-watch-ultra": [
+    {
+      url: "/productos/smartwatch-estilo-watch-ultra/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
+  "wdblack-nvme-ssd-para-ps5": [
+    {
+      url: "/productos/wdblack-nvme-ssd-para-ps5/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#010101",
       video: false,
     },
   ],
@@ -1342,6 +1715,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:Xiaomi_17_backside_Ice_Melting_Blue.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],
@@ -1352,6 +1726,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:Xiaomi_17_Ultra_by_Leica_rear.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
     {
@@ -1360,6 +1735,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:Xiaomi_17_Ultra.jpg",
       recorte: "foto",
+      fondo: null,
       video: false,
     },
   ],

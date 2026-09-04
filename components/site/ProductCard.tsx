@@ -51,9 +51,10 @@ export function ProductCard({
   const lead = leadVariant(product, filters);
   const stock = totalStock(product);
   const image = product.images[0];
-  // Foto del equipo recortado sobre transparente: se muestra sobre blanco.
-  // La grilla siempre muestra la primera foto, que es el render cuando lo hay.
-  const propia = FOTOS_PRODUCTO[product.slug]?.[0]?.recorte === "render";
+  // Recorte de estudio: se muestra entero, sobre su propio fondo. La grilla
+  // siempre muestra la primera foto, que es el recorte cuando lo hay.
+  const primera = FOTOS_PRODUCTO[product.slug]?.[0];
+  const propia = primera?.recorte === "render";
   const multiplePrices = new Set(product.variants.map((v) => v.priceArs)).size > 1;
 
   const detalle = [
@@ -85,10 +86,10 @@ export function ProductCard({
           una foto de catálogo y todas las tarjetas quedan parejas. Las fotos
           ambientales van sobre el gris, que las contiene mejor. */}
       <div
-        className={cn(
-          "relative aspect-square overflow-hidden",
-          propia ? "bg-white" : "bg-elevated"
-        )}
+        className={cn("relative aspect-square overflow-hidden", !propia && "bg-elevated")}
+        // El color sale de medir el borde de la propia imagen. Con un blanco
+        // fijo, un recorte sobre negro quedaba con un marco oscuro alrededor.
+        style={propia ? { background: primera?.fondo ?? "#ffffff" } : undefined}
       >
         {image ? (
           <Image

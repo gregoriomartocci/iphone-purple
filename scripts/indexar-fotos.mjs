@@ -76,13 +76,13 @@ async function creditosDe(slug) {
 async function clasificar(archivo) {
   const img = sharp(archivo);
   const { hasAlpha } = await img.metadata();
-  if (hasAlpha) return "render";
+  if (hasAlpha) return { recorte: "render", fondo: null };
 
-  // 32×32 en gris: suficiente para saber de qué color es el marco.
+  // 32×32: suficiente para saber de qué color es el marco.
   const lado = 32;
   const { data } = await img
     .resize(lado, lado, { fit: "fill" })
-    .greyscale()
+    .removeAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true });
 
@@ -90,19 +90,39 @@ async function clasificar(archivo) {
   for (let y = 0; y < lado; y++) {
     for (let x = 0; x < lado; x++) {
       if (y === 0 || y === lado - 1 || x === 0 || x === lado - 1) {
-        borde.push(data[y * lado + x]);
+        const i = (y * lado + x) * 3;
+        borde.push([data[i], data[i + 1], data[i + 2]]);
       }
     }
   }
 
-  const media = borde.reduce((a, b) => a + b, 0) / borde.length;
-  const desvio = Math.sqrt(
-    borde.reduce((a, b) => a + (b - media) ** 2, 0) / borde.length
+  const medio = [0, 1, 2].map(
+    (c) => borde.reduce((a, px) => a + px[c], 0) / borde.length
+  );
+  // Qué tan lejos del color medio está el píxel más raro del marco. Con la
+  // distancia máxima —y no el desvío promedio— una esquina con algo pegado
+  // rompe la uniformidad, que es justo lo que hay que detectar.
+  const dispersion = Math.max(
+    ...borde.map((px) => Math.sqrt(px.reduce((a, v, c) => a + (v - medio[c]) ** 2, 0)))
   );
 
-  // Claro y parejo: fondo de estudio. Los umbrales son holgados a propósito,
-  // porque un blanco fotografiado nunca da 255 clavado.
-  return media > 235 && desvio < 12 ? "render" : "foto";
+  /*
+   * Un marco parejo es un fondo de estudio, sea blanco o negro.
+   *
+   * Antes solo contaba el blanco, y las fotos de prensa sobre negro —la mitad
+   * de las que manda un fabricante de celulares— entraban como toma ambiental:
+   * la galería las recortaba para llenar el cuadro y al equipo le comía los
+   * bordes. Se guarda también el color, porque mostrar un recorte sobre negro
+   * encima de un fondo blanco le dibuja un marco alrededor.
+   */
+  const uniforme = dispersion < 42;
+  const claro = medio.every((c) => c > 232);
+  const oscuro = medio.every((c) => c < 34);
+  if (!uniforme || (!claro && !oscuro)) return { recorte: "foto", fondo: null };
+
+  const hex =
+    "#" + medio.map((c) => Math.round(c).toString(16).padStart(2, "0")).join("");
+  return { recorte: "render", fondo: hex };
 }
 
 const carpetas = (await readdir(RAIZ, { withFileTypes: true }))
@@ -137,14 +157,17 @@ for (const slug of carpetas) {
     const previo = marca ? marca[nombre] : CREDITOS.get(url);
     const esVideo = VIDEOS.has(path.extname(nombre).toLowerCase());
 
+    const medido = esVideo
+      ? { recorte: "foto", fondo: null }
+      : await clasificar(path.join(RAIZ, slug, nombre));
+
     piezas.push({
       url,
       autor: previo?.autor ?? null,
       licencia: previo?.licencia ?? null,
       origen: previo?.origen ?? null,
-      recorte: esVideo
-        ? "foto"
-        : (previo?.recorte ?? (await clasificar(path.join(RAIZ, slug, nombre)))),
+      recorte: previo?.recorte ?? medido.recorte,
+      fondo: medido.fondo,
       video: esVideo,
     });
 
@@ -180,6 +203,7 @@ const cuerpo = Object.entries(indice)
       licencia: ${JSON.stringify(p.licencia)},
       origen: ${JSON.stringify(p.origen)},
       recorte: ${JSON.stringify(p.recorte)},
+      fondo: ${JSON.stringify(p.fondo)},
       video: ${p.video},
     },`
       )
@@ -205,8 +229,15 @@ export type CreditoFoto = {
   autor: string | null;
   licencia: string | null;
   origen: string | null;
-  /** "render" es el equipo recortado sobre blanco o transparente; "foto", una toma real. */
+  /** "render" es el equipo recortado sobre un fondo parejo; "foto", una toma real. */
   recorte: "render" | "foto";
+  /**
+   * Color del fondo cuando el recorte lo tiene parejo, para pintarlo detrás.
+   *
+   * Un recorte sobre negro puesto encima de blanco queda con un marco oscuro
+   * alrededor; con el color medido no se nota dónde termina la foto.
+   */
+  fondo: string | null;
   /** Los videos van al final de la galería. */
   video: boolean;
 };

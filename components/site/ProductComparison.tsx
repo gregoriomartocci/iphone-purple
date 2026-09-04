@@ -20,6 +20,11 @@ function esRender(slug: string): boolean {
   return FOTOS_PRODUCTO[slug]?.[0]?.recorte === "render";
 }
 
+/** Color del fondo del recorte, para pintarlo detrás de la foto. */
+function fondoDe(slug: string): string {
+  return FOTOS_PRODUCTO[slug]?.[0]?.fondo ?? "#ffffff";
+}
+
 export function ProductComparison({
   products,
   currentId,
@@ -55,15 +60,19 @@ export function ProductComparison({
                     className={cn("px-5 py-4 align-top", actual && "bg-elevated")}
                   >
                     <Link href={`/catalogo/${p.slug}`} className="group block">
-                      {/* El render del equipo entra entero sobre blanco. Con
-                          `cover` se recortaba el celular vertical a un cuadrado
-                          y quedaba solo el centro de la pantalla apagada: un
-                          cuadrado negro donde tenía que verse el teléfono. */}
+                      {/* El recorte del equipo entra entero, sobre su propio
+                          fondo. Con `cover` se recortaba el celular vertical a
+                          un cuadrado y quedaba solo el centro de la pantalla
+                          apagada: un cuadrado negro donde tenía que verse el
+                          teléfono. */}
                       <span
                         className={cn(
                           "relative block aspect-square w-24 overflow-hidden rounded-xl",
-                          esRender(p.slug) ? "bg-white" : "bg-elevated"
+                          !esRender(p.slug) && "bg-elevated"
                         )}
+                        style={
+                          esRender(p.slug) ? { background: fondoDe(p.slug) } : undefined
+                        }
                       >
                         {p.images[0] && (
                           <Image
