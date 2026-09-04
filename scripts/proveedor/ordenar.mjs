@@ -35,6 +35,10 @@ const LOTES = {
   "WhatsApp Unknown 2026-09-03 at 23.33.51": "lote-septiembre-a",
   "WhatsApp Unknown 2026-09-03 at 23.40.07": "lote-septiembre-b",
   "WhatsApp Unknown 2026-09-03 at 23.47.51": "lote-septiembre-c",
+  "WhatsApp Unknown 2026-09-03 at 23.55.28": "lote-septiembre-d",
+  "WhatsApp Unknown 2026-09-03 at 12.14.49": "lote-septiembre-g",
+  "WhatsApp Unknown 2026-09-03 at 23.46.10": "lote-septiembre-f",
+  "WhatsApp Unknown 2026-09-03 at 23.46.47": "lote-septiembre-e",
 };
 
 const filas = (await readFile(TABLA, "utf8"))
@@ -45,6 +49,21 @@ const filas = (await readFile(TABLA, "utf8"))
 
 const origenes = new Map();
 const paraCatalogo = [];
+
+/**
+ * Nombre final de un archivo.
+ *
+ * Los descartes llevan el lote y el id adelante del motivo. Sin eso, dos fotos
+ * de depósito de lotes distintos se llamaban igual y la segunda pisaba a la
+ * primera: así se perdieron treinta y nueve archivos en una corrida, y como
+ * fotos-proveedor no va al repo, no había de dónde recuperarlos salvo la
+ * descarga original.
+ */
+function nombreDe(elegido, lote, id, ext) {
+  return elegido.destino.startsWith("_")
+    ? `${lote}-${id}-${elegido.nombre}${ext}`
+    : `${elegido.nombre}${ext}`;
+}
 
 /** lote → id → { destino, nombre, orden } */
 const decidido = new Map();
@@ -66,9 +85,11 @@ if (existsSync(pendientes)) {
       const elegido = decidido.get(lote)?.get(id);
       if (!elegido) continue;
 
-      const destino = path.join(RAIZ, elegido.destino);
+      const destino = elegido.destino.startsWith("_")
+        ? path.join(RAIZ, elegido.destino, lote)
+        : path.join(RAIZ, elegido.destino);
       await mkdir(destino, { recursive: true });
-      const nombre = elegido.nombre + path.extname(archivo);
+      const nombre = nombreDe(elegido, lote, id, path.extname(archivo));
       await rename(path.join(carpeta, archivo), path.join(destino, nombre));
 
       if (!origenes.has(destino)) origenes.set(destino, []);
@@ -96,15 +117,15 @@ for (const [carpeta, lote] of Object.entries(LOTES)) {
     const carpetaDestino = destino.startsWith("_")
       ? path.join(RAIZ, destino, lote)
       : path.join(RAIZ, destino);
-    const nombre = elegido?.nombre ?? `${lote}-${id}`;
+    const nombre = elegido ? nombreDe(elegido, lote, id, ext) : `${lote}-${id}${ext}`;
 
     await mkdir(carpetaDestino, { recursive: true });
-    await rename(path.join(base, archivo), path.join(carpetaDestino, nombre + ext));
+    await rename(path.join(base, archivo), path.join(carpetaDestino, nombre));
 
     if (!origenes.has(carpetaDestino)) origenes.set(carpetaDestino, []);
-    origenes.get(carpetaDestino).push([nombre + ext, lote, archivo]);
+    origenes.get(carpetaDestino).push([nombre, lote, archivo]);
 
-    if (elegido?.orden) paraCatalogo.push([destino, nombre + ext, elegido.orden]);
+    if (elegido?.orden) paraCatalogo.push([destino, nombre, elegido.orden]);
   }
 
   await rm(base, { recursive: true, force: true });

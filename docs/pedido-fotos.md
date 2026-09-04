@@ -3,7 +3,7 @@
 GENERADO por `npm run fotos:pedido`. Se regenera solo cada vez que entran
 fotos nuevas, así no se piden las que ya tenemos.
 
-Son **36 productos sin ninguna imagen**: hoy su ficha sale vacía.
+Son **35 productos sin ninguna imagen**: hoy su ficha sale vacía.
 
 Copiá todo lo que está entre las líneas y pegalo en la extensión de Claude en
 Chrome. Cuando termine:
@@ -42,7 +42,6 @@ modelo exacto.
 - `iphone-17-pro-max-1.jpg` `-2` `-3` · Apple iPhone 17 Pro Max — Naranja Cósmico, Blanco Nube
 - `iphone-16-pro-max-1.jpg` `-2` `-3` · Apple iPhone 16 Pro Max — Titanio Negro, Titanio Natural
 - `iphone-15-pro-max-1.jpg` `-2` `-3` · Apple iPhone 15 Pro Max — Titanio Azul, Titanio Natural
-- `iphone-12-1.jpg` `-2` `-3` · Apple iPhone 12 — Negro, Verde
 - `iphone-12-pro-1.jpg` `-2` `-3` · Apple iPhone 12 Pro — Negro, Verde
 - `iphone-12-pro-max-1.jpg` `-2` `-3` · Apple iPhone 12 Pro Max — Negro, Verde
 - `iphone-11-1.jpg` `-2` `-3` · Apple iPhone 11 — Blanco, Negro

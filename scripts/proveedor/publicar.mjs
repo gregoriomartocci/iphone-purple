@@ -12,7 +12,8 @@
  *
  * Uso: npm run proveedor:publicar
  */
-import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import sharp from "sharp";
 
@@ -62,4 +63,29 @@ for (const carpeta of tocados) {
   );
 }
 
+/*
+ * Duplicados exactos dentro de una misma carpeta.
+ *
+ * Aparecen cuando se renumera lo que quedó después de borrar algo y después se
+ * vuelve a publicar: el archivo queda con su número viejo y con el nuevo. Son
+ * el mismo byte a byte, así que se borra el sobrante y no hay nada que elegir.
+ */
+let repetidos = 0;
+for (const carpeta of tocados) {
+  const vistos = new Map();
+  for (const f of (await readdir(carpeta)).sort()) {
+    if (f.startsWith(".")) continue;
+    const hash = createHash("md5")
+      .update(await readFile(path.join(carpeta, f)))
+      .digest("hex");
+    if (vistos.has(hash)) {
+      await rm(path.join(carpeta, f), { force: true });
+      repetidos++;
+    } else {
+      vistos.set(hash, f);
+    }
+  }
+}
+
 console.log(`\n${filas.length} archivos en ${tocados.size} productos.`);
+if (repetidos > 0) console.log(`${repetidos} duplicados exactos borrados.`);

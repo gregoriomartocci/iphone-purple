@@ -188,3 +188,106 @@ lote-septiembre-c	v013	_descartado	persona-hablando-a-camara
 lote-septiembre-c	v015	_descartado	pantalla-apagada-modelo-indeterminado
 lote-septiembre-c	v016	_descartado	equipo-en-pomposa-sobre-mesa
 lote-septiembre-c	v020	_descartado	pantalla-apagada-modelo-indeterminado
+# --- lote-septiembre-d: el mejor material de todos para fotos. Pared lisa,
+# luz pareja, sin etiquetas pegadas. La segunda mitad de la carpeta no son
+# productos sino fotos del local y la planilla de una venta de fondo de
+# comercio; van a _descartado.
+lote-septiembre-d	f005	iphone-12	iphone-12-verde-y-rojo-en-abanico	1
+lote-septiembre-d	f001	iphone-16	iphone-16-caja-negra-en-mano	10
+lote-septiembre-d	f008	iphone-16	iphone-16-teal-y-negro-en-abanico	11
+lote-septiembre-d	f006	iphone-13	iphone-13-midnight-y-azul-en-abanico	15
+lote-septiembre-d	f017	iphone-13	iphone-13-rojo-azul-y-blanco-en-abanico	16
+lote-septiembre-d	f018	iphone-13	iphone-13-verde-azul-y-rosa-en-abanico	17
+lote-septiembre-d	f009	iphone-14-pro	iphone-14-pro-deep-purple-pared-lisa	7
+lote-septiembre-d	f007	iphone-14-pro-max	iphone-14-pro-max-gold-y-space-black	3
+lote-septiembre-d	f002	iphone-15-pro	iphone-15-pro-blue-titanium-dorso	2
+lote-septiembre-d	f003	iphone-17-pro	iphone-17-pro-cosmic-orange-pared-lisa	10
+lote-septiembre-d	f012	iphone-17-pro	iphone-17-pro-blanco-y-naranja-en-abanico	11
+lote-septiembre-d	f013	iphone-17-pro	iphone-17-pro-cosmic-orange-sobre-mesa	12
+lote-septiembre-d	f014	iphone-17-pro	iphone-17-pro-caja-azul-en-mano	13
+lote-septiembre-d	f016	iphone-17-pro	iphone-17-pro-caja-blanca-en-mano	14
+lote-septiembre-d	f004	_descartado	equipo-con-la-pantalla-despegada
+lote-septiembre-d	f010	_descartado	sticker-pegado-sobre-la-manzana
+lote-septiembre-d	f011	_descartado	titanio-natural-generacion-indeterminada
+lote-septiembre-d	f015	_descartado	flyer-de-un-crm-no-es-un-producto
+lote-septiembre-d	f019	_descartado	foto-del-local-en-venta
+lote-septiembre-d	f020	_descartado	foto-del-local-en-venta
+lote-septiembre-d	f021	_descartado	foto-del-local-en-venta
+lote-septiembre-d	f022	_descartado	foto-del-local-en-venta
+lote-septiembre-d	f023	_descartado	foto-del-local-en-venta
+lote-septiembre-d	f024	_descartado	foto-del-local-en-venta
+lote-septiembre-d	f025	_descartado	foto-del-local-en-venta
+lote-septiembre-d	f026	_descartado	foto-del-local-en-venta
+lote-septiembre-d	f027	_descartado	planilla-de-venta-de-fondo-de-comercio
+lote-septiembre-d	v001	_descartado	deposito-cajas-de-cargador
+# --- tres lotes más, que estaban sin descomprimir en Descargas.
+lote-septiembre-e	f006	iphone-16	iphone-16-cajas-cinco-colores	12
+lote-septiembre-e	f010	iphone-16	iphone-16-negro-dorso-en-mano	13
+lote-septiembre-e	f014	iphone-16	iphone-16-negro-tres-unidades	14
+lote-septiembre-e	f015	iphone-16	iphone-16-cajas-en-abanico	15
+lote-septiembre-e	v006	iphone-16	iphone-16-cajas-en-abanico-360	16
+lote-septiembre-e	v007	iphone-16	iphone-16-cajas-360	17
+lote-septiembre-e	v014	iphone-16	iphone-16-cajas-colores-360	18
+lote-septiembre-e	v018	iphone-16	iphone-16-cajas-blancas-360	19
+lote-septiembre-e	f007	iphone-15	iphone-15-cajas-en-mano	3
+lote-septiembre-e	v004	iphone-15	iphone-15-cajas-en-abanico-360	4
+lote-septiembre-e	v015	iphone-15	iphone-15-cajas-360	5
+lote-septiembre-e	f008	iphone-15-pro	iphone-15-pro-blue-titanium-en-mano	3
+lote-septiembre-e	f011	iphone-16-pro	iphone-16-pro-desert-titanium-dorso	8
+lote-septiembre-e	v021	iphone-16-pro	iphone-16-pro-desert-y-blanco-360	9
+lote-septiembre-e	v002	iphone-13	iphone-13-verde-alpino-en-abanico-360	18
+lote-septiembre-e	v003	iphone-13-pro	iphone-13-pro-sierra-blue-y-grafito-360	13
+lote-septiembre-f	f007	iphone-13	iphone-13-midnight-starlight-y-azul	19
+lote-septiembre-f	f008	iphone-13	iphone-13-blanco-verde-y-rojo	20
+lote-septiembre-f	v003	iphone-16	iphone-16-cajas-azul-y-lila-360	20
+lote-septiembre-f	v004	iphone-15	iphone-15-cajas-en-mano-360	6
+lote-septiembre-g	f005	iphone-16	iphone-16-azul-negro-y-lila-en-abanico	21
+lote-septiembre-g	f006	iphone-16	iphone-16-celeste-negro-y-blanco	22
+lote-septiembre-g	f002	iphone-16	iphone-16-cuatro-colores-en-caja	23
+lote-septiembre-g	f016	iphone-16	iphone-16-en-caja-de-carton	24
+lote-septiembre-g	f018	macbook-air-m3	macbook-air-cajas-cuatro-colores	6
+lote-septiembre-e	f001	_descartado	iphone-pro-titanio-generacion-indeterminada
+lote-septiembre-e	f002	_descartado	cajas-de-iphone-pro-generacion-indeterminada
+lote-septiembre-e	f003	_descartado	cajas-de-iphone-pro-generacion-indeterminada
+lote-septiembre-e	f004	_descartado	folleto-del-equipo-no-es-el-equipo
+lote-septiembre-e	f005	_descartado	folleto-del-equipo-no-es-el-equipo
+lote-septiembre-e	f009	_descartado	white-titanium-generacion-indeterminada
+lote-septiembre-e	f012	_descartado	iphone-pro-titanio-generacion-indeterminada
+lote-septiembre-e	f013	_descartado	iphone-pro-titanio-generacion-indeterminada
+lote-septiembre-e	v001	_descartado	deposito-mostrador
+lote-septiembre-e	v005	_descartado	folletos-en-mano
+lote-septiembre-e	v008	_descartado	personas-saludando-a-camara
+lote-septiembre-e	v009	_descartado	pantalla-apagada-modelo-indeterminado
+lote-septiembre-e	v010	_descartado	deposito-cajas
+lote-septiembre-e	v011	_descartado	iphone-pro-titanio-generacion-indeterminada
+lote-septiembre-e	v012	_descartado	deposito-equipos-envueltos
+lote-septiembre-e	v013	_descartado	deposito-mostrador
+lote-septiembre-e	v016	_descartado	cajas-de-iphone-pro-generacion-indeterminada
+lote-septiembre-e	v017	_descartado	cajas-de-iphone-pro-generacion-indeterminada
+lote-septiembre-e	v019	_descartado	deposito-cajas
+lote-septiembre-e	v020	_descartado	persona-hablando-a-camara
+lote-septiembre-f	f001	_descartado	varios-modelos-sobre-mostrador
+lote-septiembre-f	f002	_descartado	capturas-de-whatsapp-con-precios
+lote-septiembre-f	f003	_descartado	airpods-con-sticker-dorado-posible-replica
+lote-septiembre-f	f004	_descartado	vidrios-templados-no-esta-en-el-catalogo
+lote-septiembre-f	f005	_descartado	fundas-no-esta-en-el-catalogo
+lote-septiembre-f	f006	_descartado	cables-sueltos-no-es-un-producto
+lote-septiembre-f	f009	_descartado	iphone-pro-titanio-generacion-indeterminada
+lote-septiembre-f	f010	_descartado	iphone-pro-titanio-generacion-indeterminada
+lote-septiembre-f	v001	_descartado	deposito-equipos-envueltos
+lote-septiembre-f	v002	_descartado	deposito-equipos-envueltos
+lote-septiembre-g	f001	_descartado	parlante-jbl-no-esta-en-el-catalogo
+lote-septiembre-g	f003	_descartado	vitrina-con-varios-modelos-mezclados
+lote-septiembre-g	f004	_descartado	cajas-samsung-no-esta-en-el-catalogo
+lote-septiembre-g	f007	_descartado	logo-del-proveedor
+lote-septiembre-g	f008	_descartado	cargadores-sueltos-no-es-un-producto
+lote-septiembre-g	f009	_descartado	cargadores-sueltos-no-es-un-producto
+lote-septiembre-g	f010	_descartado	cajas-de-airpods-fuera-de-foco
+lote-septiembre-g	f011	_descartado	airpods-max-no-esta-en-el-catalogo
+lote-septiembre-g	f012	_descartado	flyer-de-vidrios-templados
+lote-septiembre-g	f013	_descartado	battery-pack-no-esta-en-el-catalogo
+lote-septiembre-g	f014	_descartado	bolsas-de-entrega-no-es-un-producto
+lote-septiembre-g	f015	_descartado	funda-no-esta-en-el-catalogo
+lote-septiembre-g	f017	_descartado	varios-productos-mezclados-en-una-toma
+lote-septiembre-g	f019	_descartado	cajas-samsung-no-esta-en-el-catalogo
+lote-septiembre-g	f020	_descartado	vitrina-con-varios-modelos-mezclados
