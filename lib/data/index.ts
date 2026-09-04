@@ -49,6 +49,19 @@ export function isSupabaseConfigured(): boolean {
   return url.startsWith("https://") && url.includes(".supabase.co") && key.length > 40;
 }
 
+/**
+ * Un producto sin foto no se publica.
+ *
+ * Decisión del negocio: una ficha sin imagen no vende y deja el catálogo con
+ * cara de inacabado. Preferimos mostrar menos y que todo lo que se muestre se
+ * vea bien.
+ *
+ * No se borra nada: el producto sigue en los datos y en el panel, y vuelve al
+ * catálogo solo con dejar sus fotos en public/productos/<slug>/. Poner esto en
+ * `false` publica todo de nuevo.
+ */
+const OCULTAR_SIN_FOTO = true;
+
 async function allProducts(): Promise<Product[]> {
   if (!isSupabaseConfigured()) return seed.PRODUCTS;
   try {
@@ -78,6 +91,11 @@ function normalize(text: string): string {
 
 export async function getProducts(filters: CatalogFilters = {}): Promise<Product[]> {
   let items = await allProducts();
+
+  // Antes que cualquier filtro: lo que no tiene foto no llega al catálogo.
+  if (OCULTAR_SIN_FOTO && !filters.incluirSinFoto) {
+    items = items.filter((p) => p.images.length > 0);
+  }
 
   if (filters.q) {
     // Cada palabra tiene que aparecer: "15 pro" no debe traer todos los "pro".

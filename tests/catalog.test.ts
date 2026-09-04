@@ -134,7 +134,7 @@ describe("getProducts", () => {
     const originales = PRODUCTS.filter((p) =>
       p.variants.some((v) => v.authenticity === "original")
     );
-    const result = await getProducts();
+    const result = await getProducts({ incluirSinFoto: true });
     expect(result).toHaveLength(originales.length);
   });
 
@@ -282,16 +282,27 @@ describe("réplicas", () => {
   });
 
   it("se ven solo cuando se piden explícitamente", async () => {
-    const result = await getProducts({ authenticity: "replica" });
+    const result = await getProducts({ authenticity: "replica", incluirSinFoto: true });
     expect(result.length).toBeGreaterThan(0);
     for (const p of result) {
       expect(p.variants.some((v) => v.authenticity === "replica")).toBe(true);
     }
   });
 
+  /**
+   * El invariante es que el contador coincide con las réplicas publicables, no
+   * que sea mayor que cero: si ninguna réplica tiene foto, no se publica
+   * ninguna y el contador correcto es cero.
+   */
   it("el catálogo informa cuántas réplicas hay, sin listarlas", async () => {
     const facets = await getCatalogFacets();
-    expect(facets.replicaCount).toBeGreaterThan(0);
+    const replicas = await getProducts({ authenticity: "replica" });
+    expect(facets.replicaCount).toBe(replicas.length);
+
+    const listados = await getProducts();
+    for (const p of listados) {
+      expect(p.variants.every((v) => v.authenticity === "original")).toBe(true);
+    }
   });
 
   it("una réplica no cuenta como ahorro contra un sellado original", () => {
@@ -421,7 +432,11 @@ describe("getCatalogFacets", () => {
   it("un eje no se bloquea por lo que se eligió debajo", async () => {
     // Con "iPhone" elegido, Sony no tiene iPhones y su contador daría cero:
     // si se descartara, la persona ya no podría volver a cambiar de marca.
-    const facets = await getCatalogFacets({ brand: "Apple", category: "celular" });
+    const facets = await getCatalogFacets({
+      brand: "Apple",
+      category: "celular",
+      incluirSinFoto: true,
+    });
     expect(facets.brands.length).toBeGreaterThan(1);
     expect(facets.brands.map((f) => f.value)).toContain("Sony");
   });
@@ -430,6 +445,7 @@ describe("getCatalogFacets", () => {
     const facets = await getCatalogFacets({
       category: "celular",
       model: "iPhone 15 Pro",
+      incluirSinFoto: true,
     });
     expect(facets.categories.length).toBeGreaterThan(1);
   });
@@ -494,6 +510,28 @@ describe("getCatalogFacets", () => {
 
     for (const capacidad of facets.storages) {
       expect(propias.has(capacidad.value)).toBe(true);
+    }
+  });
+});
+
+describe("productos sin foto", () => {
+  /**
+   * Una ficha sin imagen no vende y deja el catálogo con cara de inacabado.
+   * El producto sigue existiendo en los datos: lo que no hace es publicarse.
+   */
+  it("no publica en el catálogo un producto sin fotos", async () => {
+    const publicados = await getProducts();
+    for (const p of publicados) {
+      expect(p.images.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("las facetas tampoco cuentan lo que no se publica", async () => {
+    const facets = await getCatalogFacets();
+    const publicados = await getProducts();
+    const marcas = new Set(publicados.map((p) => p.brand));
+    for (const f of facets.brands) {
+      expect(marcas.has(f.value)).toBe(true);
     }
   });
 });

@@ -347,4 +347,11 @@ export interface CatalogFilters {
    * muestra—, pero el panel necesita ver el stock en cero para reponer.
    */
   includeOutOfStock?: boolean;
+  /**
+   * Incluir lo que todavía no tiene foto.
+   *
+   * El catálogo no los publica —una ficha sin imagen no vende—, pero el panel
+   * y los tests necesitan ver el conjunto completo.
+   */
+  incluirSinFoto?: boolean;
 }

@@ -24,169 +24,54 @@ const API = "https://commons.wikimedia.org/w/api.php";
 const RAIZ = path.join(process.cwd(), "public", "productos");
 
 /** slug del producto → archivos de Commons, en el orden en que se muestran. */
+/**
+ * slug del producto → archivos de Commons, en el orden en que se muestran.
+ *
+ * REGLA: solo renders del producto, ninguna foto de un equipo real.
+ *
+ * Un render es una ilustración del equipo como sale de fábrica: fondo
+ * transparente, sin etiquetas de precio pegadas al dorso, sin funda, sin
+ * manos, sin la pantalla amarilleada de un usado, sin el cable con imán del
+ * mostrador. Eso se puede garantizar; la calidad de una foto no, porque para
+ * saber si tiene una etiqueta tapando la manzana hay que mirarla.
+ *
+ * Se probó lo contrario y no funcionó: aceptar fotos leyendo su nombre y su
+ * descripción dejó pasar una PlayStation sobre una mesa de casa, un Redmi con
+ * la pantalla sucia, una Switch tirada, un iPhone con una etiqueta en el
+ * dorso y un iPad amarillento. El texto de un archivo no dice nada de eso.
+ *
+ * Consecuencia asumida: muchos productos quedan sin imagen y lo dicen. Es
+ * preferible a una foto que descuida el producto. Se levanta sola en cuanto
+ * haya fotos propias o del proveedor en public/productos/<slug>/.
+ */
 const FOTOS = {
-  "nintendo-switch-oled": [
-    "Nintendo switch OLED model - 1.jpg",
-    "Nintendo switch OLED model - 2.jpg",
-    "Switch oled console.jpg",
-  ],
-  "nintendo-switch-2-mario-kart": [
-    "Nintendo Switch 2 in Docking Console.jpg",
-    "Nintendo Switch 2 in Handheld Mode.jpg",
-    "Nintendo Switch 2 Joy-Con 2 Blue and Orange.jpg",
-  ],
-  "logitech-g29-driving-force": ["Logitech G29 steering wheel.jpg"],
-  "playstation-5-slim": [
-    "PlayStation 5 and DualSense.jpg",
-    "Playstation 5.jpg",
-    "PlayStation 5 and DualSense (2).jpg",
-  ],
-  "redmi-15c": ["Redmi 15C front.jpg", "Redmi 15C back.jpg"],
-  "garmin-instinct-2s-solar": ["Garmin Instinct 2s.jpg"],
-
-  // ── Línea de MacBook
-  //
-  // Acá sí vale usar la foto de otra generación, y es la diferencia con los
-  // teléfonos: el chasis de la MacBook Pro no cambió desde el rediseño de
-  // 2021 —mismo cuerpo, mismo tamaño, misma muesca, mismos puertos— así que
-  // una foto de la de 16" con M2 Max muestra exactamente el equipo que se
-  // vende con M5. Con un iPhone eso no pasa: cada generación cambia el dorso.
-  "macbook-pro-m5-max-16": [
-    'Apple MacBook Pro 16" M2 Max.jpg',
-    'Apple MacBook Pro 16" M2 Max closeup.jpg',
-    'Apple MacBook Pro 16" M2 Max with Headset and Mouse.jpg',
-    'Apple MacBook Pro 16" M2 Max with Drone.jpg',
-  ],
-  "macbook-pro-m5-pro-16": [
-    "MacBook Pro 16 (M1 Pro, 2021) - Wikipedia.jpg",
-    'Apple MacBook Pro 16" M2 Max.jpg',
-    "MacBook Pro 16 (M1 Pro, 2021) - Wikipedia (2).jpg",
-    'Apple MacBook Pro 16" M2 Max closeup.jpg',
-  ],
-  "macbook-pro-m5-14": [
-    "MacBook Pro 3rd Generation.jpg",
-    "Apple Macbook Pro (Unsplash).jpg",
-    "MacBook Pro 3rd Generation (blue).jpg",
-  ],
-  "macbook-pro-m5-pro-14": [
-    "MacBook Pro 3rd Generation (blue).jpg",
-    "MacBook Pro 3rd Generation.jpg",
-    "Apple Macbook Pro (Unsplash).jpg",
-  ],
-  "macbook-pro-m5-max-14": [
-    "Apple Macbook Pro (Unsplash).jpg",
-    "MacBook Pro 3rd Generation.jpg",
-    "MacBook Pro 3rd Generation (blue).jpg",
-  ],
-  "macbook-pro-m4-pro-14": [
-    "MacBook Pro 3rd Generation.jpg",
-    "MacBook Pro 3rd Generation (blue).jpg",
-    "Apple Macbook Pro (Unsplash).jpg",
-  ],
-  // El chasis del Air tampoco cambió entre M4 y M5.
-  "macbook-air-m5-13": [
-    "M5 Macbook Air 13 Sky Blue model.jpg",
-    "MacBook Air (13-inch, M4, Silver).jpg",
-  ],
-  "macbook-air-m5-15": ["MacBook Air (15-inch, M4, Silver).jpg"],
-  "macbook-air-m3": ["MacBook Air (13-inch, M4, Silver).jpg"],
-
-  // ── Otros productos Apple
-  "airpods-pro-2": [
-    "AirPods Pro (2nd generation).jpg",
-    "2025-10-24 AirPods Pro 2 dunkelblau.jpg",
-  ],
-  "apple-watch-series-10": ["Apple Watch Series 10.jpg"],
-  "ipad-air-m2": [
-    "About iPad Air 11-inch (M2).jpg",
-    "M2 iPad Air series - 1.jpg",
-    "About iPad Air 13-inch (M2).jpg",
-  ],
-  "ipad-air-13-m3": ["IPad Air 11-inch (M3) backside.jpg", "IPad Air 11-inch (M3).jpg"],
-  "ipad-air-11-m4": ["IPad Air 11-inch (M3) backside.jpg", "IPad Air 11-inch (M3).jpg"],
-  "ipad-air-13-m4": ["About iPad Air 13-inch (M2).jpg", "M2 iPad Air 13inti.jpg"],
-
-  // Línea de iPhone.
-  //
-  // Primero va SIEMPRE el dorso, y de ser posible un render limpio del equipo
-  // como nuevo, no una foto de uno usado. De frente todos los iPhone son la
-  // misma silueta con la pantalla apagada; el dorso cambia de color y de
-  // disposición de cámaras, y es lo que hace reconocible el modelo en la
-  // grilla. Las fotos de un equipo real van después, para quien quiera ver
-  // cómo se ve de verdad.
-  //
-  // Los renders de dorso aparecieron recorriendo la categoría de cada modelo
-  // en Commons y buscando por "Rear", no por búsqueda libre: con eso último no
-  // salían.
-  //
-  // No entran fotos de equipos en exhibición: en el mostrador de una tienda el
-  // teléfono va enganchado a un cable con imán antirrobo y ese cable sale en
-  // la foto. La descripción de Commons dice dónde fue tomada, así que se filtra
-  // antes de bajarla.
+  // Dorso primero donde hay render de dorso. De frente todos los iPhone son
+  // la misma silueta con la pantalla apagada.
   "iphone-17": ["IPhone 17 (Lavender).png", "IPhone 17 Vector.svg"],
   "iphone-17-pro": [
     "IPhone 17 Pro.png",
     "IPhone 17 Pro back.svg",
-    "IPhone 17 Pro (Silver) - Backside.jpg",
     "IPhone 17 Pro Vector.svg",
   ],
   "iphone-17-pro-max": [
     "IPhone 17 Pro Max (Deep Blue).png",
     "IPhone 17 Pro Max Vector.svg",
   ],
-  "iphone-16": ["IPhone 16 Ultramarine Rear.png", "IPhone 16 Vector.svg"],
-  "iphone-16-pro": [
-    "Back view of iPhone 16 Pro White Titanium.jpg",
-    "IPhone 16 Pro Vector.svg",
-    "Right view of iPhone 16 Pro White Titanium.jpg",
-  ],
-  "iphone-16-pro-max": [
-    "IPhone 16 Pro Max Desert Titanium Rear.png",
-    "Back view of iPhone 16 Pro Max Natural Titanium.jpg",
-    "IPhone 16 Pro Max Vector.svg",
-  ],
-  "iphone-15": [
-    "Back view of iPhone 15 Blue.jpg",
-    "Apple iPhone 15 Pink - back view (November 1, 2024).jpg",
-    "Back of iPhone 15.jpg",
-    "IPhone 15 Vector.svg",
-  ],
-  "iphone-15-pro": [
-    "Back view of iPhone 15 Pro Natural titanium.jpg",
-    "IPhone 15 Pro Vector.svg",
-  ],
-  "iphone-15-pro-max": [
-    "Back view of iPhone 15 Pro Max Natural Titanium.jpg",
-    "IPhone 15 Pro Max Vector.svg",
-  ],
-  "iphone-14": ["Back view of iPhone 14 Blue.jpg", "IPhone 14 vector.svg"],
-  "iphone-14-pro": [
-    "Back of the iPhone 14 Pro.jpg",
-    "IPhone 14 Pro vector.svg",
-    "IPhone 14 Pro - black.jpg",
-  ],
-  "iphone-14-pro-max": [
-    "IPhone 14 Pro Max Deep purple A2896 China, Hong Kong and Macao version rear.jpg",
-    "Back of the iPhone 14 Pro Max.jpg",
-  ],
+  "iphone-16": ["IPhone 16 Vector.svg"],
+  "iphone-16-pro": ["IPhone 16 Pro Vector.svg"],
+  "iphone-16-pro-max": ["IPhone 16 Pro Max Vector.svg"],
+  "iphone-15": ["IPhone 15 Vector.svg"],
+  "iphone-15-pro": ["IPhone 15 Pro Vector.svg"],
+  "iphone-15-pro-max": ["IPhone 15 Pro Max Vector.svg"],
+  "iphone-14": ["IPhone 14 vector.svg"],
+  "iphone-14-pro": ["IPhone 14 Pro vector.svg"],
   "iphone-13": ["IPhone 13 vector.svg"],
-  "iphone-13-pro": [
-    "IPhone 13 Pro Sierra blue A2483 US version rear.jpg",
-    "Back of the iPhone 13 Pro.jpg",
-    "IPhone 13 Pro vector.svg",
-  ],
+  "iphone-13-pro": ["IPhone 13 Pro vector.svg"],
   "iphone-12": ["IPhone 12 Blue.svg"],
-  "iphone-12-pro": [
-    "IPhone 12 Pro backside.jpg",
-    "IPhone 12 Pro Gold.svg",
-    "IPhone 12 Pro Pacific Blue 256g.jpg",
-  ],
-  "iphone-11": ["Back view of iPhone 11 white.jpg", "IPhone 11 White.svg"],
+  "iphone-12-pro": ["IPhone 12 Pro Gold.svg"],
+  "iphone-11": ["IPhone 11 White.svg"],
   "iphone-11-pro": ["IPhone 11 Pro Midnight Green.svg"],
-  "iphone-11-pro-max": [
-    "Scan of back of iPhone 11 Pro Max Space Grey.jpg",
-    "IPhone 11 Pro Max Midnight Green.svg",
-  ],
+  "iphone-11-pro-max": ["IPhone 11 Pro Max Midnight Green.svg"],
 };
 
 /** Señales, en varios idiomas, de que la foto es de un equipo en exhibición. */
@@ -250,14 +135,20 @@ async function ficha(archivo) {
 }
 
 /**
- * Ancho y alto de un PNG, leídos del encabezado IHDR.
+ * Ancho, alto y transparencia de un PNG, leídos del encabezado IHDR.
  *
- * Son 8 bytes de firma, 8 de largo y tipo de bloque, y ahí vienen los dos
- * enteros de 32 bits. No hace falta una librería para esto.
+ * Son 8 bytes de firma, 8 de largo y tipo de bloque, ahí vienen los dos
+ * enteros de 32 bits, y después la profundidad y el tipo de color. Los tipos
+ * 4 y 6 son los que llevan canal alfa. No hace falta una librería.
  */
 function medirPng(buf) {
-  if (buf.length < 24 || buf.toString("ascii", 12, 16) !== "IHDR") return null;
-  return { ancho: buf.readUInt32BE(16), alto: buf.readUInt32BE(20) };
+  if (buf.length < 26 || buf.toString("ascii", 12, 16) !== "IHDR") return null;
+  const tipoColor = buf[25];
+  return {
+    ancho: buf.readUInt32BE(16),
+    alto: buf.readUInt32BE(20),
+    conAlfa: tipoColor === 4 || tipoColor === 6,
+  };
 }
 
 const indice = {};
@@ -296,6 +187,20 @@ for (const [slug, archivos] of Object.entries(FOTOS)) {
     // modelo: en Commons conviven con el mismo nombre y ya se coló uno al
     // catálogo. Frenarlo acá es más barato que descubrirlo mirando la grilla.
     const medidas = medirPng(datos);
+
+    /**
+     * Que sea un render de verdad y no una foto guardada como PNG.
+     *
+     * El recorte del producto sobre transparente es lo único que garantiza
+     * que no haya etiquetas pegadas, fundas, manos ni pantallas amarillentas.
+     * Deducirlo de la extensión no alcanzaba: una foto en PNG pasaba como
+     * render.
+     */
+    if (medidas && !medidas.conAlfa) {
+      descartadas.push(`${slug}: ${archivo} — es una foto, no un render`);
+      continue;
+    }
+
     if (medidas && medidas.ancho / medidas.alto > 2.5) {
       throw new Error(
         `${archivo} mide ${medidas.ancho}x${medidas.alto}: con esa proporción no ` +
@@ -310,7 +215,8 @@ for (const [slug, archivos] of Object.entries(FOTOS)) {
       licencia,
       origen,
       // Un render sin fondo se muestra sobre blanco; una foto ambiental no.
-      recorte: ext === "png" ? "render" : "foto",
+      // Con transparencia comprobada, no supuesta por la extensión.
+      recorte: medidas?.conAlfa ? "render" : "foto",
     });
     guardadas++;
     console.log(`✓ ${slug}/${nombre}  ${licencia} — ${autor}`);
