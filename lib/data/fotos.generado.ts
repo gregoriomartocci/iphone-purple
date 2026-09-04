@@ -866,7 +866,32 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: true,
     },
   ],
-  "iphone-16-pro-max": [],
+  "iphone-16-pro-max": [
+    {
+      url: "/productos/iphone-16-pro-max/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      video: false,
+    },
+    {
+      url: "/productos/iphone-16-pro-max/2.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      video: false,
+    },
+    {
+      url: "/productos/iphone-16-pro-max/3.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "foto",
+      video: false,
+    },
+  ],
   "iphone-17": [],
   "iphone-17-pro": [
     {

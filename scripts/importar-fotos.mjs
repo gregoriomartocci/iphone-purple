@@ -36,7 +36,14 @@ const IMG = /\.(jpe?g|png|webp|avif)$/i;
  * las fotos del Pro Max a la ficha del 17.
  */
 function resolver(nombre) {
-  const base = path.basename(nombre, path.extname(nombre));
+  const base = path
+    .basename(nombre, path.extname(nombre))
+    // El navegador antepone el nombre de la carpeta y numera las repeticiones:
+    // "fotos-iphone-purple_iphone-16-pro-max-1 (3).jpg". Sin sacar las dos
+    // cosas, el slug no coincide con ningún producto y la foto queda afuera.
+    .replace(/^fotos-iphone-purple[_-]/i, "")
+    .replace(/\s*\(\d+\)$/, "")
+    .trim();
   const partes = base.split("-");
   for (let i = partes.length - 1; i > 0; i--) {
     const slug = partes.slice(0, i).join("-");
@@ -58,7 +65,11 @@ for (const nombre of archivos) {
   const carpeta = path.join(DESTINO, r.slug);
   await mkdir(carpeta, { recursive: true });
 
-  const salida = path.join(carpeta, `buscada-${r.orden}.jpg`);
+  // Varias fotos pueden venir con el mismo número, porque el navegador
+  // desambigua con "(1)", "(2)" y eso se descarta al resolver el slug. Se
+  // numeran por orden de llegada para que ninguna pise a la anterior.
+  const yaHay = (porProducto.get(r.slug) ?? []).length;
+  const salida = path.join(carpeta, `buscada-${r.orden}-${yaHay + 1}.jpg`);
   const { width, height } = await sharp(path.join(origen, nombre)).metadata();
   await sharp(path.join(origen, nombre))
     .rotate()

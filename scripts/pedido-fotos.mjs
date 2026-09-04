@@ -96,10 +96,19 @@ distribuidor oficial.
 manos, personas o escritorios; la caja en vez del producto; equipos usados o
 rayados; equipos en exhibición con el cable antirrobo.
 
-**Nombres:** hasta 3 por producto, con el nombre exacto de la lista. La \`-1\` es
-la mejor y la que va al catálogo. Si de alguno no encontrás nada que cumpla,
-dejalo sin archivo y avisá; prefiero eso a una foto que no corresponde al
-modelo exacto.
+**Nombres:** hasta 3 por producto, con el nombre exacto de la lista y nada más
+—sin prefijos ni sufijos—. La \`-1\` es la mejor y la que va al catálogo. Si de
+alguno no encontrás nada que cumpla, dejalo sin archivo y avisá; prefiero eso a
+una foto que no corresponde al modelo exacto.
+
+**Antes de guardar cada archivo, abrí la imagen y miralo:** que sea el equipo
+entero, no un recorte donde queda cortado por la mitad ni un primer plano de
+una esquina; que no sea el logo de la tienda ni un ícono de la página; y que
+mida más de 1000 px. La vez pasada volvieron el logo de Amazon Prime, una
+miniatura de 78 px y un archivo de prueba de 1 píxel.
+
+**Hacé la lista entera.** Son muchos productos: no pares en los primeros dos.
+Si uno se resiste, anotalo y seguí con el siguiente.
 
 `;
 
