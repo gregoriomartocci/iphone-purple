@@ -88,7 +88,10 @@ export default async function ProductPage({
     description: product.description,
     brand: { "@type": "Brand", name: product.brand },
     category: CATEGORY_LABELS[product.category],
-    image: product.images.map((i) => i.url),
+    // Solo imágenes: desde que la galería admite un video al final, la lista
+    // trae también un .mp4, y schema.org espera fotos acá. Un video que el
+    // buscador no puede mostrar invalida el dato entero.
+    image: product.images.filter((i) => !/\.(mp4|webm)$/i.test(i.url)).map((i) => i.url),
     // Cada variante es una oferta distinta: con el rango, el buscador puede
     // mostrar "desde $X" en vez de un precio suelto que puede no ser el que
     // la persona termina viendo.

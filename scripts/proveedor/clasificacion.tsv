@@ -1,0 +1,31 @@
+# Clasificación de lo que mandaron los proveedores.
+#
+# Cada línea: carpeta_origen <TAB> id <TAB> destino <TAB> nombre <TAB> orden
+#
+#   destino  el slug del producto, o _descartado, o _por-revisar
+#   nombre   cómo se llama el archivo una vez ordenado, sin extensión
+#   orden    posición en la galería del catálogo; vacío = queda en el archivo
+#            pero no se publica
+#
+# Las fotos con etiqueta de código de barras pegada al dorso quedan sin orden:
+# se guardan porque son del stock real, pero no se publican.
+lote-agosto	f002	playstation-5-slim	ps5-slim-digital-cajas-selladas
+lote-agosto	f005	iphone-12	iphone-12-blanco-dorso-en-mano
+lote-agosto	f008	macbook-neo-13	macbook-neo-13-caja-sellada	1
+lote-agosto	f011	redmi-pad-2	redmi-pad-2-cajas-selladas	1
+lote-agosto	f023	iphone-15	iphone-15-azul-dorso-con-caja
+lote-agosto	f028	iphone-13	iphone-13-starlight-dorso-con-caja	2
+lote-agosto	f037	playstation-5-slim	ps5-slim-digital-caja-frente	1
+lote-agosto	f044	playstation-5-slim	ps5-slim-digital-caja-tres-cuartos	2
+lote-agosto	f045	iphone-14-pro	iphone-14-pro-deep-purple-dorso	2
+lote-agosto	v020	iphone-14-pro	iphone-14-pro-negro-giro-360	3
+lote-agosto	v023	iphone-13	iphone-13-midnight-giro-360	3
+lote-septiembre-a	f007	iphone-17-pro	iphone-17-pro-azul-dorso-en-mano	4
+lote-septiembre-a	f008	iphone-17-pro	iphone-17-pro-cosmic-orange-dorso	5
+lote-septiembre-a	f009	iphone-17-pro	iphone-17-pro-cosmic-orange-tres-cuartos	6
+lote-septiembre-a	f010	iphone-16	iphone-16-blanco-y-lila-en-abanico	2
+lote-septiembre-a	f011	iphone-17-pro	iphone-17-pro-cosmic-orange-vertical	7
+lote-septiembre-a	f012	iphone-17-pro	iphone-17-pro-cuatro-colores-en-abanico	8
+lote-septiembre-a	f013	iphone-16	iphone-16-negro-lila-y-azul-en-abanico	3
+lote-septiembre-a	f014	iphone-17-pro	iphone-17-pro-silver-en-abanico	9
+lote-septiembre-b	f012	airpods-pro-2	airpods-pro-2-cajas-selladas

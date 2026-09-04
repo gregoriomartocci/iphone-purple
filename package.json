@@ -20,7 +20,11 @@
     "seed:sql": "tsx scripts/generate-seed-sql.mjs > lib/supabase/seed.sql",
     "fotos": "node scripts/descargar-fotos.mjs && npm run fotos:indexar",
     "fotos:indexar": "tsx scripts/indexar-fotos.mjs",
-    "fotos:faltan": "tsx scripts/faltan-fotos.mjs"
+    "fotos:faltan": "tsx scripts/faltan-fotos.mjs",
+    "proveedor:preparar": "node scripts/proveedor/preparar.mjs",
+    "proveedor:aplicar": "node scripts/proveedor/aplicar.mjs",
+    "proveedor:ordenar": "node scripts/proveedor/ordenar.mjs",
+    "proveedor:publicar": "node scripts/proveedor/publicar.mjs && npm run fotos:indexar"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",
