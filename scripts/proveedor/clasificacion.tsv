@@ -85,3 +85,106 @@ lote-septiembre-c	f026	iphone-13-pro	iphone-13-pro-sierra-blue-grafito-y-gold	10
 lote-septiembre-c	f029	iphone-13-pro	iphone-13-pro-gold-tres-unidades	11
 lote-septiembre-c	f013	ipad-air-m2	ipad-air-starlight-con-caja	3
 lote-septiembre-c	v003	iphone-16	iphone-16-negro-dos-unidades-360	9
+# --- pasada final: cada archivo que quedaba tiene ahora un destino escrito.
+# Dos colores más rompieron el empate entre generaciones de Pro: Desert
+# Titanium solo existió en el iPhone 16 Pro y Blue Titanium solo en el 15 Pro.
+# Lo demás va a _descartado con el motivo en el nombre, para que se pueda
+# revisar la decisión sin volver a mirar las noventa y ocho.
+lote-agosto	f015	iphone-13	iphone-13-midnight-con-caja-en-mano	13
+lote-agosto	f032	iphone-13	iphone-13-midnight-en-ventana	14
+lote-agosto	f027	iphone-13-pro	iphone-13-pro-grafito-tres-cuartos	12
+lote-agosto	f051	iphone-14-pro	iphone-14-pro-deep-purple-en-caja	6
+lote-septiembre-c	f027	iphone-15-pro	iphone-15-pro-blue-titanium-en-abanico	1
+lote-septiembre-c	v009	iphone-16-pro	iphone-16-pro-cuatro-colores-360	3
+lote-septiembre-c	v014	iphone-16-pro	iphone-16-pro-abanico-sobre-madera-360	4
+lote-septiembre-c	v017	iphone-16-pro	iphone-16-pro-desert-y-negro-360	5
+lote-septiembre-c	v018	iphone-16-pro	iphone-16-pro-desert-y-white-titanium-360	6
+lote-septiembre-c	v019	iphone-16-pro	iphone-16-pro-black-titanium-360	7
+lote-agosto	f001	_descartado	bolsas-de-entrega-no-es-un-producto
+lote-agosto	f004	_descartado	ipad-10-generacion-no-esta-en-el-catalogo
+lote-agosto	f006	_descartado	deposito-equipos-sobre-escritorio
+lote-agosto	f007	_descartado	logitech-g923-no-esta-en-el-catalogo
+lote-agosto	f010	_descartado	cargador-suelto-no-es-un-producto
+lote-agosto	f012	_descartado	flyer-del-proveedor-bolsas
+lote-agosto	f013	_descartado	flyer-del-proveedor-cajas
+lote-agosto	f014	_descartado	flyer-del-proveedor-cajas-de-iphone
+lote-agosto	f016	_descartado	cargador-suelto-no-es-un-producto
+lote-agosto	f017	_descartado	flyer-del-proveedor-baterias
+lote-agosto	f020	_descartado	iphone-pro-titanio-generacion-indeterminada
+lote-agosto	f021	_descartado	captura-de-la-cotizacion-del-dolar
+lote-agosto	f025	_descartado	flyer-del-proveedor-playstation
+lote-agosto	f031	_descartado	iphone-pro-titanio-generacion-indeterminada
+lote-agosto	f038	_descartado	poster-ilustrado-del-proveedor
+lote-agosto	f041	_descartado	cables-sueltos-no-es-un-producto
+lote-agosto	f042	_descartado	pantalla-de-reparacion-no-es-un-producto
+lote-agosto	f043	_descartado	poster-ilustrado-del-proveedor
+lote-agosto	f046	_descartado	iphone-pro-titanio-generacion-indeterminada
+lote-agosto	f047	_descartado	logo-del-proveedor
+lote-agosto	f048	_descartado	deposito-equipos-en-pomposa
+lote-agosto	f049	_descartado	deposito-equipos-sobre-mesa
+lote-agosto	v001	_descartado	caja-en-mano-no-se-ve-el-equipo
+lote-agosto	v002	_descartado	unboxing-sobre-escritorio
+lote-agosto	v003	_descartado	pantalla-encendida-modelo-indeterminado
+lote-agosto	v004	_descartado	tablet-infantil-no-esta-en-el-catalogo
+lote-agosto	v005	_descartado	deposito-equipos-en-pomposa
+lote-agosto	v007	_descartado	pantalla-apagada-modelo-indeterminado
+lote-agosto	v008	_descartado	iphone-pro-titanio-generacion-indeterminada
+lote-agosto	v009	_descartado	iphone-pro-titanio-generacion-indeterminada
+lote-agosto	v011	_descartado	iphone-base-generacion-indeterminada
+lote-agosto	v012	_descartado	iphone-base-generacion-indeterminada
+lote-agosto	v013	_descartado	deposito-equipos-en-pomposa
+lote-agosto	v015	_descartado	pantalla-apagada-modelo-indeterminado
+lote-agosto	v016	_descartado	deposito-cajas
+lote-agosto	v021	_descartado	deposito-equipos-en-pomposa
+lote-agosto	v022	_descartado	cajas-de-carton-cerradas
+lote-agosto	v024	_descartado	deposito-cajas-de-airpods
+lote-agosto	v025	_descartado	pantalla-apagada-modelo-indeterminado
+lote-agosto	v027	_descartado	perfil-en-living-modelo-indeterminado
+lote-agosto	v028	_descartado	perfil-modelo-indeterminado
+lote-agosto	v029	_descartado	pantalla-apagada-sobre-mesa-de-deposito
+lote-agosto	v030	_descartado	pantalla-encendida-modelo-indeterminado
+lote-septiembre-a	f001	_descartado	rayban-meta-no-esta-en-el-catalogo
+lote-septiembre-a	f002	_descartado	ipad-10-generacion-no-esta-en-el-catalogo
+lote-septiembre-a	f004	_descartado	samsung-galaxy-a37-no-esta-en-el-catalogo
+lote-septiembre-a	f005	_descartado	switch-2-sin-mario-kart-no-es-nuestro-pack
+lote-septiembre-a	v001	_descartado	equipo-en-bolsa-sobre-mesa
+lote-septiembre-b	f001	_descartado	ipad-generacion-indeterminada
+lote-septiembre-b	f002	_descartado	ipad-pro-no-esta-en-el-catalogo
+lote-septiembre-b	f005	_descartado	switch-lite-no-esta-en-el-catalogo
+lote-septiembre-b	f006	_descartado	rayban-meta-no-esta-en-el-catalogo
+lote-septiembre-b	f007	_descartado	switch-lite-no-esta-en-el-catalogo
+lote-septiembre-b	f008	_descartado	cajas-de-carton-hp-cerradas
+lote-septiembre-b	f010	_descartado	deposito-equipos-sobre-mesa
+lote-septiembre-b	f011	_descartado	ipad-generacion-indeterminada
+lote-septiembre-b	v001	_descartado	banco-de-reparacion
+lote-septiembre-b	v002	_descartado	pantalla-de-ajustes-modelo-indeterminado
+lote-septiembre-b	v003	_descartado	deposito-equipos-sobre-mesa
+lote-septiembre-b	v004	_descartado	pantalla-de-ajustes-modelo-indeterminado
+lote-septiembre-c	f005	_descartado	airpods-con-sticker-dorado-posible-replica
+lote-septiembre-c	f006	_descartado	cargador-suelto-no-es-un-producto
+lote-septiembre-c	f007	_descartado	cargador-suelto-no-es-un-producto
+lote-septiembre-c	f008	_descartado	cables-sueltos-no-es-un-producto
+lote-septiembre-c	f010	_descartado	paquete-en-sucursal-de-correo
+lote-septiembre-c	f011	_descartado	cajas-de-iphone-pro-generacion-indeterminada
+lote-septiembre-c	f014	_descartado	ipad-mini-no-esta-en-el-catalogo
+lote-septiembre-c	f015	_descartado	ipad-pro-no-esta-en-el-catalogo
+lote-septiembre-c	f019	_descartado	apple-watch-ultra-no-esta-en-el-catalogo
+lote-septiembre-c	f020	_descartado	cables-sueltos-no-es-un-producto
+lote-septiembre-c	f021	_descartado	cargadores-sueltos-no-es-un-producto
+lote-septiembre-c	f022	_descartado	deposito-cajas-de-airpods
+lote-septiembre-c	f024	_descartado	baterias-de-repuesto-no-es-un-producto
+lote-septiembre-c	f028	_descartado	white-titanium-generacion-indeterminada
+lote-septiembre-c	v001	_descartado	persona-hablando-a-camara
+lote-septiembre-c	v002	_descartado	pantalla-apagada-modelo-indeterminado
+lote-septiembre-c	v004	_descartado	pantalla-apagada-modelo-indeterminado
+lote-septiembre-c	v005	_descartado	equipo-en-pomposa-sobre-mesa
+lote-septiembre-c	v006	_descartado	cajas-cerradas-no-se-ve-el-equipo
+lote-septiembre-c	v007	_descartado	deposito-equipos-en-pomposa
+lote-septiembre-c	v008	_descartado	persona-embalando-un-paquete
+lote-septiembre-c	v010	_descartado	cajas-cerradas-no-se-ve-el-equipo
+lote-septiembre-c	v011	_descartado	equipo-en-pomposa-sobre-mesa
+lote-septiembre-c	v012	_descartado	pantalla-apagada-modelo-indeterminado
+lote-septiembre-c	v013	_descartado	persona-hablando-a-camara
+lote-septiembre-c	v015	_descartado	pantalla-apagada-modelo-indeterminado
+lote-septiembre-c	v016	_descartado	equipo-en-pomposa-sobre-mesa
+lote-septiembre-c	v020	_descartado	pantalla-apagada-modelo-indeterminado

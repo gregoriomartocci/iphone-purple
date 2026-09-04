@@ -152,6 +152,21 @@ for (const slug of carpetas) {
     if (!previo?.autor) sinCredito++;
   }
 
+  /*
+   * El orden lo decide el tipo, no el nombre del archivo.
+   *
+   * Primero el equipo nuevo sobre fondo limpio, que es lo que sale en la
+   * grilla del catálogo y lo que tiene que aguantar estar al lado de la foto
+   * oficial de Apple. Después las fotos del stock real, que muestran el equipo
+   * que se entrega. Y al final el video.
+   *
+   * Va acá y no en el nombre del archivo a propósito: así alcanza con dejar
+   * una foto de estudio en la carpeta para que pase a encabezar, sin renumerar
+   * lo que ya estaba.
+   */
+  const peso = (p) => (p.video ? 2 : p.recorte === "render" ? 0 : 1);
+  piezas.sort((a, b) => peso(a) - peso(b));
+
   indice[slug] = piezas;
 }
 

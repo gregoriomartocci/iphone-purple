@@ -25,7 +25,8 @@
     "proveedor:aplicar": "node scripts/proveedor/aplicar.mjs",
     "proveedor:ordenar": "node scripts/proveedor/ordenar.mjs",
     "proveedor:publicar": "node scripts/proveedor/publicar.mjs && npm run fotos:indexar",
-    "fotos:importar": "tsx scripts/importar-fotos.mjs"
+    "fotos:importar": "tsx scripts/importar-fotos.mjs",
+    "fotos:pedido": "tsx scripts/pedido-fotos.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",
