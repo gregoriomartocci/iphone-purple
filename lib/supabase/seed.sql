@@ -206,9 +206,17 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-15' AND pi.url = '/productos/iphone-15/1.jpg');
 INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-15/2.png', 'iPhone 15 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15'
+  SELECT id, '/productos/iphone-15/2.jpg', 'iPhone 15 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-15' AND pi.url = '/productos/iphone-15/2.png');
+                  WHERE pr.slug = 'iphone-15' AND pi.url = '/productos/iphone-15/2.jpg');
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/iphone-15/3.jpg', 'iPhone 15 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'iphone-15' AND pi.url = '/productos/iphone-15/3.jpg');
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/iphone-15/4.png', 'iPhone 15 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'iphone-15' AND pi.url = '/productos/iphone-15/4.png');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Titanio Azul', '#5f6b7a', 'a-plus', 'original', 97, 1021000, 704, 591, 1, 'IPHONE-15-128GB-1'
   FROM products WHERE slug = 'iphone-15'
@@ -1153,6 +1161,14 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
   VALUES ('iPad Air 11 M4', 'ipad-air-11-m4', 'Apple', 'iPad Air 11 M4', 'tablet', 'iPad Air 11 M4 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple M4","Pantalla":"11\" Liquid Retina"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/ipad-air-11-m4/1.jpg', 'iPad Air 11 M4 Apple en venta en La Plata', 0 FROM products WHERE slug = 'ipad-air-11-m4'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'ipad-air-11-m4' AND pi.url = '/productos/ipad-air-11-m4/1.jpg');
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/ipad-air-11-m4/2.jpg', 'iPad Air 11 M4 Apple en venta en La Plata', 0 FROM products WHERE slug = 'ipad-air-11-m4'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'ipad-air-11-m4' AND pi.url = '/productos/ipad-air-11-m4/2.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Blue', '#7f9cc0', 'sellado', 'original', NULL, 1349000, 930, 790, 2, 'IPAD-AIR-11-M4-128GB-1'
   FROM products WHERE slug = 'ipad-air-11-m4'
@@ -1177,6 +1193,14 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
   VALUES ('iPad Air 13 M3', 'ipad-air-13-m3', 'Apple', 'iPad Air 13 M3', 'tablet', 'iPad Air 13 M3 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple M3","Pantalla":"13\" Liquid Retina"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/ipad-air-13-m3/1.jpg', 'iPad Air 13 M3 Apple en venta en La Plata', 0 FROM products WHERE slug = 'ipad-air-13-m3'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'ipad-air-13-m3' AND pi.url = '/productos/ipad-air-13-m3/1.jpg');
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/ipad-air-13-m3/2.jpg', 'iPad Air 13 M3 Apple en venta en La Plata', 0 FROM products WHERE slug = 'ipad-air-13-m3'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'ipad-air-13-m3' AND pi.url = '/productos/ipad-air-13-m3/2.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Starlight', '#e9dfd0', 'sellado', 'original', NULL, 1494000, 1030, 870, 2, 'IPAD-AIR-13-M3-128GB-1'
   FROM products WHERE slug = 'ipad-air-13-m3'
@@ -1193,6 +1217,10 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
   VALUES ('iPad Air 13 M4', 'ipad-air-13-m4', 'Apple', 'iPad Air 13 M4', 'tablet', 'iPad Air 13 M4 nuevo, sellado y con garantía. Consultanos por disponibilidad de color y configuración.', '{"Chip":"Apple M4","Pantalla":"13\" Liquid Retina"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/ipad-air-13-m4/1.jpg', 'iPad Air 13 M4 Apple en venta en La Plata', 0 FROM products WHERE slug = 'ipad-air-13-m4'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'ipad-air-13-m4' AND pi.url = '/productos/ipad-air-13-m4/1.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Space Gray', '#5c5c5e', 'sellado', 'original', NULL, 1639000, 1130, 955, 2, 'IPAD-AIR-13-M4-128GB-1'
   FROM products WHERE slug = 'ipad-air-13-m4'
@@ -1217,6 +1245,14 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
   VALUES ('iPad Air M2', 'ipad-air-m2', 'Apple', 'iPad Air M2', 'tablet', 'iPad Air de 11" con chip M2. Compatible con Apple Pencil Pro y Magic Keyboard.', '{"Pantalla":"11\" Liquid Retina","Chip":"M2","Cámara":"12 MP gran angular","Batería":"Hasta 10 h de navegación","Conectividad":"Wi-Fi 6E"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/ipad-air-m2/1.jpg', 'iPad Air M2 Apple en venta en La Plata', 0 FROM products WHERE slug = 'ipad-air-m2'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'ipad-air-m2' AND pi.url = '/productos/ipad-air-m2/1.jpg');
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/ipad-air-m2/2.jpg', 'iPad Air M2 Apple en venta en La Plata', 0 FROM products WHERE slug = 'ipad-air-m2'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'ipad-air-m2' AND pi.url = '/productos/ipad-air-m2/2.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Azul', '#7d95ad', 'sellado', 'original', NULL, 1015000, 700, 590, 2, 'IPAD-AIR-M2-128GB-1'
   FROM products WHERE slug = 'ipad-air-m2'
@@ -1229,6 +1265,10 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
   VALUES ('Apple Watch Series 10', 'apple-watch-series-10', 'Apple', 'Apple Watch Series 10', 'reloj', 'La pantalla más grande y el cuerpo más delgado de la historia del Apple Watch.', '{"Caja":"46 mm aluminio","Pantalla":"LTPO3 OLED siempre activa","Sensores":"ECG, oxígeno en sangre, temperatura","Batería":"Hasta 18 h","Resistencia":"50 m"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/apple-watch-series-10/1.jpg', 'Apple Watch Series 10 Apple en venta en La Plata', 0 FROM products WHERE slug = 'apple-watch-series-10'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'apple-watch-series-10' AND pi.url = '/productos/apple-watch-series-10/1.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '46mm GPS', 'Titanio Natural', '#c2bcb2', 'sellado', 'original', NULL, 653000, 450, 378, 3, 'APPLE-WATCH-SERIES-10-46mm GPS-1'
   FROM products WHERE slug = 'apple-watch-series-10'
@@ -1241,6 +1281,14 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
   VALUES ('AirPods Pro 2', 'airpods-pro-2', 'Apple', 'AirPods Pro 2', 'audio', 'Cancelación activa de ruido, Audio Adaptativo y estuche con USB-C. También funcionan como audífonos.', '{"Chip":"H2","Cancelación":"Activa, hasta 2x más efectiva","Batería":"6 h + 30 h con el estuche","Estuche":"USB-C con MagSafe","Resistencia":"IP54"}'::jsonb, 'active', TRUE)
   ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/airpods-pro-2/1.jpg', 'AirPods Pro 2 Apple en venta en La Plata', 0 FROM products WHERE slug = 'airpods-pro-2'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'airpods-pro-2' AND pi.url = '/productos/airpods-pro-2/1.jpg');
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/airpods-pro-2/2.jpg', 'AirPods Pro 2 Apple en venta en La Plata', 0 FROM products WHERE slug = 'airpods-pro-2'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'airpods-pro-2' AND pi.url = '/productos/airpods-pro-2/2.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, 'USB-C', 'Blanco', '#f5f5f7', 'sellado', 'original', NULL, 319000, 220, 182, 8, 'AIRPODS-PRO-2-USB-C-1'
   FROM products WHERE slug = 'airpods-pro-2'

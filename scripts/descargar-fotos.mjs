@@ -91,6 +91,21 @@ const FOTOS = {
   "macbook-air-m5-15": ["MacBook Air (15-inch, M4, Silver).jpg"],
   "macbook-air-m3": ["MacBook Air (13-inch, M4, Silver).jpg"],
 
+  // ── Otros productos Apple
+  "airpods-pro-2": [
+    "AirPods Pro (2nd generation).jpg",
+    "2025-10-24 AirPods Pro 2 dunkelblau.jpg",
+  ],
+  "apple-watch-series-10": ["Apple Watch Series 10.jpg"],
+  "ipad-air-m2": [
+    "About iPad Air 11-inch (M2).jpg",
+    "M2 iPad Air series - 1.jpg",
+    "About iPad Air 13-inch (M2).jpg",
+  ],
+  "ipad-air-13-m3": ["IPad Air 11-inch (M3) backside.jpg", "IPad Air 11-inch (M3).jpg"],
+  "ipad-air-11-m4": ["IPad Air 11-inch (M3) backside.jpg", "IPad Air 11-inch (M3).jpg"],
+  "ipad-air-13-m4": ["About iPad Air 13-inch (M2).jpg", "M2 iPad Air 13inti.jpg"],
+
   // Línea de iPhone.
   //
   // Primero va SIEMPRE el dorso, y de ser posible un render limpio del equipo
@@ -130,7 +145,12 @@ const FOTOS = {
     "Back view of iPhone 16 Pro Max Natural Titanium.jpg",
     "IPhone 16 Pro Max Vector.svg",
   ],
-  "iphone-15": ["Back of iPhone 15.jpg", "IPhone 15 Vector.svg"],
+  "iphone-15": [
+    "Back view of iPhone 15 Blue.jpg",
+    "Apple iPhone 15 Pink - back view (November 1, 2024).jpg",
+    "Back of iPhone 15.jpg",
+    "IPhone 15 Vector.svg",
+  ],
   "iphone-15-pro": [
     "Back view of iPhone 15 Pro Natural titanium.jpg",
     "IPhone 15 Pro Vector.svg",

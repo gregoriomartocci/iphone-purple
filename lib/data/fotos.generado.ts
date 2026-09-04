@@ -300,6 +300,91 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "foto",
     },
   ],
+  "airpods-pro-2": [
+    {
+      url: "/productos/airpods-pro-2/1.jpg",
+      autor: "Hajoon0102",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:AirPods_Pro_(2nd_generation).jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/airpods-pro-2/2.jpg",
+      autor: "Burkhard Mücke",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:2025-10-24_AirPods_Pro_2_dunkelblau.jpg",
+      recorte: "foto",
+    },
+  ],
+  "apple-watch-series-10": [
+    {
+      url: "/productos/apple-watch-series-10/1.jpg",
+      autor: "KK IN HK",
+      licencia: "Public domain",
+      origen: "https://commons.wikimedia.org/wiki/File:Apple_Watch_Series_10.jpg",
+      recorte: "foto",
+    },
+  ],
+  "ipad-air-m2": [
+    {
+      url: "/productos/ipad-air-m2/1.jpg",
+      autor: "メイド理世",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:About_iPad_Air_11-inch_(M2).jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/ipad-air-m2/2.jpg",
+      autor: "メイド理世",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:About_iPad_Air_13-inch_(M2).jpg",
+      recorte: "foto",
+    },
+  ],
+  "ipad-air-13-m3": [
+    {
+      url: "/productos/ipad-air-13-m3/1.jpg",
+      autor: "茅野ふたば",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3)_backside.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/ipad-air-13-m3/2.jpg",
+      autor: "茅野ふたば",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3).jpg",
+      recorte: "foto",
+    },
+  ],
+  "ipad-air-11-m4": [
+    {
+      url: "/productos/ipad-air-11-m4/1.jpg",
+      autor: "茅野ふたば",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3)_backside.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/ipad-air-11-m4/2.jpg",
+      autor: "茅野ふたば",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3).jpg",
+      recorte: "foto",
+    },
+  ],
+  "ipad-air-13-m4": [
+    {
+      url: "/productos/ipad-air-13-m4/1.jpg",
+      autor: "メイド理世",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:About_iPad_Air_13-inch_(M2).jpg",
+      recorte: "foto",
+    },
+  ],
   "iphone-17": [
     {
       url: "/productos/iphone-17/1.png",
@@ -432,13 +517,28 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "iphone-15": [
     {
       url: "/productos/iphone-15/1.jpg",
+      autor: "メイド理世",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:Back_view_of_iPhone_15_Blue.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/iphone-15/2.jpg",
+      autor: "メイド理世",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Apple_iPhone_15_Pink_-_back_view_(November_1,_2024).jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/iphone-15/3.jpg",
       autor: "ThePhotoGraphIc",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:Back_of_iPhone_15.jpg",
       recorte: "foto",
     },
     {
-      url: "/productos/iphone-15/2.png",
+      url: "/productos/iphone-15/4.png",
       autor: "Rafael Fernandez",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_15_Vector.svg",
