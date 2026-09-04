@@ -1,1 +1,14 @@
-{}
+{
+  "1.jpg": {
+    "autor": "Osh33m",
+    "licencia": "CC BY-SA 4.0",
+    "origen": "https://commons.wikimedia.org/wiki/File:PlayStation_5_and_DualSense.jpg",
+    "recorte": "foto"
+  },
+  "2.jpg": {
+    "autor": "Ryan Bennett",
+    "licencia": "CC BY-SA 4.0",
+    "origen": "https://commons.wikimedia.org/wiki/File:Playstation_5.jpg",
+    "recorte": "foto"
+  }
+}

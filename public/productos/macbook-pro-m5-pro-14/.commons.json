@@ -1,0 +1,14 @@
+{
+  "1.jpg": {
+    "autor": "SimonWaldherr",
+    "licencia": "CC BY-SA 4.0",
+    "origen": "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation_(blue).jpg",
+    "recorte": "foto"
+  },
+  "2.jpg": {
+    "autor": "SimonWaldherr",
+    "licencia": "CC BY-SA 4.0",
+    "origen": "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
+    "recorte": "foto"
+  }
+}

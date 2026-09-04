@@ -1,0 +1,20 @@
+{
+  "1.jpg": {
+    "autor": "SimonWaldherr",
+    "licencia": "CC BY-SA 4.0",
+    "origen": "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max.jpg",
+    "recorte": "foto"
+  },
+  "2.jpg": {
+    "autor": "SimonWaldherr",
+    "licencia": "CC BY-SA 4.0",
+    "origen": "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max_closeup.jpg",
+    "recorte": "foto"
+  },
+  "3.jpg": {
+    "autor": "SimonWaldherr",
+    "licencia": "CC BY-SA 4.0",
+    "origen": "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max_with_Headset_and_Mouse.jpg",
+    "recorte": "foto"
+  }
+}

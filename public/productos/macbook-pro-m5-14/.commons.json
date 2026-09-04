@@ -1,0 +1,14 @@
+{
+  "1.jpg": {
+    "autor": "SimonWaldherr",
+    "licencia": "CC BY-SA 4.0",
+    "origen": "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
+    "recorte": "foto"
+  },
+  "2.jpg": {
+    "autor": "Mark Solarski marksolarski",
+    "licencia": "CC0",
+    "origen": "https://commons.wikimedia.org/wiki/File:Apple_Macbook_Pro_(Unsplash).jpg",
+    "recorte": "foto"
+  }
+}

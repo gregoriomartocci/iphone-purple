@@ -1,0 +1,14 @@
+{
+  "1.jpg": {
+    "autor": "Premeditated",
+    "licencia": "CC BY-SA 4.0",
+    "origen": "https://commons.wikimedia.org/wiki/File:MacBook_Pro_16_(M1_Pro,_2021)_-_Wikipedia.jpg",
+    "recorte": "foto"
+  },
+  "2.jpg": {
+    "autor": "SimonWaldherr",
+    "licencia": "CC BY-SA 4.0",
+    "origen": "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max.jpg",
+    "recorte": "foto"
+  }
+}

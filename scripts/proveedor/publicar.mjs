@@ -47,10 +47,19 @@ for (const [slug, archivo, orden] of filas) {
   }
 }
 
-// Marca vacía: nada de estas carpetas viene de Commons, así que el descargador
-// no las pisa y la ficha no acredita a nadie.
+// La marca se completa, no se pisa. Escribirla vacía borraba el crédito de las
+// fotos de Commons que ya estaban en la carpeta, y las licencias CC BY exigen
+// que ese crédito siga visible. Los archivos nuevos entran sin autor porque son
+// del proveedor y no hay a quién acreditar.
 for (const carpeta of tocados) {
-  await writeFile(path.join(carpeta, ".commons.json"), "{}", "utf8");
+  const marca = await readFile(path.join(carpeta, ".commons.json"), "utf8")
+    .then(JSON.parse)
+    .catch(() => ({}));
+  await writeFile(
+    path.join(carpeta, ".commons.json"),
+    JSON.stringify(marca, null, 2),
+    "utf8"
+  );
 }
 
 console.log(`\n${filas.length} archivos en ${tocados.size} productos.`);
