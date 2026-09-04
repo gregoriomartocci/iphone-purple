@@ -93,37 +93,42 @@ const FOTOS = {
 
   // Línea de iPhone.
   //
-  // El dorso va PRIMERO donde exista una foto de él, y no el render de
-  // frente. De frente todos los iPhone son casi la misma silueta con la
-  // pantalla apagada, así que la grilla quedaba con veintiún equipos
-  // indistinguibles. El dorso cambia de color y de disposición de cámaras: es
-  // lo que deja reconocer el modelo de un vistazo.
+  // Primero va SIEMPRE el dorso, y de ser posible un render limpio del equipo
+  // como nuevo, no una foto de uno usado. De frente todos los iPhone son la
+  // misma silueta con la pantalla apagada; el dorso cambia de color y de
+  // disposición de cámaras, y es lo que hace reconocible el modelo en la
+  // grilla. Las fotos de un equipo real van después, para quien quiera ver
+  // cómo se ve de verdad.
   //
-  // Nueve modelos se quedan con el render de frente porque no hay foto libre
-  // de su dorso. Mejor una grilla despareja que veintiún equipos iguales.
+  // Los renders de dorso aparecieron recorriendo la categoría de cada modelo
+  // en Commons y buscando por "Rear", no por búsqueda libre: con eso último no
+  // salían.
   //
-  // No entran fotos de equipos en exhibición: en el mostrador de una tienda
-  // el teléfono va enganchado a un cable con imán antirrobo, y ese cable sale
-  // en la foto. La descripción de cada archivo en Commons dice dónde fue
-  // tomada, así que se puede verificar antes de bajarla en vez de
-  // descubrirlo mirando el catálogo.
-  "iphone-17": ["IPhone 17 Vector.svg"],
+  // No entran fotos de equipos en exhibición: en el mostrador de una tienda el
+  // teléfono va enganchado a un cable con imán antirrobo y ese cable sale en
+  // la foto. La descripción de Commons dice dónde fue tomada, así que se filtra
+  // antes de bajarla.
+  "iphone-17": ["IPhone 17 (Lavender).png", "IPhone 17 Vector.svg"],
   "iphone-17-pro": [
+    "IPhone 17 Pro.png",
+    "IPhone 17 Pro back.svg",
     "IPhone 17 Pro (Silver) - Backside.jpg",
     "IPhone 17 Pro Vector.svg",
-    "IPhone 17 Pro (Deep Blue model).jpg",
   ],
-  "iphone-17-pro-max": ["IPhone 17 Pro Max Vector.svg"],
-  "iphone-16": ["IPhone 16 Vector.svg"],
+  "iphone-17-pro-max": [
+    "IPhone 17 Pro Max (Deep Blue).png",
+    "IPhone 17 Pro Max Vector.svg",
+  ],
+  "iphone-16": ["IPhone 16 Ultramarine Rear.png", "IPhone 16 Vector.svg"],
   "iphone-16-pro": [
     "Back view of iPhone 16 Pro White Titanium.jpg",
     "IPhone 16 Pro Vector.svg",
     "Right view of iPhone 16 Pro White Titanium.jpg",
   ],
   "iphone-16-pro-max": [
+    "IPhone 16 Pro Max Desert Titanium Rear.png",
     "Back view of iPhone 16 Pro Max Natural Titanium.jpg",
     "IPhone 16 Pro Max Vector.svg",
-    "Right view of iPhone 16 Pro Max Natural Titanium.jpg",
   ],
   "iphone-15": ["Back of iPhone 15.jpg", "IPhone 15 Vector.svg"],
   "iphone-15-pro": [
@@ -140,8 +145,16 @@ const FOTOS = {
     "IPhone 14 Pro vector.svg",
     "IPhone 14 Pro - black.jpg",
   ],
+  "iphone-14-pro-max": [
+    "IPhone 14 Pro Max Deep purple A2896 China, Hong Kong and Macao version rear.jpg",
+    "Back of the iPhone 14 Pro Max.jpg",
+  ],
   "iphone-13": ["IPhone 13 vector.svg"],
-  "iphone-13-pro": ["Back of the iPhone 13 Pro.jpg", "IPhone 13 Pro vector.svg"],
+  "iphone-13-pro": [
+    "IPhone 13 Pro Sierra blue A2483 US version rear.jpg",
+    "Back of the iPhone 13 Pro.jpg",
+    "IPhone 13 Pro vector.svg",
+  ],
   "iphone-12": ["IPhone 12 Blue.svg"],
   "iphone-12-pro": [
     "IPhone 12 Pro backside.jpg",
@@ -154,9 +167,6 @@ const FOTOS = {
     "Scan of back of iPhone 11 Pro Max Space Grey.jpg",
     "IPhone 11 Pro Max Midnight Green.svg",
   ],
-  // No tenía ninguna foto propia: no existe su render de frente, así que
-  // mostraba la genérica de la familia.
-  "iphone-14-pro-max": ["Back of the iPhone 14 Pro Max.jpg"],
 };
 
 /** Señales, en varios idiomas, de que la foto es de un equipo en exhibición. */

@@ -303,6 +303,13 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "iphone-17": [
     {
       url: "/productos/iphone-17/1.png",
+      autor: "Eugen Prostakov",
+      licencia: "CC BY 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:IPhone_17_(Lavender).png",
+      recorte: "render",
+    },
+    {
+      url: "/productos/iphone-17/2.png",
       autor: "Rafael Fernandez",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_17_Vector.svg",
@@ -311,7 +318,21 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   ],
   "iphone-17-pro": [
     {
-      url: "/productos/iphone-17-pro/1.jpg",
+      url: "/productos/iphone-17-pro/1.png",
+      autor: "Eugen Prostakov",
+      licencia: "CC BY 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:IPhone_17_Pro.png",
+      recorte: "render",
+    },
+    {
+      url: "/productos/iphone-17-pro/2.png",
+      autor: "Own work",
+      licencia: "CC BY 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:IPhone_17_Pro_back.svg",
+      recorte: "render",
+    },
+    {
+      url: "/productos/iphone-17-pro/3.jpg",
       autor: "AzureSaturn",
       licencia: "CC0",
       origen:
@@ -319,7 +340,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "foto",
     },
     {
-      url: "/productos/iphone-17-pro/2.png",
+      url: "/productos/iphone-17-pro/4.png",
       autor: "Rafael Fernandez",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_17_Pro_Vector.svg",
@@ -329,6 +350,13 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "iphone-17-pro-max": [
     {
       url: "/productos/iphone-17-pro-max/1.png",
+      autor: "Eugen Prostakov",
+      licencia: "CC BY 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:IPhone_17_Pro_Max_(Deep_Blue).png",
+      recorte: "render",
+    },
+    {
+      url: "/productos/iphone-17-pro-max/2.png",
       autor: "Rafael Fernandez",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_17_Pro_Max_Vector.svg",
@@ -338,6 +366,13 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "iphone-16": [
     {
       url: "/productos/iphone-16/1.png",
+      autor: "Padgriffin",
+      licencia: "CC BY 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:IPhone_16_Ultramarine_Rear.png",
+      recorte: "render",
+    },
+    {
+      url: "/productos/iphone-16/2.png",
       autor: "Rafael Fernandez",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_16_Vector.svg",
@@ -371,7 +406,15 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   ],
   "iphone-16-pro-max": [
     {
-      url: "/productos/iphone-16-pro-max/1.jpg",
+      url: "/productos/iphone-16-pro-max/1.png",
+      autor: "Padgriffin",
+      licencia: "CC BY 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:IPhone_16_Pro_Max_Desert_Titanium_Rear.png",
+      recorte: "render",
+    },
+    {
+      url: "/productos/iphone-16-pro-max/2.jpg",
       autor: "メイド理世",
       licencia: "CC BY-SA 4.0",
       origen:
@@ -379,19 +422,11 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "foto",
     },
     {
-      url: "/productos/iphone-16-pro-max/2.png",
+      url: "/productos/iphone-16-pro-max/3.png",
       autor: "Rafael Fernandez",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_16_Pro_Max_Vector.svg",
       recorte: "render",
-    },
-    {
-      url: "/productos/iphone-16-pro-max/3.jpg",
-      autor: "メイド理世",
-      licencia: "CC BY-SA 4.0",
-      origen:
-        "https://commons.wikimedia.org/wiki/File:Right_view_of_iPhone_16_Pro_Max_Natural_Titanium.jpg",
-      recorte: "foto",
     },
   ],
   "iphone-15": [
@@ -483,6 +518,23 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "foto",
     },
   ],
+  "iphone-14-pro-max": [
+    {
+      url: "/productos/iphone-14-pro-max/1.jpg",
+      autor: "茅野ふたば",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:IPhone_14_Pro_Max_Deep_purple_A2896_China,_Hong_Kong_and_Macao_version_rear.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/iphone-14-pro-max/2.jpg",
+      autor: "Hajoon0102",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:Back_of_the_iPhone_14_Pro_Max.jpg",
+      recorte: "foto",
+    },
+  ],
   "iphone-13": [
     {
       url: "/productos/iphone-13/1.png",
@@ -495,13 +547,21 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "iphone-13-pro": [
     {
       url: "/productos/iphone-13-pro/1.jpg",
+      autor: "茅野ふたば",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:IPhone_13_Pro_Sierra_blue_A2483_US_version_rear.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/iphone-13-pro/2.jpg",
       autor: "Hajoon0102",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:Back_of_the_iPhone_13_Pro.jpg",
       recorte: "foto",
     },
     {
-      url: "/productos/iphone-13-pro/2.png",
+      url: "/productos/iphone-13-pro/3.png",
       autor: "Rafael Fernandez",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_13_Pro_vector.svg",
@@ -582,15 +642,6 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:IPhone_11_Pro_Max_Midnight_Green.svg",
       recorte: "render",
-    },
-  ],
-  "iphone-14-pro-max": [
-    {
-      url: "/productos/iphone-14-pro-max/1.jpg",
-      autor: "Hajoon0102",
-      licencia: "CC BY-SA 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:Back_of_the_iPhone_14_Pro_Max.jpg",
-      recorte: "foto",
     },
   ],
 };
