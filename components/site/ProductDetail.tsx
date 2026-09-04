@@ -5,10 +5,12 @@ import { BatteryMedium, Check, ShieldCheck, Truck, Wrench } from "lucide-react";
 import { WhatsAppLink } from "./WhatsAppLink";
 import { AddToCart } from "@/components/cart/AddToCart";
 import { Galeria } from "./Galeria";
+import { Precio } from "./Precio";
+import { antiguedadCotizacion } from "@/lib/moneda";
 import { savingsVsNew } from "@/lib/catalog";
 import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
 import { productMessage } from "@/lib/whatsapp";
-import { formatARS, formatUSD } from "@/utils/format";
+import { formatARS } from "@/utils/format";
 import {
   GRADE_LABELS,
   GRADE_SPECS,
@@ -49,10 +51,15 @@ const GARANTIAS = [
 export function ProductDetail({
   product,
   whatsappNumber,
+  dollarRate,
+  dollarRateUpdatedAt,
 }: {
   product: Product;
   whatsappNumber: string;
+  dollarRate: number;
+  dollarRateUpdatedAt: string;
 }) {
+  const cotizacion = antiguedadCotizacion(dollarRateUpdatedAt);
   // Arrancamos en la variante que la tarjeta mostró: la más barata con stock.
   const initial = useMemo(() => {
     const withStock = product.variants.filter((v) => v.stock > 0);
@@ -151,29 +158,42 @@ export function ProductDetail({
 
         {/* Bloque de precio: lo primero que se busca al entrar. */}
         <div className="border-line bg-surface mt-6 rounded-2xl border p-6 shadow-sm">
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span className="tnum text-foreground text-4xl font-semibold">
-              {formatARS(selected?.priceArs ?? 0)}
-            </span>
+          <div className="flex flex-wrap items-end gap-x-3 gap-y-1">
+            <Precio
+              ars={selected?.priceArs ?? 0}
+              usd={selected?.priceUsd ?? 0}
+              fuerte="2.25rem"
+              suave="1rem"
+            />
             {fullPrice !== null && (
-              <span className="tnum text-muted-foreground text-lg line-through">
+              <span className="tnum text-muted-foreground pb-1 text-lg line-through">
                 {formatARS(fullPrice)}
               </span>
             )}
           </div>
 
-          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 text-sm">
-            {selected && selected.priceUsd > 0 && (
-              <span className="tnum text-muted-foreground">
-                ≈ {formatUSD(selected.priceUsd)}
-              </span>
-            )}
-            {savings !== null && (
-              <span className="font-medium text-emerald-700">
-                Ahorrás {formatARS(savings)} contra el sellado
-              </span>
-            )}
-          </div>
+          {savings !== null && (
+            <p className="mt-1.5 text-sm font-medium text-emerald-700">
+              Ahorrás {formatARS(savings)} contra el sellado
+            </p>
+          )}
+
+          {/*
+            La cotización, dicha en voz alta.
+
+            Es la pregunta que aparece igual en cada consulta por WhatsApp —"¿a
+            cuánto lo tomás?"— y contestarla antes de que la hagan es lo que
+            hace que el precio en dólares se lea como un ancla y no como un
+            número de adorno. Va con la antigüedad al lado: si la cotización
+            quedó vieja, que se vea.
+          */}
+          {cotizacion && (
+            <p className="text-muted-foreground mt-3 text-xs">
+              Tomamos el dólar a{" "}
+              <span className="tnum text-foreground">{formatARS(dollarRate)}</span> ·{" "}
+              {cotizacion}
+            </p>
+          )}
 
           <p className="mt-4 flex items-center gap-2 text-sm">
             {(selected?.stock ?? 0) > 0 ? (

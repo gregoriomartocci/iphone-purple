@@ -309,6 +309,13 @@ export interface Sale {
 export interface StoreSettings {
   /** Cotización del dólar usada para pasar precios USD a ARS. */
   dollarRate: number;
+  /**
+   * Cuándo se tocó esa cotización, en ISO.
+   *
+   * La ficha lo muestra en palabras al lado del precio. Un dólar de hace tres
+   * semanas es peor que no mostrar ninguno: el número parece firme y no lo es.
+   */
+  dollarRateUpdatedAt: string;
   defaultMarginPct: number;
   whatsappNumber: string;
   whatsappDisplay: string;

@@ -26,6 +26,7 @@ import type {
 
 export const SETTINGS: StoreSettings = {
   dollarRate: 1450,
+  dollarRateUpdatedAt: new Date().toISOString(),
   defaultMarginPct: 18,
   whatsappNumber: "5491100000000",
   whatsappDisplay: "+54 9 11 0000-0000",

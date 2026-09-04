@@ -148,7 +148,12 @@ export default async function ProductPage({
       </Link>
 
       <div className="mt-8">
-        <ProductDetail product={product} whatsappNumber={settings.whatsappNumber} />
+        <ProductDetail
+          product={product}
+          whatsappNumber={settings.whatsappNumber}
+          dollarRate={settings.dollarRate}
+          dollarRateUpdatedAt={settings.dollarRateUpdatedAt}
+        />
       </div>
 
       {/* El orden sigue cómo se decide una compra: primero qué es y qué trae

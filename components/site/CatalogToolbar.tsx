@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { Search, X } from "lucide-react";
+import { SelectorMoneda } from "./SelectorMoneda";
 import {
   CATEGORY_LABELS,
   GRADE_LABELS,
@@ -150,22 +151,28 @@ export function CatalogToolbar({
           de {totalCount} equipos
         </p>
 
-        <label className="flex items-center gap-2 text-sm">
-          <span className="text-muted-foreground">Ordenar por</span>
-          <select
-            value={filters.sort ?? "relevancia"}
-            onChange={(e) =>
-              navigate({ ...filters, sort: e.target.value as CatalogFilters["sort"] })
-            }
-            className="border-line bg-surface text-foreground focus-visible:border-ink h-11 rounded-xl border px-3.5 text-[15px] shadow-sm transition-colors outline-none"
-          >
-            {SORTS.map((s) => (
-              <option key={s.value} value={s.value}>
-                {s.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="flex items-center gap-3">
+          {/* La moneda al lado del orden: las dos son maneras de mirar la misma
+              lista, y las dos se quedan como quedaron. */}
+          <SelectorMoneda />
+
+          <label className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Ordenar por</span>
+            <select
+              value={filters.sort ?? "relevancia"}
+              onChange={(e) =>
+                navigate({ ...filters, sort: e.target.value as CatalogFilters["sort"] })
+              }
+              className="border-line bg-surface text-foreground focus-visible:border-ink h-11 rounded-xl border px-3.5 text-[15px] shadow-sm transition-colors outline-none"
+            >
+              {SORTS.map((s) => (
+                <option key={s.value} value={s.value}>
+                  {s.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
       </div>
 
       {chips.length > 0 && (

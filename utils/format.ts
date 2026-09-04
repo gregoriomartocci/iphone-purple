@@ -7,13 +7,21 @@ export function formatARS(amount: number): string {
   }).format(amount);
 }
 
+/**
+ * Dólares, escritos "US$".
+ *
+ * No se usa el formato de moneda de Intl, que devuelve "$840": acá el signo
+ * `$` solo es pesos, y ese número puesto debajo de "$ 1.218.000" se lee como
+ * un descuento absurdo en vez de como el precio en otra moneda. El separador
+ * de miles va en formato argentino por el mismo motivo: quien lee está
+ * acostumbrado al punto.
+ */
 export function formatUSD(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  const numero = new Intl.NumberFormat("es-AR", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
+  return `US$ ${numero}`;
 }
 
 /**

@@ -301,6 +301,101 @@
     animation: pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
+  /**
+   * Precio en las dos monedas.
+   *
+   * Los dos números están siempre en el marcado; lo único que cambia es cuál
+   * va grande. Se resuelve con CSS y un atributo en <html> en vez de con
+   * estado de React a propósito: el atributo lo pone un script que corre antes
+   * del primer pintado, así quien eligió dólares no ve los precios en pesos
+   * durante un cuadro, y el servidor puede seguir armando la página sin saber
+   * qué eligió cada visitante.
+   *
+   * El tamaño de cada uno lo pasa el componente en `--precio-fuerte` y
+   * `--precio-suave`, porque no es lo mismo en la tarjeta del catálogo que en
+   * el bloque de precio de la ficha.
+   */
+  .precio {
+    display: flex;
+    flex-direction: column;
+    --precio-fuerte: 1.25rem;
+    --precio-suave: 0.8125rem;
+  }
+  .precio > .moneda-ars {
+    order: 1;
+    font-size: var(--precio-fuerte);
+    font-weight: 600;
+    color: var(--foreground);
+    line-height: 1.15;
+  }
+  .precio > .moneda-usd {
+    order: 2;
+    font-size: var(--precio-suave);
+    font-weight: 400;
+    color: var(--muted-foreground);
+    line-height: 1.35;
+  }
+  :root[data-moneda="usd"] .precio > .moneda-ars {
+    order: 2;
+    font-size: var(--precio-suave);
+    font-weight: 400;
+    color: var(--muted-foreground);
+    line-height: 1.35;
+  }
+  :root[data-moneda="usd"] .precio > .moneda-usd {
+    order: 1;
+    font-size: var(--precio-fuerte);
+    font-weight: 600;
+    color: var(--foreground);
+    line-height: 1.15;
+  }
+
+  /* "Desde" acompaña al número que está grande, no siempre al de pesos. */
+  .precio .desde {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--muted-foreground);
+  }
+  .precio > .moneda-usd .desde {
+    display: none;
+  }
+  :root[data-moneda="usd"] .precio > .moneda-ars .desde {
+    display: none;
+  }
+  :root[data-moneda="usd"] .precio > .moneda-usd .desde {
+    display: inline;
+  }
+
+  /* El selector marca cuál está activa. Mismo mecanismo: sin JavaScript de por
+     medio, así el botón no queda un cuadro mostrando la opción equivocada.
+
+     La base es el estado apagado, y encima van las dos reglas que encienden la
+     que corresponde. Sin la base, el botón de dólares quedaba sin estilo
+     propio mientras el sitio estaba en pesos. */
+  .marca-moneda {
+    background: transparent;
+    color: var(--muted-foreground);
+  }
+  .marca-moneda:hover {
+    color: var(--foreground);
+  }
+  .marca-moneda[data-para="ars"] {
+    background: var(--foreground);
+    color: var(--background);
+  }
+  :root[data-moneda="usd"] .marca-moneda[data-para="ars"] {
+    background: transparent;
+    color: var(--muted-foreground);
+  }
+  :root[data-moneda="usd"] .marca-moneda[data-para="usd"] {
+    background: var(--foreground);
+    color: var(--background);
+  }
+  .marca-moneda[data-para="ars"]:hover,
+  :root[data-moneda="usd"] .marca-moneda[data-para="usd"]:hover {
+    color: var(--background);
+  }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;

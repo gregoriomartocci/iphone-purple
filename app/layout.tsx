@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Jost, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import { SCRIPT_MONEDA } from "@/lib/moneda";
 
 /**
  * Una sola familia para todo el sitio.
@@ -101,6 +102,20 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={`${jost.variable} ${geistMono.variable}`}>
+      <head>
+        {/*
+          Aplica la moneda elegida antes del primer pintado.
+
+          Va como script suelto y no como efecto de React porque tiene que
+          correr antes de que se dibuje nada: si esperáramos al montaje, quien
+          eligió dólares vería los precios en pesos durante un cuadro y
+          saltarían solos delante suyo.
+
+          Es la misma técnica que se usa para el tema oscuro, y por el mismo
+          motivo: el servidor no puede saber qué eligió cada visitante.
+        */}
+        <script dangerouslySetInnerHTML={{ __html: SCRIPT_MONEDA }} />
+      </head>
       <body className="bg-background text-foreground flex min-h-dvh flex-col">
         <Providers>{children}</Providers>
       </body>

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Camera } from "lucide-react";
-import { formatARS } from "@/utils/format";
+import { Precio } from "./Precio";
 import { leadVariant, totalStock } from "@/lib/catalog";
 import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
 import type { VariantFilters } from "@/lib/catalog";
@@ -124,11 +124,12 @@ export function ProductCard({
 
         <p className="text-muted-foreground mt-0.5 text-sm">{detalle.join(" · ")}</p>
 
-        <div className="mt-auto flex items-baseline gap-1.5 pt-3">
-          {multiplePrices && <span className="text-muted-foreground text-xs">Desde</span>}
-          <span className="tnum text-foreground text-xl font-semibold">
-            {formatARS(lead?.priceArs ?? 0)}
-          </span>
+        <div className="mt-auto pt-3">
+          <Precio
+            ars={lead?.priceArs ?? 0}
+            usd={lead?.priceUsd ?? 0}
+            desde={multiplePrices}
+          />
         </div>
       </div>
     </Link>
