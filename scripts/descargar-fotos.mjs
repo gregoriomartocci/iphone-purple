@@ -17,7 +17,7 @@
  * Para sumar fotos propias no hace falta tocar este archivo: alcanza con
  * dejarlas en public/productos/<slug>/ y tienen prioridad sobre estas.
  */
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const API = "https://commons.wikimedia.org/w/api.php";
@@ -133,7 +133,6 @@ const FOTOS = {
   "iphone-15-pro-max": [
     "Back view of iPhone 15 Pro Max Natural Titanium.jpg",
     "IPhone 15 Pro Max Vector.svg",
-    "Front of iPhone 15 Pro Max.jpg",
   ],
   "iphone-14": ["Back view of iPhone 14 Blue.jpg", "IPhone 14 vector.svg"],
   "iphone-14-pro": [
@@ -162,7 +161,7 @@ const FOTOS = {
 
 /** Señales, en varios idiomas, de que la foto es de un equipo en exhibición. */
 const EXHIBICION =
-  /店頭|展示|量販店|apple store|store display|on display|retail|launching event|showroom|display unit/i;
+  /店頭|展示|量販店|ヨドバシ|ビックカメラ|apple store|store display|on display|at the store|in a store|in the store|retail|launching event|showroom|display unit/i;
 
 const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -236,6 +235,11 @@ const indice = {};
 const descartadas = [];
 
 for (const [slug, archivos] of Object.entries(FOTOS)) {
+  // Se vacía la carpeta antes de escribir: si en una corrida anterior este
+  // producto tenía cuatro fotos y ahora tiene una, las tres viejas quedaban
+  // en el repo sin que nada las referenciara. Ya había 109 archivos para 70
+  // entradas de índice.
+  await rm(path.join(RAIZ, slug), { recursive: true, force: true });
   await mkdir(path.join(RAIZ, slug), { recursive: true });
   indice[slug] = [];
 

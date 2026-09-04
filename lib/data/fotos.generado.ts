@@ -443,13 +443,6 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen: "https://commons.wikimedia.org/wiki/File:IPhone_15_Pro_Max_Vector.svg",
       recorte: "render",
     },
-    {
-      url: "/productos/iphone-15-pro-max/3.jpg",
-      autor: "Ayamano2021",
-      licencia: "CC BY 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:Front_of_iPhone_15_Pro_Max.jpg",
-      recorte: "foto",
-    },
   ],
   "iphone-14": [
     {

@@ -237,10 +237,6 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-15-pro-max/2.png', 'iPhone 15 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15-pro-max'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-15-pro-max' AND pi.url = '/productos/iphone-15-pro-max/2.png');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-15-pro-max/3.jpg', 'iPhone 15 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15-pro-max'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-15-pro-max' AND pi.url = '/productos/iphone-15-pro-max/3.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '256GB', 'Titanio Azul', '#5f6b7a', 'a-plus', 'original', 97, 1736000, 1197, 1005, 1, 'IPHONE-15-PRO-MAX-256GB-1'
   FROM products WHERE slug = 'iphone-15-pro-max'
