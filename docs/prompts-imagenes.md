@@ -6,7 +6,10 @@ Son **29 productos**. Cada uno lleva dos prompts: la foto principal del catálog
 
 1. Copiá el prompt y pegalo en ChatGPT pidiendo que genere la imagen.
 2. Guardala como `1.jpg` —y `2.jpg` la segunda— dentro de la carpeta que indica cada ficha.
-3. Listo. No hay que tocar código: el catálogo las toma solas y pisan a cualquier otra imagen.
+3. Corré `npm run fotos:indexar`. Eso recorre las carpetas y arma el índice que lee el catálogo.
+
+El paso 3 no es opcional: el catálogo lee el índice, no el disco. Sin correrlo,
+las fotos quedan en la carpeta y el producto sigue saliendo sin imagen.
 
 ## Un cuidado antes de publicar cada una
 

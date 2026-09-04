@@ -49,3 +49,8 @@ next-env.d.ts
 
 # capturas generadas para el README
 /docs/screenshots/*.tmp.png
+
+# Fotos que mandan los proveedores por WhatsApp. Material de trabajo: se
+# miran, se elige, y lo elegido se copia a public/productos/. La carpeta
+# entera no va al repo ni se publica.
+fotos-proveedor/

@@ -70,7 +70,12 @@ export function ProductDetail({
    * corresponde acreditar a nadie.
    */
   const propias = FOTOS_PRODUCTO[product.slug];
-  const credito = propias?.[0];
+  // Solo se acredita lo que tiene autor. Una foto propia, comprada o bajada
+  // de la sala de prensa del fabricante no tiene a quién acreditar, y la
+  // línea de crédito vacía quedaba colgada abajo de la galería.
+  const credito = propias?.find(
+    (f): f is typeof f & { autor: string; origen: string } => !!f.autor && !!f.origen
+  );
 
   /**
    * Piezas de la galería.
@@ -82,6 +87,7 @@ export function ProductDetail({
     url: img.url,
     alt: img.alt,
     render: propias?.[i]?.recorte === "render",
+    video: propias?.[i]?.video ?? false,
   }));
 
   /** Variantes de la capacidad elegida: definen los grados y colores ofrecidos. */

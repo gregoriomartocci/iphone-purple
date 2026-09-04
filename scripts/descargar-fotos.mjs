@@ -17,7 +17,7 @@
  * Para sumar fotos propias no hace falta tocar este archivo: alcanza con
  * dejarlas en public/productos/<slug>/ y tienen prioridad sobre estas.
  */
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const API = "https://commons.wikimedia.org/w/api.php";
@@ -225,13 +225,53 @@ const indice = {};
 /** Lo que se descartó, para revisarlo al final. */
 const descartadas = [];
 
+/** Productos que quedaron con sus fotos propias y este script no tocó. */
+const conservados = [];
+
+/**
+ * Marca que este script deja en cada carpeta que administra, con la lista de
+ * archivos que bajó.
+ *
+ * Hace falta porque los nombres no alcanzan para distinguir: este script
+ * escribe 1.jpg, 2.jpg… y una foto puesta a mano se llama igual. Sin la marca,
+ * la única forma de saber de quién es cada archivo era adivinar, y adivinar
+ * mal acá significa borrar una foto que alguien consiguió y no vuelve.
+ */
+const MARCA = ".commons.json";
+
 for (const [slug, archivos] of Object.entries(FOTOS)) {
   // Se vacía la carpeta antes de escribir: si en una corrida anterior este
   // producto tenía cuatro fotos y ahora tiene una, las tres viejas quedaban
   // en el repo sin que nada las referenciara. Ya había 109 archivos para 70
   // entradas de índice.
-  await rm(path.join(RAIZ, slug), { recursive: true, force: true });
-  await mkdir(path.join(RAIZ, slug), { recursive: true });
+  //
+  // Pero solo si la carpeta es de este script. Desde que se pueden dejar
+  // fotos a mano, vaciar a ciegas borraba trabajo ajeno: alcanzaba con correr
+  // `npm run fotos` después de haber puesto una foto propia para perderla sin
+  // aviso. Si hay algo que este script no bajó, no toca nada.
+  const carpeta = path.join(RAIZ, slug);
+  await mkdir(carpeta, { recursive: true });
+
+  const presentes = (await readdir(carpeta).catch(() => [])).filter((n) => n !== MARCA);
+  const mias = new Set(
+    Object.keys(
+      await readFile(path.join(carpeta, MARCA), "utf8")
+        .then(JSON.parse)
+        .catch(() => ({}))
+    )
+  );
+  const ajenas = presentes.filter((n) => !mias.has(n));
+
+  if (ajenas.length > 0) {
+    console.log(
+      `· ${slug}: hay fotos que no bajé yo, no toco la carpeta (${ajenas.join(", ")})`
+    );
+    conservados.push(slug);
+    continue;
+  }
+
+  // Todo lo que hay lo bajé yo en una corrida anterior: se puede rehacer.
+  for (const n of presentes) await rm(path.join(carpeta, n), { force: true });
   indice[slug] = [];
 
   let guardadas = 0;
@@ -291,32 +331,35 @@ for (const [slug, archivos] of Object.entries(FOTOS)) {
     guardadas++;
     console.log(`✓ ${slug}/${nombre}  ${licencia} — ${autor}`);
   }
+
+  // Queda anotado qué archivos son míos y de quién es cada foto. El crédito
+  // vive al lado del archivo y no en un índice aparte: así sobrevive a que se
+  // regenere el índice, y no se puede perder de vista cuál foto acredita a
+  // quién, que es justamente lo que exige la licencia.
+  await writeFile(
+    path.join(RAIZ, slug, MARCA),
+    JSON.stringify(
+      Object.fromEntries(
+        indice[slug].map((f) => [
+          path.basename(f.url),
+          { autor: f.autor, licencia: f.licencia, origen: f.origen, recorte: f.recorte },
+        ])
+      ),
+      null,
+      2
+    ),
+    "utf8"
+  );
 }
-
-const cabecera = `// GENERADO por scripts/descargar-fotos.mjs — no editar a mano.
-// Fotos de catálogo servidas desde public/productos/, con su autoría.
-// Las licencias Creative Commons exigen crédito visible: lo muestra la ficha
-// de producto.
-
-export type CreditoFoto = {
-  url: string;
-  autor: string;
-  licencia: string;
-  origen: string;
-  /** "render" es el equipo recortado sobre transparente; "foto", una toma real. */
-  recorte: "render" | "foto";
-};
-
-export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = `;
-
-await writeFile(
-  path.join(process.cwd(), "lib", "data", "fotos.generado.ts"),
-  `${cabecera}${JSON.stringify(indice, null, 2)};\n`
-);
 
 const total = Object.values(indice).reduce((n, l) => n + l.length, 0);
 const conFotos = Object.values(indice).filter((f) => f.length > 0).length;
 console.log(`\n${total} fotos en ${conFotos} productos.`);
+if (conservados.length) {
+  console.log(`\n${conservados.length} productos conservaron sus fotos propias:`);
+  for (const c of conservados) console.log(`  · ${c}`);
+}
+console.log("\nFalta armar el índice: npm run fotos:indexar");
 if (descartadas.length) {
   console.log(`\n${descartadas.length} descartadas por ser de equipos en exhibición:`);
   for (const d of descartadas) console.log(`  · ${d}`);

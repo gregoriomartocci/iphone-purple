@@ -18,7 +18,8 @@
     "prepare": "husky",
     "screenshots": "node scripts/screenshots.mjs",
     "seed:sql": "tsx scripts/generate-seed-sql.mjs > lib/supabase/seed.sql",
-    "fotos": "node scripts/descargar-fotos.mjs"
+    "fotos": "node scripts/descargar-fotos.mjs && npm run fotos:indexar",
+    "fotos:indexar": "tsx scripts/indexar-fotos.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",

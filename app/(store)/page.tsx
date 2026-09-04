@@ -141,7 +141,10 @@ export default async function HomePage() {
         <div className="shell py-20 sm:py-24">
           <div className="aparece grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div>
-              <p className="eyebrow text-foreground">Plan Canje</p>
+              {/* Blanco al 60 %, no `text-foreground`: los tokens del tema
+                  claro son tinta casi negra y sobre esta banda desaparecían.
+                  Quedaron así al sacar el violeta del cuerpo. */}
+              <p className="eyebrow text-white/60">Plan Canje</p>
               <h2 className="mt-3 text-3xl leading-[1.1] font-semibold sm:text-4xl">
                 Tu equipo usado vale más
                 <br />
@@ -183,7 +186,7 @@ export default async function HomePage() {
           <div className="aparece-escalonado mt-20 grid gap-8 border-t border-white/10 pt-12 sm:grid-cols-3">
             {TRUST.map((item) => (
               <div key={item.title}>
-                <ShieldCheck className="text-foreground size-5" />
+                <ShieldCheck className="size-5 text-white/70" />
                 <h3 className="mt-3 font-medium">{item.title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-white/60">
                   {item.text}
