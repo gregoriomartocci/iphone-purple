@@ -13,6 +13,363 @@ export type CreditoFoto = {
 };
 
 export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
+  "iphone-13-pro-max": [
+    {
+      url: "/productos/iphone-13-pro-max/1.jpg",
+      autor: "メイド理世",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Back_view_of_iPhone_13_Pro_Max_Gold.jpg",
+      recorte: "foto",
+    },
+  ],
+  "iphone-12-pro-max": [],
+  "iphone-14-pro-max": [
+    {
+      url: "/productos/iphone-14-pro-max/1.jpg",
+      autor: "茅野ふたば",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:IPhone_14_Pro_Max_Deep_purple_A2896_China,_Hong_Kong_and_Macao_version_rear.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/iphone-14-pro-max/2.jpg",
+      autor: "Hajoon0102",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:Back_of_the_iPhone_14_Pro_Max.jpg",
+      recorte: "foto",
+    },
+  ],
+  "moto-g35": [
+    {
+      url: "/productos/moto-g35/1.jpg",
+      autor: "Savantup",
+      licencia: "CC0",
+      origen: "https://commons.wikimedia.org/wiki/File:Motorola_Moto_G35_5G.jpg",
+      recorte: "foto",
+    },
+  ],
+  "xiaomi-17": [
+    {
+      url: "/productos/xiaomi-17/1.jpg",
+      autor: "茅野ふたば",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Xiaomi_17_backside_Ice_Melting_Blue.jpg",
+      recorte: "foto",
+    },
+  ],
+  "xiaomi-17-ultra": [
+    {
+      url: "/productos/xiaomi-17-ultra/1.jpg",
+      autor: "茅野ふたば",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:Xiaomi_17_Ultra_by_Leica_rear.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/xiaomi-17-ultra/2.jpg",
+      autor: "茅野ふたば",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:Xiaomi_17_Ultra.jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-pro-m5-max-16": [
+    {
+      url: "/productos/macbook-pro-m5-max-16/1.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-max-16/2.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max_closeup.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-max-16/3.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max_with_Headset_and_Mouse.jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-pro-m5-pro-16": [
+    {
+      url: "/productos/macbook-pro-m5-pro-16/1.jpg",
+      autor: "Premeditated",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Pro_16_(M1_Pro,_2021)_-_Wikipedia.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-pro-16/2.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max.jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-pro-m5-14": [
+    {
+      url: "/productos/macbook-pro-m5-14/1.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-14/2.jpg",
+      autor: "Mark Solarski marksolarski",
+      licencia: "CC0",
+      origen: "https://commons.wikimedia.org/wiki/File:Apple_Macbook_Pro_(Unsplash).jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-pro-m5-pro-14": [
+    {
+      url: "/productos/macbook-pro-m5-pro-14/1.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation_(blue).jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-pro-14/2.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-pro-m5-max-14": [
+    {
+      url: "/productos/macbook-pro-m5-max-14/1.jpg",
+      autor: "Mark Solarski marksolarski",
+      licencia: "CC0",
+      origen: "https://commons.wikimedia.org/wiki/File:Apple_Macbook_Pro_(Unsplash).jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m5-max-14/2.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-pro-m4-pro-14": [
+    {
+      url: "/productos/macbook-pro-m4-pro-14/1.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/macbook-pro-m4-pro-14/2.jpg",
+      autor: "SimonWaldherr",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation_(blue).jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-air-m5-13": [
+    {
+      url: "/productos/macbook-air-m5-13/1.jpg",
+      autor: "AzureSaturn",
+      licencia: "CC0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Air_(13-inch,_M4,_Silver).jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-air-m5-15": [
+    {
+      url: "/productos/macbook-air-m5-15/1.jpg",
+      autor: "AzureSaturn",
+      licencia: "CC0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Air_(15-inch,_M4,_Silver).jpg",
+      recorte: "foto",
+    },
+  ],
+  "macbook-air-m3": [
+    {
+      url: "/productos/macbook-air-m3/1.jpg",
+      autor: "AzureSaturn",
+      licencia: "CC0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:MacBook_Air_(13-inch,_M4,_Silver).jpg",
+      recorte: "foto",
+    },
+  ],
+  "airpods-pro-2": [
+    {
+      url: "/productos/airpods-pro-2/1.jpg",
+      autor: "Hajoon0102",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:AirPods_Pro_(2nd_generation).jpg",
+      recorte: "foto",
+    },
+  ],
+  "apple-watch-series-10": [
+    {
+      url: "/productos/apple-watch-series-10/1.jpg",
+      autor: "KK IN HK",
+      licencia: "Public domain",
+      origen: "https://commons.wikimedia.org/wiki/File:Apple_Watch_Series_10.jpg",
+      recorte: "foto",
+    },
+  ],
+  "ipad-air-m2": [
+    {
+      url: "/productos/ipad-air-m2/1.jpg",
+      autor: "メイド理世",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:About_iPad_Air_11-inch_(M2).jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/ipad-air-m2/2.jpg",
+      autor: "メイド理世",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:About_iPad_Air_13-inch_(M2).jpg",
+      recorte: "foto",
+    },
+  ],
+  "ipad-air-13-m3": [
+    {
+      url: "/productos/ipad-air-13-m3/1.jpg",
+      autor: "茅野ふたば",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3)_backside.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/ipad-air-13-m3/2.jpg",
+      autor: "茅野ふたば",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3).jpg",
+      recorte: "foto",
+    },
+  ],
+  "ipad-air-11-m4": [
+    {
+      url: "/productos/ipad-air-11-m4/1.jpg",
+      autor: "茅野ふたば",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3)_backside.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/ipad-air-11-m4/2.jpg",
+      autor: "茅野ふたば",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3).jpg",
+      recorte: "foto",
+    },
+  ],
+  "ipad-air-13-m4": [
+    {
+      url: "/productos/ipad-air-13-m4/1.jpg",
+      autor: "メイド理世",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:About_iPad_Air_13-inch_(M2).jpg",
+      recorte: "foto",
+    },
+  ],
+  "playstation-5-slim": [
+    {
+      url: "/productos/playstation-5-slim/1.jpg",
+      autor: "Osh33m",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:PlayStation_5_and_DualSense.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/playstation-5-slim/2.jpg",
+      autor: "Ryan Bennett",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:Playstation_5.jpg",
+      recorte: "foto",
+    },
+  ],
+  "nintendo-switch-2-mario-kart": [
+    {
+      url: "/productos/nintendo-switch-2-mario-kart/1.jpg",
+      autor: "Crisco 1492",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Nintendo_Switch_2_in_Docking_Console.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/nintendo-switch-2-mario-kart/2.jpg",
+      autor: "Crisco 1492",
+      licencia: "CC BY-SA 4.0",
+      origen:
+        "https://commons.wikimedia.org/wiki/File:Nintendo_Switch_2_in_Handheld_Mode.jpg",
+      recorte: "foto",
+    },
+  ],
+  "nintendo-switch-oled": [
+    {
+      url: "/productos/nintendo-switch-oled/1.jpg",
+      autor: "Grandmaster Huon",
+      licencia: "CC0",
+      origen: "https://commons.wikimedia.org/wiki/File:Switch_oled_console.jpg",
+      recorte: "foto",
+    },
+  ],
+  "logitech-g29-driving-force": [
+    {
+      url: "/productos/logitech-g29-driving-force/1.jpg",
+      autor: "Antoineets",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:Logitech_G29_steering_wheel.jpg",
+      recorte: "foto",
+    },
+  ],
+  "redmi-15c": [
+    {
+      url: "/productos/redmi-15c/1.jpg",
+      autor: "Maksdroider",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:Redmi_15C_back.jpg",
+      recorte: "foto",
+    },
+    {
+      url: "/productos/redmi-15c/2.jpg",
+      autor: "Maksdroider",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:Redmi_15C_front.jpg",
+      recorte: "foto",
+    },
+  ],
+  "garmin-instinct-2s-solar": [
+    {
+      url: "/productos/garmin-instinct-2s-solar/1.jpg",
+      autor: "Lomrjyo",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:Garmin_Instinct_2s.jpg",
+      recorte: "foto",
+    },
+  ],
   "iphone-17": [
     {
       url: "/productos/iphone-17/1.png",

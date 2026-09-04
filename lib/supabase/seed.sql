@@ -74,13 +74,9 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-17-pro' AND pi.url = '/productos/iphone-17-pro/2.png');
 INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-17-pro/3.jpg', 'iPhone 17 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-17-pro'
+  SELECT id, '/productos/iphone-17-pro/3.png', 'iPhone 17 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-17-pro'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-17-pro' AND pi.url = '/productos/iphone-17-pro/3.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-17-pro/4.png', 'iPhone 17 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-17-pro'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-17-pro' AND pi.url = '/productos/iphone-17-pro/4.png');
+                  WHERE pr.slug = 'iphone-17-pro' AND pi.url = '/productos/iphone-17-pro/3.png');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Naranja Cósmico', '#d97a45', 'sellado', 'original', NULL, 1958000, 1350, 1134, 3, 'IPHONE-17-PRO-128GB-1'
   FROM products WHERE slug = 'iphone-17-pro'
@@ -125,10 +121,6 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-16/1.png', 'iPhone 16 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-16'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-16' AND pi.url = '/productos/iphone-16/1.png');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-16/2.png', 'iPhone 16 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-16'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-16' AND pi.url = '/productos/iphone-16/2.png');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Titanio Negro', '#3b3b3d', 'sellado', 'original', NULL, 1378000, 950, 798, 2, 'IPHONE-16-128GB-1'
   FROM products WHERE slug = 'iphone-16'
@@ -146,17 +138,9 @@ INSERT INTO products (name, slug, brand, model, category, description, specs, st
   VALUES ('iPhone 16 Pro', 'iphone-16-pro', 'Apple', 'iPhone 16 Pro', 'celular', 'iPhone 16 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.3\" Super Retina XDR","Chip":"A17 Pro","Cámara":"48 MP + teleobjetivo","Material":"Titanio"}'::jsonb, 'active', TRUE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-16-pro/1.jpg', 'iPhone 16 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-16-pro'
+  SELECT id, '/productos/iphone-16-pro/1.png', 'iPhone 16 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-16-pro'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-16-pro' AND pi.url = '/productos/iphone-16-pro/1.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-16-pro/2.png', 'iPhone 16 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-16-pro'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-16-pro' AND pi.url = '/productos/iphone-16-pro/2.png');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-16-pro/3.jpg', 'iPhone 16 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-16-pro'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-16-pro' AND pi.url = '/productos/iphone-16-pro/3.jpg');
+                  WHERE pr.slug = 'iphone-16-pro' AND pi.url = '/productos/iphone-16-pro/1.png');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Titanio Negro', '#3b3b3d', 'sellado', 'original', NULL, 1813000, 1250, 1050, 2, 'IPHONE-16-PRO-128GB-1'
   FROM products WHERE slug = 'iphone-16-pro'
@@ -177,14 +161,6 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/iphone-16-pro-max/1.png', 'iPhone 16 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-16-pro-max'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'iphone-16-pro-max' AND pi.url = '/productos/iphone-16-pro-max/1.png');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-16-pro-max/2.jpg', 'iPhone 16 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-16-pro-max'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-16-pro-max' AND pi.url = '/productos/iphone-16-pro-max/2.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-16-pro-max/3.png', 'iPhone 16 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-16-pro-max'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-16-pro-max' AND pi.url = '/productos/iphone-16-pro-max/3.png');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '256GB', 'Titanio Negro', '#3b3b3d', 'sellado', 'original', NULL, 2262000, 1560, 1310, 2, 'IPHONE-16-PRO-MAX-256GB-1'
   FROM products WHERE slug = 'iphone-16-pro-max'
@@ -202,21 +178,9 @@ INSERT INTO products (name, slug, brand, model, category, description, specs, st
   VALUES ('iPhone 15', 'iphone-15', 'Apple', 'iPhone 15', 'celular', 'iPhone 15 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A16","Cámara":"48 MP dual","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-15/1.jpg', 'iPhone 15 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15'
+  SELECT id, '/productos/iphone-15/1.png', 'iPhone 15 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-15' AND pi.url = '/productos/iphone-15/1.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-15/2.jpg', 'iPhone 15 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-15' AND pi.url = '/productos/iphone-15/2.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-15/3.jpg', 'iPhone 15 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-15' AND pi.url = '/productos/iphone-15/3.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-15/4.png', 'iPhone 15 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-15' AND pi.url = '/productos/iphone-15/4.png');
+                  WHERE pr.slug = 'iphone-15' AND pi.url = '/productos/iphone-15/1.png');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Titanio Azul', '#5f6b7a', 'a-plus', 'original', 97, 1021000, 704, 591, 1, 'IPHONE-15-128GB-1'
   FROM products WHERE slug = 'iphone-15'
@@ -234,13 +198,9 @@ INSERT INTO products (name, slug, brand, model, category, description, specs, st
   VALUES ('iPhone 15 Pro', 'iphone-15-pro', 'Apple', 'iPhone 15 Pro', 'celular', 'iPhone 15 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A16 Pro","Cámara":"48 MP + teleobjetivo","Material":"Titanio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-15-pro/1.jpg', 'iPhone 15 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15-pro'
+  SELECT id, '/productos/iphone-15-pro/1.png', 'iPhone 15 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15-pro'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-15-pro' AND pi.url = '/productos/iphone-15-pro/1.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-15-pro/2.png', 'iPhone 15 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15-pro'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-15-pro' AND pi.url = '/productos/iphone-15-pro/2.png');
+                  WHERE pr.slug = 'iphone-15-pro' AND pi.url = '/productos/iphone-15-pro/1.png');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Titanio Azul', '#5f6b7a', 'a-plus', 'original', 97, 1340000, 924, 776, 1, 'IPHONE-15-PRO-128GB-1'
   FROM products WHERE slug = 'iphone-15-pro'
@@ -258,13 +218,9 @@ INSERT INTO products (name, slug, brand, model, category, description, specs, st
   VALUES ('iPhone 15 Pro Max', 'iphone-15-pro-max', 'Apple', 'iPhone 15 Pro Max', 'celular', 'iPhone 15 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.7\" Super Retina XDR","Chip":"A16 Pro","Cámara":"48 MP + teleobjetivo","Material":"Titanio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-15-pro-max/1.jpg', 'iPhone 15 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15-pro-max'
+  SELECT id, '/productos/iphone-15-pro-max/1.png', 'iPhone 15 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15-pro-max'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-15-pro-max' AND pi.url = '/productos/iphone-15-pro-max/1.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-15-pro-max/2.png', 'iPhone 15 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-15-pro-max'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-15-pro-max' AND pi.url = '/productos/iphone-15-pro-max/2.png');
+                  WHERE pr.slug = 'iphone-15-pro-max' AND pi.url = '/productos/iphone-15-pro-max/1.png');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '256GB', 'Titanio Azul', '#5f6b7a', 'a-plus', 'original', 97, 1736000, 1197, 1005, 1, 'IPHONE-15-PRO-MAX-256GB-1'
   FROM products WHERE slug = 'iphone-15-pro-max'
@@ -282,13 +238,9 @@ INSERT INTO products (name, slug, brand, model, category, description, specs, st
   VALUES ('iPhone 14', 'iphone-14', 'Apple', 'iPhone 14', 'celular', 'iPhone 14 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A15","Cámara":"48 MP dual","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-14/1.jpg', 'iPhone 14 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-14'
+  SELECT id, '/productos/iphone-14/1.png', 'iPhone 14 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-14'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-14' AND pi.url = '/productos/iphone-14/1.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-14/2.png', 'iPhone 14 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-14'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-14' AND pi.url = '/productos/iphone-14/2.png');
+                  WHERE pr.slug = 'iphone-14' AND pi.url = '/productos/iphone-14/1.png');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Morado Oscuro', '#5b5069', 'a-plus', 'original', 97, 829000, 572, 480, 0, 'IPHONE-14-128GB-1'
   FROM products WHERE slug = 'iphone-14'
@@ -306,17 +258,9 @@ INSERT INTO products (name, slug, brand, model, category, description, specs, st
   VALUES ('iPhone 14 Pro', 'iphone-14-pro', 'Apple', 'iPhone 14 Pro', 'celular', 'iPhone 14 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A15 Pro","Cámara":"48 MP + teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-14-pro/1.jpg', 'iPhone 14 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-14-pro'
+  SELECT id, '/productos/iphone-14-pro/1.png', 'iPhone 14 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-14-pro'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-14-pro' AND pi.url = '/productos/iphone-14-pro/1.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-14-pro/2.png', 'iPhone 14 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-14-pro'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-14-pro' AND pi.url = '/productos/iphone-14-pro/2.png');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-14-pro/3.jpg', 'iPhone 14 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-14-pro'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-14-pro' AND pi.url = '/productos/iphone-14-pro/3.jpg');
+                  WHERE pr.slug = 'iphone-14-pro' AND pi.url = '/productos/iphone-14-pro/1.png');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Morado Oscuro', '#5b5069', 'a-plus', 'original', 97, 1085000, 748, 628, 0, 'IPHONE-14-PRO-128GB-1'
   FROM products WHERE slug = 'iphone-14-pro'
@@ -374,17 +318,9 @@ INSERT INTO products (name, slug, brand, model, category, description, specs, st
   VALUES ('iPhone 13 Pro', 'iphone-13-pro', 'Apple', 'iPhone 13 Pro', 'celular', 'iPhone 13 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A14 Pro","Cámara":"48 MP + teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-13-pro/1.jpg', 'iPhone 13 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-13-pro'
+  SELECT id, '/productos/iphone-13-pro/1.png', 'iPhone 13 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-13-pro'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-13-pro' AND pi.url = '/productos/iphone-13-pro/1.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-13-pro/2.jpg', 'iPhone 13 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-13-pro'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-13-pro' AND pi.url = '/productos/iphone-13-pro/2.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-13-pro/3.png', 'iPhone 13 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-13-pro'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-13-pro' AND pi.url = '/productos/iphone-13-pro/3.png');
+                  WHERE pr.slug = 'iphone-13-pro' AND pi.url = '/productos/iphone-13-pro/1.png');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Medianoche', '#2c2c34', 'a', 'original', 91, 812000, 560, 470, 2, 'IPHONE-13-PRO-128GB-1'
   FROM products WHERE slug = 'iphone-13-pro'
@@ -397,6 +333,10 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
   VALUES ('iPhone 13 Pro Max', 'iphone-13-pro-max', 'Apple', 'iPhone 13 Pro Max', 'celular', 'iPhone 13 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.7\" Super Retina XDR","Chip":"A14 Pro","Cámara":"48 MP + teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/iphone-13-pro-max/1.jpg', 'iPhone 13 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-13-pro-max'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'iphone-13-pro-max' AND pi.url = '/productos/iphone-13-pro-max/1.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '256GB', 'Medianoche', '#2c2c34', 'a', 'original', 91, 1079000, 744, 625, 2, 'IPHONE-13-PRO-MAX-256GB-1'
   FROM products WHERE slug = 'iphone-13-pro-max'
@@ -426,17 +366,9 @@ INSERT INTO products (name, slug, brand, model, category, description, specs, st
   VALUES ('iPhone 12 Pro', 'iphone-12-pro', 'Apple', 'iPhone 12 Pro', 'celular', 'iPhone 12 Pro revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A13 Pro","Cámara":"48 MP + teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-12-pro/1.jpg', 'iPhone 12 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-12-pro'
+  SELECT id, '/productos/iphone-12-pro/1.png', 'iPhone 12 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-12-pro'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-12-pro' AND pi.url = '/productos/iphone-12-pro/1.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-12-pro/2.png', 'iPhone 12 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-12-pro'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-12-pro' AND pi.url = '/productos/iphone-12-pro/2.png');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-12-pro/3.jpg', 'iPhone 12 Pro Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-12-pro'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-12-pro' AND pi.url = '/productos/iphone-12-pro/3.jpg');
+                  WHERE pr.slug = 'iphone-12-pro' AND pi.url = '/productos/iphone-12-pro/1.png');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Negro', '#2c2c2e', 'a', 'original', 91, 638000, 440, 370, 1, 'IPHONE-12-PRO-128GB-1'
   FROM products WHERE slug = 'iphone-12-pro'
@@ -462,13 +394,9 @@ INSERT INTO products (name, slug, brand, model, category, description, specs, st
   VALUES ('iPhone 11', 'iphone-11', 'Apple', 'iPhone 11', 'celular', 'iPhone 11 revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.1\" Super Retina XDR","Chip":"A12","Cámara":"48 MP dual","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-11/1.jpg', 'iPhone 11 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-11'
+  SELECT id, '/productos/iphone-11/1.png', 'iPhone 11 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-11'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-11' AND pi.url = '/productos/iphone-11/1.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-11/2.png', 'iPhone 11 Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-11'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-11' AND pi.url = '/productos/iphone-11/2.png');
+                  WHERE pr.slug = 'iphone-11' AND pi.url = '/productos/iphone-11/1.png');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '128GB', 'Blanco', '#f2f2f0', 'a', 'original', 91, 348000, 240, 202, 3, 'IPHONE-11-128GB-1'
   FROM products WHERE slug = 'iphone-11'
@@ -498,13 +426,9 @@ INSERT INTO products (name, slug, brand, model, category, description, specs, st
   VALUES ('iPhone 11 Pro Max', 'iphone-11-pro-max', 'Apple', 'iPhone 11 Pro Max', 'celular', 'iPhone 11 Pro Max revisado y con garantía escrita. Verificamos batería, piezas originales y bloqueo de iCloud antes de publicarlo.', '{"Pantalla":"6.5\" Super Retina XDR","Chip":"A12 Pro","Cámara":"48 MP + teleobjetivo","Material":"Aluminio"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
 INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-11-pro-max/1.jpg', 'iPhone 11 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-11-pro-max'
+  SELECT id, '/productos/iphone-11-pro-max/1.png', 'iPhone 11 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-11-pro-max'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-11-pro-max' AND pi.url = '/productos/iphone-11-pro-max/1.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/iphone-11-pro-max/2.png', 'iPhone 11 Pro Max Apple en venta en La Plata', 0 FROM products WHERE slug = 'iphone-11-pro-max'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'iphone-11-pro-max' AND pi.url = '/productos/iphone-11-pro-max/2.png');
+                  WHERE pr.slug = 'iphone-11-pro-max' AND pi.url = '/productos/iphone-11-pro-max/1.png');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '256GB', 'Blanco', '#f2f2f0', 'a', 'original', 91, 708000, 488, 410, 3, 'IPHONE-11-PRO-MAX-256GB-1'
   FROM products WHERE slug = 'iphone-11-pro-max'
@@ -585,10 +509,6 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/nintendo-switch-2-mario-kart/2.jpg', 'Nintendo Switch 2 + Mario Kart Nintendo en venta en La Plata', 0 FROM products WHERE slug = 'nintendo-switch-2-mario-kart'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'nintendo-switch-2-mario-kart' AND pi.url = '/productos/nintendo-switch-2-mario-kart/2.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/nintendo-switch-2-mario-kart/3.jpg', 'Nintendo Switch 2 + Mario Kart Nintendo en venta en La Plata', 0 FROM products WHERE slug = 'nintendo-switch-2-mario-kart'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'nintendo-switch-2-mario-kart' AND pi.url = '/productos/nintendo-switch-2-mario-kart/3.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, 'Bundle US', 'Negro', '#2c2c2e', 'sellado', 'original', NULL, 1073000, 740, 630, 2, 'NINTENDO-SWITCH-2-MARIO-KART-Bundle US-1'
   FROM products WHERE slug = 'nintendo-switch-2-mario-kart'
@@ -657,6 +577,10 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
   VALUES ('Xiaomi 17', 'xiaomi-17', 'Xiaomi', 'Xiaomi 17', 'celular', 'Xiaomi 17 nuevo, sellado y con garantía. Consultanos por disponibilidad de color.', '{"Memoria":"12 GB + 512 GB","Red":"5G"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/xiaomi-17/1.jpg', 'Xiaomi 17 Xiaomi en venta en La Plata', 0 FROM products WHERE slug = 'xiaomi-17'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'xiaomi-17' AND pi.url = '/productos/xiaomi-17/1.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '12+512 5G', 'Negro', '#2c2c2e', 'sellado', 'original', NULL, 1508000, 1040, 880, 2, 'XIAOMI-17-12+512 5G-1'
   FROM products WHERE slug = 'xiaomi-17'
@@ -665,6 +589,14 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
   VALUES ('Xiaomi 17 Ultra', 'xiaomi-17-ultra', 'Xiaomi', 'Xiaomi 17 Ultra', 'celular', 'Xiaomi 17 Ultra nuevo, sellado y con garantía. Consultanos por disponibilidad de color.', '{"Memoria":"12 GB + 512 GB","Red":"5G"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/xiaomi-17-ultra/1.jpg', 'Xiaomi 17 Ultra Xiaomi en venta en La Plata', 0 FROM products WHERE slug = 'xiaomi-17-ultra'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'xiaomi-17-ultra' AND pi.url = '/productos/xiaomi-17-ultra/1.jpg');
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/xiaomi-17-ultra/2.jpg', 'Xiaomi 17 Ultra Xiaomi en venta en La Plata', 0 FROM products WHERE slug = 'xiaomi-17-ultra'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'xiaomi-17-ultra' AND pi.url = '/productos/xiaomi-17-ultra/2.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '12+512 5G', 'Blanco', '#f0efeb', 'sellado', 'original', NULL, 2146000, 1480, 1250, 2, 'XIAOMI-17-ULTRA-12+512 5G-1'
   FROM products WHERE slug = 'xiaomi-17-ultra'
@@ -705,6 +637,10 @@ INSERT INTO product_variants (product_id, storage, color, color_hex, grade, auth
 INSERT INTO products (name, slug, brand, model, category, description, specs, status, is_featured)
   VALUES ('Moto G35', 'moto-g35', 'Motorola', 'Moto G35', 'celular', 'Moto G35 nuevo, sellado y con garantía. Consultanos por disponibilidad de color.', '{"Memoria":"4 GB + 256 GB","SIM":"Dual"}'::jsonb, 'active', FALSE)
   ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_images (product_id, url, alt, sort_order)
+  SELECT id, '/productos/moto-g35/1.jpg', 'Moto G35 Motorola en venta en La Plata', 0 FROM products WHERE slug = 'moto-g35'
+  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
+                  WHERE pr.slug = 'moto-g35' AND pi.url = '/productos/moto-g35/1.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '4+256 DS', 'Negro', '#2c2c2e', 'sellado', 'original', NULL, 305000, 210, 175, 2, 'MOTO-G35-4+256 DS-1'
   FROM products WHERE slug = 'moto-g35'
@@ -949,10 +885,6 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/macbook-pro-m4-pro-14/2.jpg', 'MacBook Pro M4 Pro 14 Apple en venta en La Plata', 0 FROM products WHERE slug = 'macbook-pro-m4-pro-14'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'macbook-pro-m4-pro-14' AND pi.url = '/productos/macbook-pro-m4-pro-14/2.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/macbook-pro-m4-pro-14/3.jpg', 'MacBook Pro M4 Pro 14 Apple en venta en La Plata', 0 FROM products WHERE slug = 'macbook-pro-m4-pro-14'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'macbook-pro-m4-pro-14' AND pi.url = '/productos/macbook-pro-m4-pro-14/3.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '12 CPU · 16 GPU · 24GB · 512GB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 3741000, 2580, 2190, 2, 'MACBOOK-PRO-M4-PRO-14-12 CPU · 16 GPU · 24GB · 512GB-1'
   FROM products WHERE slug = 'macbook-pro-m4-pro-14'
@@ -973,10 +905,6 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/macbook-pro-m5-14/2.jpg', 'MacBook Pro M5 14 Apple en venta en La Plata', 0 FROM products WHERE slug = 'macbook-pro-m5-14'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'macbook-pro-m5-14' AND pi.url = '/productos/macbook-pro-m5-14/2.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/macbook-pro-m5-14/3.jpg', 'MacBook Pro M5 14 Apple en venta en La Plata', 0 FROM products WHERE slug = 'macbook-pro-m5-14'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'macbook-pro-m5-14' AND pi.url = '/productos/macbook-pro-m5-14/3.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '16GB · 1TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 3480000, 2400, 2030, 2, 'MACBOOK-PRO-M5-14-16GB · 1TB-1'
   FROM products WHERE slug = 'macbook-pro-m5-14'
@@ -1017,10 +945,6 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/macbook-pro-m5-pro-14/2.jpg', 'MacBook Pro M5 Pro 14 Apple en venta en La Plata', 0 FROM products WHERE slug = 'macbook-pro-m5-pro-14'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'macbook-pro-m5-pro-14' AND pi.url = '/productos/macbook-pro-m5-pro-14/2.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/macbook-pro-m5-pro-14/3.jpg', 'MacBook Pro M5 Pro 14 Apple en venta en La Plata', 0 FROM products WHERE slug = 'macbook-pro-m5-pro-14'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'macbook-pro-m5-pro-14' AND pi.url = '/productos/macbook-pro-m5-pro-14/3.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '15 CPU · 16 GPU · 24GB · 1TB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 4539000, 3130, 2650, 2, 'MACBOOK-PRO-M5-PRO-14-15 CPU · 16 GPU · 24GB · 1TB-1'
   FROM products WHERE slug = 'macbook-pro-m5-pro-14'
@@ -1045,10 +969,6 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/macbook-pro-m5-max-14/2.jpg', 'MacBook Pro M5 Max 14 Apple en venta en La Plata', 0 FROM products WHERE slug = 'macbook-pro-m5-max-14'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'macbook-pro-m5-max-14' AND pi.url = '/productos/macbook-pro-m5-max-14/2.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/macbook-pro-m5-max-14/3.jpg', 'MacBook Pro M5 Max 14 Apple en venta en La Plata', 0 FROM products WHERE slug = 'macbook-pro-m5-max-14'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'macbook-pro-m5-max-14' AND pi.url = '/productos/macbook-pro-m5-max-14/3.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '18 CPU · 32 GPU · 36GB · 2TB', 'Silver', '#dcdee1', 'sellado', 'original', NULL, 7105000, 4900, 4150, 1, 'MACBOOK-PRO-M5-MAX-14-18 CPU · 32 GPU · 36GB · 2TB-1'
   FROM products WHERE slug = 'macbook-pro-m5-max-14'
@@ -1065,14 +985,6 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/macbook-pro-m5-pro-16/2.jpg', 'MacBook Pro M5 Pro 16 Apple en venta en La Plata', 0 FROM products WHERE slug = 'macbook-pro-m5-pro-16'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'macbook-pro-m5-pro-16' AND pi.url = '/productos/macbook-pro-m5-pro-16/2.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/macbook-pro-m5-pro-16/3.jpg', 'MacBook Pro M5 Pro 16 Apple en venta en La Plata', 0 FROM products WHERE slug = 'macbook-pro-m5-pro-16'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'macbook-pro-m5-pro-16' AND pi.url = '/productos/macbook-pro-m5-pro-16/3.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/macbook-pro-m5-pro-16/4.jpg', 'MacBook Pro M5 Pro 16 Apple en venta en La Plata', 0 FROM products WHERE slug = 'macbook-pro-m5-pro-16'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'macbook-pro-m5-pro-16' AND pi.url = '/productos/macbook-pro-m5-pro-16/4.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '24GB · 1TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 5264000, 3630, 3080, 2, 'MACBOOK-PRO-M5-PRO-16-24GB · 1TB-1'
   FROM products WHERE slug = 'macbook-pro-m5-pro-16'
@@ -1113,10 +1025,6 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/macbook-pro-m5-max-16/3.jpg', 'MacBook Pro M5 Max 16 Apple en venta en La Plata', 0 FROM products WHERE slug = 'macbook-pro-m5-max-16'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'macbook-pro-m5-max-16' AND pi.url = '/productos/macbook-pro-m5-max-16/3.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/macbook-pro-m5-max-16/4.jpg', 'MacBook Pro M5 Max 16 Apple en venta en La Plata', 0 FROM products WHERE slug = 'macbook-pro-m5-max-16'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'macbook-pro-m5-max-16' AND pi.url = '/productos/macbook-pro-m5-max-16/4.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '18 CPU · 32 GPU · 36GB · 2TB', 'Space Black', '#2b2b2d', 'sellado', 'original', NULL, 7352000, 5070, 4300, 2, 'MACBOOK-PRO-M5-MAX-16-18 CPU · 32 GPU · 36GB · 2TB-1'
   FROM products WHERE slug = 'macbook-pro-m5-max-16'
@@ -1285,10 +1193,6 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/airpods-pro-2/1.jpg', 'AirPods Pro 2 Apple en venta en La Plata', 0 FROM products WHERE slug = 'airpods-pro-2'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'airpods-pro-2' AND pi.url = '/productos/airpods-pro-2/1.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/airpods-pro-2/2.jpg', 'AirPods Pro 2 Apple en venta en La Plata', 0 FROM products WHERE slug = 'airpods-pro-2'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'airpods-pro-2' AND pi.url = '/productos/airpods-pro-2/2.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, 'USB-C', 'Blanco', '#f5f5f7', 'sellado', 'original', NULL, 319000, 220, 182, 8, 'AIRPODS-PRO-2-USB-C-1'
   FROM products WHERE slug = 'airpods-pro-2'
@@ -1321,10 +1225,6 @@ INSERT INTO product_images (product_id, url, alt, sort_order)
   SELECT id, '/productos/playstation-5-slim/2.jpg', 'PlayStation 5 Slim Sony en venta en La Plata', 0 FROM products WHERE slug = 'playstation-5-slim'
   AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
                   WHERE pr.slug = 'playstation-5-slim' AND pi.url = '/productos/playstation-5-slim/2.jpg');
-INSERT INTO product_images (product_id, url, alt, sort_order)
-  SELECT id, '/productos/playstation-5-slim/3.jpg', 'PlayStation 5 Slim Sony en venta en La Plata', 0 FROM products WHERE slug = 'playstation-5-slim'
-  AND NOT EXISTS (SELECT 1 FROM product_images pi JOIN products pr ON pr.id = pi.product_id
-                  WHERE pr.slug = 'playstation-5-slim' AND pi.url = '/productos/playstation-5-slim/3.jpg');
 INSERT INTO product_variants (product_id, storage, color, color_hex, grade, authenticity, battery_health, price_ars, price_usd, cost_usd, stock, sku)
   SELECT id, '1TB', 'Blanco', '#f2f2f2', 'sellado', 'original', NULL, 899000, 620, 520, 2, 'PLAYSTATION-5-SLIM-1TB-1'
   FROM products WHERE slug = 'playstation-5-slim'

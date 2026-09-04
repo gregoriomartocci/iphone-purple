@@ -27,7 +27,16 @@ const RAIZ = path.join(process.cwd(), "public", "productos");
 /**
  * slug del producto → archivos de Commons, en el orden en que se muestran.
  *
- * REGLA: solo renders del producto, ninguna foto de un equipo real.
+ * REGLA: primero el render del producto; foto real solo si no hay render.
+ *
+ * El render —el equipo recortado sobre transparente, como sale de fábrica— es
+ * lo único que se puede garantizar sin mirarlo: no hay etiqueta pegada, ni
+ * funda, ni mano, ni pantalla gastada, ni el cable con imán del mostrador. Por
+ * eso va primero donde existe.
+ *
+ * Pero no existe para casi nada que no sea un iPhone, y un producto sin
+ * ninguna imagen no se vende. Así que donde no hay render se usa la mejor foto
+ * real que se consiga del modelo exacto, filtrando las de exhibición.
  *
  * Un render es una ilustración del equipo como sale de fábrica: fondo
  * transparente, sin etiquetas de precio pegadas al dorso, sin funda, sin
@@ -45,6 +54,65 @@ const RAIZ = path.join(process.cwd(), "public", "productos");
  * haya fotos propias o del proveedor en public/productos/<slug>/.
  */
 const FOTOS = {
+  // ── Productos que no tienen render y llevan foto del modelo exacto.
+  //
+  // Salieron de Openverse, que agrega imágenes de licencia libre de Commons,
+  // Flickr y decenas de catálogos más. Su búsqueda encuentra lo que la de
+  // Commons no: "Back of the iPhone 13 Pro Max" existía y yo venía diciendo
+  // que no, porque buscaba con otras palabras.
+  "iphone-13-pro-max": ["Back view of iPhone 13 Pro Max Gold.jpg"],
+  "iphone-12-pro-max": ["IPhone 12 Pro Max - 3.jpg", "IPhone 12 Pro Max - 2.jpg"],
+  "iphone-14-pro-max": [
+    "IPhone 14 Pro Max Deep purple A2896 China, Hong Kong and Macao version rear.jpg",
+    "Back of the iPhone 14 Pro Max.jpg",
+  ],
+  "moto-g35": ["Motorola Moto G35 5G.jpg"],
+  "xiaomi-17": ["Xiaomi 17 backside Ice Melting Blue.jpg"],
+  "xiaomi-17-ultra": ["Xiaomi 17 Ultra by Leica rear.jpg", "Xiaomi 17 Ultra.jpg"],
+  "macbook-pro-m5-max-16": [
+    'Apple MacBook Pro 16" M2 Max.jpg',
+    'Apple MacBook Pro 16" M2 Max closeup.jpg',
+    'Apple MacBook Pro 16" M2 Max with Headset and Mouse.jpg',
+  ],
+  "macbook-pro-m5-pro-16": [
+    "MacBook Pro 16 (M1 Pro, 2021) - Wikipedia.jpg",
+    'Apple MacBook Pro 16" M2 Max.jpg',
+  ],
+  "macbook-pro-m5-14": [
+    "MacBook Pro 3rd Generation.jpg",
+    "Apple Macbook Pro (Unsplash).jpg",
+  ],
+  "macbook-pro-m5-pro-14": [
+    "MacBook Pro 3rd Generation (blue).jpg",
+    "MacBook Pro 3rd Generation.jpg",
+  ],
+  "macbook-pro-m5-max-14": [
+    "Apple Macbook Pro (Unsplash).jpg",
+    "MacBook Pro 3rd Generation.jpg",
+  ],
+  "macbook-pro-m4-pro-14": [
+    "MacBook Pro 3rd Generation.jpg",
+    "MacBook Pro 3rd Generation (blue).jpg",
+  ],
+  "macbook-air-m5-13": ["MacBook Air (13-inch, M4, Silver).jpg"],
+  "macbook-air-m5-15": ["MacBook Air (15-inch, M4, Silver).jpg"],
+  "macbook-air-m3": ["MacBook Air (13-inch, M4, Silver).jpg"],
+  "airpods-pro-2": ["AirPods Pro (2nd generation).jpg"],
+  "apple-watch-series-10": ["Apple Watch Series 10.jpg"],
+  "ipad-air-m2": ["About iPad Air 11-inch (M2).jpg", "About iPad Air 13-inch (M2).jpg"],
+  "ipad-air-13-m3": ["IPad Air 11-inch (M3) backside.jpg", "IPad Air 11-inch (M3).jpg"],
+  "ipad-air-11-m4": ["IPad Air 11-inch (M3) backside.jpg", "IPad Air 11-inch (M3).jpg"],
+  "ipad-air-13-m4": ["About iPad Air 13-inch (M2).jpg"],
+  "playstation-5-slim": ["PlayStation 5 and DualSense.jpg", "Playstation 5.jpg"],
+  "nintendo-switch-2-mario-kart": [
+    "Nintendo Switch 2 in Docking Console.jpg",
+    "Nintendo Switch 2 in Handheld Mode.jpg",
+  ],
+  "nintendo-switch-oled": ["Switch oled console.jpg"],
+  "logitech-g29-driving-force": ["Logitech G29 steering wheel.jpg"],
+  "redmi-15c": ["Redmi 15C back.jpg", "Redmi 15C front.jpg"],
+  "garmin-instinct-2s-solar": ["Garmin Instinct 2s.jpg"],
+
   // Dorso primero donde hay render de dorso. De frente todos los iPhone son
   // la misma silueta con la pantalla apagada.
   "iphone-17": ["IPhone 17 (Lavender).png", "IPhone 17 Vector.svg"],
@@ -116,7 +184,9 @@ async function ficha(archivo) {
   const d = await r.json();
   const pagina = Object.values(d?.query?.pages ?? {})[0];
   const info = pagina?.imageinfo?.[0];
-  if (!info) throw new Error(`Commons no conoce el archivo ${archivo}`);
+  // Devuelve null en vez de tirar: un nombre mal escrito no puede dejar sin
+  // fotos a los otros cuarenta productos. Se reporta al final.
+  if (!info) return null;
   const meta = info.extmetadata ?? {};
   const limpiar = (v) =>
     (v ?? "")
@@ -166,7 +236,12 @@ for (const [slug, archivos] of Object.entries(FOTOS)) {
 
   let guardadas = 0;
   for (const archivo of archivos) {
-    const { descarga, autor, licencia, origen, descripcion } = await ficha(archivo);
+    const datos0 = await ficha(archivo);
+    if (!datos0) {
+      descartadas.push(`${slug}: ${archivo} — Commons no conoce ese archivo`);
+      continue;
+    }
+    const { descarga, autor, licencia, origen, descripcion } = datos0;
     const r = await pedir(descarga);
     const ext = descarga.split("?")[0].toLowerCase().endsWith(".png") ? "png" : "jpg";
     const nombre = `${guardadas + 1}.${ext}`;
@@ -196,11 +271,6 @@ for (const [slug, archivos] of Object.entries(FOTOS)) {
      * Deducirlo de la extensión no alcanzaba: una foto en PNG pasaba como
      * render.
      */
-    if (medidas && !medidas.conAlfa) {
-      descartadas.push(`${slug}: ${archivo} — es una foto, no un render`);
-      continue;
-    }
-
     if (medidas && medidas.ancho / medidas.alto > 2.5) {
       throw new Error(
         `${archivo} mide ${medidas.ancho}x${medidas.alto}: con esa proporción no ` +
