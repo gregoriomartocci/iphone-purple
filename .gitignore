@@ -54,3 +54,10 @@ next-env.d.ts
 # miran, se elige, y lo elegido se copia a public/productos/. La carpeta
 # entera no va al repo ni se publica.
 fotos-proveedor/
+
+# Sesión de WhatsApp Web: son las credenciales de la línea, equivalen a
+# la cuenta. Nunca al repo.
+.whatsapp-auth/
+
+# Lo que baja el lector de WhatsApp: mensajes de proveedores con precios.
+datos-proveedor/

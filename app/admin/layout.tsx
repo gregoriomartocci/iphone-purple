@@ -6,15 +6,16 @@ import { useState } from "react";
 import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
-  MessageSquareText,
-  Package,
-  Receipt,
-  RefreshCcw,
-  Truck,
-  Wrench,
-  Settings,
   LogOut,
   Menu,
+  MessageSquareText,
+  Package,
+  Percent,
+  Receipt,
+  RefreshCcw,
+  Settings,
+  Truck,
+  Wrench,
 } from "lucide-react";
 import { Logo } from "@/components/site/Logo";
 import { cn } from "@/lib/utils";
@@ -23,6 +24,7 @@ const NAV = [
   { href: "/admin", label: "Resumen", icon: LayoutDashboard },
   { href: "/admin/importar", label: "Importar lista", icon: MessageSquareText },
   { href: "/admin/productos", label: "Productos", icon: Package },
+  { href: "/admin/margenes", label: "Margen y precios", icon: Percent },
   { href: "/admin/ventas", label: "Ventas", icon: Receipt },
   { href: "/admin/plan-canje", label: "Plan Canje", icon: RefreshCcw },
   { href: "/admin/proveedores", label: "Proveedores", icon: Truck },
