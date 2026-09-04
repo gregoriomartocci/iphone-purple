@@ -50,17 +50,19 @@ export function isSupabaseConfigured(): boolean {
 }
 
 /**
- * Un producto sin foto no se publica.
+ * Si se ocultan del catálogo los productos que todavía no tienen foto.
  *
- * Decisión del negocio: una ficha sin imagen no vende y deja el catálogo con
- * cara de inacabado. Preferimos mostrar menos y que todo lo que se muestre se
- * vea bien.
+ * Está en `false`, y la razón importa: con `true` el catálogo bajaba de 71
+ * productos a 18, todos iPhone. Sin MacBook, sin iPad, sin notebooks, sin
+ * consolas. Y como quedaba una sola marca y una sola categoría, los filtros de
+ * marca y categoría desaparecían —no tenían nada que ofrecer—, así que el
+ * catálogo parecía roto.
  *
- * No se borra nada: el producto sigue en los datos y en el panel, y vuelve al
- * catálogo solo con dejar sus fotos en public/productos/<slug>/. Poner esto en
- * `false` publica todo de nuevo.
+ * Una ficha sin foto vende menos; una tienda sin tres cuartos de su stock no
+ * vende nada. Mientras tanto, el producto sin foto lo dice con todas las
+ * letras en vez de disimularlo con una imagen que no es suya.
  */
-const OCULTAR_SIN_FOTO = true;
+const OCULTAR_SIN_FOTO = false;
 
 async function allProducts(): Promise<Product[]> {
   if (!isSupabaseConfigured()) return seed.PRODUCTS;

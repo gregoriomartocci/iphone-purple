@@ -516,13 +516,21 @@ describe("getCatalogFacets", () => {
 
 describe("productos sin foto", () => {
   /**
-   * Una ficha sin imagen no vende y deja el catálogo con cara de inacabado.
-   * El producto sigue existiendo en los datos: lo que no hace es publicarse.
+   * Hoy se publican también los que no tienen foto: ocultarlos dejaba el
+   * catálogo en 18 productos de 71, todos iPhone, y con una sola marca los
+   * filtros de marca y categoría desaparecían.
+   *
+   * Lo que sí se sostiene es que un producto sin foto no recibe una imagen
+   * prestada: o tiene las suyas o no tiene ninguna, y la tarjeta lo dice.
    */
-  it("no publica en el catálogo un producto sin fotos", async () => {
-    const publicados = await getProducts();
-    for (const p of publicados) {
-      expect(p.images.length).toBeGreaterThan(0);
+  it("un producto sin foto no recibe una imagen prestada", async () => {
+    const todos = await getProducts({ incluirSinFoto: true });
+    const sinFoto = todos.filter((p) => p.images.length === 0);
+    expect(sinFoto.length).toBeGreaterThan(0);
+    for (const p of todos) {
+      for (const img of p.images) {
+        expect(img.url).toContain(`/productos/${p.slug}/`);
+      }
     }
   });
 

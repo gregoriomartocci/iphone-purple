@@ -3,8 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { ProductDetail } from "@/components/site/ProductDetail";
-import { ProductCard } from "@/components/site/ProductCard";
 import { ProductComparison } from "@/components/site/ProductComparison";
+import { ProductRail } from "@/components/site/ProductRail";
 import { Descripcion } from "@/components/site/Descripcion";
 import { FichaTecnica, Respaldos } from "@/components/site/FichaTecnica";
 import { FaqProducto } from "@/components/site/FaqProducto";
@@ -71,7 +71,8 @@ export default async function ProductPage({
 
   const [settings, related, comparison] = await Promise.all([
     getSettings(),
-    getRelatedProducts(product, 4),
+    // El carrusel muestra cuatro por vez, así que con ocho hay para deslizar.
+    getRelatedProducts(product, 8),
     getGenerationComparison(product),
   ]);
 
@@ -161,16 +162,15 @@ export default async function ProductPage({
 
       <FaqProducto product={product} esSellado={lead?.grade === "sellado"} />
 
-      {related.length > 0 && (
-        <section className="border-line mt-16 border-t pt-12 sm:mt-20">
-          <h2 className="text-2xl font-semibold">También te puede servir</h2>
-          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
-            {related.map((item) => (
-              <ProductCard key={item.id} product={item} />
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Mismo carrusel que la portada: avanza solo y se frena al tocarlo. */}
+      <div className="border-line mt-16 border-t sm:mt-20">
+        <ProductRail
+          title="También te puede interesar"
+          products={related}
+          href={`/catalogo?category=${product.category}`}
+          auto
+        />
+      </div>
     </div>
   );
 }
