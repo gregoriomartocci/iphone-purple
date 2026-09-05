@@ -73,12 +73,14 @@ Son **${filas.length} productos sin ninguna imagen**: hoy su ficha sale vacía.
 Copiá todo lo que está entre las líneas y pegalo en la extensión de Claude en
 Chrome. Cuando termine:
 
-    npm run fotos:importar ~/Descargas/fotos-iphone-purple
+    npm run fotos:importar ~/Downloads
 
 ---
 
-Buscá fotos de producto para una tienda de electrónica y descargalas a una
-carpeta \`fotos-iphone-purple\` dentro de Descargas.
+Buscá fotos de producto para una tienda de electrónica y descargalas a la
+carpeta de descargas, cada una con el nombre exacto que se pide más abajo. No
+hace falta crear una subcarpeta: si se intenta, el navegador termina metiendo
+el nombre de la carpeta adentro del nombre del archivo y da lo mismo.
 
 **Todo tiene que ser el producto NUEVO**, como sale de fábrica: sin rayas, sin
 uso, sin desgaste. Y "nuevo" significa foto de estudio, no una foto de alguien
@@ -123,6 +125,12 @@ entero, no un recorte donde queda cortado por la mitad ni un primer plano de
 una esquina; que no sea el logo de la tienda ni un ícono de la página; y que
 mida más de 1000 px. La vez pasada volvieron el logo de Amazon Prime, una
 miniatura de 78 px y un archivo de prueba de 1 píxel.
+
+**Y miralo una vez más para el fondo, que es lo que más vuelve mal:** el fondo
+tiene que ser blanco. Si alrededor del producto ves negro, gris oscuro o
+cualquier color, esa foto no entra, por buena que sea el resto — se mide el
+borde de la imagen al recibirla y se rechaza sola. Si del modelo sólo existe
+la versión sobre negro, dejalo sin archivo y avisá.
 
 **Hacé la lista entera.** Son muchos productos: no pares en los primeros dos.
 Si uno se resiste, anotalo y seguí con el siguiente.
