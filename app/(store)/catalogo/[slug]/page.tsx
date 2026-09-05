@@ -129,49 +129,56 @@ export default async function ProductPage({
   };
 
   return (
-    <div className="shell py-8 sm:py-12">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdMigas) }}
-      />
-
-      <Link
-        href="/catalogo"
-        className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors"
-      >
-        <ChevronLeft className="size-4" />
-        Volver al catálogo
-      </Link>
-
-      <div className="mt-8">
-        <ProductDetail
-          product={product}
-          whatsappNumber={settings.whatsappNumber}
-          dollarRate={settings.dollarRate}
-          dollarRateUpdatedAt={settings.dollarRateUpdatedAt}
+    <>
+      <div className="shell py-8 sm:py-12">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-      </div>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdMigas) }}
+        />
 
-      {/* El orden sigue cómo se decide una compra: primero qué es y qué trae
+        <Link
+          href="/catalogo"
+          className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors"
+        >
+          <ChevronLeft className="size-4" />
+          Volver al catálogo
+        </Link>
+
+        <div className="mt-8">
+          <ProductDetail
+            product={product}
+            whatsappNumber={settings.whatsappNumber}
+            dollarRate={settings.dollarRate}
+            dollarRateUpdatedAt={settings.dollarRateUpdatedAt}
+          />
+        </div>
+
+        {/* El orden sigue cómo se decide una compra: primero qué es y qué trae
           este modelo, después el detalle técnico, luego cómo se compara contra
           los vecinos, con qué respaldo se compra, las dudas de cerrar la
           operación, y al final qué otra cosa mirar. */}
-      <Descripcion product={product} />
+        <Descripcion product={product} />
 
-      <FichaTecnica product={product} variante={lead} />
+        <FichaTecnica product={product} variante={lead} />
 
-      <ProductComparison products={comparison} currentId={product.id} />
+        <ProductComparison products={comparison} currentId={product.id} />
 
-      <Respaldos />
+        <Respaldos />
 
-      <FaqProducto product={product} esSellado={lead?.grade === "sellado"} />
+        <FaqProducto product={product} esSellado={lead?.grade === "sellado"} />
+      </div>
 
-      {/* Mismo carrusel que la portada: avanza solo y se frena al tocarlo. */}
-      <div className="border-line mt-16 border-t sm:mt-20">
+      {/*
+      Fuera del `.shell` de la página: ProductRail trae el suyo propio, y
+      anidar uno adentro del otro duplicaba el margen lateral. Por eso "También
+      te puede interesar" quedaba más angosto y corrido respecto de todo lo de
+      arriba, que sí comparte el mismo `.shell`.
+    */}
+      <div className="border-line border-t">
         <ProductRail
           title="También te puede interesar"
           products={related}
@@ -179,6 +186,6 @@ export default async function ProductPage({
           auto
         />
       </div>
-    </div>
+    </>
   );
 }
