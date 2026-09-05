@@ -74,6 +74,11 @@ for (const nombre of archivos) {
   await sharp(path.join(origen, nombre))
     .rotate()
     .resize(1600, 1600, { fit: "inside", withoutEnlargement: true })
+    // Sin esto, un PNG con transparencia se aplasta a JPEG con fondo NEGRO
+    // por defecto de sharp: pasó con una foto de estudio que llegó
+    // transparente y terminó publicada sobre negro, justo la regla que el
+    // catálogo prohíbe.
+    .flatten({ background: "#ffffff" })
     .jpeg({ quality: 88 })
     .toFile(salida);
 
@@ -87,6 +92,7 @@ if (huerfanos.length > 0) {
   for (const nombre of huerfanos) {
     await sharp(path.join(origen, nombre))
       .rotate()
+      .flatten({ background: "#ffffff" })
       .jpeg({ quality: 88 })
       .toFile(path.join(aparte, path.basename(nombre, path.extname(nombre)) + ".jpg"));
   }

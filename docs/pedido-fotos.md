@@ -3,7 +3,7 @@
 GENERADO por `npm run fotos:pedido`. Se regenera solo cada vez que entran
 fotos nuevas, así no se piden las que ya tenemos.
 
-Son **30 productos sin ninguna imagen**: hoy su ficha sale vacía.
+Son **21 productos sin ninguna imagen**: hoy su ficha sale vacía.
 
 Copiá todo lo que está entre las líneas y pegalo en la extensión de Claude en
 Chrome. Cuando termine:
@@ -64,9 +64,6 @@ Si uno se resiste, anotalo y seguí con el siguiente.
 
 **Celulares**
 
-- `iphone-17-1.jpg` `-2` `-3` · Apple iPhone 17 — Naranja Cósmico, Blanco Nube
-- `iphone-17-pro-max-1.jpg` `-2` `-3` · Apple iPhone 17 Pro Max — Naranja Cósmico, Blanco Nube
-- `iphone-15-pro-max-1.jpg` `-2` `-3` · Apple iPhone 15 Pro Max — Titanio Azul, Titanio Natural
 - `iphone-14-1.jpg` `-2` `-3` · Apple iPhone 14 — Morado Oscuro, Medianoche
 - `iphone-13-pro-max-1.jpg` `-2` `-3` · Apple iPhone 13 Pro Max — Medianoche, Azul Sierra
 - `iphone-12-pro-1.jpg` `-2` `-3` · Apple iPhone 12 Pro — Negro, Verde
@@ -75,16 +72,10 @@ Si uno se resiste, anotalo y seguí con el siguiente.
 - `iphone-11-pro-1.jpg` `-2` `-3` · Apple iPhone 11 Pro — Blanco, Negro
 - `iphone-11-pro-max-1.jpg` `-2` `-3` · Apple iPhone 11 Pro Max — Blanco, Negro
 - `redmi-15c-1.jpg` `-2` `-3` · Xiaomi Redmi 15C — Negro, Verde
-- `poco-f8-ultra-1.jpg` `-2` `-3` · Xiaomi Poco F8 Ultra — Azul
 - `xiaomi-17-1.jpg` `-2` `-3` · Xiaomi 17 — Negro
 - `xiaomi-17-ultra-1.jpg` `-2` `-3` · Xiaomi 17 Ultra — Blanco, Verde
 - `moto-g15-1.jpg` `-2` `-3` · Motorola Moto G15 — Azul
 - `moto-g35-1.jpg` `-2` `-3` · Motorola Moto G35 — Negro
-- `moto-g67-1.jpg` `-2` `-3` · Motorola Moto G67 — Gris
-
-**Accesorios**
-
-- `wdblack-nvme-ssd-para-ps5-1.jpg` `-2` `-3` · Western Digital WD_Black NVMe SSD para PS5 — Negro
 
 **Tablets**
 
@@ -95,13 +86,10 @@ Si uno se resiste, anotalo y seguí con el siguiente.
 
 **Hogar y belleza**
 
-- `dyson-hd18-hair-dryer-r-professional-1.jpg` `-2` `-3` · Dyson HD18 Hair Dryer R Professional — Vinca Blue, Topaz
 - `xiaomi-aspiradora-mijia-2-1.jpg` `-2` `-3` · Xiaomi Aspiradora Mijia 2 — Blanco
 
 **Relojes**
 
-- `xiaomi-band-9-active-1.jpg` `-2` `-3` · Xiaomi Band 9 Active — Rosa, Blanco
-- `garmin-instinct-2s-solar-1.jpg` `-2` `-3` · Garmin Instinct 2S Solar — Grafito
 - `kieslect-calling-watch-kr-ultra-3-1.jpg` `-2` `-3` · Kieslect Calling Watch Kr Ultra 3 — Ice White
 - `kieslect-lady-watch-elfin-1.jpg` `-2` `-3` · Kieslect Lady Watch Elfin — Negro Grafito, Rosa Dorado, Plata
 - `kieslect-al-watch-elite-2-1.jpg` `-2` `-3` · Kieslect Al Watch Elite 2 — Titan Black

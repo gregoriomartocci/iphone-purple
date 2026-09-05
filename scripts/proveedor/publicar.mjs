@@ -42,6 +42,9 @@ for (const [slug, archivo, orden] of filas) {
     await sharp(fuente)
       .rotate()
       .resize(1600, 1600, { fit: "inside", withoutEnlargement: true })
+      // Un PNG con transparencia se aplasta a negro por defecto al pasar a
+      // JPEG si no se le dice qué fondo poner.
+      .flatten({ background: "#ffffff" })
       .jpeg({ quality: 86 })
       .toFile(path.join(carpeta, `${orden}.jpg`));
     console.log(`✓ ${slug}/${orden}.jpg`);

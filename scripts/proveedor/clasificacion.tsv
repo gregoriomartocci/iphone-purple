@@ -336,3 +336,17 @@ revision-3	redmi-15c-2	_descartado	redmi-15c-pantalla-de-ajustes-no-es-una-foto
 revision-3	xiaomi-17-1	_descartado	xiaomi-17-en-la-mano-pedido-nuevo-de-fabrica
 revision-3	xiaomi-17-ultra-1	_descartado	xiaomi-17-ultra-en-la-mano-pedido-nuevo-de-fabrica
 revision-3	xiaomi-17-ultra-2	_descartado	xiaomi-17-ultra-pantalla-de-ajustes-no-es-una-foto
+# --- tercera tanda de la extensión: nueve productos con foto oficial de
+# fábrica, dorso y frente en una sola imagen, sobre blanco. Sin manos, sin
+# mesas, exactamente el criterio pedido para equipo sellado.
+extension-3	dyson-hd18	dyson-hd18-hair-dryer-r-professional	dyson-hd18-vinca-blue-con-accesorios	1
+extension-3	garmin-instinct-2s	garmin-instinct-2s-solar	garmin-instinct-2s-solar-grafito-perfil	1
+extension-3	iphone-15-pro-max-1	iphone-15-pro-max	iphone-15-pro-max-titanio-azul-dorso-y-frente	1
+extension-3	iphone-15-pro-max-2	iphone-15-pro-max	iphone-15-pro-max-titanio-natural-dorso-y-frente	2
+extension-3	iphone-17	iphone-17	iphone-17-blanco-nube-dorso-y-frente	1
+extension-3	iphone-17-pro-max	iphone-17-pro-max	iphone-17-pro-max-cosmic-orange-dorso-y-frente	1
+extension-3	moto-g67	moto-g67	moto-g67-gris-dorso-y-frente	1
+extension-3	poco-f8-ultra	poco-f8-ultra	poco-f8-ultra-azul-dorso-y-frente	1
+extension-3	wdblack	wdblack-nvme-ssd-para-ps5	wdblack-ssd-sn850x-con-disipador	1
+extension-3	xiaomi-band-1	xiaomi-band-9-active	xiaomi-band-9-active-rosa-perfil	1
+extension-3	xiaomi-band-2	xiaomi-band-9-active	xiaomi-band-9-active-blanco-perfil	2

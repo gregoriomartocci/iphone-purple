@@ -209,7 +209,17 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "dyson-hd18-hair-dryer-r-professional": [],
+  "dyson-hd18-hair-dryer-r-professional": [
+    {
+      url: "/productos/dyson-hd18-hair-dryer-r-professional/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
   "dyson-hs08-id-straightwavy": [
     {
       url: "/productos/dyson-hs08-id-straightwavy/1.jpg",
@@ -243,7 +253,17 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "garmin-instinct-2s-solar": [],
+  "garmin-instinct-2s-solar": [
+    {
+      url: "/productos/garmin-instinct-2s-solar/1.jpg",
+      autor: "Lomrjyo",
+      licencia: "CC BY-SA 4.0",
+      origen: "https://commons.wikimedia.org/wiki/File:Garmin_Instinct_2s.jpg",
+      recorte: "foto",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
   "ipad-11-generacion": [
     {
       url: "/productos/ipad-11-generacion/1.jpg",
@@ -674,7 +694,26 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "iphone-15-pro-max": [],
+  "iphone-15-pro-max": [
+    {
+      url: "/productos/iphone-15-pro-max/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "foto",
+      fondo: null,
+      video: false,
+    },
+    {
+      url: "/productos/iphone-15-pro-max/2.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "foto",
+      fondo: null,
+      video: false,
+    },
+  ],
   "iphone-16": [
     {
       url: "/productos/iphone-16/1.jpg",
@@ -969,7 +1008,17 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "iphone-17": [],
+  "iphone-17": [
+    {
+      url: "/productos/iphone-17/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
   "iphone-17-pro": [
     {
       url: "/productos/iphone-17-pro/1.jpg",
@@ -1071,7 +1120,17 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "iphone-17-pro-max": [],
+  "iphone-17-pro-max": [
+    {
+      url: "/productos/iphone-17-pro-max/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
   "kieslect-calling-watch-kr3": [
     {
       url: "/productos/kieslect-calling-watch-kr3/1.jpg",
@@ -1344,7 +1403,17 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "moto-g67": [],
+  "moto-g67": [
+    {
+      url: "/productos/moto-g67/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
   "nintendo-switch-2-mario-kart": [
     {
       url: "/productos/nintendo-switch-2-mario-kart/1.jpg",
@@ -1452,7 +1521,17 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "poco-f8-ultra": [],
+  "poco-f8-ultra": [
+    {
+      url: "/productos/poco-f8-ultra/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
   "smartwatch-estilo-watch-ultra": [
     {
       url: "/productos/smartwatch-estilo-watch-ultra/1.jpg",
@@ -1464,5 +1543,35 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "wdblack-nvme-ssd-para-ps5": [],
+  "wdblack-nvme-ssd-para-ps5": [
+    {
+      url: "/productos/wdblack-nvme-ssd-para-ps5/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
+  "xiaomi-band-9-active": [
+    {
+      url: "/productos/xiaomi-band-9-active/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+    {
+      url: "/productos/xiaomi-band-9-active/2.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
 };
