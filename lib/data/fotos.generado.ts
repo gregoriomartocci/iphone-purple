@@ -273,63 +273,13 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "ipad-air-11-m4": [
-    {
-      url: "/productos/ipad-air-11-m4/1.jpg",
-      autor: "茅野ふたば",
-      licencia: "CC BY-SA 4.0",
-      origen:
-        "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3)_backside.jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-    {
-      url: "/productos/ipad-air-11-m4/2.jpg",
-      autor: "茅野ふたば",
-      licencia: "CC BY-SA 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3).jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-  ],
   "ipad-air-13-m3": [],
-  "ipad-air-13-m4": [
-    {
-      url: "/productos/ipad-air-13-m4/1.jpg",
-      autor: "メイド理世",
-      licencia: "CC BY-SA 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:About_iPad_Air_13-inch_(M2).jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-  ],
   "ipad-air-m2": [
     {
       url: "/productos/ipad-air-m2/1.jpg",
       autor: "メイド理世",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:About_iPad_Air_11-inch_(M2).jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-    {
-      url: "/productos/ipad-air-m2/2.jpg",
-      autor: "メイド理世",
-      licencia: "CC BY-SA 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:About_iPad_Air_13-inch_(M2).jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-    {
-      url: "/productos/ipad-air-m2/3.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
       recorte: "foto",
       fondo: null,
       video: false,
@@ -544,15 +494,6 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
     {
-      url: "/productos/iphone-13-pro/4.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-    {
       url: "/productos/iphone-13-pro/5.jpg",
       autor: null,
       licencia: null,
@@ -572,15 +513,6 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
     },
     {
       url: "/productos/iphone-13-pro/10.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-    {
-      url: "/productos/iphone-13-pro/11.jpg",
       autor: null,
       licencia: null,
       origen: null,
@@ -632,38 +564,6 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "foto",
       fondo: null,
       video: true,
-    },
-  ],
-  "iphone-13-pro-max": [
-    {
-      url: "/productos/iphone-13-pro-max/1.jpg",
-      autor: "メイド理世",
-      licencia: "CC BY-SA 4.0",
-      origen:
-        "https://commons.wikimedia.org/wiki/File:Back_view_of_iPhone_13_Pro_Max_Gold.jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-  ],
-  "iphone-14": [
-    {
-      url: "/productos/iphone-14/1.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-    {
-      url: "/productos/iphone-14/3.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "foto",
-      fondo: null,
-      video: false,
     },
   ],
   "iphone-14-pro": [
@@ -729,24 +629,6 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       licencia: "CC BY-SA 4.0",
       origen:
         "https://commons.wikimedia.org/wiki/File:IPhone_14_Pro_Max_Deep_purple_A2896_China,_Hong_Kong_and_Macao_version_rear.jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-    {
-      url: "/productos/iphone-14-pro-max/2.jpg",
-      autor: "Hajoon0102",
-      licencia: "CC BY-SA 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:Back_of_the_iPhone_14_Pro_Max.jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-    {
-      url: "/productos/iphone-14-pro-max/3.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
       recorte: "foto",
       fondo: null,
       video: false,
@@ -1462,17 +1344,6 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "moto-g35": [
-    {
-      url: "/productos/moto-g35/1.jpg",
-      autor: "Savantup",
-      licencia: "CC0",
-      origen: "https://commons.wikimedia.org/wiki/File:Motorola_Moto_G35_5G.jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-  ],
   "moto-g67": [],
   "nintendo-switch-2-mario-kart": [
     {
@@ -1482,7 +1353,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:Nintendo_Switch_2_in_Docking_Console.jpg",
       recorte: "foto",
-      fondo: "#fdfcfc",
+      fondo: "#ffffff",
       video: false,
     },
     {
@@ -1492,7 +1363,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       origen:
         "https://commons.wikimedia.org/wiki/File:Nintendo_Switch_2_in_Handheld_Mode.jpg",
       recorte: "foto",
-      fondo: "#fcfcfc",
+      fondo: "#ffffff",
       video: false,
     },
   ],
@@ -1582,37 +1453,6 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
     },
   ],
   "poco-f8-ultra": [],
-  "redmi-15c": [
-    {
-      url: "/productos/redmi-15c/1.jpg",
-      autor: "Maksdroider",
-      licencia: "CC BY-SA 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:Redmi_15C_back.jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-    {
-      url: "/productos/redmi-15c/2.jpg",
-      autor: "Maksdroider",
-      licencia: "CC BY-SA 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:Redmi_15C_front.jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-  ],
-  "redmi-pad-2": [
-    {
-      url: "/productos/redmi-pad-2/1.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-  ],
   "smartwatch-estilo-watch-ultra": [
     {
       url: "/productos/smartwatch-estilo-watch-ultra/1.jpg",
@@ -1625,36 +1465,4 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
     },
   ],
   "wdblack-nvme-ssd-para-ps5": [],
-  "xiaomi-17": [
-    {
-      url: "/productos/xiaomi-17/1.jpg",
-      autor: "茅野ふたば",
-      licencia: "CC BY-SA 4.0",
-      origen:
-        "https://commons.wikimedia.org/wiki/File:Xiaomi_17_backside_Ice_Melting_Blue.jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-  ],
-  "xiaomi-17-ultra": [
-    {
-      url: "/productos/xiaomi-17-ultra/1.jpg",
-      autor: "茅野ふたば",
-      licencia: "CC BY-SA 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:Xiaomi_17_Ultra_by_Leica_rear.jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-    {
-      url: "/productos/xiaomi-17-ultra/2.jpg",
-      autor: "茅野ふたば",
-      licencia: "CC BY-SA 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:Xiaomi_17_Ultra.jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-  ],
 };

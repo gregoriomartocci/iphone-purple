@@ -81,7 +81,11 @@ Buscá fotos de producto para una tienda de electrónica y descargalas a una
 carpeta \`fotos-iphone-purple\` dentro de Descargas.
 
 **Todo tiene que ser el producto NUEVO**, como sale de fábrica: sin rayas, sin
-uso, sin desgaste.
+uso, sin desgaste. Y "nuevo" significa foto de estudio, no una foto de alguien
+mostrando el equipo que le llegó: **nada de manos sosteniéndolo, nada de mesas,
+nada de fondos de living o de depósito.** Si la única opción disponible es un
+producto real fotografiado en un ambiente así, no sirve igual: hay que seguir
+buscando la foto de fábrica.
 
 **Cómo tiene que ser:** el producto solo sobre fondo BLANCO —blanco de
 verdad, no gris ni negro—, foto de estudio, nítida, mínimo 1000 px de ancho.
@@ -95,11 +99,19 @@ tres cuartos. Relojes con la malla abierta.
 (\`<marca> press room\` o \`newsroom\`), su página oficial del producto, un
 distribuidor oficial.
 
-**No sirve:** fondo negro, gris o de color, aunque sea foto oficial de la
-marca; dibujos, vectores o ilustraciones; marcas de agua de otros sitios; manos,
-personas o escritorios; la caja en vez del producto —tiene que verse el equipo,
-no el packaging—; equipos usados o rayados; equipos en exhibición con el cable
-antirrobo.
+**No sirve:**
+
+- Fondo negro, gris o de color, aunque sea foto oficial de la marca.
+- Dibujos, vectores o ilustraciones.
+- Marcas de agua de otros sitios.
+- Manos, personas, mesas, pisos, livings o depósitos de fondo.
+- La caja en vez del producto, o el producto sin terminar de salir de la caja
+  —tiene que verse el equipo entero, no el packaging—.
+- Una foto donde el equipo queda cortado por el borde del cuadro: tiene que
+  entrar completo, con margen alrededor.
+- Una pantalla mostrando un menú de Ajustes o "Acerca de": eso es una captura
+  de software, no una foto del producto.
+- Equipos usados, rayados, o en exhibición con el cable antirrobo.
 
 **Nombres:** hasta 3 por producto, con el nombre exacto de la lista y nada más
 —sin prefijos ni sufijos—. La \`-1\` es la mejor y la que va al catálogo. Si de

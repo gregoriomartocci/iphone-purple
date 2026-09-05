@@ -312,3 +312,27 @@ extension-2	ipad-11-2	ipad-11-generacion	ipad-11-generacion-blue-dorso	2
 extension-2	ipad-11-3	ipad-11-generacion	ipad-11-generacion-yellow-dorso	3
 extension-2	xiaomi-band-1	_descartado	xiaomi-band-9-active-fondo-negro-descartado
 extension-2	xiaomi-band-2	_descartado	xiaomi-band-9-active-2-fondo-negro-descartado
+# --- rechequeo de criterio: cámara cortada por el recorte cuadrado, cajas sin
+# equipo, pantallas de Ajustes que no son fotos, exhibición de tienda con
+# cartel de precio, y una etiqueta de grading visible ("CPO: FAIL"). Se
+# promovió la mejor foto restante donde había una, y donde no había ninguna
+# limpia el producto queda otra vez pidiendo foto.
+revision-3	iphone-14-pro-max-1	_descartado	iphone-14-pro-max-camara-cortada-por-el-recorte-cuadrado
+revision-3	iphone-14-pro-max-2	_descartado	iphone-14-pro-max-fondo-de-cables-desprolijo
+revision-3	iphone-13-pro-1	_descartado	iphone-13-pro-etiqueta-visible-cpo-fail
+revision-3	iphone-13-pro-11	_descartado	iphone-13-pro-fondo-de-deposito-desprolijo
+revision-3	iphone-14-1	_descartado	iphone-14-caja-no-muestra-el-equipo
+revision-3	iphone-14-3	_descartado	iphone-14-caja-2-no-muestra-el-equipo
+revision-3	ipad-air-11-m4-1	_descartado	ipad-air-11-m4-tarjeta-en-blanco-no-muestra-el-equipo
+revision-3	ipad-air-11-m4-2	_descartado	ipad-air-11-m4-pantalla-de-ajustes-no-es-una-foto
+revision-3	ipad-air-13-m4-1	_descartado	ipad-air-13-m4-pantalla-de-ajustes-no-es-una-foto
+revision-3	ipad-air-m2-1	_descartado	ipad-air-m2-pantalla-de-ajustes-no-es-una-foto
+revision-3	ipad-air-m2-2	_descartado	ipad-air-m2-pantalla-de-ajustes-modelo-13-pulgadas-equivocado
+revision-3	iphone-13-pro-max-1	_descartado	iphone-13-pro-max-exhibicion-de-tienda-con-cartel-de-precio
+revision-3	moto-g35-1	_descartado	moto-g35-pantalla-casi-negra-no-se-distingue-nada
+revision-3	redmi-pad-2-1	_descartado	redmi-pad-2-caja-no-muestra-el-equipo
+revision-3	redmi-15c-1	_descartado	redmi-15c-arriba-de-una-caja-impresa-desprolijo
+revision-3	redmi-15c-2	_descartado	redmi-15c-pantalla-de-ajustes-no-es-una-foto
+revision-3	xiaomi-17-1	_descartado	xiaomi-17-en-la-mano-pedido-nuevo-de-fabrica
+revision-3	xiaomi-17-ultra-1	_descartado	xiaomi-17-ultra-en-la-mano-pedido-nuevo-de-fabrica
+revision-3	xiaomi-17-ultra-2	_descartado	xiaomi-17-ultra-pantalla-de-ajustes-no-es-una-foto
