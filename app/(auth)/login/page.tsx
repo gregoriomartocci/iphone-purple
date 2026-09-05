@@ -74,7 +74,12 @@ function LoginContent() {
         */}
         <div className="absolute top-1/2 -right-[8%] hidden h-[150vh] w-[62vw] -translate-y-1/2 rotate-[14deg] lg:block">
           <Image
-            src="/productos/iphone-15-pro-max/1.jpg"
+            // Imagen propia de esta pantalla, no del catálogo: es la misma
+            // foto de fondo negro que se descartó como producto —acá no
+            // corresponde ningún fondo negro— pero funciona distinto como
+            // textura decorativa detrás de un vidrio, donde nadie la lee
+            // como la ficha de un equipo.
+            src="/panel-fondo.jpg"
             alt=""
             fill
             priority

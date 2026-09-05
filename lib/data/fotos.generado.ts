@@ -209,17 +209,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "dyson-hd18-hair-dryer-r-professional": [
-    {
-      url: "/productos/dyson-hd18-hair-dryer-r-professional/1.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "render",
-      fondo: "#000000",
-      video: false,
-    },
-  ],
+  "dyson-hd18-hair-dryer-r-professional": [],
   "garmin-instinct-2s-solar": [],
   "ipad-air-11-m4": [
     {
@@ -710,42 +700,6 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       fondo: null,
       video: false,
     },
-    {
-      url: "/productos/iphone-15/3.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-    {
-      url: "/productos/iphone-15/4.mp4",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "foto",
-      fondo: null,
-      video: true,
-    },
-    {
-      url: "/productos/iphone-15/5.mp4",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "foto",
-      fondo: null,
-      video: true,
-    },
-    {
-      url: "/productos/iphone-15/6.mp4",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "foto",
-      fondo: null,
-      video: true,
-    },
   ],
   "iphone-15-pro": [
     {
@@ -776,17 +730,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "iphone-15-pro-max": [
-    {
-      url: "/productos/iphone-15-pro-max/1.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "render",
-      fondo: "#000000",
-      video: false,
-    },
-  ],
+  "iphone-15-pro-max": [],
   "iphone-16": [
     {
       url: "/productos/iphone-16/1.jpg",
@@ -988,15 +932,6 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
     },
   ],
   "iphone-16-pro": [
-    {
-      url: "/productos/iphone-16-pro/1.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
     {
       url: "/productos/iphone-16-pro/8.jpg",
       autor: null,
@@ -1433,17 +1368,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "moto-g15": [
-    {
-      url: "/productos/moto-g15/1.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "render",
-      fondo: "#000000",
-      video: false,
-    },
-  ],
+  "moto-g15": [],
   "moto-g17": [
     {
       url: "/productos/moto-g17/1.jpg",
@@ -1475,17 +1400,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "moto-g67": [
-    {
-      url: "/productos/moto-g67/1.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "render",
-      fondo: "#000000",
-      video: false,
-    },
-  ],
+  "moto-g67": [],
   "nintendo-switch-2-mario-kart": [
     {
       url: "/productos/nintendo-switch-2-mario-kart/1.jpg",
@@ -1593,17 +1508,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "poco-f8-ultra": [
-    {
-      url: "/productos/poco-f8-ultra/1.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "render",
-      fondo: "#000000",
-      video: false,
-    },
-  ],
+  "poco-f8-ultra": [],
   "redmi-15c": [
     {
       url: "/productos/redmi-15c/1.jpg",
@@ -1646,17 +1551,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "wdblack-nvme-ssd-para-ps5": [
-    {
-      url: "/productos/wdblack-nvme-ssd-para-ps5/1.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "render",
-      fondo: "#010101",
-      video: false,
-    },
-  ],
+  "wdblack-nvme-ssd-para-ps5": [],
   "xiaomi-17": [
     {
       url: "/productos/xiaomi-17/1.jpg",

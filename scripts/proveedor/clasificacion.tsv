@@ -291,3 +291,13 @@ lote-septiembre-g	f015	_descartado	funda-no-esta-en-el-catalogo
 lote-septiembre-g	f017	_descartado	varios-productos-mezclados-en-una-toma
 lote-septiembre-g	f019	_descartado	cajas-samsung-no-esta-en-el-catalogo
 lote-septiembre-g	f020	_descartado	vitrina-con-varios-modelos-mezclados
+# --- rechequeo pedido por el usuario: modelos que no se podían confirmar y
+# fondos negros, que quedaron prohibidos sin excepción para todo lo clasificado
+# como render/vectorizado.
+lote-agosto	f023	iphone-15	iphone-15-azul-dorso-con-caja	1
+lote-septiembre-c	f003	_descartado	iphone-15-cajas-no-muestra-el-equipo
+lote-septiembre-e	f007	_descartado	iphone-15-cajas-no-muestra-el-equipo
+lote-septiembre-e	v004	_descartado	iphone-15-video-cajas-no-muestra-el-equipo
+lote-septiembre-e	v015	_descartado	iphone-15-video-cajas-no-muestra-el-equipo
+lote-septiembre-f	v004	_descartado	iphone-15-video-cajas-no-muestra-el-equipo
+lote-septiembre-c	f004	_descartado	iphone-16-pro-cajas-diseno-de-camara-no-confirmable

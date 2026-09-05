@@ -83,18 +83,23 @@ carpeta \`fotos-iphone-purple\` dentro de Descargas.
 **Todo tiene que ser el producto NUEVO**, como sale de fábrica: sin rayas, sin
 uso, sin desgaste.
 
-**Cómo tiene que ser:** el producto solo sobre fondo blanco, foto de estudio,
-nítida, mínimo 1000 px de ancho. Celulares y tablets de **dorso** (de frente
-son todos una pantalla negra igual). Notebooks abiertas en tres cuartos.
-Relojes con la malla abierta.
+**Cómo tiene que ser:** el producto solo sobre fondo BLANCO —blanco de
+verdad, no gris ni negro—, foto de estudio, nítida, mínimo 1000 px de ancho.
+Muchas marcas también publican la misma foto de prensa sobre fondo negro: esa
+versión no sirve, aunque sea oficial y esté perfecta en todo lo demás. Preferí
+siempre la variante en blanco del mismo producto. Celulares y tablets de
+**dorso** (de frente son todos una pantalla negra igual). Notebooks abiertas en
+tres cuartos. Relojes con la malla abierta.
 
 **Dónde buscar,** en este orden: la sala de prensa del fabricante
 (\`<marca> press room\` o \`newsroom\`), su página oficial del producto, un
 distribuidor oficial.
 
-**No sirve:** dibujos, vectores o ilustraciones; marcas de agua de otros sitios;
-manos, personas o escritorios; la caja en vez del producto; equipos usados o
-rayados; equipos en exhibición con el cable antirrobo.
+**No sirve:** fondo negro, gris o de color, aunque sea foto oficial de la
+marca; dibujos, vectores o ilustraciones; marcas de agua de otros sitios; manos,
+personas o escritorios; la caja en vez del producto —tiene que verse el equipo,
+no el packaging—; equipos usados o rayados; equipos en exhibición con el cable
+antirrobo.
 
 **Nombres:** hasta 3 por producto, con el nombre exacto de la lista y nada más
 —sin prefijos ni sufijos—. La \`-1\` es la mejor y la que va al catálogo. Si de
