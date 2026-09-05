@@ -31,6 +31,7 @@ export function AddToCart({
           name: product.name,
           variantLabel: `${variant.storage} · ${variant.color} · ${GRADE_LABELS[variant.grade]}`,
           priceArs: variant.priceArs,
+          priceUsd: variant.priceUsd,
           image: product.images[0]?.url ?? null,
           maxStock: variant.stock,
         });

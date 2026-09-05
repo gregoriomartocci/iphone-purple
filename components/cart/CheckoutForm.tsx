@@ -10,6 +10,7 @@ import { fechaLarga } from "@/lib/turnos";
 import { useCart } from "./CartProvider";
 import { WhatsAppLink } from "@/components/site/WhatsAppLink";
 import { formatARS } from "@/utils/format";
+import { Precio } from "@/components/site/Precio";
 import { cn } from "@/lib/utils";
 
 const ENTREGAS = [
@@ -301,16 +302,35 @@ export function CheckoutForm({
                     {item.variantLabel}
                   </span>
                 </span>
-                <span className="tnum shrink-0 text-sm font-semibold">
-                  {formatARS(item.priceArs * item.quantity)}
-                </span>
+                <Precio
+                  ars={item.priceArs * item.quantity}
+                  usd={item.priceUsd * item.quantity}
+                  anclado
+                  fuerte="0.875rem"
+                  suave="0.6875rem"
+                  className="shrink-0 items-end"
+                />
               </li>
             ))}
           </ul>
 
-          <div className="border-line mt-4 flex items-baseline justify-between border-t pt-4">
+          {/*
+            Acá los pesos no se mueven aunque el sitio esté en dólares.
+
+            No es una referencia: es el importe que Mercado Pago va a cobrar.
+            Mostrar dólares grandes sería anunciar un pago en una moneda en la
+            que nadie va a pagar.
+          */}
+          <div className="border-line mt-4 flex items-end justify-between border-t pt-4">
             <span className="text-muted-foreground">Total</span>
-            <span className="tnum text-2xl font-semibold">{formatARS(total)}</span>
+            <Precio
+              ars={total}
+              usd={items.reduce((n, i) => n + i.priceUsd * i.quantity, 0)}
+              anclado
+              fuerte="1.5rem"
+              suave="0.8125rem"
+              className="items-end"
+            />
           </div>
 
           {referencia ? (

@@ -20,6 +20,7 @@ export function Precio({
   fuerte = "1.25rem",
   suave = "0.8125rem",
   desde = false,
+  anclado = false,
   className,
 }: {
   ars: number;
@@ -31,11 +32,19 @@ export function Precio({
   suave?: string;
   /** Antepone "Desde" cuando el producto tiene variantes de distinto precio. */
   desde?: boolean;
+  /**
+   * No sigue la moneda elegida: los pesos van siempre grandes.
+   *
+   * Es para el checkout y el carrito, donde el número no es una referencia sino
+   * el importe que Mercado Pago va a cobrar. Mostrar dólares grandes ahí sería
+   * decirle a alguien que va a pagar en una moneda en la que no va a pagar.
+   */
+  anclado?: boolean;
   className?: string;
 }) {
   return (
     <div
-      className={cn("precio tnum", className)}
+      className={cn("precio tnum", anclado && "precio-anclado", className)}
       style={
         {
           "--precio-fuerte": fuerte,

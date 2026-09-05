@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Check } from "lucide-react";
-import { formatARS } from "@/utils/format";
 import { leadVariant } from "@/lib/catalog";
 import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
+import { Precio } from "./Precio";
 import type { Product } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -91,9 +91,17 @@ export function ProductComparison({
                         {p.name}
                       </span>
                       {lead && (
-                        <span className="tnum text-muted-foreground mt-0.5 block text-sm">
-                          Desde {formatARS(lead.priceArs)}
-                        </span>
+                        // Sigue la moneda elegida, igual que la tarjeta y la
+                        // ficha: quedaba en pesos justo debajo de un precio en
+                        // dólares y las dos columnas no se podían comparar.
+                        <Precio
+                          ars={lead.priceArs}
+                          usd={lead.priceUsd}
+                          desde
+                          fuerte="0.875rem"
+                          suave="0.75rem"
+                          className="mt-0.5"
+                        />
                       )}
                       {actual && (
                         <span className="text-foreground mt-1.5 inline-flex items-center gap-1 text-xs font-semibold">

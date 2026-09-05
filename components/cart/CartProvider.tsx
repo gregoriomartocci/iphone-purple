@@ -18,6 +18,8 @@ export type CartItem = {
   name: string;
   variantLabel: string;
   priceArs: number;
+  /** El mismo precio en dólares, para poder mostrarlo en las dos monedas. */
+  priceUsd: number;
   image: string | null;
   /** Stock disponible al agregarlo, para no dejar sumar de más. */
   maxStock: number;

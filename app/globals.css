@@ -350,6 +350,28 @@
     line-height: 1.15;
   }
 
+  /* Donde el importe es el que se cobra, los pesos no se mueven. */
+  :root[data-moneda="usd"] .precio-anclado > .moneda-ars {
+    order: 1;
+    font-size: var(--precio-fuerte);
+    font-weight: 600;
+    color: var(--foreground);
+    line-height: 1.15;
+  }
+  :root[data-moneda="usd"] .precio-anclado > .moneda-usd {
+    order: 2;
+    font-size: var(--precio-suave);
+    font-weight: 400;
+    color: var(--muted-foreground);
+    line-height: 1.35;
+  }
+  :root[data-moneda="usd"] .precio-anclado > .moneda-ars .desde {
+    display: inline;
+  }
+  :root[data-moneda="usd"] .precio-anclado > .moneda-usd .desde {
+    display: none;
+  }
+
   /* "Desde" acompaña al número que está grande, no siempre al de pesos. */
   .precio .desde {
     font-size: 0.75rem;

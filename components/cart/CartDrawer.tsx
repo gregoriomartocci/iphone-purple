@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCart } from "./CartProvider";
-import { formatARS } from "@/utils/format";
+import { Precio } from "@/components/site/Precio";
 import { cn } from "@/lib/utils";
 
 /** Lo que dura la animación de salida, en sincronía con `.drawer-out`. */
@@ -165,9 +165,13 @@ export function CartDrawer() {
                         </button>
                       </div>
 
-                      <span className="tnum text-foreground font-semibold">
-                        {formatARS(item.priceArs * item.quantity)}
-                      </span>
+                      <Precio
+                        ars={item.priceArs * item.quantity}
+                        usd={item.priceUsd * item.quantity}
+                        fuerte="0.9375rem"
+                        suave="0.75rem"
+                        className="items-end"
+                      />
                     </div>
                   </div>
 
@@ -186,7 +190,14 @@ export function CartDrawer() {
             <footer className="border-line bg-surface border-t p-5">
               <div className="flex items-baseline justify-between">
                 <span className="text-muted-foreground">Total</span>
-                <span className="tnum text-2xl font-semibold">{formatARS(total)}</span>
+                <Precio
+                  ars={total}
+                  usd={items.reduce((n, i) => n + i.priceUsd * i.quantity, 0)}
+                  anclado
+                  fuerte="1.5rem"
+                  suave="0.8125rem"
+                  className="items-end"
+                />
               </div>
               <p className="text-muted-foreground mt-1 text-sm">
                 El envío se coordina al confirmar el pedido.
