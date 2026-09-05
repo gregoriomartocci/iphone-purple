@@ -210,7 +210,69 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
     },
   ],
   "dyson-hd18-hair-dryer-r-professional": [],
+  "dyson-hs08-id-straightwavy": [
+    {
+      url: "/productos/dyson-hs08-id-straightwavy/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
+  "garmin-approach-s70": [
+    {
+      url: "/productos/garmin-approach-s70/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
+  "garmin-epix-pro-gen-2": [
+    {
+      url: "/productos/garmin-epix-pro-gen-2/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
   "garmin-instinct-2s-solar": [],
+  "ipad-11-generacion": [
+    {
+      url: "/productos/ipad-11-generacion/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f5f5f7",
+      video: false,
+    },
+    {
+      url: "/productos/ipad-11-generacion/2.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f5f5f7",
+      video: false,
+    },
+    {
+      url: "/productos/ipad-11-generacion/3.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f5f5f7",
+      video: false,
+    },
+  ],
   "ipad-air-11-m4": [
     {
       url: "/productos/ipad-air-11-m4/1.jpg",
@@ -1128,6 +1190,17 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
     },
   ],
   "iphone-17-pro-max": [],
+  "kieslect-calling-watch-kr3": [
+    {
+      url: "/productos/kieslect-calling-watch-kr3/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
   "logitech-g29-driving-force": [
     {
       url: "/productos/logitech-g29-driving-force/1.jpg",
