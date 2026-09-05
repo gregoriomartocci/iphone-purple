@@ -96,6 +96,13 @@ export function ProductCard({
             src={image.url}
             alt={image.alt}
             fill
+            // Sin esto, apretar y mover el mouse sobre la foto arranca el
+            // arrastre nativo de imagen del navegador —la "fantasma" que sale
+            // pegada al cursor— y ese gesto le roba los eventos al arrastre
+            // del carrusel: el pointerdown llega, pero el pointermove que
+            // sigue nunca aparece porque el navegador ya está en modo drag de
+            // imagen.
+            draggable={false}
             sizes="(max-width: 640px) 50vw, (max-width: 1280px) 33vw, (max-width: 1536px) 25vw, 20vw"
             className={cn(
               "transition-transform duration-[600ms] ease-out group-hover:scale-[1.06]",

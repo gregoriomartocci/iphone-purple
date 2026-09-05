@@ -43,6 +43,26 @@ export function ProductRail({
   const pista = useRef<HTMLDivElement>(null);
   const [quieto, setQuieto] = useState(false);
 
+  /**
+   * Arrastre con mouse.
+   *
+   * El teléfono ya desliza con el dedo gracias al scroll nativo; esto es solo
+   * para el mouse, que no tiene forma de arrastrar un `overflow-x-auto` de
+   * fábrica. Por eso todo lo que sigue mira `pointerType === "mouse"` y deja
+   * el touch intacto: capturar también el puntero táctil pisaría el scroll
+   * nativo y el momentum que el navegador ya resuelve mejor que un cálculo a
+   * mano.
+   *
+   * Va en refs y no en estado: el handler de "moverse" corre en cada pixel
+   * del arrastre, y disparar un render por cada uno sería carísimo para algo
+   * que no necesita pintar nada distinto mientras se mueve —el propio scroll
+   * ya se ve—.
+   */
+  const arrastre = useRef<{ x: number; scrollInicial: number; movido: boolean } | null>(
+    null
+  );
+  const [agarrado, setAgarrado] = useState(false);
+
   /** Mueve la pista una tarjeta; al llegar al final vuelve al principio. */
   const avanzar = useCallback((paso: 1 | -1) => {
     const el = pista.current;
@@ -65,6 +85,47 @@ export function ProductRail({
     const id = window.setInterval(() => avanzar(1), INTERVALO);
     return () => window.clearInterval(id);
   }, [auto, quieto, avanzar]);
+
+  /**
+   * Escucha en window, no en la pista.
+   *
+   * Es lo que evita el problema que ya había pasado en la galería de
+   * producto: si el arrastre se sigue con `setPointerCapture` sobre la pista,
+   * el clic que suelta el mouse arriba de una tarjeta le queda robado al
+   * link y la tarjeta deja de abrir. Escuchando en window en cambio se sigue
+   * el movimiento aunque el mouse salga del carrusel, y el clic de cada
+   * tarjeta queda intacto.
+   */
+  useEffect(() => {
+    if (!agarrado) return;
+
+    const mover = (e: PointerEvent) => {
+      const el = pista.current;
+      const inicio = arrastre.current;
+      if (!el || !inicio) return;
+      const delta = e.clientX - inicio.x;
+      if (Math.abs(delta) > 3) inicio.movido = true;
+      el.scrollLeft = inicio.scrollInicial - delta;
+    };
+
+    const soltar = () => {
+      setAgarrado(false);
+      // Si hubo arrastre real, el próximo clic sobre una tarjeta es el gesto
+      // de soltar el mouse, no una intención de entrar al producto: el
+      // handler de clic de más abajo lo cancela mientras esto siga en true.
+      if (!arrastre.current?.movido) arrastre.current = null;
+      else window.setTimeout(() => (arrastre.current = null), 0);
+    };
+
+    window.addEventListener("pointermove", mover);
+    window.addEventListener("pointerup", soltar);
+    window.addEventListener("pointercancel", soltar);
+    return () => {
+      window.removeEventListener("pointermove", mover);
+      window.removeEventListener("pointerup", soltar);
+      window.removeEventListener("pointercancel", soltar);
+    };
+  }, [agarrado]);
 
   if (products.length === 0) return null;
 
@@ -116,7 +177,38 @@ export function ProductRail({
       */}
       <div
         ref={pista}
-        className="scrollbar-hide mt-4 flex snap-x snap-mandatory gap-5 overflow-x-auto pt-6 pb-14"
+        onPointerDown={(e) => {
+          // Solo mouse: el teléfono ya desliza con el dedo, y sumarle esto
+          // ahí compite con el scroll nativo en vez de ayudarlo.
+          if (e.pointerType !== "mouse") return;
+          arrastre.current = {
+            x: e.clientX,
+            scrollInicial: pista.current!.scrollLeft,
+            movido: false,
+          };
+          setAgarrado(true);
+        }}
+        onClickCapture={(e) => {
+          // El clic que suelta el arrastre arriba de una tarjeta no es la
+          // intención de entrar al producto.
+          if (arrastre.current?.movido) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }}
+        // Un link o una imagen arrastrados arrancan el drag nativo del
+        // navegador, que le roba los eventos de puntero al arrastre de acá:
+        // el pointerdown llega pero el pointermove que sigue, no. La imagen
+        // ya lo tiene resuelto con `draggable={false}`; esto cubre cualquier
+        // otro hijo —el texto del link, por ejemplo— que también lo sea por
+        // defecto.
+        onDragStart={(e) => e.preventDefault()}
+        className={cn(
+          "scrollbar-hide mt-4 flex gap-5 overflow-x-auto pt-6 pb-14",
+          agarrado
+            ? "cursor-grabbing snap-none select-none"
+            : "cursor-grab snap-x snap-mandatory"
+        )}
       >
         {products.map((product, i) => (
           <div
