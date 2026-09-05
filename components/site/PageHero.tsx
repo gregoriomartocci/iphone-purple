@@ -110,7 +110,11 @@ export const PAGE_PHOTOS = {
   // escena oscura—. Con ese foco el equipo cae en 0.498 de la banda, o sea
   // centrado. Con 0.62 quedaba en 0.409, empujado contra el borde de arriba.
   catalogo: `https://images.unsplash.com/photo-1531297484001-80022131f5a1?${recorte(0.565)}`,
-  planCanje: `https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?${recorte()}`,
+  // Dos iPhone Pro Max de generaciones distintas, uno al lado del otro: es el
+  // Plan Canje en una imagen —entregás el de la izquierda, te llevás el de la
+  // derecha—. La anterior era un iPhone X con iOS 11, de 2017: un teléfono de
+  // ocho años atrás ilustrando la página donde se cotiza lo que vale el tuyo.
+  planCanje: `https://images.unsplash.com/photo-1727079513748-d03e7b8c8947?${recorte()}`,
   reparaciones: `https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?${recorte()}`,
   blog: `https://images.unsplash.com/photo-1519389950473-47ba0277781c?${recorte()}`,
   contacto: `https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?${recorte()}`,

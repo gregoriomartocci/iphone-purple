@@ -72,10 +72,18 @@ function fotosDe(slug: string, seed: SeedProduct): ProductImage[] {
  * se muestra.
  */
 const PORTADAS_BLOG = {
-  iphone: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab",
-  iphonePro: "https://images.unsplash.com/photo-1695048133142-1a20484d2569",
-  bateria: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5",
-  taller: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789",
+  // Dos iPhone Pro de generaciones seguidas, uno al lado del otro: la nota es
+  // una comparación, y la portada la muestra sin tener que explicarla.
+  comparacion: "https://images.unsplash.com/photo-1726732970014-f2df88c87dd3",
+  // Un iPhone abierto con las herramientas al lado. Es lo que ilustra
+  // "revisar": mirar el equipo por dentro antes de darlo por bueno.
+  revision: "https://images.unsplash.com/photo-1746005718004-1f992c399428",
+  // Macro del módulo de cámara. Sirve para la nota de tasación porque el tema
+  // es mirar de cerca, y el detalle del vidrio y el titanio se lee enorme.
+  detalle: "https://images.unsplash.com/photo-1761435922542-f25f1c5fee5a",
+  // iPhone cargando, con los widgets de batería a la vista en la pantalla de
+  // bloqueo: la nota habla exactamente de ese número.
+  bateria: "https://images.unsplash.com/photo-1682828511261-1d481875deb6",
 } as const;
 
 type SeedVariant = {
@@ -1509,7 +1517,7 @@ El 16 rinde alrededor de dos horas más de video. Si tu 15 ya tiene la batería 
 ## Conclusión
 
 Si venís de un iPhone 13 o anterior, el salto al 16 se siente muchísimo. Si tenés un 15 en buen estado, esperá una generación más — o traelo por Plan Canje cuando salga el 17.`,
-    coverUrl: `${PORTADAS_BLOG.iphone}?auto=format&fit=crop&w=1200&q=80`,
+    coverUrl: `${PORTADAS_BLOG.comparacion}?auto=format&fit=crop&w=1200&h=750&q=80`,
     author: "Equipo iPhone Purple",
     publishedAt: "2026-08-18",
   },
@@ -1546,7 +1554,7 @@ Sacá una foto con cada lente, probá el Face ID y hacé una llamada. Son treint
 Enchufalo y movelo. Si la carga se corta al mover el cable, el pin está gastado.
 
 Todos los equipos que vendemos pasan por estos seis pasos y van con garantía escrita.`,
-    coverUrl: `${PORTADAS_BLOG.bateria}?auto=format&fit=crop&w=1200&q=80`,
+    coverUrl: `${PORTADAS_BLOG.revision}?auto=format&fit=crop&w=1200&h=750&q=80`,
     author: "Equipo iPhone Purple",
     publishedAt: "2026-07-30",
   },
@@ -1580,7 +1588,7 @@ Caja, cable original y accesorios suman un poco. La factura de compra también, 
 Bloqueo de iCloud pendiente, pantalla no original o daño por líquido cambian bastante el número. Nada de esto lo descubrimos después: lo revisamos con vos en el mostrador.
 
 Podés cotizar online en dos minutos y después traerlo para confirmar. El valor que te damos online se respeta si el equipo está como lo describiste.`,
-    coverUrl: `${PORTADAS_BLOG.iphonePro}?auto=format&fit=crop&w=1200&q=80`,
+    coverUrl: `${PORTADAS_BLOG.detalle}?auto=format&fit=crop&w=1200&h=750&q=80`,
     author: "Equipo iPhone Purple",
     publishedAt: "2026-07-12",
   },
@@ -1607,7 +1615,7 @@ El calor, sobre todo. Dejar el equipo al sol o cargarlo dentro de una funda grue
 ## Cuándo cambiarla
 
 Si estás por debajo de 85 % y te queda corto el día, el cambio de batería es la mejor inversión posible: por una fracción del precio de un equipo nuevo, recuperás la autonomía original.`,
-    coverUrl: `${PORTADAS_BLOG.iphone}?auto=format&fit=crop&w=1200&q=80`,
+    coverUrl: `${PORTADAS_BLOG.bateria}?auto=format&fit=crop&w=1200&h=750&q=80`,
     author: "Equipo iPhone Purple",
     publishedAt: "2026-06-25",
   },
