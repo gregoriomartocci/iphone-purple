@@ -201,12 +201,17 @@ recortado sobre blanco —todos del mismo trazo, para que la grilla se vea
 pareja— y sigue con fotos reales del dorso o el perfil.
 
 **Para poner fotos propias no hace falta tocar código**: se dejan en
-`public/productos/<slug>/` y tienen prioridad sobre las descargadas.
+`public/productos/<slug>/`, se corre `npm run fotos:indexar` y tienen
+prioridad sobre las descargadas.
 
-Los modelos sin foto propia todavía —Motorola G06 a G67, Garmin Epix y Approach,
-Kieslect, Redmi Pad 2, Poco F8 Ultra y los Dyson HD16/HD18/HS08— quedan con una
-foto genérica de familia. De esos modelos exactos no hay material libre, y
-mostrar otro equipo sería peor que no mostrar ninguno.
+Los modelos sin foto propia todavía no muestran ninguna: la ficha avisa "Foto
+en camino" en vez de rellenar con la de otro equipo. Mostrar un modelo
+distinto del que se vende es peor que no mostrar nada.
+
+**[docs/criterio-fotos.md](docs/criterio-fotos.md)** es la regla completa de
+qué foto sirve y cuál no —según el equipo esté sellado o usado, qué se
+prohíbe siempre, y cómo verificarlo antes de publicar—. Cualquier foto nueva,
+puesta a mano o traída por el pipeline de proveedores, se mide contra eso.
 
 ---
 
