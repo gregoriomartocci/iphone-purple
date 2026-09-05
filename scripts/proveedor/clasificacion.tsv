@@ -350,3 +350,9 @@ extension-3	poco-f8-ultra	poco-f8-ultra	poco-f8-ultra-azul-dorso-y-frente	1
 extension-3	wdblack	wdblack-nvme-ssd-para-ps5	wdblack-ssd-sn850x-con-disipador	1
 extension-3	xiaomi-band-1	xiaomi-band-9-active	xiaomi-band-9-active-rosa-perfil	1
 extension-3	xiaomi-band-2	xiaomi-band-9-active	xiaomi-band-9-active-blanco-perfil	2
+# --- cuarta tanda de la extensión. La carpeta que se pidió no se creó: la
+# extensión aplastó la ruta en el nombre, así que los archivos quedaron
+# sueltos en ~/Downloads con el prefijo "fotos-iphone-purple_". De los 23,
+# casi todos son de productos que ya tienen foto. Sirven tres, y una se cae
+# sola en el chequeo de fondo.
+extension-4	moto-g15	_descartado	moto-g15-fondo-negro-medido-000000
