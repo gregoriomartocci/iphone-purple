@@ -27,7 +27,8 @@
     "proveedor:publicar": "node scripts/proveedor/publicar.mjs && npm run fotos:indexar",
     "fotos:importar": "tsx scripts/importar-fotos.mjs",
     "fotos:pedido": "tsx scripts/pedido-fotos.mjs",
-    "whatsapp": "node scripts/whatsapp/leer.mjs"
+    "whatsapp": "node scripts/whatsapp/leer.mjs",
+    "whatsapp:servidor": "node scripts/whatsapp/servidor.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",

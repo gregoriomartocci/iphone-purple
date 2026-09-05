@@ -3,7 +3,7 @@
 GENERADO por `npm run fotos:pedido`. Se regenera solo cada vez que entran
 fotos nuevas, así no se piden las que ya tenemos.
 
-Son **16 productos sin ninguna imagen**: hoy su ficha sale vacía.
+Son **20 productos sin ninguna imagen**: hoy su ficha sale vacía.
 
 Copiá todo lo que está entre las líneas y pegalo en la extensión de Claude en
 Chrome. Cuando termine:
@@ -48,6 +48,7 @@ Si uno se resiste, anotalo y seguí con el siguiente.
 **Celulares**
 
 - `iphone-17-1.jpg` `-2` `-3` · Apple iPhone 17 — Naranja Cósmico, Blanco Nube
+- `iphone-17-pro-max-1.jpg` `-2` `-3` · Apple iPhone 17 Pro Max — Naranja Cósmico, Blanco Nube
 - `iphone-12-pro-1.jpg` `-2` `-3` · Apple iPhone 12 Pro — Negro, Verde
 - `iphone-12-pro-max-1.jpg` `-2` `-3` · Apple iPhone 12 Pro Max — Negro, Verde
 - `iphone-11-1.jpg` `-2` `-3` · Apple iPhone 11 — Blanco, Negro
@@ -62,6 +63,7 @@ Si uno se resiste, anotalo y seguí con el siguiente.
 **Relojes**
 
 - `xiaomi-band-9-active-1.jpg` `-2` `-3` · Xiaomi Band 9 Active — Rosa, Blanco
+- `garmin-instinct-2s-solar-1.jpg` `-2` `-3` · Garmin Instinct 2S Solar — Grafito
 - `garmin-epix-pro-gen-2-1.jpg` `-2` `-3` · Garmin Epix Pro Gen 2 — Gris, Blanco
 - `garmin-approach-s70-1.jpg` `-2` `-3` · Garmin Approach S70 — Negro
 - `kieslect-calling-watch-kr3-1.jpg` `-2` `-3` · Kieslect Calling Watch Kr3 — Denim
@@ -69,8 +71,13 @@ Si uno se resiste, anotalo y seguí con el siguiente.
 - `kieslect-lady-watch-elfin-1.jpg` `-2` `-3` · Kieslect Lady Watch Elfin — Negro Grafito, Rosa Dorado, Plata
 - `kieslect-al-watch-elite-2-1.jpg` `-2` `-3` · Kieslect Al Watch Elite 2 — Titan Black
 
+**Notebooks**
+
+- `macbook-neo-13-1.jpg` `-2` `-3` · Apple MacBook Neo 13 — Silver, Indigo, Blush
+
 **Tablets**
 
 - `ipad-11-generacion-1.jpg` `-2` `-3` · Apple iPad 11ª generación — Silver, Blue, Yellow
+- `ipad-air-13-m3-1.jpg` `-2` `-3` · Apple iPad Air 13 M3 — Starlight, Blue, Purple
 
 ---

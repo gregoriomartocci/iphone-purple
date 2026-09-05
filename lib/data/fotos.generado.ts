@@ -220,17 +220,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "garmin-instinct-2s-solar": [
-    {
-      url: "/productos/garmin-instinct-2s-solar/1.jpg",
-      autor: "Lomrjyo",
-      licencia: "CC BY-SA 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:Garmin_Instinct_2s.jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-  ],
+  "garmin-instinct-2s-solar": [],
   "ipad-air-11-m4": [
     {
       url: "/productos/ipad-air-11-m4/1.jpg",
@@ -252,27 +242,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "ipad-air-13-m3": [
-    {
-      url: "/productos/ipad-air-13-m3/1.jpg",
-      autor: "茅野ふたば",
-      licencia: "CC BY-SA 4.0",
-      origen:
-        "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3)_backside.jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-    {
-      url: "/productos/ipad-air-13-m3/2.jpg",
-      autor: "茅野ふたば",
-      licencia: "CC BY-SA 4.0",
-      origen: "https://commons.wikimedia.org/wiki/File:IPad_Air_11-inch_(M3).jpg",
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-  ],
+  "ipad-air-13-m3": [],
   "ipad-air-13-m4": [
     {
       url: "/productos/ipad-air-13-m4/1.jpg",
@@ -1222,17 +1192,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "iphone-17-pro-max": [
-    {
-      url: "/productos/iphone-17-pro-max/1.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-  ],
+  "iphone-17-pro-max": [],
   "logitech-g29-driving-force": [
     {
       url: "/productos/logitech-g29-driving-force/1.jpg",
@@ -1325,17 +1285,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "macbook-neo-13": [
-    {
-      url: "/productos/macbook-neo-13/1.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
-      recorte: "foto",
-      fondo: null,
-      video: false,
-    },
-  ],
+  "macbook-neo-13": [],
   "macbook-pro-m4-pro-14": [
     {
       url: "/productos/macbook-pro-m4-pro-14/1.jpg",

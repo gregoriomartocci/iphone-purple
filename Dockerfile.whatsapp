@@ -1,0 +1,22 @@
+# Imagen para el lector de WhatsApp que queda siempre prendido.
+#
+# Es una imagen aparte de la del sitio: el sitio se despliega solo (Vercel lo
+# hace por su cuenta a partir del repo) y esto necesita un proceso persistente
+# con disco propio, que es justo lo que Vercel no ofrece.
+FROM node:22-slim
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+# Solo lo que este proceso usa: no hace falta Next ni el resto del sitio acá.
+RUN npm install --omit=dev --no-audit --no-fund baileys qrcode-terminal
+
+COPY scripts/whatsapp/servidor.mjs ./scripts/whatsapp/servidor.mjs
+
+# Ahí vive la sesión vinculada. Un volumen montado en este punto es lo que
+# hace que no haya que volver a escanear el QR en cada reinicio.
+VOLUME /datos
+ENV AUTH_DIR=/datos/whatsapp-auth
+
+EXPOSE 8080
+CMD ["node", "scripts/whatsapp/servidor.mjs"]
