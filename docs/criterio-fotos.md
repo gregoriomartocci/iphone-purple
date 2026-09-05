@@ -64,6 +64,21 @@ imagen entera, no el nombre del archivo. Antes de dar una foto por buena:
    de esa generación; una etiqueta legible) antes de publicar. Una foto
    correcta pero del modelo equivocado es peor que no tener foto.
 
+## Si un producto "no existe", verificarlo antes de decirlo
+
+El catálogo tiene equipos más nuevos que lo que sabe cualquier modelo de
+lenguaje. Pasó con la MacBook Neo 13: Apple la anunció en marzo de 2026 y
+acá se afirmó que no existía, que el nombre estaba mal y que había que
+revisar la ficha —cuando la ficha estaba bien y el producto se vende—.
+
+La regla, entonces: **si un producto del catálogo no suena conocido, eso no
+es evidencia de nada.** Es más probable que sea posterior al corte de
+conocimiento a que el negocio haya cargado mal un nombre. Antes de sugerir
+que se corrija o se saque, hay que buscarlo en la web y confirmarlo contra
+la página oficial del fabricante. Lo mismo vale para colores y variantes que
+suenan raros: los de la MacBook Neo son Silver, Blush, Citrus e Indigo, que
+no se parecen a ninguna notebook anterior de Apple, y son correctos.
+
 ## Cuando algo se ve mal después de corregido
 
 Antes de asumir que la corrección no entró: **el archivo se sirve siempre por
