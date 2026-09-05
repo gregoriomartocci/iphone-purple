@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -49,29 +50,79 @@ function LoginContent() {
   }
 
   const fieldClass =
-    "h-12 w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ink";
+    "h-12 w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 text-[15px] text-white outline-none transition-all placeholder:text-white/30 " +
+    "focus-visible:border-[#8b5cf6]/70 focus-visible:bg-white/[0.07] focus-visible:ring-4 focus-visible:ring-[#5e16eb]/25";
 
   return (
-    <div className="bg-surface flex min-h-dvh items-center justify-center px-5">
-      <div className="w-full max-w-sm">
+    <div className="relative flex min-h-dvh items-center justify-center overflow-hidden bg-[#07070a] px-5 py-10">
+      {/*
+        El fondo, en cuatro capas.
+
+        La foto es del stock real y va casi apagada: a plena luz le compite al
+        formulario, y lo que tiene que aportar es textura para que el vidrio
+        tenga algo que difuminar. Sin nada detrás, un `backdrop-filter` no se
+        distingue de un fondo gris.
+      */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        {/*
+          El equipo va inclinado y saliéndose por la derecha, no centrado.
+
+          Centrado se transparentaba la manzana justo detrás del formulario: el
+          vidrio deja pasar la silueta y quedaba el logo de otra marca atrás del
+          de la nuestra. Corrido a un costado aporta la textura que el
+          `backdrop-filter` necesita sin competir con lo que hay que leer.
+        */}
+        <div className="absolute top-1/2 -right-[8%] hidden h-[150vh] w-[62vw] -translate-y-1/2 rotate-[14deg] lg:block">
+          <Image
+            src="/productos/iphone-15-pro-max/1.jpg"
+            alt=""
+            fill
+            priority
+            sizes="60vw"
+            className="object-contain opacity-[0.5]"
+          />
+        </div>
+
+        <div
+          className="aurora aurora-1 -top-[18%] left-[-12%] h-[70vh] w-[70vh]"
+          style={{ background: "radial-gradient(circle, #5e16eb 0%, transparent 66%)" }}
+        />
+        <div
+          className="aurora aurora-2 right-[-6%] bottom-[-24%] h-[64vh] w-[64vh] opacity-70"
+          style={{ background: "radial-gradient(circle, #2563eb 0%, transparent 68%)" }}
+        />
+
+        {/* Viñeta: apaga los bordes y empuja la mirada al centro. */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_18%,#07070a_88%)]" />
+        {/* Y una banda vertical detrás de la tarjeta, para que ninguna forma del
+            fondo se lea a través del vidrio. */}
+        <div className="absolute inset-y-0 left-1/2 w-[46rem] max-w-[92vw] -translate-x-1/2 bg-[linear-gradient(90deg,transparent,rgba(7,7,10,0.82)_22%,rgba(7,7,10,0.82)_78%,transparent)]" />
+        <div className="grano absolute inset-0 opacity-[0.18] mix-blend-overlay" />
+      </div>
+
+      <div className="entra-vidrio relative w-full max-w-[26rem]">
         <Link
           href="/"
-          className="flex justify-center"
+          className="flex justify-center transition-opacity hover:opacity-80"
           aria-label="iPhone Purple — inicio"
         >
+          {/* En blanco, que es la versión que corresponde sobre fondo oscuro:
+              antes se servía la misma sobre blanco y el texto desaparecía. */}
           <Logo className="h-9" />
         </Link>
 
-        <div className="border-line bg-surface mt-6 rounded-2xl border p-8">
-          <h1 className="text-xl font-semibold">Panel de administración</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
+        <div className="vidrio mt-7 rounded-3xl p-8">
+          <h1 className="text-[1.35rem] font-semibold tracking-[-0.01em] text-white">
+            Panel de administración
+          </h1>
+          <p className="mt-1.5 text-sm text-white/45">
             Ingresá con tu cuenta para gestionar el stock.
           </p>
 
           <button
             type="button"
             onClick={() => signIn("google", { callbackUrl: redirect })}
-            className="border-line text-foreground hover:border-foreground/35 mt-6 flex h-12 w-full items-center justify-center gap-2.5 rounded-xl border text-sm font-medium transition-colors"
+            className="mt-7 flex h-12 w-full items-center justify-center gap-2.5 rounded-xl border border-white/12 bg-white/[0.05] text-sm font-medium text-white transition-colors hover:border-white/25 hover:bg-white/[0.09]"
           >
             <svg className="size-4" viewBox="0 0 24 24" aria-hidden>
               <path
@@ -94,21 +145,21 @@ function LoginContent() {
             Continuar con Google
           </button>
 
-          <div className="my-5 flex items-center gap-3">
-            <span className="bg-line h-px flex-1" />
-            <span className="text-muted-foreground text-xs">o</span>
-            <span className="bg-line h-px flex-1" />
+          <div className="my-6 flex items-center gap-3">
+            <span className="h-px flex-1 bg-gradient-to-r from-transparent to-white/12" />
+            <span className="text-xs text-white/30">o</span>
+            <span className="h-px flex-1 bg-gradient-to-l from-transparent to-white/12" />
           </div>
 
           {error && (
-            <p className="bg-destructive/10 text-destructive mb-3 rounded-xl px-3 py-2.5 text-sm">
+            <p className="mb-4 rounded-xl border border-red-500/25 bg-red-500/10 px-3.5 py-2.5 text-sm text-red-300">
               {error}
             </p>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label htmlFor="email" className="text-foreground mb-1.5 block text-sm">
+              <label htmlFor="email" className="mb-1.5 block text-sm text-white/70">
                 Email
               </label>
               <input
@@ -120,12 +171,12 @@ function LoginContent() {
                 className={fieldClass}
               />
               {errors.email && (
-                <p className="text-destructive mt-1.5 text-xs">{errors.email.message}</p>
+                <p className="mt-1.5 text-xs text-red-300">{errors.email.message}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="password" className="text-foreground mb-1.5 block text-sm">
+              <label htmlFor="password" className="mb-1.5 block text-sm text-white/70">
                 Contraseña
               </label>
               <input
@@ -137,16 +188,14 @@ function LoginContent() {
                 className={fieldClass}
               />
               {errors.password && (
-                <p className="text-destructive mt-1.5 text-xs">
-                  {errors.password.message}
-                </p>
+                <p className="mt-1.5 text-xs text-red-300">{errors.password.message}</p>
               )}
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="bg-ink hover:bg-ink/85 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-medium text-white transition-colors disabled:opacity-60"
+              className="mt-1 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#5e16eb] text-sm font-semibold text-white shadow-[0_10px_34px_-10px_#5e16eb] transition-all hover:bg-[#6d28f0] hover:shadow-[0_14px_44px_-10px_#5e16eb] active:scale-[0.985] disabled:opacity-60 disabled:shadow-none"
             >
               {loading && <Loader2 className="size-4 animate-spin" />}
               {loading ? "Ingresando…" : "Ingresar"}
@@ -156,7 +205,7 @@ function LoginContent() {
 
         <Link
           href="/"
-          className="text-muted-foreground hover:text-foreground mt-6 block text-center text-sm transition-colors"
+          className="mt-6 block text-center text-sm text-white/35 transition-colors hover:text-white/70"
         >
           Volver a la tienda
         </Link>
