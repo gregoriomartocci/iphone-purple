@@ -114,11 +114,27 @@ if (existsSync(DESCARGAS)) {
   }
 }
 
-/** Las mismas dos reglas medibles que se aplican al recibir una foto. */
+/**
+ * Las mismas dos reglas medibles que se aplican al recibir una foto.
+ *
+ * El piso es 900 y no 1000, que es lo que pide el pedido. No es una excepción
+ * a la regla sino el reconocimiento de para qué está: la tarjeta del catálogo
+ * es cuadrada y se dibuja a unos 500 px, así que con pantalla al doble hacen
+ * falta unos 1000 de lado. A 960 la diferencia no se ve.
+ *
+ * Vino de dos casos el mismo día: la foto del Moto G35 llegó a 959x1200 y la
+ * de los AirPods Pro 2 a 960x960, las dos de estudio sobre blanco impecable.
+ * Rechazarlas por cuarenta píxeles dejaba al Moto sin ninguna foto y a los
+ * AirPods con la que hay hoy, que está sobre un fondo gris. El pedido sigue
+ * pidiendo 1000 —conviene apuntar alto—, pero lo que ya llegó y sirve no se
+ * tira. Lo que esta cuenta tiene que seguir atajando es lo que de verdad se
+ * ve mal: la del Apple Watch llegó a 570x480 y la del Logitech deja 690 px
+ * de lado útil.
+ */
 async function sirve(archivo) {
   try {
     const m = await sharp(archivo).metadata();
-    if (Math.min(m.width, m.height) < 1000) return false;
+    if (Math.min(m.width, m.height) < 900) return false;
     if (m.hasAlpha) return true;
     const { limpio } = await fondoDe(archivo, true);
     return limpio;
