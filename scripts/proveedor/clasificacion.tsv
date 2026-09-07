@@ -368,3 +368,8 @@ extension-5	macbook-neo-13-1b	_descartado	macbook-neo-13-repetida-peor-calidad-q
 # qué producto es. No coincide con ninguna foto ya publicada.
 extension-6	iphone-14-1	_por-revisar	iphone-14-1500x1500-fondo-blanco-falta-verla
 extension-6	e23f06742c	_por-revisar	png-transparente-981x980-sin-slug-producto-desconocido
+# --- séptima tanda. La extensión ya trabaja sobre la lista de reemplazos: de
+# siete archivos, cinco son de equipos sellados con foto de ambiente al frente.
+# Las tres que se caen tienen fondo blanco impecable; el problema es el tamaño.
+extension-7	apple-watch-series-10-1	_descartado	apple-watch-570x480-muy-chica-para-la-tarjeta
+extension-7	logitech-g29-1	_descartado	logitech-g29-1200x690-lado-corto-690

@@ -3,12 +3,12 @@
 GENERADO por `npm run fotos:pedido`. Se regenera solo cada vez que entran
 fotos nuevas, así no se piden las que ya tenemos.
 
-Son **16 productos sin ninguna imagen** —hoy su ficha sale vacía— y
-**12 equipos sellados** cuya foto principal es de ambiente y hay que
+Son **15 productos sin ninguna imagen** —hoy su ficha sale vacía— y
+**9 equipos sellados** cuya foto principal es de ambiente y hay que
 reemplazar.
 
-Otros **5** quedaron fuera de la lista porque su foto ya está bajada,
-esperando que la revisen: iphone-14, redmi-15c, kieslect-calling-watch-kr-ultra-3, kieslect-al-watch-elite-2, macbook-neo-13. Esos no hay que volver a buscarlos.
+Otros **9** quedaron fuera de la lista porque su foto ya está bajada,
+esperando que la revisen: iphone-14, redmi-15c, xiaomi-17, kieslect-calling-watch-kr-ultra-3, kieslect-al-watch-elite-2, macbook-neo-13, macbook-air-m5-13, macbook-pro-m5-pro-14, macbook-pro-m5-pro-16. Esos no hay que volver a buscarlos.
 
 Copiá todo lo que está entre las líneas y pegalo en la extensión de Claude en
 Chrome. Cuando termine:
@@ -83,7 +83,6 @@ Si uno se resiste, anotalo y seguí con el siguiente.
 - `iphone-11-1.jpg` `-2` `-3` · Apple iPhone 11 — Blanco, Negro
 - `iphone-11-pro-1.jpg` `-2` `-3` · Apple iPhone 11 Pro — Blanco, Negro
 - `iphone-11-pro-max-1.jpg` `-2` `-3` · Apple iPhone 11 Pro Max — Blanco, Negro
-- `xiaomi-17-1.jpg` `-2` `-3` · Xiaomi 17 — Negro
 - `xiaomi-17-ultra-1.jpg` `-2` `-3` · Xiaomi 17 Ultra — Blanco, Verde
 - `moto-g15-1.jpg` `-2` `-3` · Motorola Moto G15 — Azul
 - `moto-g35-1.jpg` `-2` `-3` · Motorola Moto G35 — Negro
@@ -114,13 +113,10 @@ se conservan y pasan atrás.
 
 - `nintendo-switch-oled-1.jpg` · Nintendo Switch OLED (hoy: #9d8770)
 - `logitech-g29-driving-force-1.jpg` · Logitech G29 Driving Force (hoy: #a3a3a4)
-- `macbook-air-m5-13-1.jpg` · Apple MacBook Air M5 13 (hoy: #936b35)
 - `macbook-air-m5-15-1.jpg` · Apple MacBook Air M5 15 (hoy: #776651)
 - `macbook-pro-m4-pro-14-1.jpg` · Apple MacBook Pro M4 Pro 14 (hoy: #190947)
 - `macbook-pro-m5-14-1.jpg` · Apple MacBook Pro M5 14 (hoy: #190947)
-- `macbook-pro-m5-pro-14-1.jpg` · Apple MacBook Pro M5 Pro 14 (hoy: #080969)
 - `macbook-pro-m5-max-14-1.jpg` · Apple MacBook Pro M5 Max 14 (hoy: #575959)
-- `macbook-pro-m5-pro-16-1.jpg` · Apple MacBook Pro M5 Pro 16 (hoy: #c3b096)
 - `macbook-pro-m5-max-16-1.jpg` · Apple MacBook Pro M5 Max 16 (hoy: #08060a)
 - `apple-watch-series-10-1.jpg` · Apple Watch Series 10 (hoy: #bcc0bf)
 - `airpods-pro-2-1.jpg` · Apple AirPods Pro 2 (hoy: #8b9294)
