@@ -3,9 +3,12 @@
 GENERADO por `npm run fotos:pedido`. Se regenera solo cada vez que entran
 fotos nuevas, así no se piden las que ya tenemos.
 
-Son **21 productos sin ninguna imagen** —hoy su ficha sale vacía— y
+Son **16 productos sin ninguna imagen** —hoy su ficha sale vacía— y
 **12 equipos sellados** cuya foto principal es de ambiente y hay que
 reemplazar.
+
+Otros **5** quedaron fuera de la lista porque su foto ya está bajada,
+esperando que la revisen: iphone-14, redmi-15c, kieslect-calling-watch-kr-ultra-3, kieslect-al-watch-elite-2, macbook-neo-13. Esos no hay que volver a buscarlos.
 
 Copiá todo lo que está entre las líneas y pegalo en la extensión de Claude en
 Chrome. Cuando termine:
@@ -74,14 +77,12 @@ Si uno se resiste, anotalo y seguí con el siguiente.
 
 **Celulares**
 
-- `iphone-14-1.jpg` `-2` `-3` · Apple iPhone 14 — Morado Oscuro, Medianoche
 - `iphone-13-pro-max-1.jpg` `-2` `-3` · Apple iPhone 13 Pro Max — Medianoche, Azul Sierra
 - `iphone-12-pro-1.jpg` `-2` `-3` · Apple iPhone 12 Pro — Negro, Verde
 - `iphone-12-pro-max-1.jpg` `-2` `-3` · Apple iPhone 12 Pro Max — Negro, Verde
 - `iphone-11-1.jpg` `-2` `-3` · Apple iPhone 11 — Blanco, Negro
 - `iphone-11-pro-1.jpg` `-2` `-3` · Apple iPhone 11 Pro — Blanco, Negro
 - `iphone-11-pro-max-1.jpg` `-2` `-3` · Apple iPhone 11 Pro Max — Blanco, Negro
-- `redmi-15c-1.jpg` `-2` `-3` · Xiaomi Redmi 15C — Negro, Verde
 - `xiaomi-17-1.jpg` `-2` `-3` · Xiaomi 17 — Negro
 - `xiaomi-17-ultra-1.jpg` `-2` `-3` · Xiaomi 17 Ultra — Blanco, Verde
 - `moto-g15-1.jpg` `-2` `-3` · Motorola Moto G15 — Azul
@@ -100,13 +101,7 @@ Si uno se resiste, anotalo y seguí con el siguiente.
 
 **Relojes**
 
-- `kieslect-calling-watch-kr-ultra-3-1.jpg` `-2` `-3` · Kieslect Calling Watch Kr Ultra 3 — Ice White
 - `kieslect-lady-watch-elfin-1.jpg` `-2` `-3` · Kieslect Lady Watch Elfin — Negro Grafito, Rosa Dorado, Plata
-- `kieslect-al-watch-elite-2-1.jpg` `-2` `-3` · Kieslect Al Watch Elite 2 — Titan Black
-
-**Notebooks**
-
-- `macbook-neo-13-1.jpg` `-2` `-3` · Apple MacBook Neo 13 — Silver, Indigo, Blush
 
 **Estos ya tienen foto, pero la que abre la ficha no sirve**
 

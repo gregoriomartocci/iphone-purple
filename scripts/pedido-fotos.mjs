@@ -16,6 +16,8 @@
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
+import { existsSync, readdirSync } from "node:fs";
+import os from "node:os";
 import { PRODUCTS } from "../lib/data/seed.ts";
 import { FOTOS_PRODUCTO } from "../lib/data/fotos.generado.ts";
 import { CATEGORY_LABELS } from "../types/index.ts";
@@ -46,8 +48,8 @@ const ENCUADRE = {
  * anillo de afuera. Un fondo de estudio da un color parejo y claro; una foto
  * sacada sobre un escritorio da madera, y una en penumbra da casi negro.
  */
-async function fondoDe(url) {
-  const { data, info } = await sharp(path.join("public", url))
+async function fondoDe(url, absoluto = false) {
+  const { data, info } = await sharp(absoluto ? url : path.join("public", url))
     .resize(32, 32, { fit: "fill" })
     .raw()
     .toBuffer({ resolveWithObject: true });
@@ -83,8 +85,51 @@ async function fondoDe(url) {
 // de madera o en penumbra. Como tenía fotos, el pedido lo daba por resuelto.
 // Así quedaron doce equipos a estrenar presentados con foto de ambiente, los
 // AirPods Pro 2 y casi todas las MacBook entre ellos.
+/**
+ * Lo que ya está bajado y todavía no se publicó.
+ *
+ * Sin esto el pedido vuelve a pedir lo que ya está esperando en Descargas, y
+ * la extensión sale a buscar de nuevo algo que ya encontró. Pasó con la
+ * MacBook Neo: la bajó dos veces, la segunda con la mitad de calidad.
+ *
+ * Se mira sólo el nombre, que es lo que el pedido pide: <slug>-<n>.<ext>. Un
+ * archivo con otro nombre no cuenta, porque no se sabe de qué producto es.
+ */
+const DESCARGAS = process.argv[2] ?? path.join(os.homedir(), "Downloads");
+const bajados = new Set();
+if (existsSync(DESCARGAS)) {
+  for (const f of readdirSync(DESCARGAS)) {
+    if (!/\.(jpg|jpeg|png|webp)$/i.test(f)) continue;
+    const base = f
+      .replace(/^fotos-iphone-purple[_-]/i, "")
+      .replace(/\.\w+$/, "")
+      .replace(/\s*\(\d+\)$/, "")
+      .replace(/-\d+$/, "");
+    // Que el archivo exista no alcanza: si la foto bajada no cumple, el
+    // producto tiene que seguir pidiéndose. Descontarlo igual es peor que no
+    // descontar nada, porque el equipo queda sin foto y sin nadie buscándola.
+    // Pasó con el Xiaomi 17 Ultra, el iPhone 11 y el Moto G15, que llegaron
+    // por debajo del mínimo o sobre fondo sucio.
+    if (await sirve(path.join(DESCARGAS, f))) bajados.add(base);
+  }
+}
+
+/** Las mismas dos reglas medibles que se aplican al recibir una foto. */
+async function sirve(archivo) {
+  try {
+    const m = await sharp(archivo).metadata();
+    if (Math.min(m.width, m.height) < 1000) return false;
+    if (m.hasAlpha) return true;
+    const { limpio } = await fondoDe(archivo, true);
+    return limpio;
+  } catch {
+    return false;
+  }
+}
+
 const filas = [];
 const reemplazos = [];
+const esperando = [];
 for (const p of PRODUCTS) {
   const fotos = (FOTOS_PRODUCTO[p.slug] ?? []).filter((f) => !f.video);
   if (fotos.length > 0) {
@@ -94,7 +139,15 @@ for (const p of PRODUCTS) {
     if (!sellado) continue;
     const { hex, limpio } = await fondoDe(fotos[0].url);
     if (limpio) continue;
+    if (bajados.has(p.slug)) {
+      esperando.push(p.slug);
+      continue;
+    }
     reemplazos.push({ slug: p.slug, nombre: p.name, marca: p.brand, fondo: hex });
+    continue;
+  }
+  if (bajados.has(p.slug)) {
+    esperando.push(p.slug);
     continue;
   }
   const colores = [...new Set(p.variants.map((v) => v.color))].filter(Boolean);
@@ -119,7 +172,17 @@ let md = `# Pedido de fotos
 GENERADO por \`npm run fotos:pedido\`. Se regenera solo cada vez que entran
 fotos nuevas, así no se piden las que ya tenemos.
 
-Son **${filas.length} productos sin ninguna imagen** —hoy su ficha sale vacía— y\n**${reemplazos.length} equipos sellados** cuya foto principal es de ambiente y hay que\nreemplazar.
+Son **${filas.length} productos sin ninguna imagen** —hoy su ficha sale vacía— y
+**${reemplazos.length} equipos sellados** cuya foto principal es de ambiente y hay que
+reemplazar.
+${
+  esperando.length > 0
+    ? `
+Otros **${esperando.length}** quedaron fuera de la lista porque su foto ya está bajada,
+esperando que la revisen: ${esperando.join(", ")}. Esos no hay que volver a buscarlos.
+`
+    : ""
+}
 
 Copiá todo lo que está entre las líneas y pegalo en la extensión de Claude en
 Chrome. Cuando termine:
@@ -226,5 +289,6 @@ md += `\n---\n`;
 await writeFile(path.join(process.cwd(), "docs", "pedido-fotos.md"), md, "utf8");
 console.log(
   `docs/pedido-fotos.md — ${filas.length} sin ninguna foto, ` +
-    `${reemplazos.length} sellados con foto de ambiente al frente.`
+    `${reemplazos.length} sellados con foto de ambiente al frente` +
+    `${esperando.length ? `, ${esperando.length} ya bajados sin revisar` : ""}.`
 );
