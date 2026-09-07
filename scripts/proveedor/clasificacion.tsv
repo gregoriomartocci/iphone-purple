@@ -363,3 +363,8 @@ extension-5	xiaomi-17-ultra-1	_descartado	xiaomi-17-ultra-520x620-y-fondo-8c807c
 extension-5	xiaomi-17-ultra-2	_descartado	xiaomi-17-ultra-520x620-y-fondo-737b79
 extension-5	iphone-11-1	_descartado	iphone-11-600px-de-ancho-y-relacion-1a2
 extension-5	macbook-neo-13-1b	_descartado	macbook-neo-13-repetida-peor-calidad-que-la-del-5
+# --- sexta tanda. Cinco archivos, pero cuatro son el mismo PNG bajado cuatro
+# veces, y sin slug: el nombre es el hash del contenido, así que no se sabe de
+# qué producto es. No coincide con ninguna foto ya publicada.
+extension-6	iphone-14-1	_por-revisar	iphone-14-1500x1500-fondo-blanco-falta-verla
+extension-6	e23f06742c	_por-revisar	png-transparente-981x980-sin-slug-producto-desconocido
