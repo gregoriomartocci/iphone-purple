@@ -15,6 +15,7 @@
  */
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
+import sharp from "sharp";
 import { PRODUCTS } from "../lib/data/seed.ts";
 import { FOTOS_PRODUCTO } from "../lib/data/fotos.generado.ts";
 import { CATEGORY_LABELS } from "../types/index.ts";
@@ -38,13 +39,64 @@ const ENCUADRE = {
   accesorio: "de tres cuartos sobre fondo blanco",
 };
 
-// Solo los que no tienen ninguna imagen. Los que ya tienen fotos del stock
-// real se resuelven con la foto de estudio cuando aparezca; meterlos en el
-// pedido lo volvía una lista de setenta y tres que nadie iba a leer.
+/**
+ * Mide el borde de una imagen para saber sobre qué fondo está el producto.
+ *
+ * Es la misma cuenta que usa el indexador: se achica a 32x32 y se promedia el
+ * anillo de afuera. Un fondo de estudio da un color parejo y claro; una foto
+ * sacada sobre un escritorio da madera, y una en penumbra da casi negro.
+ */
+async function fondoDe(url) {
+  const { data, info } = await sharp(path.join("public", url))
+    .resize(32, 32, { fit: "fill" })
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const borde = [];
+  for (let y = 0; y < 32; y++) {
+    for (let x = 0; x < 32; x++) {
+      if (x === 0 || y === 0 || x === 31 || y === 31) {
+        const i = (y * 32 + x) * info.channels;
+        borde.push([data[i], data[i + 1], data[i + 2]]);
+      }
+    }
+  }
+  const medio = [0, 1, 2].map(
+    (c) => borde.reduce((s, px) => s + px[c], 0) / borde.length
+  );
+  const dispersion = Math.max(
+    ...borde.map((px) => Math.sqrt(px.reduce((s, v, c) => s + (v - medio[c]) ** 2, 0)))
+  );
+  const hex =
+    "#" + medio.map((c) => Math.round(c).toString(16).padStart(2, "0")).join("");
+  const limpio = dispersion < 42 && medio.every((c) => c > 232);
+  return { hex, limpio };
+}
+
+// Dos listas, porque son dos pedidos distintos.
+//
+// La primera es la obvia: productos sin ninguna imagen, que hoy salen con la
+// ficha vacía.
+//
+// La segunda es la que faltaba, y es la que dejaba pasar el problema más
+// visible del catálogo. Un producto SELLADO que ya tiene fotos nunca volvía a
+// pedirse, aunque la que abre su ficha sea una foto sacada sobre un escritorio
+// de madera o en penumbra. Como tenía fotos, el pedido lo daba por resuelto.
+// Así quedaron doce equipos a estrenar presentados con foto de ambiente, los
+// AirPods Pro 2 y casi todas las MacBook entre ellos.
 const filas = [];
+const reemplazos = [];
 for (const p of PRODUCTS) {
-  const tiene = FOTOS_PRODUCTO[p.slug]?.length ?? 0;
-  if (tiene > 0) continue;
+  const fotos = (FOTOS_PRODUCTO[p.slug] ?? []).filter((f) => !f.video);
+  if (fotos.length > 0) {
+    // Para un usado, una foto real sobre una mesa es honesta: es el equipo que
+    // se entrega. La exigencia de estudio es sólo para lo que se vende sellado.
+    const sellado = p.variants.every((v) => v.grade === "sellado");
+    if (!sellado) continue;
+    const { hex, limpio } = await fondoDe(fotos[0].url);
+    if (limpio) continue;
+    reemplazos.push({ slug: p.slug, nombre: p.name, marca: p.brand, fondo: hex });
+    continue;
+  }
   const colores = [...new Set(p.variants.map((v) => v.color))].filter(Boolean);
   filas.push({
     categoria: CATEGORY_LABELS[p.category] ?? p.category,
@@ -52,7 +104,6 @@ for (const p of PRODUCTS) {
     nombre: p.name,
     slug: p.slug,
     colores,
-    tiene,
     encuadre: ENCUADRE[p.category] ?? ENCUADRE.accesorio,
   });
 }
@@ -68,7 +119,7 @@ let md = `# Pedido de fotos
 GENERADO por \`npm run fotos:pedido\`. Se regenera solo cada vez que entran
 fotos nuevas, así no se piden las que ya tenemos.
 
-Son **${filas.length} productos sin ninguna imagen**: hoy su ficha sale vacía.
+Son **${filas.length} productos sin ninguna imagen** —hoy su ficha sale vacía— y\n**${reemplazos.length} equipos sellados** cuya foto principal es de ambiente y hay que\nreemplazar.
 
 Copiá todo lo que está entre las líneas y pegalo en la extensión de Claude en
 Chrome. Cuando termine:
@@ -150,7 +201,30 @@ for (const [categoria, items] of porCategoria) {
   }
 }
 
+if (reemplazos.length > 0) {
+  md += `
+**Estos ya tienen foto, pero la que abre la ficha no sirve**
+
+Son equipos que se venden SELLADOS y hoy se presentan con una foto de
+ambiente: sobre un escritorio de madera, en penumbra o sobre un fondo de
+color. Para un equipo a estrenar eso no va —entre paréntesis está el color de
+fondo que tiene hoy, medido—. Se necesita la misma foto de estudio sobre
+blanco que el resto del pedido. Va a reemplazar a la primera; las que ya están
+se conservan y pasan atrás.
+
+`;
+  for (const r of reemplazos) {
+    const titulo = r.nombre.toLowerCase().startsWith(String(r.marca).toLowerCase())
+      ? r.nombre
+      : `${r.marca} ${r.nombre}`;
+    md += `- \`${r.slug}-1.jpg\` · ${titulo} (hoy: ${r.fondo})\n`;
+  }
+}
+
 md += `\n---\n`;
 
 await writeFile(path.join(process.cwd(), "docs", "pedido-fotos.md"), md, "utf8");
-console.log(`docs/pedido-fotos.md — ${filas.length} productos sin ninguna foto.`);
+console.log(
+  `docs/pedido-fotos.md — ${filas.length} sin ninguna foto, ` +
+    `${reemplazos.length} sellados con foto de ambiente al frente.`
+);

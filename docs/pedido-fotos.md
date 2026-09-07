@@ -3,7 +3,9 @@
 GENERADO por `npm run fotos:pedido`. Se regenera solo cada vez que entran
 fotos nuevas, así no se piden las que ya tenemos.
 
-Son **21 productos sin ninguna imagen**: hoy su ficha sale vacía.
+Son **21 productos sin ninguna imagen** —hoy su ficha sale vacía— y
+**12 equipos sellados** cuya foto principal es de ambiente y hay que
+reemplazar.
 
 Copiá todo lo que está entre las líneas y pegalo en la extensión de Claude en
 Chrome. Cuando termine:
@@ -105,5 +107,27 @@ Si uno se resiste, anotalo y seguí con el siguiente.
 **Notebooks**
 
 - `macbook-neo-13-1.jpg` `-2` `-3` · Apple MacBook Neo 13 — Silver, Indigo, Blush
+
+**Estos ya tienen foto, pero la que abre la ficha no sirve**
+
+Son equipos que se venden SELLADOS y hoy se presentan con una foto de
+ambiente: sobre un escritorio de madera, en penumbra o sobre un fondo de
+color. Para un equipo a estrenar eso no va —entre paréntesis está el color de
+fondo que tiene hoy, medido—. Se necesita la misma foto de estudio sobre
+blanco que el resto del pedido. Va a reemplazar a la primera; las que ya están
+se conservan y pasan atrás.
+
+- `nintendo-switch-oled-1.jpg` · Nintendo Switch OLED (hoy: #9d8770)
+- `logitech-g29-driving-force-1.jpg` · Logitech G29 Driving Force (hoy: #a3a3a4)
+- `macbook-air-m5-13-1.jpg` · Apple MacBook Air M5 13 (hoy: #936b35)
+- `macbook-air-m5-15-1.jpg` · Apple MacBook Air M5 15 (hoy: #776651)
+- `macbook-pro-m4-pro-14-1.jpg` · Apple MacBook Pro M4 Pro 14 (hoy: #190947)
+- `macbook-pro-m5-14-1.jpg` · Apple MacBook Pro M5 14 (hoy: #190947)
+- `macbook-pro-m5-pro-14-1.jpg` · Apple MacBook Pro M5 Pro 14 (hoy: #080969)
+- `macbook-pro-m5-max-14-1.jpg` · Apple MacBook Pro M5 Max 14 (hoy: #575959)
+- `macbook-pro-m5-pro-16-1.jpg` · Apple MacBook Pro M5 Pro 16 (hoy: #c3b096)
+- `macbook-pro-m5-max-16-1.jpg` · Apple MacBook Pro M5 Max 16 (hoy: #08060a)
+- `apple-watch-series-10-1.jpg` · Apple Watch Series 10 (hoy: #bcc0bf)
+- `airpods-pro-2-1.jpg` · Apple AirPods Pro 2 (hoy: #8b9294)
 
 ---
