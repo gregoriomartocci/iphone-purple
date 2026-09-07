@@ -356,3 +356,10 @@ extension-3	xiaomi-band-2	xiaomi-band-9-active	xiaomi-band-9-active-blanco-perfi
 # casi todos son de productos que ya tienen foto. Sirven tres, y una se cae
 # sola en el chequeo de fondo.
 extension-4	moto-g15	_descartado	moto-g15-fondo-negro-medido-000000
+# --- quinta tanda. Ocho archivos, todos de productos que hoy salen sin foto.
+# Tres se caen midiéndolos, sin necesidad de abrirlos, y uno es la misma foto
+# de la MacBook bajada de nuevo con peor calidad.
+extension-5	xiaomi-17-ultra-1	_descartado	xiaomi-17-ultra-520x620-y-fondo-8c807c
+extension-5	xiaomi-17-ultra-2	_descartado	xiaomi-17-ultra-520x620-y-fondo-737b79
+extension-5	iphone-11-1	_descartado	iphone-11-600px-de-ancho-y-relacion-1a2
+extension-5	macbook-neo-13-1b	_descartado	macbook-neo-13-repetida-peor-calidad-que-la-del-5
