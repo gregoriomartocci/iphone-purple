@@ -374,3 +374,12 @@ extension-6	e23f06742c	_por-revisar	png-transparente-981x980-sin-slug-producto-d
 extension-7	apple-watch-series-10-1	_descartado	apple-watch-570x480-muy-chica-para-la-tarjeta
 extension-7	logitech-g29-1	_descartado	logitech-g29-1200x690-lado-corto-690
 extension-7	airpods-pro-2-1	_por-revisar	airpods-pro-2-960x960-blanco-reemplaza-la-gris
+# --- octava tanda: 24 archivos. La grande. Cubre casi todos los reemplazos
+# que faltaban y varios productos sin foto. Pero trae repetida la misma imagen
+# para productos distintos, que es la falla más cara de todas.
+extension-8	iphone-12-pro-1	_descartado	iphone-12-pro-fondo-010305-negro
+extension-8	ipad-air-thumbs	_descartado	tres-miniaturas-de-300x169-de-los-ipad-air
+extension-8	ipad-air-x3	_por-revisar	misma-foto-para-11-m4-13-m3-y-13-m4-hay-que-mirarla
+extension-8	macbook-pro-x4	_por-revisar	misma-foto-para-m4-pro-14-m5-14-m5-max-14-y-m5-max-16
+extension-8	redmi-pad-2-2	_descartado	redmi-pad-2-segunda-foto-igual-a-la-primera
+extension-8	iphone-13-pro-max-test	_descartado	duplicado-exacto-del-archivo-sin-sufijo-test

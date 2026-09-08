@@ -3,12 +3,12 @@
 GENERADO por `npm run fotos:pedido`. Se regenera solo cada vez que entran
 fotos nuevas, así no se piden las que ya tenemos.
 
-Son **14 productos sin ninguna imagen** —hoy su ficha sale vacía— y
-**8 equipos sellados** cuya foto principal es de ambiente y hay que
+Son **7 productos sin ninguna imagen** —hoy su ficha sale vacía— y
+**1 equipos sellados** cuya foto principal es de ambiente y hay que
 reemplazar.
 
-Otros **11** quedaron fuera de la lista porque su foto ya está bajada,
-esperando que la revisen: iphone-14, redmi-15c, xiaomi-17, moto-g35, kieslect-calling-watch-kr-ultra-3, kieslect-al-watch-elite-2, macbook-neo-13, macbook-air-m5-13, macbook-pro-m5-pro-14, macbook-pro-m5-pro-16, airpods-pro-2. Esos no hay que volver a buscarlos.
+Otros **25** quedaron fuera de la lista porque su foto ya está bajada,
+esperando que la revisen: iphone-14, iphone-13-pro-max, logitech-g29-driving-force, redmi-15c, redmi-pad-2, xiaomi-17, xiaomi-17-ultra, moto-g15, moto-g35, kieslect-calling-watch-kr-ultra-3, kieslect-al-watch-elite-2, macbook-neo-13, macbook-air-m5-13, macbook-air-m5-15, macbook-pro-m4-pro-14, macbook-pro-m5-14, macbook-pro-m5-pro-14, macbook-pro-m5-max-14, macbook-pro-m5-pro-16, macbook-pro-m5-max-16, ipad-air-11-m4, ipad-air-13-m3, ipad-air-13-m4, apple-watch-series-10, airpods-pro-2. Esos no hay que volver a buscarlos.
 
 Copiá todo lo que está entre las líneas y pegalo en la extensión de Claude en
 Chrome. Cuando termine:
@@ -72,26 +72,27 @@ cualquier color, esa foto no entra, por buena que sea el resto — se mide el
 borde de la imagen al recibirla y se rechaza sola. Si del modelo sólo existe
 la versión sobre negro, dejalo sin archivo y avisá.
 
+**Una foto por producto, y distinta para cada uno.** No uses el mismo archivo
+para dos productos aunque se parezcan mucho. La última vez volvió la misma
+imagen para el iPad Air 11 M4, el 13 M3 y el 13 M4 —tres equipos de tamaños y
+generaciones distintas—, y otra repetida para cuatro MacBook Pro, incluyendo
+una de 14 puesta como si fuera la de 16. Si de un modelo concreto no
+encontrás su foto propia, dejalo sin archivo y avisá. Una foto del modelo
+equivocado es peor que no tener foto: el cliente compra mirando eso.
+
+Lo mismo dentro de un producto: si pedís `-1` y `-2`, que sean dos tomas
+distintas —dorso y perfil, abierta y cerrada—, no la misma imagen dos veces.
+
 **Hacé la lista entera.** Son muchos productos: no pares en los primeros dos.
 Si uno se resiste, anotalo y seguí con el siguiente.
 
 **Celulares**
 
-- `iphone-13-pro-max-1.jpg` `-2` `-3` · Apple iPhone 13 Pro Max — Medianoche, Azul Sierra
 - `iphone-12-pro-1.jpg` `-2` `-3` · Apple iPhone 12 Pro — Negro, Verde
 - `iphone-12-pro-max-1.jpg` `-2` `-3` · Apple iPhone 12 Pro Max — Negro, Verde
 - `iphone-11-1.jpg` `-2` `-3` · Apple iPhone 11 — Blanco, Negro
 - `iphone-11-pro-1.jpg` `-2` `-3` · Apple iPhone 11 Pro — Blanco, Negro
 - `iphone-11-pro-max-1.jpg` `-2` `-3` · Apple iPhone 11 Pro Max — Blanco, Negro
-- `xiaomi-17-ultra-1.jpg` `-2` `-3` · Xiaomi 17 Ultra — Blanco, Verde
-- `moto-g15-1.jpg` `-2` `-3` · Motorola Moto G15 — Azul
-
-**Tablets**
-
-- `redmi-pad-2-1.jpg` `-2` `-3` · Xiaomi Redmi Pad 2 — Gris, Verde
-- `ipad-air-11-m4-1.jpg` `-2` `-3` · Apple iPad Air 11 M4 — Blue, Purple, Space Gray
-- `ipad-air-13-m3-1.jpg` `-2` `-3` · Apple iPad Air 13 M3 — Starlight, Blue, Purple
-- `ipad-air-13-m4-1.jpg` `-2` `-3` · Apple iPad Air 13 M4 — Space Gray, Blue, Starlight
 
 **Hogar y belleza**
 
@@ -111,12 +112,5 @@ blanco que el resto del pedido. Va a reemplazar a la primera; las que ya están
 se conservan y pasan atrás.
 
 - `nintendo-switch-oled-1.jpg` · Nintendo Switch OLED (hoy: #9d8770)
-- `logitech-g29-driving-force-1.jpg` · Logitech G29 Driving Force (hoy: #a3a3a4)
-- `macbook-air-m5-15-1.jpg` · Apple MacBook Air M5 15 (hoy: #776651)
-- `macbook-pro-m4-pro-14-1.jpg` · Apple MacBook Pro M4 Pro 14 (hoy: #190947)
-- `macbook-pro-m5-14-1.jpg` · Apple MacBook Pro M5 14 (hoy: #190947)
-- `macbook-pro-m5-max-14-1.jpg` · Apple MacBook Pro M5 Max 14 (hoy: #575959)
-- `macbook-pro-m5-max-16-1.jpg` · Apple MacBook Pro M5 Max 16 (hoy: #08060a)
-- `apple-watch-series-10-1.jpg` · Apple Watch Series 10 (hoy: #bcc0bf)
 
 ---

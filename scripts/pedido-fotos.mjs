@@ -262,6 +262,17 @@ cualquier color, esa foto no entra, por buena que sea el resto — se mide el
 borde de la imagen al recibirla y se rechaza sola. Si del modelo sólo existe
 la versión sobre negro, dejalo sin archivo y avisá.
 
+**Una foto por producto, y distinta para cada uno.** No uses el mismo archivo
+para dos productos aunque se parezcan mucho. La última vez volvió la misma
+imagen para el iPad Air 11 M4, el 13 M3 y el 13 M4 —tres equipos de tamaños y
+generaciones distintas—, y otra repetida para cuatro MacBook Pro, incluyendo
+una de 14 puesta como si fuera la de 16. Si de un modelo concreto no
+encontrás su foto propia, dejalo sin archivo y avisá. Una foto del modelo
+equivocado es peor que no tener foto: el cliente compra mirando eso.
+
+Lo mismo dentro de un producto: si pedís \`-1\` y \`-2\`, que sean dos tomas
+distintas —dorso y perfil, abierta y cerrada—, no la misma imagen dos veces.
+
 **Hacé la lista entera.** Son muchos productos: no pares en los primeros dos.
 Si uno se resiste, anotalo y seguí con el siguiente.
 
