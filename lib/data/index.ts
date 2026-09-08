@@ -192,13 +192,43 @@ export async function getProducts(filters: CatalogFilters = {}): Promise<Product
     case "nuevo":
       items = [...items].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
       break;
-    default:
-      // Relevancia: primero lo que se puede comprar hoy, después lo destacado.
+    default: {
+      /**
+       * Relevancia: lo comprable, después lo sellado, después lo destacado.
+       *
+       * El corte por sellado es lo que ordena visualmente la grilla. Un equipo
+       * a estrenar se muestra con foto de estudio sobre blanco y uno usado con
+       * la foto real del que se entrega —sobre una mesa, en la mano—, y las dos
+       * cosas mezcladas hacen que la grilla se vea desprolija aunque cada foto
+       * esté bien. Agrupadas, primero se ve una tira pareja de fotos de
+       * catálogo y después las reales.
+       *
+       * Se mira sólo entre las variantes que pasan los filtros activos: si
+       * alguien está filtrando por seminuevo, que un iPhone 17 también tenga
+       * stock sellado no lo tiene que adelantar, porque ese sellado no es lo
+       * que se está mostrando.
+       */
+      const visibles = {
+        authenticity,
+        state: filters.state,
+        grade: filters.grade,
+        storage: filters.storage,
+        color: filters.color,
+        minBattery: filters.minBattery,
+        includeOutOfStock: filters.includeOutOfStock,
+      };
+      const seVendeSellado = (p: Product) =>
+        p.variants.some((v) => v.grade === "sellado" && matchesVariant(v, visibles));
+
       items = [...items].sort((a, b) => {
         const stockDiff = Number(totalStock(b) > 0) - Number(totalStock(a) > 0);
         if (stockDiff !== 0) return stockDiff;
+        const selladoDiff = Number(seVendeSellado(b)) - Number(seVendeSellado(a));
+        if (selladoDiff !== 0) return selladoDiff;
         return Number(b.isFeatured) - Number(a.isFeatured);
       });
+      break;
+    }
   }
 
   return items;
