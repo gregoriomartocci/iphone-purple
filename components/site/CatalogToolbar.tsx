@@ -5,6 +5,7 @@ import { useEffect, useState, useTransition } from "react";
 import { Search, X } from "lucide-react";
 import { SelectorMoneda } from "./SelectorMoneda";
 import { PARAM_MONEDA, esMoneda } from "@/lib/moneda";
+import { formatARS } from "@/utils/format";
 import {
   CATEGORY_LABELS,
   GRADE_LABELS,
@@ -79,6 +80,8 @@ export function CatalogToolbar({
     if (next.grade) params.set("grade", next.grade);
     if (next.authenticity === "replica") params.set("tipo", "replica");
     if (next.minBattery) params.set("bateria", String(next.minBattery));
+    if (next.minPrice) params.set("precio_min", String(next.minPrice));
+    if (next.maxPrice) params.set("precio_max", String(next.maxPrice));
     if (next.sort && next.sort !== "relevancia") params.set("sort", next.sort);
 
     // La moneda no es un filtro, pero si estaba en la dirección se queda: sin
@@ -97,10 +100,15 @@ export function CatalogToolbar({
 
   const chips = [
     filters.q && { label: `"${filters.q}"`, clear: { q: undefined } },
-    filters.brand && { label: filters.brand, clear: { brand: undefined } },
+    // El color solo se ofrece dentro de una marca y una categoría: al sacar
+    // cualquiera de las dos se va con ellas, si no quedaría aplicado sin verse.
+    filters.brand && {
+      label: filters.brand,
+      clear: { brand: undefined, color: undefined },
+    },
     filters.category && {
       label: CATEGORY_LABELS[filters.category as Category],
-      clear: { category: undefined },
+      clear: { category: undefined, color: undefined },
     },
     filters.model && { label: filters.model, clear: { model: undefined } },
     filters.minBattery && {
@@ -125,6 +133,15 @@ export function CatalogToolbar({
     },
     filters.color && { label: filters.color, clear: { color: undefined } },
     filters.storage && { label: filters.storage, clear: { storage: undefined } },
+    (filters.minPrice || filters.maxPrice) && {
+      label:
+        filters.minPrice && filters.maxPrice
+          ? `${formatARS(filters.minPrice)} – ${formatARS(filters.maxPrice)}`
+          : filters.minPrice
+            ? `Desde ${formatARS(filters.minPrice)}`
+            : `Hasta ${formatARS(filters.maxPrice!)}`,
+      clear: { minPrice: undefined, maxPrice: undefined },
+    },
   ].filter(Boolean) as { label: string; clear: Partial<CatalogFilters> }[];
 
   return (

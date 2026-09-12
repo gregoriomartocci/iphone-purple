@@ -110,6 +110,8 @@ export type VariantFilters = Pick<
   | "color"
   | "authenticity"
   | "minBattery"
+  | "minPrice"
+  | "maxPrice"
   | "includeOutOfStock"
 >;
 
@@ -119,6 +121,8 @@ export function matchesVariant(variant: Variant, filters: VariantFilters): boole
   if (filters.storage && variant.storage !== filters.storage) return false;
   if (filters.color && variant.color !== filters.color) return false;
   if (filters.authenticity && variant.authenticity !== filters.authenticity) return false;
+  if (filters.minPrice !== undefined && variant.priceArs < filters.minPrice) return false;
+  if (filters.maxPrice !== undefined && variant.priceArs > filters.maxPrice) return false;
   // Lo agotado no se muestra en el sitio: si no está, no se ofrece.
   if (!filters.includeOutOfStock && variant.stock <= 0) return false;
   if (filters.minBattery !== undefined) {

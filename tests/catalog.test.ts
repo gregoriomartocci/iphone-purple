@@ -348,6 +348,46 @@ describe("filtro de batería", () => {
   });
 });
 
+describe("filtro de precio", () => {
+  const original = (v: Variant) => v.authenticity === "original" && v.stock > 0;
+
+  it("deja pasar solo lo que tiene una variante dentro del rango", async () => {
+    const result = await getProducts({ minPrice: 1_000_000, maxPrice: 1_500_000 });
+    expect(result.length).toBeGreaterThan(0);
+    for (const p of result) {
+      const ok = p.variants.some(
+        (v) => original(v) && v.priceArs >= 1_000_000 && v.priceArs <= 1_500_000
+      );
+      expect(ok).toBe(true);
+    }
+  });
+
+  it("el mínimo solo corta por abajo y el máximo solo por arriba", async () => {
+    const desde = await getProducts({ minPrice: 2_000_000 });
+    for (const p of desde) {
+      expect(p.variants.some((v) => original(v) && v.priceArs >= 2_000_000)).toBe(true);
+    }
+    const hasta = await getProducts({ maxPrice: 500_000 });
+    for (const p of hasta) {
+      expect(p.variants.some((v) => original(v) && v.priceArs <= 500_000)).toBe(true);
+    }
+  });
+
+  it("la tarjeta muestra la variante que entra en el rango, no la más barata", () => {
+    const p = product({
+      variants: [
+        variant({ id: "barata", priceArs: 400_000, stock: 2 }),
+        variant({ id: "cara", priceArs: 900_000, stock: 2 }),
+      ],
+    });
+    expect(leadVariant(p, { minPrice: 800_000 })?.id).toBe("cara");
+  });
+
+  it("un rango imposible devuelve vacío, sin romper", async () => {
+    expect(await getProducts({ minPrice: 999_999_999 })).toEqual([]);
+  });
+});
+
 describe("getProduct", () => {
   it("encuentra un producto por su slug", async () => {
     const found = await getProduct(PRODUCTS[0].slug);

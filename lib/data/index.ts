@@ -177,6 +177,8 @@ export async function getProducts(filters: CatalogFilters = {}): Promise<Product
         storage: filters.storage,
         color: filters.color,
         minBattery: filters.minBattery,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
         includeOutOfStock: filters.includeOutOfStock,
       })
     )
@@ -215,6 +217,8 @@ export async function getProducts(filters: CatalogFilters = {}): Promise<Product
         storage: filters.storage,
         color: filters.color,
         minBattery: filters.minBattery,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
         includeOutOfStock: filters.includeOutOfStock,
       };
       const seVendeSellado = (p: Product) =>

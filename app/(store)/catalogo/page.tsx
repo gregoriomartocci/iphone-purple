@@ -42,18 +42,37 @@ function parseFilters(params: SearchParams): CatalogFilters {
   const battery = Number(first(params.bateria));
   const generation = Number(first(params.gen));
 
+  // Precio en pesos. Se aceptan solo enteros positivos: un texto o un número
+  // negativo en la URL se ignora en vez de romper el filtro.
+  const precio = (v: string | string[] | undefined) => {
+    const n = Number(first(v));
+    return Number.isInteger(n) && n > 0 ? n : undefined;
+  };
+  let minPrice = precio(params.precio_min);
+  let maxPrice = precio(params.precio_max);
+  // Si vienen al revés, se dan vuelta: nadie quiere una lista vacía por eso.
+  if (minPrice !== undefined && maxPrice !== undefined && minPrice > maxPrice) {
+    [minPrice, maxPrice] = [maxPrice, minPrice];
+  }
+
+  const brand = first(params.marca);
+  // Solo aceptamos valores conocidos: una URL manipulada no debe romper el filtro.
+  const categoria = CATEGORIES.includes(category as Category)
+    ? (category as Category)
+    : undefined;
+
   return {
     q: first(params.q),
-    brand: first(params.marca),
+    brand,
     model: first(params.model),
     storage: first(params.storage),
-    // Solo aceptamos valores conocidos: una URL manipulada no debe romper el filtro.
-    category: CATEGORIES.includes(category as Category)
-      ? (category as Category)
-      : undefined,
+    category: categoria,
     generation: Number.isInteger(generation) && generation > 0 ? generation : undefined,
     line: LINES.includes(line as Line) ? (line as Line) : undefined,
-    color: first(params.color),
+    // El color se elige dentro de una marca y una categoría; sin ellas el panel
+    // no lo ofrece, así que tampoco se aplica desde la URL: filtraría sin que
+    // se vea qué está filtrando.
+    color: brand && categoria ? first(params.color) : undefined,
     state: STATES.includes(state as State) ? (state as State) : undefined,
     grade: GRADES.includes(grade as Grade) ? (grade as Grade) : undefined,
     // Sin este parámetro, la capa de datos sirve solo originales.
@@ -63,6 +82,8 @@ function parseFilters(params: SearchParams): CatalogFilters {
     // con esa batería, el filtro simplemente no devuelve resultados.
     minBattery:
       Number.isInteger(battery) && battery >= 50 && battery <= 100 ? battery : undefined,
+    minPrice,
+    maxPrice,
     sort: (["precio-asc", "precio-desc", "nuevo"] as const).includes(
       sort as "precio-asc" | "precio-desc" | "nuevo"
     )

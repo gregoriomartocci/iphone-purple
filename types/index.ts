@@ -348,6 +348,13 @@ export interface CatalogFilters {
   authenticity?: Authenticity;
   /** Batería mínima: 90 significa "90 % o más". */
   minBattery?: number;
+  /**
+   * Rango de precio, en pesos. Se mira el precio de la variante, no el
+   * "desde" del producto: si un iPhone tiene una configuración dentro del
+   * rango y otra fuera, entra, y la tarjeta muestra la que entra.
+   */
+  minPrice?: number;
+  maxPrice?: number;
   sort?: "relevancia" | "precio-asc" | "precio-desc" | "nuevo";
   /**
    * Incluir lo agotado. El sitio público no lo usa —si no está, no se
