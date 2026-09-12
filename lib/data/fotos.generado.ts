@@ -90,18 +90,18 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "apple-watch-series-10": [
     {
       url: "/productos/apple-watch-series-10/1.jpg",
-      autor: "KK IN HK",
-      licencia: "Public domain",
-      origen: "https://commons.wikimedia.org/wiki/File:Apple_Watch_Series_10.jpg",
-      recorte: "foto",
-      fondo: null,
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
       video: false,
     },
     {
       url: "/productos/apple-watch-series-10/2.jpg",
-      autor: null,
-      licencia: null,
-      origen: null,
+      autor: "KK IN HK",
+      licencia: "Public domain",
+      origen: "https://commons.wikimedia.org/wiki/File:Apple_Watch_Series_10.jpg",
       recorte: "foto",
       fondo: null,
       video: false,
@@ -126,6 +126,15 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
     },
     {
       url: "/productos/apple-watch-series-10/5.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "foto",
+      fondo: null,
+      video: false,
+    },
+    {
+      url: "/productos/apple-watch-series-10/6.jpg",
       autor: null,
       licencia: null,
       origen: null,
@@ -293,7 +302,29 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
+  "ipad-air-11-m4": [
+    {
+      url: "/productos/ipad-air-11-m4/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f5f5f7",
+      video: false,
+    },
+  ],
   "ipad-air-13-m3": [],
+  "ipad-air-13-m4": [
+    {
+      url: "/productos/ipad-air-13-m4/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f5f5f7",
+      video: false,
+    },
+  ],
   "ipad-air-m2": [
     {
       url: "/productos/ipad-air-m2/1.jpg",
@@ -306,8 +337,28 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
     },
   ],
   "iphone-11": [],
-  "iphone-11-pro": [],
-  "iphone-11-pro-max": [],
+  "iphone-11-pro": [
+    {
+      url: "/productos/iphone-11-pro/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#fdfdfd",
+      video: false,
+    },
+  ],
+  "iphone-11-pro-max": [
+    {
+      url: "/productos/iphone-11-pro-max/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
   "iphone-12": [
     {
       url: "/productos/iphone-12/1.jpg",
@@ -320,7 +371,17 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
     },
   ],
   "iphone-12-pro": [],
-  "iphone-12-pro-max": [],
+  "iphone-12-pro-max": [
+    {
+      url: "/productos/iphone-12-pro-max/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f9f9f9",
+      video: false,
+    },
+  ],
   "iphone-13": [
     {
       url: "/productos/iphone-13/1.jpg",
@@ -584,6 +645,17 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "foto",
       fondo: null,
       video: true,
+    },
+  ],
+  "iphone-14": [
+    {
+      url: "/productos/iphone-14/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f5f5f7",
+      video: false,
     },
   ],
   "iphone-14-pro": [
@@ -1142,9 +1214,29 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
+  "kieslect-lady-watch-elfin": [
+    {
+      url: "/productos/kieslect-lady-watch-elfin/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
   "logitech-g29-driving-force": [
     {
       url: "/productos/logitech-g29-driving-force/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+    {
+      url: "/productos/logitech-g29-driving-force/2.jpg",
       autor: "Antoineets",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:Logitech_G29_steering_wheel.jpg",
@@ -1213,6 +1305,15 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "macbook-air-m5-13": [
     {
       url: "/productos/macbook-air-m5-13/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f5f5f7",
+      video: false,
+    },
+    {
+      url: "/productos/macbook-air-m5-13/2.jpg",
       autor: "AzureSaturn",
       licencia: "CC0",
       origen:
@@ -1225,6 +1326,15 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "macbook-air-m5-15": [
     {
       url: "/productos/macbook-air-m5-15/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f5f5f7",
+      video: false,
+    },
+    {
+      url: "/productos/macbook-air-m5-15/2.jpg",
       autor: "AzureSaturn",
       licencia: "CC0",
       origen:
@@ -1234,10 +1344,29 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "macbook-neo-13": [],
+  "macbook-neo-13": [
+    {
+      url: "/productos/macbook-neo-13/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f5f5f7",
+      video: false,
+    },
+  ],
   "macbook-pro-m4-pro-14": [
     {
       url: "/productos/macbook-pro-m4-pro-14/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+    {
+      url: "/productos/macbook-pro-m4-pro-14/2.jpg",
       autor: "SimonWaldherr",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
@@ -1246,7 +1375,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
     {
-      url: "/productos/macbook-pro-m4-pro-14/2.jpg",
+      url: "/productos/macbook-pro-m4-pro-14/3.jpg",
       autor: "SimonWaldherr",
       licencia: "CC BY-SA 4.0",
       origen:
@@ -1259,6 +1388,15 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "macbook-pro-m5-14": [
     {
       url: "/productos/macbook-pro-m5-14/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f5f5f7",
+      video: false,
+    },
+    {
+      url: "/productos/macbook-pro-m5-14/2.jpg",
       autor: "SimonWaldherr",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
@@ -1267,7 +1405,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
     {
-      url: "/productos/macbook-pro-m5-14/2.jpg",
+      url: "/productos/macbook-pro-m5-14/3.jpg",
       autor: "Mark Solarski marksolarski",
       licencia: "CC0",
       origen: "https://commons.wikimedia.org/wiki/File:Apple_Macbook_Pro_(Unsplash).jpg",
@@ -1279,6 +1417,15 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "macbook-pro-m5-max-14": [
     {
       url: "/productos/macbook-pro-m5-max-14/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f5f5f7",
+      video: false,
+    },
+    {
+      url: "/productos/macbook-pro-m5-max-14/2.jpg",
       autor: "Mark Solarski marksolarski",
       licencia: "CC0",
       origen: "https://commons.wikimedia.org/wiki/File:Apple_Macbook_Pro_(Unsplash).jpg",
@@ -1287,7 +1434,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
     {
-      url: "/productos/macbook-pro-m5-max-14/2.jpg",
+      url: "/productos/macbook-pro-m5-max-14/3.jpg",
       autor: "SimonWaldherr",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
@@ -1299,6 +1446,15 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "macbook-pro-m5-max-16": [
     {
       url: "/productos/macbook-pro-m5-max-16/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f5f5f7",
+      video: false,
+    },
+    {
+      url: "/productos/macbook-pro-m5-max-16/2.jpg",
       autor: "SimonWaldherr",
       licencia: "CC BY-SA 4.0",
       origen:
@@ -1308,7 +1464,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
     {
-      url: "/productos/macbook-pro-m5-max-16/2.jpg",
+      url: "/productos/macbook-pro-m5-max-16/3.jpg",
       autor: "SimonWaldherr",
       licencia: "CC BY-SA 4.0",
       origen:
@@ -1318,7 +1474,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
     {
-      url: "/productos/macbook-pro-m5-max-16/3.jpg",
+      url: "/productos/macbook-pro-m5-max-16/4.jpg",
       autor: "SimonWaldherr",
       licencia: "CC BY-SA 4.0",
       origen:
@@ -1331,6 +1487,15 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "macbook-pro-m5-pro-14": [
     {
       url: "/productos/macbook-pro-m5-pro-14/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f5f5f7",
+      video: false,
+    },
+    {
+      url: "/productos/macbook-pro-m5-pro-14/2.jpg",
       autor: "SimonWaldherr",
       licencia: "CC BY-SA 4.0",
       origen:
@@ -1340,7 +1505,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
     {
-      url: "/productos/macbook-pro-m5-pro-14/2.jpg",
+      url: "/productos/macbook-pro-m5-pro-14/3.jpg",
       autor: "SimonWaldherr",
       licencia: "CC BY-SA 4.0",
       origen: "https://commons.wikimedia.org/wiki/File:MacBook_Pro_3rd_Generation.jpg",
@@ -1352,6 +1517,15 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "macbook-pro-m5-pro-16": [
     {
       url: "/productos/macbook-pro-m5-pro-16/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#f5f5f7",
+      video: false,
+    },
+    {
+      url: "/productos/macbook-pro-m5-pro-16/2.jpg",
       autor: "Premeditated",
       licencia: "CC BY-SA 4.0",
       origen:
@@ -1361,7 +1535,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
     {
-      url: "/productos/macbook-pro-m5-pro-16/2.jpg",
+      url: "/productos/macbook-pro-m5-pro-16/3.jpg",
       autor: "SimonWaldherr",
       licencia: "CC BY-SA 4.0",
       origen:
@@ -1382,7 +1556,17 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
-  "moto-g15": [],
+  "moto-g15": [
+    {
+      url: "/productos/moto-g15/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
   "moto-g17": [
     {
       url: "/productos/moto-g17/1.jpg",
@@ -1532,6 +1716,28 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       video: false,
     },
   ],
+  "redmi-15c": [
+    {
+      url: "/productos/redmi-15c/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#fdfdfd",
+      video: false,
+    },
+  ],
+  "redmi-pad-2": [
+    {
+      url: "/productos/redmi-pad-2/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
   "smartwatch-estilo-watch-ultra": [
     {
       url: "/productos/smartwatch-estilo-watch-ultra/1.jpg",
@@ -1546,6 +1752,28 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "wdblack-nvme-ssd-para-ps5": [
     {
       url: "/productos/wdblack-nvme-ssd-para-ps5/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
+  "xiaomi-17": [
+    {
+      url: "/productos/xiaomi-17/1.jpg",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#ffffff",
+      video: false,
+    },
+  ],
+  "xiaomi-17-ultra": [
+    {
+      url: "/productos/xiaomi-17-ultra/1.jpg",
       autor: null,
       licencia: null,
       origen: null,

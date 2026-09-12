@@ -3,12 +3,9 @@
 GENERADO por `npm run fotos:pedido`. Se regenera solo cada vez que entran
 fotos nuevas, así no se piden las que ya tenemos.
 
-Son **7 productos sin ninguna imagen** —hoy su ficha sale vacía— y
-**1 equipos sellados** cuya foto principal es de ambiente y hay que
+Son **8 productos sin ninguna imagen** —hoy su ficha sale vacía— y
+**2 equipos sellados** cuya foto principal es de ambiente y hay que
 reemplazar.
-
-Otros **25** quedaron fuera de la lista porque su foto ya está bajada,
-esperando que la revisen: iphone-14, iphone-13-pro-max, logitech-g29-driving-force, redmi-15c, redmi-pad-2, xiaomi-17, xiaomi-17-ultra, moto-g15, moto-g35, kieslect-calling-watch-kr-ultra-3, kieslect-al-watch-elite-2, macbook-neo-13, macbook-air-m5-13, macbook-air-m5-15, macbook-pro-m4-pro-14, macbook-pro-m5-14, macbook-pro-m5-pro-14, macbook-pro-m5-max-14, macbook-pro-m5-pro-16, macbook-pro-m5-max-16, ipad-air-11-m4, ipad-air-13-m3, ipad-air-13-m4, apple-watch-series-10, airpods-pro-2. Esos no hay que volver a buscarlos.
 
 Copiá todo lo que está entre las líneas y pegalo en la extensión de Claude en
 Chrome. Cuando termine:
@@ -88,11 +85,10 @@ Si uno se resiste, anotalo y seguí con el siguiente.
 
 **Celulares**
 
+- `iphone-13-pro-max-1.jpg` `-2` `-3` · Apple iPhone 13 Pro Max — Medianoche, Azul Sierra
 - `iphone-12-pro-1.jpg` `-2` `-3` · Apple iPhone 12 Pro — Negro, Verde
-- `iphone-12-pro-max-1.jpg` `-2` `-3` · Apple iPhone 12 Pro Max — Negro, Verde
 - `iphone-11-1.jpg` `-2` `-3` · Apple iPhone 11 — Blanco, Negro
-- `iphone-11-pro-1.jpg` `-2` `-3` · Apple iPhone 11 Pro — Blanco, Negro
-- `iphone-11-pro-max-1.jpg` `-2` `-3` · Apple iPhone 11 Pro Max — Blanco, Negro
+- `moto-g35-1.jpg` `-2` `-3` · Motorola Moto G35 — Negro
 
 **Hogar y belleza**
 
@@ -100,7 +96,12 @@ Si uno se resiste, anotalo y seguí con el siguiente.
 
 **Relojes**
 
-- `kieslect-lady-watch-elfin-1.jpg` `-2` `-3` · Kieslect Lady Watch Elfin — Negro Grafito, Rosa Dorado, Plata
+- `kieslect-calling-watch-kr-ultra-3-1.jpg` `-2` `-3` · Kieslect Calling Watch Kr Ultra 3 — Ice White
+- `kieslect-al-watch-elite-2-1.jpg` `-2` `-3` · Kieslect Al Watch Elite 2 — Titan Black
+
+**Tablets**
+
+- `ipad-air-13-m3-1.jpg` `-2` `-3` · Apple iPad Air 13 M3 — Starlight, Blue, Purple
 
 **Estos ya tienen foto, pero la que abre la ficha no sirve**
 
@@ -112,5 +113,6 @@ blanco que el resto del pedido. Va a reemplazar a la primera; las que ya están
 se conservan y pasan atrás.
 
 - `nintendo-switch-oled-1.jpg` · Nintendo Switch OLED (hoy: #9d8770)
+- `airpods-pro-2-1.jpg` · Apple AirPods Pro 2 (hoy: #8b9294)
 
 ---
