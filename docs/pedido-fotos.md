@@ -3,8 +3,8 @@
 GENERADO por `npm run fotos:pedido`. Se regenera solo cada vez que entran
 fotos nuevas, así no se piden las que ya tenemos.
 
-Son **8 productos sin ninguna imagen** —hoy su ficha sale vacía— y
-**2 equipos sellados** cuya foto principal es de ambiente y hay que
+Son **0 productos sin ninguna imagen** —hoy su ficha sale vacía— y
+**0 equipos sellados** cuya foto principal es de ambiente y hay que
 reemplazar.
 
 Copiá todo lo que está entre las líneas y pegalo en la extensión de Claude en
@@ -82,37 +82,5 @@ distintas —dorso y perfil, abierta y cerrada—, no la misma imagen dos veces.
 
 **Hacé la lista entera.** Son muchos productos: no pares en los primeros dos.
 Si uno se resiste, anotalo y seguí con el siguiente.
-
-**Celulares**
-
-- `iphone-13-pro-max-1.jpg` `-2` `-3` · Apple iPhone 13 Pro Max — Medianoche, Azul Sierra
-- `iphone-12-pro-1.jpg` `-2` `-3` · Apple iPhone 12 Pro — Negro, Verde
-- `iphone-11-1.jpg` `-2` `-3` · Apple iPhone 11 — Blanco, Negro
-- `moto-g35-1.jpg` `-2` `-3` · Motorola Moto G35 — Negro
-
-**Hogar y belleza**
-
-- `xiaomi-aspiradora-mijia-2-1.jpg` `-2` `-3` · Xiaomi Aspiradora Mijia 2 — Blanco
-
-**Relojes**
-
-- `kieslect-calling-watch-kr-ultra-3-1.jpg` `-2` `-3` · Kieslect Calling Watch Kr Ultra 3 — Ice White
-- `kieslect-al-watch-elite-2-1.jpg` `-2` `-3` · Kieslect Al Watch Elite 2 — Titan Black
-
-**Tablets**
-
-- `ipad-air-13-m3-1.jpg` `-2` `-3` · Apple iPad Air 13 M3 — Starlight, Blue, Purple
-
-**Estos ya tienen foto, pero la que abre la ficha no sirve**
-
-Son equipos que se venden SELLADOS y hoy se presentan con una foto de
-ambiente: sobre un escritorio de madera, en penumbra o sobre un fondo de
-color. Para un equipo a estrenar eso no va —entre paréntesis está el color de
-fondo que tiene hoy, medido—. Se necesita la misma foto de estudio sobre
-blanco que el resto del pedido. Va a reemplazar a la primera; las que ya están
-se conservan y pasan atrás.
-
-- `nintendo-switch-oled-1.jpg` · Nintendo Switch OLED (hoy: #9d8770)
-- `airpods-pro-2-1.jpg` · Apple AirPods Pro 2 (hoy: #8b9294)
 
 ---

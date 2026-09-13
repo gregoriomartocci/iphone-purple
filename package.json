@@ -20,6 +20,7 @@
     "seed:sql": "tsx scripts/generate-seed-sql.mjs > lib/supabase/seed.sql",
     "fotos": "node scripts/descargar-fotos.mjs && npm run fotos:indexar",
     "fotos:indexar": "tsx scripts/indexar-fotos.mjs",
+    "fotos:encuadrar": "tsx scripts/encuadrar-fotos.mjs && npm run fotos:indexar",
     "fotos:faltan": "tsx scripts/faltan-fotos.mjs",
     "proveedor:preparar": "node scripts/proveedor/preparar.mjs",
     "proveedor:aplicar": "node scripts/proveedor/aplicar.mjs",
@@ -27,6 +28,7 @@
     "proveedor:publicar": "node scripts/proveedor/publicar.mjs && npm run fotos:indexar",
     "fotos:importar": "tsx scripts/importar-fotos.mjs",
     "fotos:pedido": "tsx scripts/pedido-fotos.mjs",
+    "fotos:pedido-galeria": "tsx scripts/pedido-galeria.mjs",
     "whatsapp": "node scripts/whatsapp/leer.mjs",
     "whatsapp:servidor": "node scripts/whatsapp/servidor.mjs"
   },

@@ -49,7 +49,10 @@ const ENCUADRE = {
  * sacada sobre un escritorio da madera, y una en penumbra da casi negro.
  */
 async function fondoDe(url, absoluto = false) {
-  const { data, info } = await sharp(absoluto ? url : path.join("public", url))
+  // La ruta pública trae ?v= de caché; el archivo no.
+  const { data, info } = await sharp(
+    absoluto ? url : path.join("public", url.split("?")[0])
+  )
     .resize(32, 32, { fit: "fill" })
     .raw()
     .toBuffer({ resolveWithObject: true });

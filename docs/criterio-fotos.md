@@ -21,6 +21,16 @@ living o un mostrador —aunque sea genuinamente nuevo y sin uso— no alcanza:
 para sellado, si no hay una foto de fábrica, no hay foto. Es preferible la
 ficha vacía a una que parece de segunda mano.
 
+Y la regla del sellado vale para **toda la galería, no solo la portada**.
+Que la primera foto sea de estudio y la segunda sea el mismo equipo tirado
+sobre una mesa, con el cable colgando, lo hace parecer de segunda mano igual.
+Las fotos que siguen a la portada pueden ser del equipo fuera de la caja
+—abierto, de tres cuartos, con luz de producción—, pero tienen que estar
+cuidadas: encuadre pensado, fondo limpio, sin cables ni escritorio de oficina.
+Esto no lo mide ningún script; se decide mirando. Pasó con la Switch OLED: la
+portada era el render y la segunda una consola usada sobre una mesa, y con
+los Apple Watch y AirPods, cuya galería eran cajas apiladas en un cartón.
+
 **Seminuevo (usado):** una foto real del equipo sirve. Puede estar arriba de
 una mesa, o alguien sosteniéndolo con la mano — eso es honesto para un
 usado, es lo que se va a entregar. Lo que sigue prohibido igual: la caja en

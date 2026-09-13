@@ -19,6 +19,8 @@ const csp = [
   "font-src 'self' data:",
   // Supabase (REST y realtime) y la API de Anthropic para el importador.
   "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com",
+  // La reseña en video de la ficha: YouTube sin cookies de seguimiento.
+  "frame-src https://www.youtube-nocookie.com",
   "form-action 'self'",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -45,6 +47,15 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   images: {
+    /*
+     * Las fotos del catálogo llevan ?v=<hash> del contenido, para que un
+     * reemplazo bajo el mismo nombre no quede cacheado en el navegador ni en
+     * el CDN. next/image rechaza un src local con query salvo que se lo
+     * permita acá; y al declarar localPatterns, todo lo demás queda cerrado,
+     * así que el segundo patrón deja el resto de /public como estaba: sin
+     * query.
+     */
+    localPatterns: [{ pathname: "/productos/**" }, { pathname: "/**", search: "" }],
     remotePatterns: [
       { protocol: "https", hostname: "*.supabase.co" },
       // Fotos de la semilla de demostración; se van cuando cargues las tuyas.

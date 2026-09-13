@@ -17,6 +17,7 @@ import { mkdir, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 import { PRODUCTS } from "../lib/data/seed.ts";
+import { encuadrar, fondoLimpio } from "./lib/encuadre.mjs";
 
 const origen = process.argv[2];
 if (!origen) {
@@ -70,8 +71,19 @@ for (const nombre of archivos) {
   // numeran por orden de llegada para que ninguna pise a la anterior.
   const yaHay = (porProducto.get(r.slug) ?? []).length;
   const salida = path.join(carpeta, `buscada-${r.orden}-${yaHay + 1}.jpg`);
-  const { width, height } = await sharp(path.join(origen, nombre)).metadata();
-  await sharp(path.join(origen, nombre))
+  const entrada = path.join(origen, nombre);
+  const { width, height } = await sharp(entrada).metadata();
+  // Un render de estudio se encuadra sobre el original, antes de achicar: si
+  // se achicara primero, un equipo que ocupa un cuarto de una foto de prensa
+  // de 5000 px quedaría en 400 px al recortarle el aire. Una foto de ambiente
+  // se deja como viene; no tiene aire que recortar.
+  //
+  // Va a un buffer antes de achicar: sharp aplica `extend` después de
+  // `resize` sin importar en qué orden se llamen, y los márgenes están
+  // calculados para el tamaño original.
+  const encuadrada = (await fondoLimpio(entrada)) ? await encuadrar(entrada) : null;
+  const base = encuadrada ? await encuadrada.toBuffer() : entrada;
+  await sharp(base)
     .rotate()
     .resize(1600, 1600, { fit: "inside", withoutEnlargement: true })
     // Sin esto, un PNG con transparencia se aplasta a JPEG con fondo NEGRO

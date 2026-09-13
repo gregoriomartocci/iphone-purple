@@ -383,3 +383,15 @@ extension-8	ipad-air-x3	_por-revisar	misma-foto-para-11-m4-13-m3-y-13-m4-hay-que
 extension-8	macbook-pro-x4	_por-revisar	misma-foto-para-m4-pro-14-m5-14-m5-max-14-y-m5-max-16
 extension-8	redmi-pad-2-2	_descartado	redmi-pad-2-segunda-foto-igual-a-la-primera
 extension-8	iphone-13-pro-max-test	_descartado	duplicado-exacto-del-archivo-sin-sufijo-test
+# --- 12/9: dos fotos publicadas como iPhone 17 Pro eran 16 Pro. Se ve en el
+# módulo de cámara: cuadrado de tres lentes (16 Pro), no la barra a todo el
+# ancho del 17 Pro. Y los colores: desierto, natural, negro y blanco titanio
+# son del 16 Pro. Van a la carpeta del 16 Pro sin orden, porque desde la foto
+# no se distingue Pro de Pro Max y no se publica lo que no se puede confirmar.
+lote-septiembre-a	f012	iphone-16-pro	iphone-16-pro-cuatro-colores-en-abanico
+lote-septiembre-a	f014	iphone-16-pro	iphone-16-pro-blanco-y-natural-en-abanico
+# --- 12/9: las dos fotos de la caja de cartón (publicadas como iPhone 16, 23 y
+# 24) tienen cuatro equipos y solo uno es un 16: el azul es un 13/14 y los
+# otros dos son Pro de 14. Varios modelos mezclados: se descartan.
+lote-septiembre-g	f002	_descartado	varios-modelos-mezclados-13-14pro-16
+lote-septiembre-g	f016	_descartado	varios-modelos-mezclados-13-14pro-16

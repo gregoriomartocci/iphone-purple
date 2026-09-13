@@ -20,9 +20,11 @@
  * grilla del catálogo.
  */
 import { readdir, readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import sharp from "sharp";
 import { FOTOS_PRODUCTO } from "../lib/data/fotos.generado.ts";
+import { PRODUCTS } from "../lib/data/seed.ts";
 
 const RAIZ = path.join(process.cwd(), "public", "productos");
 const SALIDA = path.join(process.cwd(), "lib", "data", "fotos.generado.ts");
@@ -40,10 +42,45 @@ const VIDEOS = new Set([".mp4", ".webm"]);
  */
 const CREDITOS = new Map();
 for (const fotos of Object.values(FOTOS_PRODUCTO)) {
-  for (const f of fotos) CREDITOS.set(f.url, f);
+  // Sin el ?v= de caché: la clave es el archivo, no la versión.
+  for (const f of fotos) CREDITOS.set(f.url.split("?")[0], f);
 }
 
 const MARCA = ".commons.json";
+const COLORES = ".colores.json";
+
+/** Colores que vende cada producto, para validar lo que dice el sidecar. */
+const COLORES_DEL_PRODUCTO = new Map(
+  PRODUCTS.map((p) => [p.slug, new Set(p.variants.map((v) => v.color))])
+);
+
+/**
+ * De qué color es el equipo en cada foto.
+ *
+ * Se escribe a mano mirando las fotos, con los mismos nombres que usan las
+ * variantes: la ficha ofrece los colores de las variantes y ordena la galería
+ * con esto, así que un nombre distinto no matchea nada. Por eso se valida
+ * acá y se avisa, en vez de dejar pasar "Azul" donde la variante dice
+ * "Titanio Azul". Un archivo que no figura queda sin color: sale después de
+ * las del color elegido y antes que las de los otros.
+ */
+async function coloresDe(slug) {
+  const sidecar = await readFile(path.join(RAIZ, slug, COLORES), "utf8")
+    .then(JSON.parse)
+    .catch(() => null);
+  if (!sidecar) return {};
+  const validos = COLORES_DEL_PRODUCTO.get(slug) ?? new Set();
+  for (const [archivo, colores] of Object.entries(sidecar)) {
+    for (const c of colores) {
+      if (!validos.has(c)) {
+        console.warn(
+          `  ⚠ ${slug}/${archivo}: "${c}" no es un color de las variantes (${[...validos].join(", ") || "ninguno"})`
+        );
+      }
+    }
+  }
+  return sidecar;
+}
 
 /**
  * Créditos de una carpeta.
@@ -150,12 +187,29 @@ for (const slug of carpetas) {
   });
 
   const marca = await creditosDe(slug);
+  const colores = await coloresDe(slug);
 
   const piezas = [];
   for (const nombre of archivos) {
-    const url = `/productos/${slug}/${nombre}`;
-    const previo = marca ? marca[nombre] : CREDITOS.get(url);
+    const ruta = `/productos/${slug}/${nombre}`;
+    const previo = marca ? marca[nombre] : CREDITOS.get(ruta);
     const esVideo = VIDEOS.has(path.extname(nombre).toLowerCase());
+
+    /*
+     * ?v= con el hash del contenido.
+     *
+     * Las portadas se reemplazan bajo el mismo nombre —una foto de estudio
+     * entra como 1.jpg y la que estaba pasa a 2.jpg—, y el navegador, el CDN
+     * de Vercel y el optimizador de imágenes de Next cachean por URL. Sin
+     * esto, después de reemplazar el Switch y los AirPods el catálogo siguió
+     * mostrando la foto vieja hasta un refresco forzado. Con el hash, cambia
+     * el contenido y cambia la dirección: nadie puede servir la anterior.
+     */
+    const version = createHash("md5")
+      .update(await readFile(path.join(RAIZ, slug, nombre)))
+      .digest("hex")
+      .slice(0, 8);
+    const url = `${ruta}?v=${version}`;
 
     const medido = esVideo
       ? { recorte: "foto", fondo: null }
@@ -169,6 +223,7 @@ for (const slug of carpetas) {
       recorte: previo?.recorte ?? medido.recorte,
       fondo: medido.fondo,
       video: esVideo,
+      colores: colores[nombre] ?? [],
     });
 
     totalFotos++;
@@ -205,6 +260,7 @@ const cuerpo = Object.entries(indice)
       recorte: ${JSON.stringify(p.recorte)},
       fondo: ${JSON.stringify(p.fondo)},
       video: ${p.video},
+      colores: ${JSON.stringify(p.colores)},
     },`
       )
       .join("\n");
@@ -240,6 +296,11 @@ export type CreditoFoto = {
   fondo: string | null;
   /** Los videos van al final de la galería. */
   video: boolean;
+  /**
+   * Colores del equipo en la foto, con los nombres de las variantes. Sale de
+   * public/productos/<slug>/.colores.json; vacío si no se etiquetó.
+   */
+  colores: string[];
 };
 
 export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
