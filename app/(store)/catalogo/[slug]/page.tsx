@@ -7,6 +7,7 @@ import { ProductComparison } from "@/components/site/ProductComparison";
 import { ProductRail } from "@/components/site/ProductRail";
 import { Descripcion } from "@/components/site/Descripcion";
 import { FichaTecnica, Respaldos } from "@/components/site/FichaTecnica";
+import { ResenaVideo } from "@/components/site/ResenaVideo";
 import { FaqProducto } from "@/components/site/FaqProducto";
 import {
   getGenerationComparison,
@@ -170,6 +171,10 @@ export default async function ProductPage({
         <Respaldos />
 
         <FaqProducto product={product} esSellado={lead?.grade === "sellado"} />
+
+        {/* Al final de todo: es para quien ya se convenció y quiere escuchar a
+            alguien que lo usó. Arriba competiría con lo que vende. */}
+        <ResenaVideo slug={product.slug} nombre={product.name} />
       </div>
 
       {/*
