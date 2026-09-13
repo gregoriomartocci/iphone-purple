@@ -167,6 +167,12 @@ export const LINES: Line[] = ["base", "mini", "plus", "pro", "pro-max", "air", "
 export interface ProductImage {
   url: string;
   alt: string;
+  /**
+   * Colores del equipo que se ven en la foto, con los mismos nombres que las
+   * variantes. Vacío cuando no se etiquetó. Una foto de proveedor con tres
+   * equipos en abanico lleva los tres.
+   */
+  colores?: string[];
 }
 
 export interface Variant {

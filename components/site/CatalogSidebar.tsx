@@ -17,7 +17,7 @@ import {
   type Grade,
   type State,
 } from "@/types";
-import { cn } from "@/lib/utils";
+import { cn, esClaro } from "@/lib/utils";
 
 /**
  * Panel de filtros del catálogo.
@@ -636,15 +636,4 @@ function resumenPrecio(min?: number, max?: number): string | undefined {
   if (min) return `Desde ${formatARS(min)}`;
   if (max) return `Hasta ${formatARS(max)}`;
   return undefined;
-}
-
-/**
- * Si un color es claro, para saber de qué color va el tilde encima.
- * Luminancia percibida: el ojo pesa mucho más el verde que el azul.
- */
-function esClaro(hex?: string): boolean {
-  if (!hex) return true;
-  const m = hex.replace("#", "");
-  const [r, g, b] = [0, 2, 4].map((i) => parseInt(m.slice(i, i + 2), 16));
-  return (r * 299 + g * 587 + b * 114) / 1000 > 150;
 }

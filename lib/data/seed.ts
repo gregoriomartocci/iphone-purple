@@ -60,7 +60,9 @@ function fotosDe(slug: string, seed: SeedProduct): ProductImage[] {
   const propias = FOTOS_PRODUCTO[slug];
   // Ya están servidas desde el propio dominio: no llevan los parámetros de
   // recorte de Unsplash.
-  return propias?.length ? propias.map((f) => ({ url: f.url, alt })) : [];
+  return propias?.length
+    ? propias.map((f) => ({ url: f.url, alt, colores: f.colores }))
+    : [];
 }
 
 /**

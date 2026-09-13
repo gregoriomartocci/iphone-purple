@@ -4,6 +4,7 @@ import {
   capacityInGb,
   isCapacity,
   leadVariant,
+  ordenarPorColor,
   priceFrom,
   savingsVsNew,
   totalStock,
@@ -388,6 +389,39 @@ describe("filtro de precio", () => {
   });
 });
 
+describe("ordenarPorColor", () => {
+  const galeria = [
+    { url: "a", colores: ["Negro"] },
+    { url: "b", colores: [] },
+    { url: "c", colores: ["Naranja", "Blanco"] },
+    { url: "d", colores: ["Blanco"], video: true },
+    { url: "e", colores: ["Blanco"] },
+  ];
+  const urls = (p: { url: string }[]) => p.map((x) => x.url);
+
+  it("pone primero el color elegido, después lo sin etiquetar, después el resto", () => {
+    expect(urls(ordenarPorColor(galeria, "Blanco"))).toEqual(["c", "e", "b", "a", "d"]);
+  });
+
+  it("no esconde ninguna foto", () => {
+    expect(ordenarPorColor(galeria, "Naranja")).toHaveLength(galeria.length);
+  });
+
+  it("es estable dentro de cada grupo", () => {
+    // "c" y "e" son las dos blancas; "c" venía antes y sigue antes.
+    const [primera, segunda] = urls(ordenarPorColor(galeria, "Blanco"));
+    expect([primera, segunda]).toEqual(["c", "e"]);
+  });
+
+  it("el video queda último aunque sea del color elegido", () => {
+    expect(urls(ordenarPorColor(galeria, "Blanco")).at(-1)).toBe("d");
+  });
+
+  it("sin color devuelve la galería tal cual", () => {
+    expect(ordenarPorColor(galeria, undefined)).toBe(galeria);
+  });
+});
+
 describe("getProduct", () => {
   it("encuentra un producto por su slug", async () => {
     const found = await getProduct(PRODUCTS[0].slug);
@@ -566,11 +600,14 @@ describe("productos sin foto", () => {
    *
    * Lo que sí se sostiene es que un producto sin foto no recibe una imagen
    * prestada: o tiene las suyas o no tiene ninguna, y la tarjeta lo dice.
+   *
+   * No se exige que exista algún producto sin foto: desde septiembre de 2026
+   * el catálogo está completo, y el test es sobre la regla, no sobre el
+   * estado del stock.
    */
-  it("un producto sin foto no recibe una imagen prestada", async () => {
+  it("ningún producto recibe una imagen prestada de otro", async () => {
     const todos = await getProducts({ incluirSinFoto: true });
-    const sinFoto = todos.filter((p) => p.images.length === 0);
-    expect(sinFoto.length).toBeGreaterThan(0);
+    expect(todos.length).toBeGreaterThan(0);
     for (const p of todos) {
       for (const img of p.images) {
         expect(img.url).toContain(`/productos/${p.slug}/`);

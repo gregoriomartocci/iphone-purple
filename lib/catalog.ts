@@ -133,6 +133,34 @@ export function matchesVariant(variant: Variant, filters: VariantFilters): boole
   return true;
 }
 
+/**
+ * Ordena la galería según el color elegido.
+ *
+ * No esconde nada: quien está por comprar quiere ver su color primero, pero
+ * también las demás tomas del equipo. Primero las fotos donde aparece el
+ * color, después las que no se etiquetaron —no se sabe, no se castigan—, y al
+ * final las de los otros colores. Los videos siguen yendo últimos, sea cual
+ * sea el color: primero se quiere ver el equipo quieto.
+ *
+ * Es estable: dentro de cada grupo se respeta el orden que ya traía la
+ * galería, que es el que pone los renders de estudio adelante.
+ */
+export function ordenarPorColor<T extends { colores?: string[]; video?: boolean }>(
+  piezas: T[],
+  color: string | undefined
+): T[] {
+  if (!color) return piezas;
+  const grupo = (p: T) => {
+    if (p.video) return 3;
+    if (!p.colores?.length) return 1;
+    return p.colores.includes(color) ? 0 : 2;
+  };
+  return piezas
+    .map((p, i) => ({ p, i, g: grupo(p) }))
+    .sort((a, b) => a.g - b.g || a.i - b.i)
+    .map(({ p }) => p);
+}
+
 export function totalStock(product: Product): number {
   return product.variants.reduce((sum, v) => sum + v.stock, 0);
 }

@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Camera } from "lucide-react";
+import { BatteryMedium, Camera } from "lucide-react";
 import { Precio } from "./Precio";
 import { leadVariant, totalStock } from "@/lib/catalog";
 import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
+import { IMITADOS } from "@/lib/data/replicas";
 import type { VariantFilters } from "@/lib/catalog";
-import { GRADE_LABELS, type Product } from "@/types";
+import { AUTHENTICITY_LABELS, GRADE_LABELS, type Product } from "@/types";
 import { cn } from "@/lib/utils";
 
 /** Etiqueta de disponibilidad, en texto y sin color. */
@@ -34,8 +35,16 @@ export function StockBadge({ stock, className }: { stock: number; className?: st
  * con etiquetas de colores en cada tarjeta compite consigo misma y hace que
  * ninguna destaque.
  *
- * La única excepción es la réplica: eso se dice siempre, porque callarlo en
- * el listado sería engañoso. Va como texto, no como etiqueta de color.
+ * Dos excepciones, las dos porque hacen a la confianza y no a la decoración.
+ *
+ * La autenticidad, en una etiqueta sobre la foto, pero solo donde hace
+ * falta. Una réplica lo dice siempre, en ámbar, porque callarlo sería
+ * engañoso. Un original lo dice únicamente cuando el local vende también su
+ * réplica —hoy, los AirPods Pro 2—: ahí es donde alguien duda. Ponerlo en un
+ * iPhone o una MacBook, donde nadie lo pregunta, lo volvía sospechoso.
+ *
+ * Y en un seminuevo, la batería: es lo primero que se pregunta al comprar un
+ * usado, y ponerla en la tarjeta ahorra entrar a cada ficha para compararla.
  */
 export function ProductCard({
   product,
@@ -57,11 +66,15 @@ export function ProductCard({
   const propia = primera?.recorte === "render";
   const multiplePrices = new Set(product.variants.map((v) => v.priceArs)).size > 1;
 
-  const detalle = [
-    lead?.storage,
-    lead && GRADE_LABELS[lead.grade],
-    lead?.authenticity === "replica" ? "Réplica" : null,
-  ].filter(Boolean);
+  const detalle = [lead?.storage, lead && GRADE_LABELS[lead.grade]].filter(Boolean);
+  // Un sellado no informa batería: siempre es nueva. Se muestra solo cuando
+  // hay un número real que decir.
+  const bateria =
+    lead && lead.grade !== "sellado" && lead.batteryHealth !== null
+      ? lead.batteryHealth
+      : null;
+  const replica = lead?.authenticity === "replica";
+  const etiqueta = replica ? "replica" : IMITADOS.has(product.slug) ? "original" : null;
 
   return (
     <Link
@@ -91,6 +104,19 @@ export function ProductCard({
         // fijo, un recorte sobre negro quedaba con un marco oscuro alrededor.
         style={propia ? { background: primera?.fondo ?? "#ffffff" } : undefined}
       >
+        {etiqueta && (
+          <span
+            className={cn(
+              "pointer-events-none absolute top-3 left-3 z-10 rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-wide uppercase",
+              etiqueta === "replica"
+                ? "bg-amber-500 text-white"
+                : "border-line text-foreground border bg-white/90 backdrop-blur-sm"
+            )}
+          >
+            {AUTHENTICITY_LABELS[etiqueta]}
+          </span>
+        )}
+
         {image ? (
           <Image
             src={image.url}
@@ -130,7 +156,19 @@ export function ProductCard({
           {product.name}
         </h3>
 
-        <p className="text-muted-foreground mt-0.5 text-sm">{detalle.join(" · ")}</p>
+        <p className="text-muted-foreground mt-0.5 flex flex-wrap items-center gap-x-1.5 text-sm">
+          <span>{detalle.join(" · ")}</span>
+          {bateria !== null && (
+            <span
+              className="text-foreground inline-flex items-center gap-1"
+              title={`Batería al ${bateria}%`}
+            >
+              <span aria-hidden>·</span>
+              <BatteryMedium className="size-4" aria-hidden />
+              <span className="tnum">{bateria}%</span>
+            </span>
+          )}
+        </p>
 
         <div className="mt-auto pt-3">
           <Precio
