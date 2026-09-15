@@ -116,6 +116,13 @@ export const PAGE_PHOTOS = {
   // ocho años atrás ilustrando la página donde se cotiza lo que vale el tuyo.
   planCanje: `https://images.unsplash.com/photo-1727079513748-d03e7b8c8947?${recorte()}`,
   reparaciones: `https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?${recorte()}`,
-  blog: `https://images.unsplash.com/photo-1519389950473-47ba0277781c?${recorte()}`,
-  contacto: `https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?${recorte()}`,
+  // Alguien disfrutando de su teléfono, con luz natural: el blog habla de cómo
+  // se usa y se cuida un equipo, y una cara lo dice mejor que unas manos. La
+  // primera era un escritorio visto desde arriba con cinco notebooks y un nido
+  // de cables, que no decía nada de eso.
+  blog: `https://images.unsplash.com/photo-1653762379954-8943c787e78b?${recorte(0.42)}`,
+  // Un local de Apple lleno, con gente preguntando y alguien del otro lado del
+  // mostrador: es lo que la página ofrece. La anterior eran dos personas en un
+  // mostrador y, recortada a la banda, les cortaba la cabeza a las dos.
+  contacto: `https://images.unsplash.com/photo-1731200302527-09218e92ae64?${recorte()}`,
 } as const;

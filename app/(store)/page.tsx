@@ -45,11 +45,12 @@ const SHORTCUTS = [
 /**
  * Foto de la banda de Plan Canje.
  *
- * Cuenta el canje sin tener que explicarlo: a la izquierda el equipo que se
- * entrega —dorso rayado, pantalla partida—, a la derecha el que se lleva,
- * impecable. Antes eran dos renders del catálogo con una flecha en el medio;
- * decían lo mismo, pero sin el contraste de ver un equipo gastado al lado de
- * uno nuevo, que es todo el argumento del canje.
+ * Dos equipos parados, los dos de dorso, sobre fondo oscuro: el que se
+ * entrega y el que se lleva. Nada más. Antes eran cuatro teléfonos —dorso y
+ * frente de cada uno, con la pantalla partida del viejo—, y contar el canje
+ * con cuatro pantallas negras lo volvía un catálogo en vez de una idea. La
+ * segunda versión ya eran dos, pero tiradas sobre una mesada de cocina; ésta
+ * es de estudio, que es como se muestra algo que se vende.
  */
 const CANJE_FOTO = "/plan-canje.jpg";
 
@@ -163,15 +164,15 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            {/* La narración ya está adentro de la foto —gastado a la izquierda,
-                nuevo a la derecha—, así que reemplaza a los dos renders y a la
-                flecha que los separaba. El pie lo dice en palabras para quien
-                no llega a leer el detalle de las pantallas. */}
+            {/* La narración ya está adentro de la foto —el equipo de entrada a
+                la izquierda, el Pro a la derecha—, así que reemplaza a los dos
+                renders y a la flecha que los separaba. El pie lo dice en
+                palabras para quien mira rápido. */}
             <figure className="m-0">
               <div className="relative aspect-3/2 overflow-hidden rounded-2xl ring-1 ring-white/10">
                 <Image
                   src={CANJE_FOTO}
-                  alt="Dos iPhone usados, con el dorso rayado y la pantalla partida, al lado de dos iPhone impecables"
+                  alt="Dos iPhone parados de dorso, uno al lado del otro: el que se entrega y el que se lleva"
                   fill
                   sizes="(min-width: 1024px) 46vw, 90vw"
                   className="object-cover"
