@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { fotoPrincipal } from "@/lib/fotos";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+import { ImageOff, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCart } from "./CartProvider";
 import { Precio } from "@/components/site/Precio";
 import { cn } from "@/lib/utils";
@@ -118,14 +119,20 @@ export function CartDrawer() {
                     onClick={cerrar}
                     className="bg-elevated relative size-20 shrink-0 overflow-hidden rounded-xl"
                   >
-                    {item.image && (
+                    {/* La foto se resuelve por slug contra el catálogo de hoy,
+                        no desde lo que se guardó al agregar: ver lib/fotos.ts. */}
+                    {fotoPrincipal(item.slug) ? (
                       <Image
-                        src={item.image}
+                        src={fotoPrincipal(item.slug)!}
                         alt=""
                         fill
                         sizes="80px"
                         className="object-cover"
                       />
+                    ) : (
+                      <span className="text-muted-foreground/50 flex h-full items-center justify-center">
+                        <ImageOff className="size-5" aria-hidden />
+                      </span>
                     )}
                   </Link>
 

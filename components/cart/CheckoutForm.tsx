@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { fotoPrincipal } from "@/lib/fotos";
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { AlertCircle, CheckCircle2, Loader2, ShoppingBag } from "lucide-react";
+import { AlertCircle, CheckCircle2, ImageOff, Loader2, ShoppingBag } from "lucide-react";
 import { Calendario } from "./Calendario";
 import { confirmarPedido } from "@/app/(store)/checkout/actions";
 import { fechaLarga } from "@/lib/turnos";
@@ -284,14 +285,19 @@ export function CheckoutForm({
             {items.map((item) => (
               <li key={item.variantId} className="flex gap-3 py-3">
                 <span className="bg-elevated relative size-14 shrink-0 overflow-hidden rounded-lg">
-                  {item.image && (
+                  {/* Igual que en el carrito: la foto sale del catálogo actual. */}
+                  {fotoPrincipal(item.slug) ? (
                     <Image
-                      src={item.image}
+                      src={fotoPrincipal(item.slug)!}
                       alt=""
                       fill
                       sizes="56px"
                       className="object-cover"
                     />
+                  ) : (
+                    <span className="text-muted-foreground/50 flex h-full items-center justify-center">
+                      <ImageOff className="size-4" aria-hidden />
+                    </span>
                   )}
                 </span>
                 <span className="min-w-0 flex-1">

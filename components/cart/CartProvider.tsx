@@ -20,7 +20,15 @@ export type CartItem = {
   priceArs: number;
   /** El mismo precio en dólares, para poder mostrarlo en las dos monedas. */
   priceUsd: number;
-  image: string | null;
+  /**
+   * La foto NO se guarda acá.
+   *
+   * El carrito puede quedar en localStorage semanas, y una URL guardada
+   * envejece: la foto que se reemplaza corre de número y la que se descarta
+   * desaparece, así que el recuadro terminaba mostrando una imagen rota. Se
+   * resuelve por slug al pintarla — ver lib/fotos.ts. Los carritos guardados
+   * de antes traen el campo igual; sobra, y se ignora.
+   */
   /** Stock disponible al agregarlo, para no dejar sumar de más. */
   maxStock: number;
   quantity: number;

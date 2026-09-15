@@ -32,7 +32,6 @@ export function AddToCart({
           variantLabel: `${variant.storage} · ${variant.color} · ${GRADE_LABELS[variant.grade]}`,
           priceArs: variant.priceArs,
           priceUsd: variant.priceUsd,
-          image: product.images[0]?.url ?? null,
           maxStock: variant.stock,
         });
         // Confirmación breve en el propio botón: el panel ya se abre solo,
