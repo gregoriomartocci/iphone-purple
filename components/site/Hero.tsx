@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 
 /**
  * Hero con video de fondo.
@@ -94,6 +94,22 @@ export function Hero() {
           </Link>
         </div>
       </div>
+
+      {/*
+        La pista de que la página sigue.
+
+        Es un enlace, no un adorno: quien lo toca baja al catálogo, y quien
+        navega con teclado lo encuentra en el orden natural. `aria-hidden` en
+        la flecha porque el texto accesible ya lo dice el enlace.
+      */}
+      <a
+        href="#catalogo"
+        aria-label="Ver lo que sigue"
+        className="se-apaga-al-bajar absolute inset-x-0 bottom-7 z-10 mx-auto flex w-fit flex-col items-center gap-1.5 text-white/70 transition-colors hover:text-white"
+      >
+        <span className="text-[11px] tracking-[0.18em] uppercase">Ver más</span>
+        <ChevronDown className="invita-a-bajar size-5" aria-hidden />
+      </a>
     </section>
   );
 }

@@ -88,8 +88,9 @@ export default async function HomePage() {
 
       <Hero />
 
-      {/* Tres accesos: el 90 % de las visitas viene por una de estas tres puertas. */}
-      <section className="shell py-12 sm:py-14">
+      {/* Tres accesos: el 90 % de las visitas viene por una de estas tres puertas.
+          El id es el destino de la flecha "Ver más" de la portada. */}
+      <section id="catalogo" className="shell scroll-mt-20 py-12 sm:py-14">
         <div className="aparece-escalonado grid gap-5 sm:grid-cols-3">
           {SHORTCUTS.map(({ href, icon: Icon, title, text }, i) => (
             <Link
@@ -175,7 +176,7 @@ export default async function HomePage() {
                   alt="Dos iPhone parados de dorso, uno al lado del otro: el que se entrega y el que se lleva"
                   fill
                   sizes="(min-width: 1024px) 46vw, 90vw"
-                  className="object-cover"
+                  className="parallax-foto object-cover"
                 />
               </div>
               <figcaption className="mt-3 text-sm leading-relaxed text-white/50">
@@ -200,7 +201,7 @@ export default async function HomePage() {
 
       {latestPosts.length > 0 && (
         <section className="shell band">
-          <div className="flex items-end justify-between gap-4">
+          <div className="aparece flex items-end justify-between gap-4">
             <h2 className="text-3xl font-semibold sm:text-4xl">Blog</h2>
             <Link
               href="/blog"

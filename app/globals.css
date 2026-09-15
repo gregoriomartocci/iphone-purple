@@ -256,6 +256,60 @@
   }
 
   /**
+   * Señal de que abajo hay más.
+   *
+   * La portada ocupa la pantalla entera, así que sin esto no hay ninguna
+   * pista de que la página sigue: se ve una foto y un titular, y nada indica
+   * que hay catálogo abajo. Es un latido lento —dos segundos y medio— porque
+   * la idea es que se perciba de reojo, no que reclame atención.
+   */
+  .invita-a-bajar {
+    animation: invita-a-bajar 2.6s ease-in-out infinite;
+  }
+
+  /**
+   * Se desvanece apenas se empieza a bajar.
+   *
+   * Un indicador de scroll que sigue ahí cuando ya scrolleaste es ruido: ya
+   * cumplió. Se apaga en el primer cuarto de pantalla. Atado al scroll y no a
+   * un listener de React: es una propiedad visual, no un estado.
+   */
+  .se-apaga-al-bajar {
+    opacity: 1;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .se-apaga-al-bajar {
+      animation: desvanecer linear both;
+      animation-timeline: scroll();
+      animation-range: 0 30vh;
+    }
+  }
+
+  /**
+   * Desplazamiento suave de una foto mientras la sección cruza la pantalla.
+   *
+   * Le da profundidad al scroll: la imagen se mueve un poco más lento que el
+   * texto que la acompaña, que es lo que el ojo lee como "hay planos". El
+   * `scale` no es decorativo — sin él, al desplazar la foto dentro de su
+   * marco quedarían dos franjas vacías arriba y abajo.
+   *
+   * El rango va de la entrada a la salida completa: si terminara antes, la
+   * foto se congelaría a mitad de pantalla y se notaría el corte.
+   */
+  .parallax-foto {
+    transform: none;
+  }
+
+  @supports (animation-timeline: view()) {
+    .parallax-foto {
+      animation: parallax-foto linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+  }
+
+  /**
    * Subrayado que crece desde la izquierda al pasar el mouse.
    * Se usa en los links de sección, que antes solo cambiaban de color.
    */
@@ -570,6 +624,34 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes invita-a-bajar {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(7px);
+    opacity: 1;
+  }
+}
+
+@keyframes desvanecer {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Tres por ciento arriba y abajo: se siente, no se ve. */
+@keyframes parallax-foto {
+  from {
+    transform: translateY(-3%) scale(1.07);
+  }
+  to {
+    transform: translateY(3%) scale(1.07);
   }
 }
 
