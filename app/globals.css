@@ -256,6 +256,28 @@
   }
 
   /**
+   * La capa de fotos de la portada, movida apenas por el puntero.
+   *
+   * El `scale` no es decorativo: al correr la capa unos píxeles asomarían los
+   * bordes, y un 4 % de más alcanza para que nunca se vea el borde. La
+   * transición larga es lo que convierte un seguimiento nervioso en un
+   * desplazamiento suave — el evento actualiza la variable, el CSS se encarga
+   * de llegar hasta ahí.
+   */
+  .hero-parallax {
+    transform: translate3d(var(--parallax-x, 0), var(--parallax-y, 0), 0) scale(1.04);
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-parallax {
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /**
    * Señal de que abajo hay más.
    *
    * La portada ocupa la pantalla entera, así que sin esto no hay ninguna

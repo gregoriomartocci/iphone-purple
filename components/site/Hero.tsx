@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { ArrowRight, ChevronDown } from "lucide-react";
+import { HeroFondo } from "./HeroFondo";
 
 /**
- * Hero con video de fondo.
+ * Hero con fotos de fondo que se van pasando.
  *
- * Degrada en dos escalones: si el navegador no reproduce, queda el `poster`; si
- * tampoco existe el poster, queda el fondo tinta del `<section>`. En los tres
- * casos el texto se lee, que es lo único que no puede fallar.
+ * El fondo lo maneja HeroFondo, que es cliente porque necesita un temporizador
+ * y la posición del mouse. Todo lo demás —titular, botones— queda en el
+ * servidor: es lo que tiene que estar en el HTML sí o sí, y no depende de nada
+ * que pase en el navegador.
  *
- * Para activarlo, dejá `public/hero.mp4` y `public/hero-poster.jpg`.
+ * Antes acá había un <video> con un poster, pero el video nunca existió, así
+ * que en los hechos siempre se vio una foto fija. Ahora son varias.
  */
 export function Hero() {
   return (
@@ -18,19 +21,7 @@ export function Hero() {
       data-hero
       className="bg-ink relative isolate -mt-16 flex min-h-svh items-center overflow-hidden"
     >
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        poster="/hero-poster.jpg"
-        aria-hidden
-        tabIndex={-1}
-        className="respira absolute inset-0 -z-10 size-full object-cover object-center"
-      >
-        <source src="/hero.mp4" type="video/mp4" />
-      </video>
+      <HeroFondo />
 
       {/*
         Dos capas de oscurecimiento, calibradas para que el titular se lea
