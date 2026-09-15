@@ -116,11 +116,11 @@ export const PAGE_PHOTOS = {
   // ocho años atrás ilustrando la página donde se cotiza lo que vale el tuyo.
   planCanje: `https://images.unsplash.com/photo-1727079513748-d03e7b8c8947?${recorte()}`,
   reparaciones: `https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?${recorte()}`,
-  // Alguien disfrutando de su teléfono, con luz natural: el blog habla de cómo
-  // se usa y se cuida un equipo, y una cara lo dice mejor que unas manos. La
-  // primera era un escritorio visto desde arriba con cinco notebooks y un nido
-  // de cables, que no decía nada de eso.
-  blog: `https://images.unsplash.com/photo-1653762379954-8943c787e78b?${recorte(0.42)}`,
+  // Una mano con el equipo, sobre un gris parejo: se ve que alguien lo está
+  // usando y nada más. Sin cara y sin escena, porque es una portada de
+  // sección y no la ilustración de una nota concreta: cuanto menos cuenta,
+  // mejor convive con notas que hablan de cosas distintas.
+  blog: `https://images.unsplash.com/photo-1470350576089-539d5a852bf7?${recorte()}`,
   // Un local de Apple lleno, con gente preguntando y alguien del otro lado del
   // mostrador: es lo que la página ofrece. La anterior eran dos personas en un
   // mostrador y, recortada a la banda, les cortaba la cabeza a las dos.
