@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { HeroFondo } from "./HeroFondo";
+import { versionado } from "@/lib/assets";
 
 /**
  * Hero con fotos de fondo que se van pasando.
@@ -21,7 +22,10 @@ export function Hero() {
       data-hero
       className="bg-ink relative isolate -mt-16 flex min-h-svh items-center overflow-hidden"
     >
-      <HeroFondo />
+      {/* Las rutas se arman acá, en el servidor: llevan el hash del contenido
+          para que reemplazar una foto no deje a nadie viendo la anterior, y
+          leer el archivo del disco solo se puede de este lado. */}
+      <HeroFondo fotos={[1, 2, 3, 4].map((n) => versionado(`hero/${n}.jpg`))} />
 
       {/*
         Dos capas de oscurecimiento, calibradas para que el titular se lea

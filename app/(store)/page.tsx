@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { versionado } from "@/lib/assets";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, RefreshCcw, ShieldCheck, Smartphone, Wrench } from "lucide-react";
@@ -52,7 +53,7 @@ const SHORTCUTS = [
  * segunda versión ya eran dos, pero tiradas sobre una mesada de cocina; ésta
  * es de estudio, que es como se muestra algo que se vende.
  */
-const CANJE_FOTO = "/plan-canje.jpg";
+const CANJE_FOTO = versionado("plan-canje.jpg");
 
 const TRUST = [
   {
@@ -169,20 +170,15 @@ export default async function HomePage() {
                 la izquierda, el Pro a la derecha—, así que reemplaza a los dos
                 renders y a la flecha que los separaba. El pie lo dice en
                 palabras para quien mira rápido. */}
-            <figure className="m-0">
-              <div className="relative aspect-3/2 overflow-hidden rounded-2xl ring-1 ring-white/10">
-                <Image
-                  src={CANJE_FOTO}
-                  alt="Dos iPhone parados de dorso, uno al lado del otro: el que se entrega y el que se lleva"
-                  fill
-                  sizes="(min-width: 1024px) 46vw, 90vw"
-                  className="parallax-foto object-cover"
-                />
-              </div>
-              <figcaption className="mt-3 text-sm leading-relaxed text-white/50">
-                Entregás el de la izquierda. Te llevás el de la derecha.
-              </figcaption>
-            </figure>
+            <div className="relative aspect-3/2 overflow-hidden rounded-2xl ring-1 ring-white/10">
+              <Image
+                src={CANJE_FOTO}
+                alt="Dos iPhone parados de dorso, uno al lado del otro: el que se entrega y el que se lleva"
+                fill
+                sizes="(min-width: 1024px) 46vw, 90vw"
+                className="parallax-foto object-cover"
+              />
+            </div>
           </div>
 
           <div className="aparece-escalonado mt-20 grid gap-8 border-t border-white/10 pt-12 sm:grid-cols-3">

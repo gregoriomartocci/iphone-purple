@@ -15,16 +15,9 @@ import { useEffect, useRef, useState } from "react";
  * se queda leyendo alcance a ver un cambio, sin que el que está eligiendo un
  * equipo sienta que la página se mueve sola.
  */
-const FOTOS = [
-  { src: "/hero/1.jpg", alt: "" },
-  { src: "/hero/2.jpg", alt: "" },
-  { src: "/hero/3.jpg", alt: "" },
-  { src: "/hero/4.jpg", alt: "" },
-];
-
 const QUIETA_MS = 8000;
 
-export function HeroFondo() {
+export function HeroFondo({ fotos }: { fotos: string[] }) {
   const [actual, setActual] = useState(0);
   const capa = useRef<HTMLDivElement>(null);
 
@@ -39,11 +32,11 @@ export function HeroFondo() {
     if (menosMovimiento.matches) return;
 
     const id = window.setInterval(
-      () => setActual((i) => (i + 1) % FOTOS.length),
+      () => setActual((i) => (i + 1) % fotos.length),
       QUIETA_MS
     );
     return () => window.clearInterval(id);
-  }, []);
+  }, [fotos.length]);
 
   /**
    * Parallax con el mouse.
@@ -96,11 +89,11 @@ export function HeroFondo() {
       aria-hidden
       className="hero-parallax absolute inset-0 -z-10 overflow-hidden"
     >
-      {FOTOS.map((foto, i) => (
+      {fotos.map((foto, i) => (
         <Image
-          key={foto.src}
-          src={foto.src}
-          alt={foto.alt}
+          key={foto}
+          src={foto}
+          alt=""
           fill
           // La primera es lo primero que se ve de la página: tiene que estar
           // antes que nada. Las demás pueden esperar, hay ocho segundos.
