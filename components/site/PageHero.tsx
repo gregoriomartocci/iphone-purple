@@ -119,13 +119,13 @@ export const PAGE_PHOTOS = {
   // ocho años atrás ilustrando la página donde se cotiza lo que vale el tuyo.
   planCanje: `https://images.unsplash.com/photo-1727079513748-d03e7b8c8947?${recorte()}`,
   reparaciones: `https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?${recorte()}`,
-  // Una mano con el equipo, en blanco y negro sobre una pared con textura.
-  // Sin cara y sin escena, porque es la portada de una sección que agrupa
-  // notas sobre cosas distintas: cuanto menos cuenta, mejor convive con
-  // todas. El blanco y negro la vuelve editorial, que es el tono del blog.
-  blog: `https://images.unsplash.com/photo-1614709912349-937e0e98877e?${recorte()}`,
-  // Un local lleno, con gente probando equipos sobre las mesas: es lo que la
-  // página ofrece, alguien del otro lado. En blanco y negro porque acá el
-  // tema son las personas, y el color de la ropa competía con ellas.
-  contacto: `https://images.unsplash.com/photo-1777073232732-8d66f9405a8d?${recorte()}`,
+  // Un Apple Pencil y unos AirPods sobre gris, y nada más. Producto, como en
+  // la portada: sin manos ni gente, que es lo que hacía que estas bandas
+  // desentonaran con la landing. El lápiz al lado de la palabra Blog dice
+  // solo lo que hace falta.
+  blog: `https://images.unsplash.com/photo-1563549054059-bf4ebe2f49d5?${recorte()}`,
+  // Tres iPhone en fila, con la luz cálida de atrás desenfocada. Producto,
+  // igual que el resto: se probó con fotos de local lleno de gente y
+  // desentonaban con la portada, que es de equipos y nada más.
+  contacto: `https://images.unsplash.com/photo-1608022625050-82683640e5a3?${recorte()}`,
 } as const;
