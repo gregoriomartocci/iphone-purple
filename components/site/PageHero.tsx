@@ -131,8 +131,8 @@ export const PAGE_PHOTOS = {
   // desentonaran con la landing. El lápiz al lado de la palabra Blog dice
   // solo lo que hace falta.
   blog: `https://images.unsplash.com/photo-1563549054059-bf4ebe2f49d5?${recorte(0.4)}`,
-  // Tres iPhone en fila, con la luz cálida de atrás desenfocada. Producto,
-  // igual que el resto: se probó con fotos de local lleno de gente y
-  // desentonaban con la portada, que es de equipos y nada más.
-  contacto: `https://images.unsplash.com/photo-1608022625050-82683640e5a3?${recorte(0.8)}`,
+  // Macro del módulo de cámara de un Pro en titanio: la clase de foto que usa
+  // el propio fabricante. Reemplaza a tres iPhone en fila donde uno era un 11,
+  // de 2019, en la portada de un local que vende lo último.
+  contacto: `https://images.unsplash.com/photo-1761435922559-7b2712066c19?${recorte()}`,
 } as const;
