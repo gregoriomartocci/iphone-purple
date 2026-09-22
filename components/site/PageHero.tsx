@@ -98,6 +98,13 @@ export function PageHero({
  * elegía el algoritmo mirando dónde hay más detalle, y en fotos con una zona
  * muy brillante —una pantalla encendida en la oscuridad— eso empujaba el
  * motivo contra el borde de arriba.
+ *
+ * Los valores de cada banda no son a ojo: el título apoya abajo a la
+ * izquierda, y si el equipo cae justo ahí compite con el texto. Se midió la
+ * variación de luminancia en ese rectángulo —ya con el velo y el degradado
+ * aplicados— barriendo fp-y de 0,2 a 0,8, y se eligió el que deja esa zona
+ * más tranquila sin vaciar el resto de la foto. Catálogo bajó de 17,6 a 14,4;
+ * contacto, de 18,3 a 15,4.
  */
 const recorte = (fpY = 0.5) =>
   `auto=format&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=${fpY}&w=2000&h=640&q=80`;
@@ -112,7 +119,7 @@ export const PAGE_PHOTOS = {
   // Muchos equipos Apple vistos desde arriba, con sus colores: un catálogo
   // dibujado. La anterior era una MacBook apagada en penumbra, que decía
   // "computadora" pero no decía "hay de todo y podés elegir".
-  catalogo: `https://images.unsplash.com/photo-1707485122968-56916bd2c464?${recorte()}`,
+  catalogo: `https://images.unsplash.com/photo-1707485122968-56916bd2c464?${recorte(0.6)}`,
   // Dos iPhone Pro Max de generaciones distintas, uno al lado del otro: es el
   // Plan Canje en una imagen —entregás el de la izquierda, te llevás el de la
   // derecha—. La anterior era un iPhone X con iOS 11, de 2017: un teléfono de
@@ -123,9 +130,9 @@ export const PAGE_PHOTOS = {
   // la portada: sin manos ni gente, que es lo que hacía que estas bandas
   // desentonaran con la landing. El lápiz al lado de la palabra Blog dice
   // solo lo que hace falta.
-  blog: `https://images.unsplash.com/photo-1563549054059-bf4ebe2f49d5?${recorte()}`,
+  blog: `https://images.unsplash.com/photo-1563549054059-bf4ebe2f49d5?${recorte(0.4)}`,
   // Tres iPhone en fila, con la luz cálida de atrás desenfocada. Producto,
   // igual que el resto: se probó con fotos de local lleno de gente y
   // desentonaban con la portada, que es de equipos y nada más.
-  contacto: `https://images.unsplash.com/photo-1608022625050-82683640e5a3?${recorte()}`,
+  contacto: `https://images.unsplash.com/photo-1608022625050-82683640e5a3?${recorte(0.8)}`,
 } as const;
