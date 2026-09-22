@@ -109,20 +109,23 @@ export const PAGE_PHOTOS = {
   // medida como el centro de masa del brillo —el equipo es lo iluminado en una
   // escena oscura—. Con ese foco el equipo cae en 0.498 de la banda, o sea
   // centrado. Con 0.62 quedaba en 0.409, empujado contra el borde de arriba.
-  catalogo: `https://images.unsplash.com/photo-1531297484001-80022131f5a1?${recorte(0.565)}`,
+  // Muchos equipos Apple vistos desde arriba, con sus colores: un catálogo
+  // dibujado. La anterior era una MacBook apagada en penumbra, que decía
+  // "computadora" pero no decía "hay de todo y podés elegir".
+  catalogo: `https://images.unsplash.com/photo-1707485122968-56916bd2c464?${recorte()}`,
   // Dos iPhone Pro Max de generaciones distintas, uno al lado del otro: es el
   // Plan Canje en una imagen —entregás el de la izquierda, te llevás el de la
   // derecha—. La anterior era un iPhone X con iOS 11, de 2017: un teléfono de
   // ocho años atrás ilustrando la página donde se cotiza lo que vale el tuyo.
   planCanje: `https://images.unsplash.com/photo-1727079513748-d03e7b8c8947?${recorte()}`,
   reparaciones: `https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?${recorte()}`,
-  // Una mano con el equipo, sobre un gris parejo: se ve que alguien lo está
-  // usando y nada más. Sin cara y sin escena, porque es una portada de
-  // sección y no la ilustración de una nota concreta: cuanto menos cuenta,
-  // mejor convive con notas que hablan de cosas distintas.
-  blog: `https://images.unsplash.com/photo-1470350576089-539d5a852bf7?${recorte()}`,
-  // Un local de Apple lleno, con gente preguntando y alguien del otro lado del
-  // mostrador: es lo que la página ofrece. La anterior eran dos personas en un
-  // mostrador y, recortada a la banda, les cortaba la cabeza a las dos.
-  contacto: `https://images.unsplash.com/photo-1731200302527-09218e92ae64?${recorte()}`,
+  // Una mano con el equipo, en blanco y negro sobre una pared con textura.
+  // Sin cara y sin escena, porque es la portada de una sección que agrupa
+  // notas sobre cosas distintas: cuanto menos cuenta, mejor convive con
+  // todas. El blanco y negro la vuelve editorial, que es el tono del blog.
+  blog: `https://images.unsplash.com/photo-1614709912349-937e0e98877e?${recorte()}`,
+  // Un local lleno, con gente probando equipos sobre las mesas: es lo que la
+  // página ofrece, alguien del otro lado. En blanco y negro porque acá el
+  // tema son las personas, y el color de la ropa competía con ellas.
+  contacto: `https://images.unsplash.com/photo-1777073232732-8d66f9405a8d?${recorte()}`,
 } as const;
