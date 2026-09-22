@@ -55,7 +55,25 @@ const nextConfig: NextConfig = {
      * así que el segundo patrón deja el resto de /public como estaba: sin
      * query.
      */
-    localPatterns: [{ pathname: "/productos/**" }, { pathname: "/**", search: "" }],
+    /*
+     * Rutas locales que next/image puede optimizar.
+     *
+     * Las que llevan ?v=<hash> del contenido —para que reemplazar una foto no
+     * deje a nadie viendo la anterior— tienen que estar listadas SIN `search`,
+     * que es como se permite cualquier query. El último patrón deja pasar el
+     * resto de public/ pero solo sin query: omitir `search` en un comodín
+     * habilitaría a cualquiera a pedir optimizaciones de URLs arbitrarias.
+     *
+     * Si se versiona un archivo nuevo hay que sumarlo acá. Que eso no se
+     * olvide lo cuida tests/assets.test.ts: compara lo que produce
+     * lib/assets.ts contra esta lista y falla si algo no matchea.
+     */
+    localPatterns: [
+      { pathname: "/productos/**" },
+      { pathname: "/hero/**" },
+      { pathname: "/plan-canje.jpg" },
+      { pathname: "/**", search: "" },
+    ],
     remotePatterns: [
       { protocol: "https", hostname: "*.supabase.co" },
       // Fotos de la semilla de demostración; se van cuando cargues las tuyas.
