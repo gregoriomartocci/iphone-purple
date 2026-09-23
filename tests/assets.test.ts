@@ -44,9 +44,13 @@ function permitida(url: string): boolean {
 
 describe("rutas de imagen contra localPatterns", () => {
   it("cada archivo suelto de public/ que se versiona está permitido", () => {
-    // Lo que versiona la landing hoy: las fotos del hero y la del canje.
+    // Lo que se versiona hoy: las fotos del hero, las bandas de sección y
+    // la del canje.
     const sueltos = [
       ...readdirSync(path.join(process.cwd(), "public", "hero")).map((f) => `hero/${f}`),
+      ...readdirSync(path.join(process.cwd(), "public", "bandas")).map(
+        (f) => `bandas/${f}`
+      ),
       "plan-canje.jpg",
     ];
     const rechazadas = sueltos.map((f) => versionado(f)).filter((url) => !permitida(url));

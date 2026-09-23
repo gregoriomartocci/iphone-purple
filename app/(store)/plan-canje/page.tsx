@@ -53,7 +53,7 @@ export default async function TradeInPage() {
       <PageHero
         title="Plan Canje"
         subtitle="Tomamos tu iPhone usado como parte de pago. Cotizalo acá en dos minutos y descontá ese valor del equipo que te quieras llevar."
-        image={PAGE_PHOTOS.planCanje}
+        {...PAGE_PHOTOS.planCanje}
       />
 
       <div className="shell py-12 sm:py-16">

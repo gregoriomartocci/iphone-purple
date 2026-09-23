@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { versionado } from "@/lib/assets";
 import { cn } from "@/lib/utils";
 
 /**
@@ -45,7 +46,9 @@ export function PageHero({
       data-hero
       // Baja en teléfono, para no comerse media pantalla antes del contenido;
       // más alta en escritorio, porque cuanto más chata la banda más agresivo
-      // es el recorte de la foto y peor el encuadre que queda.
+      // es el recorte de la foto y peor el encuadre que queda. Es la misma
+      // medida en todas las secciones: una más baja que el resto se lee como
+      // un error de maquetado, no como una decisión.
       className="bg-ink relative isolate -mt-16 flex min-h-[300px] items-end overflow-hidden sm:min-h-[440px] lg:min-h-[520px]"
     >
       <Image
@@ -80,59 +83,73 @@ export function PageHero({
 }
 
 /**
- * Foto de cada sección.
+ * Foto de cada sección, con su encuadre al lado.
  *
- * Se piden ya recortadas a la proporción de la banda y con `crop=entropy`:
- * así el recorte lo elige Unsplash mirando dónde está la información de la
- * imagen, en vez de cortar por el centro a ciegas y dejar afuera el motivo.
- * Además viaja bastante menos peso, porque no se descarga alto que no se ve.
+ * El encuadre viaja con la foto y no en cada página a propósito: es una
+ * propiedad de la imagen —dónde cae el equipo dentro del cuadro—, no de la
+ * sección que la usa. Cuando eran dos cosas separadas ya se notó: /cuenta
+ * reutiliza la foto del catálogo y se habría quedado con el recorte por
+ * defecto, que en esa foto deja el título encima de la MacBook.
  *
- * Centralizadas acá para cambiarlas en un solo lugar cuando haya fotos
- * propias del local.
+ * Se usan con spread: `<PageHero title="…" {...PAGE_PHOTOS.catalogo} />`.
  */
+type Banda = {
+  image: string;
+  foco?: "top" | "center" | "bottom";
+};
+
 /**
- * Recorte de las portadas.
+ * Recorte de las portadas que todavía vienen de Unsplash.
  *
  * `fp-y` decide desde qué altura de la foto original se toma la banda: 0.5 es
- * el medio, más chico sube y más grande baja. Con `entropy` el recorte lo
- * elegía el algoritmo mirando dónde hay más detalle, y en fotos con una zona
- * muy brillante —una pantalla encendida en la oscuridad— eso empujaba el
- * motivo contra el borde de arriba.
- *
- * Los valores de cada banda no son a ojo: el título apoya abajo a la
- * izquierda, y si el equipo cae justo ahí compite con el texto. Se midió la
- * variación de luminancia en ese rectángulo —ya con el velo y el degradado
- * aplicados— barriendo fp-y de 0,2 a 0,8, y se eligió el que deja esa zona
- * más tranquila sin vaciar el resto de la foto. Catálogo bajó de 17,6 a 14,4;
- * contacto, de 18,3 a 15,4.
+ * el medio, más chico sube y más grande baja. Se piden ya recortadas a la
+ * proporción de la banda para que no viaje alto que no se ve.
  */
 const recorte = (fpY = 0.5) =>
   `auto=format&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=${fpY}&w=2000&h=640&q=80`;
+
+/**
+ * Catálogo, blog y contacto llevan fotos locales, en la estética de la portada.
+ *
+ * Venían de Unsplash y desentonaban: la del catálogo era un fondo blanco con
+ * fundas rojas, doradas y naranjas —lo más ruidoso posible justo arriba de la
+ * grilla de productos—, y la de contacto, pese a que se la había buscado
+ * "macro de titanio", llegaba casi blanca. Ahora las tres son producto solo,
+ * sobre superficie oscura y sin gente, y viven en el repo: el recorte es
+ * nuestro y no depende de que un servicio de terceros siga sirviendo la foto.
+ *
+ * Blog y contacto reusan dos de las cuatro de `public/hero/`; el catálogo
+ * tiene la suya en `public/bandas/`, porque ninguna de las del hero encuadra
+ * bien en una banda tan apaisada.
+ *
+ * Cuál va en cada una no se eligió a ojo. Se rearmó el recorte de la banda de
+ * escritorio para cada foto y cada encuadre, se le aplicaron los dos velos, y
+ * se midió la variación de luminancia en el rectángulo donde apoyan el título
+ * y la bajada: cuanto más pareja esa zona, menos pelea la foto con el texto.
+ * El número mide calma, no encuadre, así que la última palabra la tuvo mirar
+ * el recorte renderizado —por eso la más "tranquila" de todas quedó afuera:
+ * era un teléfono parado que la banda partía al medio—.
+ */
 export const PAGE_PHOTOS = {
-  // MacBook encendida en penumbra: pantalla, luz y color, que es la estética
-  // que buscamos. La foto de escritorio con los dos monitores pasó a ser la
-  // portada de la landing, así catálogo no repite la misma imagen.
-  // 0.565 no es a ojo: es la altura donde está la MacBook dentro de la foto,
-  // medida como el centro de masa del brillo —el equipo es lo iluminado en una
-  // escena oscura—. Con ese foco el equipo cae en 0.498 de la banda, o sea
-  // centrado. Con 0.62 quedaba en 0.409, empujado contra el borde de arriba.
-  // Muchos equipos Apple vistos desde arriba, con sus colores: un catálogo
-  // dibujado. La anterior era una MacBook apagada en penumbra, que decía
-  // "computadora" pero no decía "hay de todo y podés elegir".
-  catalogo: `https://images.unsplash.com/photo-1707485122968-56916bd2c464?${recorte(0.6)}`,
+  // Un iPhone Pro y unos AirPods Pro con su estuche, sobre negro puro y nada
+  // más. Es la más despojada de las que probamos, que resultó ser lo que hacía
+  // falta: las anteriores tenían de más —un estuche de AirPods Max que hacía
+  // un bulto raro, o un escritorio con textura y el reloj del teléfono a la
+  // vista— y en una banda de 2,77:1 todo lo que sobra se nota.
+  catalogo: { image: versionado("bandas/catalogo.jpg"), foco: "center" },
+  // Libreta, lente y iPad con el Pencil al lado. Es la única de las cuatro con
+  // algo de escribir adentro, que es justo de lo que va la sección.
+  blog: { image: versionado("hero/2.jpg"), foco: "center" },
+  // Un iPhone solo, de cerca, sobre negro. La página de contacto no necesita
+  // mostrar surtido: necesita no distraer del formulario y de los datos.
+  contacto: { image: versionado("hero/3.jpg"), foco: "center" },
   // Dos iPhone Pro Max de generaciones distintas, uno al lado del otro: es el
   // Plan Canje en una imagen —entregás el de la izquierda, te llevás el de la
-  // derecha—. La anterior era un iPhone X con iOS 11, de 2017: un teléfono de
-  // ocho años atrás ilustrando la página donde se cotiza lo que vale el tuyo.
-  planCanje: `https://images.unsplash.com/photo-1727079513748-d03e7b8c8947?${recorte()}`,
-  reparaciones: `https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?${recorte()}`,
-  // Un Apple Pencil y unos AirPods sobre gris, y nada más. Producto, como en
-  // la portada: sin manos ni gente, que es lo que hacía que estas bandas
-  // desentonaran con la landing. El lápiz al lado de la palabra Blog dice
-  // solo lo que hace falta.
-  blog: `https://images.unsplash.com/photo-1563549054059-bf4ebe2f49d5?${recorte(0.4)}`,
-  // Macro del módulo de cámara de un Pro en titanio: la clase de foto que usa
-  // el propio fabricante. Reemplaza a tres iPhone en fila donde uno era un 11,
-  // de 2019, en la portada de un local que vende lo último.
-  contacto: `https://images.unsplash.com/photo-1761435922559-7b2712066c19?${recorte()}`,
-} as const;
+  // derecha—.
+  planCanje: {
+    image: `https://images.unsplash.com/photo-1727079513748-d03e7b8c8947?${recorte()}`,
+  },
+  reparaciones: {
+    image: `https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?${recorte()}`,
+  },
+} satisfies Record<string, Banda>;

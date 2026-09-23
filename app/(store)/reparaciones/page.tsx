@@ -75,7 +75,7 @@ export default async function RepairsPage() {
       <PageHero
         title="Reparaciones"
         subtitle="Servicio técnico propio, acá mismo. Diagnóstico sin cargo, presupuesto antes de tocar nada y tres meses de garantía sobre la reparación."
-        image={PAGE_PHOTOS.reparaciones}
+        {...PAGE_PHOTOS.reparaciones}
       />
 
       <div className="shell-wide py-12 sm:py-16">

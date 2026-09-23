@@ -32,7 +32,7 @@ export default async function BlogPage() {
       <PageHero
         title="Blog"
         subtitle="Lo que aprendimos vendiendo y reparando equipos, contado sin vueltas."
-        image={PAGE_PHOTOS.blog}
+        {...PAGE_PHOTOS.blog}
       />
 
       <div className="shell py-12 sm:py-16">

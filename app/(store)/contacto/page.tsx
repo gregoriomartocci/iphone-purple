@@ -54,7 +54,7 @@ export default async function ContactPage() {
       <PageHero
         title="Contacto"
         subtitle="Escribinos por WhatsApp o pasá por el local. Consultar no compromete a nada."
-        image={PAGE_PHOTOS.contacto}
+        {...PAGE_PHOTOS.contacto}
       />
 
       <div className="shell py-12 sm:py-16">

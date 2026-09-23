@@ -111,7 +111,7 @@ export default async function CatalogPage({
       <PageHero
         title="Catálogo"
         subtitle="Todo lo que tenemos hoy. Los precios y el stock se actualizan a medida que entran y salen equipos."
-        image={PAGE_PHOTOS.catalogo}
+        {...PAGE_PHOTOS.catalogo}
       />
 
       <div className="shell-wide py-8 sm:py-12">

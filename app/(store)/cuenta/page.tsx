@@ -17,7 +17,7 @@ export default function CuentaPage() {
       <PageHero
         title="Mi cuenta"
         subtitle="Tus pedidos, lo que guardaste y tus datos para no volver a escribirlos."
-        image={PAGE_PHOTOS.catalogo}
+        {...PAGE_PHOTOS.catalogo}
       />
 
       <div className="shell py-12 sm:py-16">
