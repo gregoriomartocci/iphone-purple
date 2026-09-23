@@ -28,7 +28,7 @@ gh api -X PUT repos/gregoriomartocci/iphone-purple/branches/main/protection \
     "required_approving_review_count": 0,
     "dismiss_stale_reviews": true
   },
-  "enforce_admins": false,
+  "enforce_admins": true,
   "restrictions": null,
   "allow_force_pushes": false,
   "allow_deletions": false,
@@ -45,23 +45,39 @@ Qué hace cada cosa, y por qué está así:
 | `required_status_checks.strict`      | No se mergea sin CI verde **y** con la rama actualizada contra `main`. |
 | `contexts`                           | Los tres jobs de `ci.yml`. Si les cambiás el `name`, cambialos acá.    |
 | `required_approving_review_count: 0` | Obliga a abrir PR, pero no a que otro apruebe: trabajás solo.          |
-| `enforce_admins: false`              | Podés saltearla en una emergencia real. Ver abajo.                     |
+| `enforce_admins: true`               | La regla también te frena a vos. Ver abajo.                            |
 | `required_linear_history`            | Sin merges de merge: el historial se lee como una línea.               |
 | `allow_force_pushes: false`          | Nadie reescribe la historia de producción.                             |
 | `allow_deletions: false`             | Nadie borra `main`.                                                    |
 
-### Sobre `enforce_admins: false`
+### Sobre `enforce_admins: true`
 
-Queda en `false` a propósito: sos el único que trabaja en el repo, y si un
-sábado el sitio se rompe tenés que poder publicar el arreglo sin pelearte con
-la configuración. La contracara es que la regla te protege de un descuido,
-no de vos mismo decidiendo saltearla.
+Está en `true` porque en `false` la regla **no sirve**. Se probó: con
+`enforce_admins: false`, un push directo a `main` no se rechaza — GitHub lo
+deja pasar y solo imprime `Bypassed rule violations`. Es un cartel, no una
+tranquera.
 
-Si algún día entra otra persona al repo, ponelo en `true`:
+Con `true`, el mismo push devuelve `GH006: protected branch hook declined` y
+no entra. Verificado, no supuesto.
+
+### El hotfix de un sábado
+
+Si producción está rota y hay que publicar ya, el camino sigue siendo el PR:
+abrilo, esperá CI y mergeá. Son tres minutos y es lo correcto casi siempre.
+
+Si de verdad no se puede esperar:
 
 ```bash
+# 1. abrir la tranquera
+gh api -X DELETE repos/gregoriomartocci/iphone-purple/branches/main/protection/enforce_admins
+# 2. publicar el arreglo
+git push origin main
+# 3. CERRARLA DE NUEVO, en el mismo rato
 gh api -X POST repos/gregoriomartocci/iphone-purple/branches/main/protection/enforce_admins
 ```
+
+El paso 3 no es opcional. Una protección que se abre y queda abierta es peor
+que no tenerla, porque creés que estás cubierto.
 
 ---
 
