@@ -76,6 +76,24 @@ gh pr create --base staging --fill
 
 # 5. Mergeado y aprobado en la URL de staging, se publica:
 gh pr create --base main --head staging --title "Publicar: cotizador de canje"
+
+# 6. Después de publicar, sincronizar staging con main. No es opcional.
+git checkout staging && git merge origin/main -m "Sincronizar staging con main"
+git push origin staging
+```
+
+### Por qué el paso 6
+
+El PR de publicación se mergea con **rebase**, así que `main` queda con
+commits nuevos: mismo contenido que `staging`, distinto SHA. Si no se
+sincroniza, las dos ramas arrancan a separarse en el historial aunque los
+archivos sean idénticos, y el próximo PR muestra diferencias que no existen.
+
+Para comprobar que están a la par, comparar árboles y no commits:
+
+```bash
+git rev-parse origin/main^{tree} origin/staging^{tree}   # dos líneas iguales
+git diff origin/staging origin/main                      # sin salida
 ```
 
 La rama se borra al mergear. Si quedó alguna colgada:
