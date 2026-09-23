@@ -104,6 +104,16 @@ Dos cosas que conviene tildar a mano una sola vez, en
 
 - **Automatically delete head branches** — borra sola la rama al mergear el
   PR, que es la mitad del trabajo de mantener el repo ordenado.
-- Dejar solo **Allow squash merging** y **Allow merge commits**, y desactivar
-  rebase, para que el historial quede consistente con
-  `required_linear_history`.
+- Dejar **Allow squash merging** y **Allow rebase merging**, y **desactivar
+  Allow merge commits**.
+
+Lo último no es estético: `required_linear_history` rechaza los merge
+commits, así que dejar ese botón prendido solo sirve para que GitHub te
+frene el merge cuando ya estás por publicar.
+
+Cuál usar en cada caso:
+
+| Merge                | Cómo       | Por qué                                                                                                    |
+| -------------------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
+| `feat/…` → `staging` | **Squash** | La rama son diez commits de ida y vuelta; en `staging` interesa el cambio terminado, uno solo.             |
+| `staging` → `main`   | **Rebase** | Acá sí interesa cada commit por separado: es el historial de producción, y es lo que se lee para revertir. |

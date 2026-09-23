@@ -38,9 +38,22 @@ GitHub, reescribir `ci.yml` y volver a clonar. Riesgo a cambio de nada.
 ### Por qué existe `staging` y no alcanza con el preview de cada PR
 
 El preview de un PR cambia de URL en cada rama y desaparece cuando se mergea.
-`staging` tiene una URL fija que se puede mandar por WhatsApp y que siempre
-apunta a lo último aprobado. Es la diferencia entre «mirá esto» y «mirá esto,
-y si te parece lo publico».
+`staging` tiene una URL fija que siempre apunta a lo último aprobado:
+
+```
+https://iphone-purple-git-staging-gregoriomartoccigmailcoms-projects.vercel.app
+```
+
+> **Hoy esa URL pide login de Vercel.** Los deploys de preview vienen con
+> _Deployment Protection_ activa, así que responde 302 al SSO: sirve para
+> mirarla vos, no para mandársela a nadie de afuera.
+>
+> Para que la pueda abrir el dueño del local, hay que ir a
+> **Vercel → el proyecto → Settings → Deployment Protection** y desactivar
+> **Vercel Authentication** para _Preview_. La contracara es que cualquiera
+> con el link entra: no es secreto, es «no indexado y feo de adivinar».
+> Producción ya es pública, así que no expone nada nuevo — salvo que en
+> staging haya datos que en producción no estén.
 
 ---
 
