@@ -241,12 +241,12 @@ las preguntas frecuentes.
 
 ```bash
 npm run verify     # tipos → lint → tests → build, todo junto
-npm test           # 79 tests
+npm test           # 149 tests
 npm run typecheck
 npm run lint
 ```
 
-- **79 tests** sobre lo que no puede fallar en silencio: aislamiento de réplicas,
+- **149 tests** sobre lo que no puede fallar en silencio: aislamiento de réplicas,
   cálculo del canje, coherencia de facetas, tramos de batería, orden de
   capacidades, unicidad de slugs y SKU.
 - **Husky + lint-staged** corren tipos y lint antes de cada commit.
@@ -254,6 +254,26 @@ npm run lint
 - **Cabeceras de seguridad y CSP** en [`next.config.ts`](next.config.ts).
 - La clave de servicio de Supabase no puede filtrarse al navegador: el módulo que
   la usa está marcado con `server-only`.
+
+---
+
+## Ramas y ambientes
+
+Dos ramas permanentes: `staging` para aprobar y `main` para publicar. El
+trabajo sale de `staging` en ramas cortas con prefijo (`feat/`, `fix/`,
+`chore/`, `docs/`) y vuelve ahí por PR.
+
+```
+feat/lo-que-sea ─┐
+fix/lo-que-sea  ─┼─► staging ─────────► main
+chore/lo-que-sea ┘   (URL fija de      (iphone-purple
+                      pre-producción)   .vercel.app)
+```
+
+- [`docs/ramas-y-ambientes.md`](docs/ramas-y-ambientes.md) — el recorrido
+  completo de un cambio, y qué hacer con los datos cuando se conecte Supabase.
+- [`docs/branch-protection.md`](docs/branch-protection.md) — las reglas que
+  protegen `main`, versionadas como comandos.
 
 ---
 

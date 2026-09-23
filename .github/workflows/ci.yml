@@ -1,10 +1,13 @@
 name: CI
 
+# staging va a la par de main a propósito: es la rama que se mira antes de
+# publicar, así que tiene que pasar exactamente los mismos controles. Una
+# pre-producción con la vara más baja que producción no sirve para nada.
 on:
   push:
-    branches: [main]
+    branches: [main, staging]
   pull_request:
-    branches: [main]
+    branches: [main, staging]
 
 # Un push nuevo cancela el run anterior de la misma rama: no tiene sentido
 # gastar minutos validando un commit que ya quedó atrás.
