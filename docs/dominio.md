@@ -103,9 +103,15 @@ porque cada una depende de la anterior.
 1. Entrá a https://vercel.com/dashboard
 2. Abrí el proyecto **iphone-purple**.
 3. Andá a **Settings → Domains**.
-4. Clic en **Add Domain**, escribí `iphonepurple.com.ar` y agregalo.
+4. Clic en **Add Existing** (antes se llamaba **Add Domain**), escribí
+   `iphonepurple.com.ar` y agregalo.
 5. Si te ofrece agregar también `www.iphonepurple.com.ar`, **aceptá**. Quiero
    las dos, con `www` redirigiendo al dominio sin `www`.
+
+   Ojo: Vercel viene con **Redirect apex domains to www** tildado, que es al
+   revés de lo que queremos. Destildalo y armá la redirección de `www` hacia
+   el dominio sin `www`, que es el que lleva `NEXT_PUBLIC_APP_URL`.
+
 6. Va a aparecer como mal configurado o pendiente. Es lo esperado en este
    punto: todavía no delegamos. Seguí igual.
 
