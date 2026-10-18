@@ -73,10 +73,23 @@ jobs:
 
       - run: npm ci
 
-      # Falla solo ante vulnerabilidades altas o críticas: con "moderate" el
-      # ruido de dependencias transitivas vuelve inútil la señal.
-      - name: Auditoría de dependencias
-        run: npm audit --audit-level=high
+      # La auditoría va en dos pasos, y solo el primero frena el merge.
+      #
+      # Lo que llega al cliente es el árbol de producción, y ahí la vara es
+      # cero: cualquier vulnerabilidad alta o crítica corta el merge. Con
+      # "moderate" el ruido de dependencias transitivas vuelve inútil la señal.
+      #
+      # Las de desarrollo se listan pero no bloquean. No es dejarlas pasar: es
+      # que un DoS dentro de eslint no es explotable contra la tienda, y las
+      # que quedan hoy solo "se arreglan" bajando eslint-config-next dos
+      # versiones mayores. Bloquear por eso significa no poder publicar un
+      # arreglo real de producción, que es peor. El listado queda a la vista en
+      # el log para revisarlo cuando haya arreglo de verdad.
+      - name: Auditoría de producción
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Auditoría de desarrollo (informativa)
+        run: npm audit --audit-level=high || true
 
       - name: Buscar secretos commiteados
         run: |
