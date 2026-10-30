@@ -15,6 +15,14 @@ export interface MensajeWhatsapp {
   /** `true` si lo mandamos nosotros. Esos nunca son listas de proveedor. */
   mio: boolean;
   texto: string;
+  /**
+   * Teléfono de quien lo escribió. En un chat de a dos es el del chat; en un
+   * grupo es el del participante, que es el dato que importa: en el mismo
+   * grupo de revendedores publican varios proveedores distintos.
+   */
+  autor: string | null;
+  /** Cómo aparece esa persona en WhatsApp. Solo para mostrarlo en el panel. */
+  autorNombre?: string | null;
 }
 
 /** Un chat tal como lo entrega el servidor de WhatsApp. */
@@ -68,20 +76,29 @@ export function telefonoComparable(valor: string | null | undefined): string {
 }
 
 /**
- * Qué proveedor es este chat, si es alguno.
+ * De qué proveedor es esta lista, si es de alguno.
  *
- * Los grupos quedan afuera: una lista reenviada a un grupo de revendedores no
- * es la lista que ese proveedor nos pasa a nosotros, y el precio suele ser
- * otro. Los proveedores inactivos también, porque dejaron de serlo por algo.
+ * Se mira quién escribió, no en qué chat apareció. La diferencia solo importa
+ * en los grupos, y ahí lo cambia todo: en un grupo de revendedores publican
+ * varios proveedores, cada uno con su precio y su margen. Mirar el chat los
+ * haría a todos "el grupo" y les aplicaría el mismo margen a precios que no
+ * tienen nada que ver.
+ *
+ * Las listas de difusión no necesitan nada especial: WhatsApp las entrega
+ * como un mensaje normal de quien las mandó.
+ *
+ * Un proveedor que escribe en un grupo y también por privado es el mismo: se
+ * empareja por teléfono, así que sus dos listas se unifican solas.
  */
-export function proveedorDelChat(
+export function proveedorDelMensaje(
   chat: ChatWhatsapp,
+  mensaje: MensajeWhatsapp,
   proveedores: Supplier[]
 ): Supplier | null {
-  if (chat.grupo) return null;
-
-  const buscado = telefonoComparable(chat.telefono);
-  if (buscado.length < 6) return null;
+  // En un grupo el chat es el grupo: el único dato útil es el autor.
+  const telefono = chat.grupo ? mensaje.autor : (mensaje.autor ?? chat.telefono);
+  const buscado = telefonoComparable(telefono);
+  if (!buscado) return null;
 
   return (
     proveedores.find((p) => p.isActive && telefonoComparable(p.phone) === buscado) ?? null

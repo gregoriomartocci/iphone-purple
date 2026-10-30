@@ -5,10 +5,11 @@ import {
   listaPendiente,
   mejorPorEquipo,
   pareceLista,
-  proveedorDelChat,
+  proveedorDelMensaje,
   revisarAntesDePublicar,
   telefonoComparable,
   type ChatWhatsapp,
+  type MensajeWhatsapp,
 } from "@/lib/whatsapp/sincronizar";
 import type { ParsedRow, Supplier } from "@/types";
 
@@ -86,26 +87,64 @@ describe("telefonoComparable", () => {
   });
 });
 
-describe("proveedorDelChat", () => {
+function mensaje(p: Partial<MensajeWhatsapp> = {}): MensajeWhatsapp {
+  return {
+    fecha: "2026-10-30T10:00:00Z",
+    mio: false,
+    texto: "a 111\nb 222\nc 333",
+    autor: "5492211234567",
+    ...p,
+  };
+}
+
+describe("proveedorDelMensaje", () => {
   it("empareja aunque el teléfono esté guardado con otro formato", () => {
-    const encontrado = proveedorDelChat(chat(), [
+    const encontrado = proveedorDelMensaje(chat(), mensaje(), [
       proveedor({ phone: "+54 9 221 123-4567" }),
     ]);
     expect(encontrado?.id).toBe("prov-1");
   });
 
-  it("ignora los grupos: una lista reenviada no es nuestra lista", () => {
-    const grupo = chat({ grupo: true });
-    expect(proveedorDelChat(grupo, [proveedor()])).toBeNull();
+  /**
+   * El caso que motivó rehacer esto: la mitad de los proveedores publican en
+   * grupos de revendedores. Mirar el chat los haría a todos "el grupo".
+   */
+  it("en un grupo mira quién escribió, no el grupo", () => {
+    const grupo = chat({ jid: "120363@g.us", telefono: "120363", grupo: true });
+    const encontrado = proveedorDelMensaje(grupo, mensaje(), [proveedor()]);
+    expect(encontrado?.id).toBe("prov-1");
+  });
+
+  it("dos proveedores del mismo grupo no se confunden entre sí", () => {
+    const grupo = chat({ jid: "120363@g.us", telefono: "120363", grupo: true });
+    const proveedores = [
+      proveedor({ id: "prov-1", phone: "2211234567" }),
+      proveedor({ id: "prov-2", name: "AppTech USA", phone: "1159998888" }),
+    ];
+    expect(
+      proveedorDelMensaje(grupo, mensaje({ autor: "5492211234567" }), proveedores)?.id
+    ).toBe("prov-1");
+    expect(
+      proveedorDelMensaje(grupo, mensaje({ autor: "5491159998888" }), proveedores)?.id
+    ).toBe("prov-2");
+  });
+
+  it("en un grupo, alguien que no es proveedor no entra", () => {
+    const grupo = chat({ jid: "120363@g.us", telefono: "120363", grupo: true });
+    expect(
+      proveedorDelMensaje(grupo, mensaje({ autor: "5491133334444" }), [proveedor()])
+    ).toBeNull();
   });
 
   it("ignora a los proveedores dados de baja", () => {
-    expect(proveedorDelChat(chat(), [proveedor({ isActive: false })])).toBeNull();
+    expect(
+      proveedorDelMensaje(chat(), mensaje(), [proveedor({ isActive: false })])
+    ).toBeNull();
   });
 
   it("devuelve null si el número no es de ningún proveedor", () => {
     expect(
-      proveedorDelChat(chat({ telefono: "5491199998888" }), [proveedor()])
+      proveedorDelMensaje(chat(), mensaje({ autor: "5491199998888" }), [proveedor()])
     ).toBeNull();
   });
 });
@@ -131,16 +170,11 @@ describe("pareceLista", () => {
 });
 
 describe("listaPendiente", () => {
-  const vieja = {
-    fecha: "2026-10-28T10:00:00Z",
-    mio: false,
-    texto: "a 111\nb 222\nc 333",
-  };
-  const nueva = {
+  const vieja = mensaje({ fecha: "2026-10-28T10:00:00Z" });
+  const nueva = mensaje({
     fecha: "2026-10-29T10:00:00Z",
-    mio: false,
     texto: "a 115\nb 225\nc 335",
-  };
+  });
 
   it("toma la más reciente cuando hay varias sin importar", () => {
     expect(listaPendiente([vieja, nueva], null)?.fecha).toBe(nueva.fecha);
@@ -157,11 +191,7 @@ describe("listaPendiente", () => {
   });
 
   it("nunca toma un mensaje nuestro como lista del proveedor", () => {
-    const mio = {
-      fecha: "2026-10-30T10:00:00Z",
-      mio: true,
-      texto: "a 111\nb 222\nc 333",
-    };
+    const mio = mensaje({ fecha: "2026-10-30T10:00:00Z", mio: true, autor: null });
     expect(listaPendiente([vieja, mio], null)?.fecha).toBe(vieja.fecha);
   });
 });
