@@ -274,6 +274,8 @@ chore/lo-que-sea ┘   (URL fija de      (iphone-purple
   completo de un cambio, y qué hacer con los datos cuando se conecte Supabase.
 - [`docs/branch-protection.md`](docs/branch-protection.md) — las reglas que
   protegen `main`, versionadas como comandos.
+- [`docs/puesta-en-marcha.md`](docs/puesta-en-marcha.md) — conectar Supabase y
+  el lector de WhatsApp, con los prompts para un agente con navegador.
 - [`docs/dominio.md`](docs/dominio.md) — cómo pasar de `iphone-purple.vercel.app`
   a `iphonepurple.com.ar`, con el prompt para el agente con navegador.
 

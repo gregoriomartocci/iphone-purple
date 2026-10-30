@@ -50,7 +50,7 @@ const RowSchema = z.object({
   grade: z
     .enum(["sellado", "a-plus", "a", "a-minus"])
     .describe(
-      "Grado. 'sellado' solo para sellados o precintados. 'a-plus' si dicen impecable/como nuevo o batería 95+. 'a' es el caso por defecto de un usado sin detalle. 'b' si mencionan marcas de uso visibles o batería menor a 88."
+      "Grado. 'sellado' solo para sellados o precintados. 'a-plus' si dicen impecable/como nuevo o batería 95+. 'a' es el caso por defecto de un usado sin detalle. 'a-minus' si mencionan marcas de uso visibles o batería menor a 88."
     ),
   authenticity: z
     .enum(["original", "replica"])
