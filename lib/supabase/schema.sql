@@ -2,7 +2,11 @@
 -- Catálogo de equipos Apple, Plan Canje, reparaciones, blog y panel interno.
 -- No hay venta online: las ventas se registran a mano desde el panel.
 --
--- Aplicar en el SQL Editor de Supabase, y después `seed.sql`.
+-- Aplicar en el SQL Editor de Supabase.
+--
+-- `seed.sql` es aparte y OPCIONAL: son 73 productos de demostración, para que
+-- quien clone el repo vea un catálogo lleno. En la base de un negocio real no
+-- va: ensucia el catálogo con equipos que no existen.
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -26,8 +30,8 @@ CREATE TABLE IF NOT EXISTS products (
   brand TEXT NOT NULL DEFAULT 'Apple',
   -- Familia del equipo ("iPhone 15 Pro"): agrupa variantes y alimenta los filtros.
   model TEXT NOT NULL,
-  category TEXT NOT NULL DEFAULT 'iphone'
-    CHECK (category IN ('iphone','ipad','mac','watch','audio','consola','accesorio')),
+  category TEXT NOT NULL DEFAULT 'celular'
+    CHECK (category IN ('celular','tablet','notebook','reloj','audio','consola','hogar','accesorio')),
   description TEXT,
   specs JSONB DEFAULT '{}',
   status TEXT DEFAULT 'active' CHECK (status IN ('active', 'draft', 'archived')),
@@ -44,7 +48,7 @@ CREATE TABLE IF NOT EXISTS product_variants (
   color TEXT,
   color_hex TEXT,
   grade TEXT NOT NULL DEFAULT 'a'
-    CHECK (grade IN ('sellado', 'a-plus', 'a', 'b')),
+    CHECK (grade IN ('sellado', 'a-plus', 'a', 'a-minus')),
   -- Original o réplica. El sitio nunca las mezcla: el listado por defecto
   -- filtra por 'original' y las réplicas se piden explícitamente.
   authenticity TEXT NOT NULL DEFAULT 'original'
@@ -147,7 +151,7 @@ CREATE TABLE IF NOT EXISTS trade_ins (
   model TEXT NOT NULL,
   storage TEXT,
   grade TEXT NOT NULL
-    CHECK (grade IN ('sellado', 'a-plus', 'a', 'b')),
+    CHECK (grade IN ('sellado', 'a-plus', 'a', 'a-minus')),
   estimated_value DECIMAL(10,2),
   final_value DECIMAL(10,2),
   wanted_product_id UUID REFERENCES products(id),

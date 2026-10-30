@@ -82,10 +82,24 @@ function guardar(m) {
   }
   const chat = chats.get(jid);
   if (!chat.nombre && m.pushName) chat.nombre = m.pushName;
+
+  /*
+   * Quién escribió, que en un grupo no es lo mismo que el chat.
+   *
+   * En un chat de a dos, `remoteJid` ya es la otra persona. En un grupo es el
+   * grupo, y quien mandó el mensaje viene aparte, en `participant`. Varios
+   * proveedores publican sus listas en el mismo grupo de revendedores: sin
+   * este dato son todos "el grupo", no se puede saber de quién es cada lista
+   * ni, por lo tanto, qué margen le toca.
+   */
+  const autorJid = jid.endsWith("@g.us") ? (m.key.participant ?? null) : jid;
+
   chat.mensajes.set(m.key.id, {
     fecha: new Date(marca).toISOString(),
     mio: Boolean(m.key.fromMe),
     texto: texto.trim(),
+    autor: autorJid ? autorJid.split("@")[0] : null,
+    autorNombre: m.pushName ?? null,
   });
   estado.ultimoMensaje = new Date().toISOString();
 }
