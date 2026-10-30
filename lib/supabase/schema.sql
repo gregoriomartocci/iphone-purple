@@ -2,7 +2,11 @@
 -- Catálogo de equipos Apple, Plan Canje, reparaciones, blog y panel interno.
 -- No hay venta online: las ventas se registran a mano desde el panel.
 --
--- Aplicar en el SQL Editor de Supabase, y después `seed.sql`.
+-- Aplicar en el SQL Editor de Supabase.
+--
+-- `seed.sql` es aparte y OPCIONAL: son 73 productos de demostración, para que
+-- quien clone el repo vea un catálogo lleno. En la base de un negocio real no
+-- va: ensucia el catálogo con equipos que no existen.
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -26,7 +30,7 @@ CREATE TABLE IF NOT EXISTS products (
   brand TEXT NOT NULL DEFAULT 'Apple',
   -- Familia del equipo ("iPhone 15 Pro"): agrupa variantes y alimenta los filtros.
   model TEXT NOT NULL,
-  category TEXT NOT NULL DEFAULT 'iphone'
+  category TEXT NOT NULL DEFAULT 'celular'
     CHECK (category IN ('celular','tablet','notebook','reloj','audio','consola','hogar','accesorio')),
   description TEXT,
   specs JSONB DEFAULT '{}',

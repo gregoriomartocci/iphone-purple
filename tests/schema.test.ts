@@ -60,6 +60,35 @@ describe("el esquema acepta lo que el código produce", () => {
   });
 });
 
+/**
+ * Que el valor por defecto de una columna pase su propio CHECK.
+ *
+ * Suena imposible y no lo es: al corregir las categorías quedó
+ * `category TEXT NOT NULL DEFAULT 'iphone'` con un CHECK que ya no aceptaba
+ * 'iphone'. Postgres acepta el CREATE TABLE sin chistar —no valida el default
+ * contra el check al crear— y falla recién al insertar una fila que no traiga
+ * la columna. Se encontró a mano, un minuto antes de correr el esquema.
+ */
+describe("los valores por defecto pasan su propio CHECK", () => {
+  const defaults = [
+    ...schema.matchAll(
+      /(\w+)\s+TEXT(?:\s+NOT NULL)?\s+DEFAULT\s+'([^']+)'\s*(?:\n\s*)?CHECK \(\1 IN \(([^)]*)\)\)/g
+    ),
+  ];
+
+  it("encuentra columnas para revisar", () => {
+    expect(defaults.length).toBeGreaterThanOrEqual(6);
+  });
+
+  it.each(defaults.map((m) => [m[1], m[2], m[3]]))(
+    "%s por defecto es '%s', y el CHECK lo acepta",
+    (_columna, pordefecto, lista) => {
+      const permitidos = lista.split(",").map((v) => v.trim().replace(/^'|'$/g, ""));
+      expect(permitidos).toContain(pordefecto);
+    }
+  );
+});
+
 describe("la semilla entra en el esquema", () => {
   const seed = readFileSync(
     path.join(process.cwd(), "lib", "supabase", "seed.sql"),
