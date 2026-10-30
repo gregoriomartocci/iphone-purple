@@ -1,3 +1,4 @@
+import { AvisoCatalogoDemo } from "@/components/site/AvisoCatalogoDemo";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { getSettings } from "@/lib/data";
@@ -91,6 +92,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSitio) }}
       />
+      <AvisoCatalogoDemo />
       <SiteHeader />
       <main className="flex-1">{children}</main>
       <SiteFooter settings={settings} />
