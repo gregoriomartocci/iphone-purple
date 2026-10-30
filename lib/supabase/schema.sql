@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS products (
   -- Familia del equipo ("iPhone 15 Pro"): agrupa variantes y alimenta los filtros.
   model TEXT NOT NULL,
   category TEXT NOT NULL DEFAULT 'iphone'
-    CHECK (category IN ('iphone','ipad','mac','watch','audio','consola','accesorio')),
+    CHECK (category IN ('celular','tablet','notebook','reloj','audio','consola','hogar','accesorio')),
   description TEXT,
   specs JSONB DEFAULT '{}',
   status TEXT DEFAULT 'active' CHECK (status IN ('active', 'draft', 'archived')),
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS product_variants (
   color TEXT,
   color_hex TEXT,
   grade TEXT NOT NULL DEFAULT 'a'
-    CHECK (grade IN ('sellado', 'a-plus', 'a', 'b')),
+    CHECK (grade IN ('sellado', 'a-plus', 'a', 'a-minus')),
   -- Original o réplica. El sitio nunca las mezcla: el listado por defecto
   -- filtra por 'original' y las réplicas se piden explícitamente.
   authenticity TEXT NOT NULL DEFAULT 'original'
@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS trade_ins (
   model TEXT NOT NULL,
   storage TEXT,
   grade TEXT NOT NULL
-    CHECK (grade IN ('sellado', 'a-plus', 'a', 'b')),
+    CHECK (grade IN ('sellado', 'a-plus', 'a', 'a-minus')),
   estimated_value DECIMAL(10,2),
   final_value DECIMAL(10,2),
   wanted_product_id UUID REFERENCES products(id),
