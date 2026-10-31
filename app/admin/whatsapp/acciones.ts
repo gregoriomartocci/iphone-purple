@@ -5,7 +5,7 @@ import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/server";
 import { getSettings, isSupabaseConfigured } from "@/lib/data";
 import { getSuppliers } from "@/lib/data/admin";
-import { pedirMensajes, servidorConfigurado } from "@/lib/whatsapp/servidor";
+import { pedirMensajes, pedirQr, servidorConfigurado } from "@/lib/whatsapp/servidor";
 import { parseSupplierList } from "@/lib/whatsapp/parser";
 import {
   listasParaImportar,
@@ -183,6 +183,29 @@ export async function planificarDesdeWhatsappAction(
       error: err instanceof Error ? err.message : "No se pudo armar el plan.",
     };
   }
+}
+
+/**
+ * El QR para vincular la línea, para mostrarlo en el panel.
+ *
+ * Existe porque la alternativa era peor: el QR se dibujaba en la terminal del
+ * proceso, y en Railway eso significa ir a buscarlo a los logs del servicio.
+ *
+ * Caduca en segundos, así que la pantalla lo vuelve a pedir sola. El SVG llega
+ * ya dibujado desde el lector: el string crudo es la credencial que vincula la
+ * cuenta y no hace falta que pase por acá.
+ */
+export async function pedirQrAction(): Promise<
+  ActionResult<{ svg: string | null; vinculado: boolean }>
+> {
+  if (!(await requireAdmin())) return { ok: false, error: "No autorizado" };
+  if (!servidorConfigurado()) {
+    return { ok: false, error: "El lector de WhatsApp no está configurado." };
+  }
+
+  const r = await pedirQr();
+  if (!r.ok) return { ok: false, error: r.detalle };
+  return { ok: true, data: { svg: r.datos.svg, vinculado: r.datos.vinculado } };
 }
 
 const PublicarSchema = z.object({

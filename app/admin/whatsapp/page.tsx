@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AlertTriangle, QrCode } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { ChatsDetectados } from "@/components/admin/ChatsDetectados";
 import { PlanWhatsapp } from "@/components/admin/PlanWhatsapp";
+import { VincularWhatsapp } from "@/components/admin/VincularWhatsapp";
 import { autoresDetectados } from "@/lib/whatsapp/sincronizar";
 import { pedirMensajes, pedirSalud, servidorConfigurado } from "@/lib/whatsapp/servidor";
 import { getSuppliers } from "@/lib/data/admin";
@@ -57,9 +58,11 @@ export default async function AdminWhatsappPage() {
             sesión se caería en cada uno.
           </p>
           <p>
-            Falta desplegarlo y cargar <code>WHATSAPP_SERVIDOR_URL</code> y{" "}
-            <code>WHATSAPP_SERVIDOR_TOKEN</code>. Los pasos están en{" "}
-            <code>docs/puesta-en-marcha.md</code>, Parte 2.
+            Falta cargar <code>WHATSAPP_SERVIDOR_URL</code> y{" "}
+            <code>WHATSAPP_SERVIDOR_TOKEN</code>. Para probarlo en tu máquina alcanza con{" "}
+            <code>node scripts/whatsapp/servidor.mjs</code>; para que quede prendido
+            siempre, los pasos de Railway están en <code>docs/puesta-en-marcha.md</code>,
+            Parte 2. El QR se escanea desde esta misma pantalla.
           </p>
         </Aviso>
       </div>
@@ -81,14 +84,10 @@ export default async function AdminWhatsappPage() {
       <div className="max-w-3xl">
         {header}
         {faltaVincular ? (
-          <Aviso icono={QrCode} titulo="Falta vincular la línea">
-            <p>
-              El lector está andando pero nadie escaneó el código. Abrí los logs del
-              servicio, buscá el QR y escanealo desde WhatsApp → Dispositivos vinculados.
-              Caduca rápido: si ya no está, reiniciá el servicio para que dibuje uno
-              nuevo.
-            </p>
-          </Aviso>
+          /* El QR se muestra acá en vez de mandar a nadie a los logs del
+             servicio, que es donde estaba antes y donde es más incómodo
+             justamente en producción. */
+          <VincularWhatsapp />
         ) : (
           <Aviso icono={AlertTriangle} titulo="No se pudo leer del servidor">
             <p>{mensajes.detalle}</p>

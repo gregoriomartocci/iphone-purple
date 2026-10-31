@@ -15,7 +15,7 @@
  * SOLO LECTURA. No manda mensajes, no marca como leído y no se pone en línea.
  *
  * Variables:
- *   TOKEN_WHATSAPP   obligatoria. Protege el endpoint de mensajes.
+ *   TOKEN_WHATSAPP   obligatoria. Protege los endpoints de mensajes y QR.
  *   PORT             por defecto 8080.
  *   DIAS             ventana de mensajes que se conserva. Por defecto 3.
  */
@@ -28,6 +28,7 @@ import {
   useMultiFileAuthState as cargarSesion,
 } from "baileys";
 import QRCode from "qrcode-terminal";
+import { toString as qrSvg } from "qrcode";
 
 const PUERTO = Number(process.env.PORT ?? 8080);
 const DIAS = Number(process.env.DIAS ?? 3);
@@ -213,6 +214,26 @@ createServer((req, res) => {
 
   if (req.headers.authorization !== `Bearer ${TOKEN}`) {
     return responder(401, { error: "No autorizado" });
+  }
+
+  /*
+   * El QR, dibujado, para poder vincular desde el panel.
+   *
+   * Va detrás del token y no en /salud, que es público: este string ES la
+   * credencial. Quien lo escanee queda con la sesión de WhatsApp vinculada, así
+   * que exponerlo sin autenticación sería regalar la línea a cualquiera que
+   * sepa la URL del servicio.
+   *
+   * Se devuelve el SVG ya armado y no el string crudo, por lo mismo: el panel
+   * lo muestra y nadie más necesita el contenido.
+   */
+  if (url.pathname === "/qr") {
+    if (!estado.qr) {
+      return responder(200, { svg: null, vinculado: estado.vinculado });
+    }
+    return qrSvg(estado.qr, { type: "svg", margin: 1, width: 280 })
+      .then((svg) => responder(200, { svg, vinculado: false }))
+      .catch(() => responder(500, { error: "No se pudo dibujar el QR" }));
   }
 
   if (url.pathname === "/mensajes") {

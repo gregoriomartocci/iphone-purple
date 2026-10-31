@@ -31,6 +31,18 @@ export interface MensajesServidor {
   chats: ChatWhatsapp[];
 }
 
+export interface QrServidor {
+  /**
+   * El QR ya dibujado, listo para meter en el HTML. `null` cuando no hay
+   * ninguno esperando: o la línea está vinculada, o el código caducó.
+   *
+   * Viene dibujado y no como texto a propósito: el string del QR es la
+   * credencial que vincula la cuenta, y acá no hace falta tenerlo.
+   */
+  svg: string | null;
+  vinculado: boolean;
+}
+
 export type MotivoFalla =
   "sin-configurar" | "sin-respuesta" | "no-autorizado" | "respuesta-rara";
 
@@ -109,6 +121,10 @@ async function pedir<T>(ruta: string, conToken: boolean): Promise<Resultado<T>> 
 
 export function pedirSalud(): Promise<Resultado<SaludServidor>> {
   return pedir<SaludServidor>("/salud", false);
+}
+
+export function pedirQr(): Promise<Resultado<QrServidor>> {
+  return pedir<QrServidor>("/qr", true);
 }
 
 export function pedirMensajes(dias = 3): Promise<Resultado<MensajesServidor>> {

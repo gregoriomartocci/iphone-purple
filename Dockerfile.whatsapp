@@ -9,7 +9,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 # Solo lo que este proceso usa: no hace falta Next ni el resto del sitio acá.
-RUN npm install --omit=dev --no-audit --no-fund baileys qrcode-terminal
+RUN npm install --omit=dev --no-audit --no-fund baileys qrcode-terminal qrcode
 
 COPY scripts/whatsapp/servidor.mjs ./scripts/whatsapp/servidor.mjs
 
