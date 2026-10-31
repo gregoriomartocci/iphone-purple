@@ -61,3 +61,7 @@ fotos-proveedor/
 
 # Lo que baja el lector de WhatsApp: mensajes de proveedores con precios.
 datos-proveedor/
+
+# Registro del lector. Va fuera de .whatsapp-auth porque ese directorio se
+# borra entero cuando un intento de vinculación no prospera.
+lector-whatsapp.log

@@ -247,7 +247,10 @@ export async function arrancarLectorAction(): Promise<
     const sesion = join(raiz, ".whatsapp-auth");
     mkdirSync(sesion, { recursive: true });
 
-    const registro = openSync(join(raiz, ".whatsapp-auth", "lector.log"), "a");
+    /* Fuera de .whatsapp-auth: ese directorio se borra cuando un intento de
+       vinculación no prospera, y se llevaba el registro justo cuando hacía
+       falta leerlo para entender por qué falló. */
+    const registro = openSync(join(raiz, "lector-whatsapp.log"), "a");
 
     const hijo = spawn(process.execPath, [join(raiz, "scripts/whatsapp/servidor.mjs")], {
       cwd: raiz,

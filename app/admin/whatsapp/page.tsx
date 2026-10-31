@@ -77,10 +77,19 @@ export default async function AdminWhatsappPage() {
     getSettings(),
   ]);
 
-  if (!mensajes.ok) {
-    // La vinculación es el único caso que no se arregla con reintentar, así que
-    // se distingue: hay que ir a escanear el QR en los logs del servicio.
-    const faltaVincular = salud.ok && salud.datos.faltaVincular;
+  /*
+   * Que el lector conteste no quiere decir que haya una línea vinculada.
+   *
+   * `/mensajes` responde igual sin vincular —devuelve cero chats— así que
+   * mirar solo si la petición salió bien llevaba a la pantalla normal con el
+   * cartel "conectado pero todavía no juntó mensajes". Alguien esperando
+   * vincular veía eso y no tenía dónde ir: ni código, ni QR, ni explicación.
+   * El estado real está en `vinculado`, no en que el HTTP conteste.
+   */
+  const sinVincular = salud.ok && !salud.datos.vinculado;
+
+  if (!mensajes.ok || sinVincular) {
+    const faltaVincular = sinVincular || (salud.ok && salud.datos.faltaVincular);
 
     return (
       <div className="max-w-3xl">
@@ -92,17 +101,19 @@ export default async function AdminWhatsappPage() {
           <VincularWhatsapp numero={settings.whatsappDisplay} />
         ) : (
           <Aviso icono={AlertTriangle} titulo="El lector no está andando">
-            <p>{mensajes.detalle}</p>
+            {/* Solo se llega acá con el pedido fallado; el otro camino —vivo
+                pero sin vincular— lo toma la rama de arriba. */}
+            <p>{!mensajes.ok && mensajes.detalle}</p>
             {/* En producción el lector vive en su propio servicio y está
                 prendido siempre, así que el botón no tendría qué hacer. */}
             {!process.env.VERCEL && <PrenderLector />}
-            {mensajes.motivo === "sin-respuesta" && (
+            {!mensajes.ok && mensajes.motivo === "sin-respuesta" && (
               <p>
                 Railway duerme los servicios sin tráfico. Si es la primera visita del día,
                 recargá en un minuto.
               </p>
             )}
-            {mensajes.motivo === "no-autorizado" && (
+            {!mensajes.ok && mensajes.motivo === "no-autorizado" && (
               <p>
                 El <code>WHATSAPP_SERVIDOR_TOKEN</code> de acá no coincide con el{" "}
                 <code>TOKEN_WHATSAPP</code> del servicio.

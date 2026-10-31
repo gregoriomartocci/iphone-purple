@@ -48,6 +48,12 @@ if (!TOKEN) {
 
 const AUTH = process.env.AUTH_DIR ?? "/datos/whatsapp-auth";
 
+/*
+ * Ojo con AUTH: se borra entero cuando un intento de vinculación no prospera.
+ * Nada que haga falta conservar —un registro, por ejemplo— puede vivir ahí
+ * adentro, porque se va con el reintento justo cuando más se necesita leerlo.
+ */
+
 /**
  * La línea que se espera, si alguien la declaró.
  *
