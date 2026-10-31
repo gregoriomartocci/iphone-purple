@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  autoresDetectados,
   claveEquipo,
   equiposSinStock,
   listaPendiente,
@@ -289,5 +290,164 @@ describe("equiposSinStock", () => {
     const antes = [fila({ model: "iPhone 14" })];
     const vuelve = [fila({ model: "iPhone 14" }), fila({ model: "iPhone 15" })];
     expect(equiposSinStock(vuelve, antes)).toEqual([]);
+  });
+});
+
+describe("autoresDetectados", () => {
+  /**
+   * El caso que justifica toda la pantalla: en un grupo de revendedores
+   * publican varios proveedores. Agrupar por chat los mostraría como una sola
+   * fila y no habría forma de mapear a cada uno por separado.
+   */
+  it("separa a los distintos proveedores que publican en el mismo grupo", () => {
+    const grupo = chat({
+      jid: "12036-99@g.us",
+      nombre: "comunidad iCell Oeste",
+      telefono: "12036-99",
+      grupo: true,
+      mensajes: [
+        mensaje({ autor: "5492211234567", autorNombre: "Fran" }),
+        mensaje({ autor: "5491176543210", autorNombre: "Dami" }),
+        mensaje({ autor: "5491176543210", autorNombre: "Dami" }),
+      ],
+    });
+
+    const autores = autoresDetectados([grupo], []);
+
+    expect(autores).toHaveLength(2);
+    expect(new Set(autores.map((a) => a.nombre))).toEqual(new Set(["Fran", "Dami"]));
+  });
+
+  /**
+   * El proveedor que manda la lista al grupo y después por privado es uno
+   * solo. Contarlo dos veces haría que el dueño cargue dos proveedores con el
+   * mismo teléfono y márgenes que pueden no coincidir.
+   */
+  it("une al mismo autor aunque escriba en el grupo y por privado", () => {
+    const grupo = chat({
+      jid: "12036-99@g.us",
+      nombre: "comunidad iCell Oeste",
+      grupo: true,
+      mensajes: [mensaje({ autor: "5492211234567" })],
+    });
+    const privado = chat({
+      nombre: "Fran mayorista",
+      mensajes: [mensaje({ autor: "5492211234567" })],
+    });
+
+    const autores = autoresDetectados([grupo, privado], []);
+
+    expect(autores).toHaveLength(1);
+    expect(autores[0].mensajes).toBe(2);
+    expect(autores[0].chats).toEqual(["comunidad iCell Oeste", "Fran mayorista"]);
+  });
+
+  it("marca con qué proveedor empareja, aunque el teléfono esté en otro formato", () => {
+    const autores = autoresDetectados(
+      [chat({ mensajes: [mensaje()] })],
+      [proveedor({ phone: "0221 15 1234567" })]
+    );
+
+    expect(autores[0].proveedor?.id).toBe("prov-1");
+  });
+
+  it("deja en null al autor que todavía no está cargado como proveedor", () => {
+    const autores = autoresDetectados(
+      [chat({ mensajes: [mensaje({ autor: "5491176543210" })] })],
+      [proveedor()]
+    );
+
+    expect(autores[0].proveedor).toBeNull();
+  });
+
+  /**
+   * El orden es el del trabajo pendiente: quien manda listas y no está
+   * cargado va arriba, porque es la única fila que pide una acción.
+   */
+  it("pone primero a quien manda listas y todavía no está mapeado", () => {
+    const mapeado = chat({
+      nombre: "Ya cargado",
+      mensajes: [mensaje(), mensaje(), mensaje()],
+    });
+    const sinMapear = chat({
+      jid: "5491176543210@s.whatsapp.net",
+      nombre: "Sin cargar",
+      telefono: "5491176543210",
+      mensajes: [mensaje({ autor: "5491176543210" })],
+    });
+
+    const autores = autoresDetectados([mapeado, sinMapear], [proveedor()]);
+
+    expect(autores[0].nombre ?? autores[0].chats[0]).toBe("Sin cargar");
+    expect(autores[0].listas).toBe(1);
+  });
+
+  /**
+   * Un proveedor desactivado ya está cargado: marcarlo como faltante haría que
+   * se cargue de nuevo y queden dos con el mismo teléfono.
+   */
+  it("distingue al proveedor desactivado del que nunca se cargó", () => {
+    const autores = autoresDetectados(
+      [chat({ mensajes: [mensaje()] })],
+      [proveedor({ isActive: false })]
+    );
+
+    expect(autores[0].proveedor).toBeNull();
+    expect(autores[0].proveedorInactivo).toBe(true);
+  });
+
+  it("no marca como inactivo a quien no está cargado de ninguna forma", () => {
+    const autores = autoresDetectados([chat({ mensajes: [mensaje()] })], []);
+
+    expect(autores[0].proveedor).toBeNull();
+    expect(autores[0].proveedorInactivo).toBe(false);
+  });
+
+  it("no cuenta como lista un mensaje que es pura charla", () => {
+    const autores = autoresDetectados(
+      [chat({ mensajes: [mensaje({ texto: "buen día, mañana te paso la lista" })] })],
+      []
+    );
+
+    expect(autores[0].mensajes).toBe(1);
+    expect(autores[0].listas).toBe(0);
+    expect(autores[0].ultimaLista).toBeNull();
+  });
+
+  it("ignora los mensajes propios: nunca son listas de proveedor", () => {
+    const autores = autoresDetectados([chat({ mensajes: [mensaje({ mio: true })] })], []);
+
+    expect(autores).toHaveLength(0);
+  });
+
+  /**
+   * Un número sin código de área no se puede emparejar sin arriesgar
+   * confundir a dos proveedores de ciudades distintas, así que tampoco se
+   * ofrece para mapear.
+   */
+  it("descarta al autor cuyo teléfono no alcanza para emparejar", () => {
+    const autores = autoresDetectados(
+      [chat({ mensajes: [mensaje({ autor: "1234567" })] })],
+      []
+    );
+
+    expect(autores).toHaveLength(0);
+  });
+
+  it("se queda con la fecha de la última lista, no la del último mensaje", () => {
+    const autores = autoresDetectados(
+      [
+        chat({
+          mensajes: [
+            mensaje({ fecha: "2026-10-28T10:00:00Z" }),
+            mensaje({ fecha: "2026-10-30T10:00:00Z" }),
+            mensaje({ fecha: "2026-10-31T10:00:00Z", texto: "gracias!" }),
+          ],
+        }),
+      ],
+      []
+    );
+
+    expect(autores[0].ultimaLista).toBe("2026-10-30T10:00:00Z");
   });
 });

@@ -274,3 +274,112 @@ export function equiposSinStock(
     (clave) => !vigentes.has(clave)
   );
 }
+
+/** Una persona que escribe en los chats, con lo que se sabe de ella. */
+export interface AutorDetectado {
+  /** El teléfono tal como lo entrega WhatsApp, para mostrarlo y copiarlo. */
+  telefono: string;
+  /** La forma reducida, que es con la que se empareja. */
+  comparable: string;
+  nombre: string | null;
+  /** En qué chats apareció, por nombre. Un proveedor suele estar en varios. */
+  chats: string[];
+  mensajes: number;
+  /** Cuántos de esos mensajes tienen pinta de lista de precios. */
+  listas: number;
+  /** Fecha del último mensaje que parecía lista, o `null` si nunca mandó una. */
+  ultimaLista: string | null;
+  /** El proveedor con el que empareja, o `null` si todavía no está cargado. */
+  proveedor: Supplier | null;
+  /**
+   * Ya existe un proveedor con este teléfono, pero está desactivado.
+   *
+   * Sin este dato, el desactivado se vería igual que uno que nunca se cargó,
+   * y volver a cargarlo dejaría dos proveedores con el mismo teléfono y
+   * márgenes distintos. Cuál de los dos gana al emparejar depende del orden
+   * en que vuelvan de la base, que no es una decisión de nadie.
+   */
+  proveedorInactivo: boolean;
+}
+
+/**
+ * Quiénes escriben en los chats, y cuáles de ellos ya son proveedores cargados.
+ *
+ * Esta es la pantalla previa a todo lo demás. El panel no puede pedirle al
+ * dueño que cargue el teléfono de once proveedores a mano y sin equivocarse:
+ * los teléfonos no están a la vista en WhatsApp, y basta un dígito mal para
+ * que una lista se publique con el margen de otro proveedor.
+ *
+ * Se agrupa por **autor y no por chat**, por la misma razón que
+ * `proveedorDelMensaje` mira el autor: en un grupo de revendedores publican
+ * varios proveedores distintos. Agrupar por chat los mostraría como una sola
+ * fila —"comunidad iCell Oeste"— y no habría forma de mapear a cada uno.
+ *
+ * El mismo autor que escribe en un grupo y también por privado es una sola
+ * fila, porque la clave es el teléfono reducido. Sus dos chats quedan
+ * listados en `chats`, que es justamente el dato que permite reconocerlo.
+ *
+ * Los mensajes propios se descartan: nunca son listas de proveedor.
+ */
+export function autoresDetectados(
+  chats: ChatWhatsapp[],
+  proveedores: Supplier[]
+): AutorDetectado[] {
+  const porAutor = new Map<string, AutorDetectado>();
+
+  for (const chat of chats) {
+    for (const mensaje of chat.mensajes) {
+      if (mensaje.mio) continue;
+
+      const telefono = chat.grupo ? mensaje.autor : (mensaje.autor ?? chat.telefono);
+      const comparable = telefonoComparable(telefono);
+      // Sin código de área no se puede emparejar sin riesgo de confundir a dos
+      // proveedores de ciudades distintas: no se muestra como mapeable.
+      if (!comparable || !telefono) continue;
+
+      let autor = porAutor.get(comparable);
+      if (!autor) {
+        autor = {
+          telefono,
+          comparable,
+          nombre: null,
+          chats: [],
+          mensajes: 0,
+          listas: 0,
+          ultimaLista: null,
+          proveedor: proveedorDelMensaje(chat, mensaje, proveedores),
+          proveedorInactivo: proveedores.some(
+            (p) => !p.isActive && telefonoComparable(p.phone) === comparable
+          ),
+        };
+        porAutor.set(comparable, autor);
+      }
+
+      if (mensaje.autorNombre && !autor.nombre) autor.nombre = mensaje.autorNombre;
+
+      const dondeEscribio = chat.nombre ?? chat.telefono;
+      if (!autor.chats.includes(dondeEscribio)) autor.chats.push(dondeEscribio);
+
+      autor.mensajes += 1;
+      if (pareceLista(mensaje.texto)) {
+        autor.listas += 1;
+        if (!autor.ultimaLista || mensaje.fecha > autor.ultimaLista) {
+          autor.ultimaLista = mensaje.fecha;
+        }
+      }
+    }
+  }
+
+  /*
+   * El orden es el del trabajo que hay que hacer, no el alfabético: arriba
+   * quien manda listas y todavía no está cargado, que es la fila que pide una
+   * acción. Después, a igualdad de condición, quien manda más listas.
+   */
+  return [...porAutor.values()].sort((a, b) => {
+    const pendienteA = a.listas > 0 && !a.proveedor;
+    const pendienteB = b.listas > 0 && !b.proveedor;
+    if (pendienteA !== pendienteB) return pendienteA ? -1 : 1;
+    if (a.listas !== b.listas) return b.listas - a.listas;
+    return b.mensajes - a.mensajes;
+  });
+}
