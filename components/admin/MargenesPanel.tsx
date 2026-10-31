@@ -224,7 +224,7 @@ export function MargenesPanel({
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               placeholder="Buscar equipo…"
-              className="border-line bg-surface focus-visible:border-ink h-9 rounded-lg border px-3 text-sm outline-none"
+              className="border-line bg-surface focus-visible:border-ring h-9 rounded-lg border px-3 text-sm outline-none"
             />
             <label className="flex items-center gap-2 text-sm">
               <input
@@ -254,7 +254,7 @@ export function MargenesPanel({
               {visibles.slice(0, 300).map((f, i) => (
                 <tr
                   key={`${f.slug}-${i}`}
-                  className={cn(f.fueraDePrecio && "bg-amber-50")}
+                  className={cn(f.fueraDePrecio && "bg-amber-400/[0.07]")}
                 >
                   <td className="px-4 py-3">
                     <span className="text-foreground block font-medium">{f.nombre}</span>
@@ -307,9 +307,9 @@ export function MargenesPanel({
                   </td>
                   <td className="px-4 py-3">
                     {f.costoUsd === 0 ? null : f.fueraDePrecio ? (
-                      <AlertTriangle className="size-4 text-amber-600" />
+                      <AlertTriangle className="size-4 text-amber-300" />
                     ) : (
-                      <Check className="size-4 text-emerald-600" />
+                      <Check className="size-4 text-emerald-300" />
                     )}
                   </td>
                 </tr>
@@ -343,7 +343,7 @@ function Tarjeta({
     <div
       className={cn(
         "border-line rounded-xl border p-5",
-        alerta && "border-amber-300 bg-amber-50"
+        alerta && "border-amber-400/25 bg-amber-400/[0.07]"
       )}
     >
       <p className="text-muted-foreground text-sm">{titulo}</p>

@@ -47,11 +47,16 @@
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
 
-  /* Escala de la marca */
-  --color-ink: #0c0c10;
-  --color-line: #d5d6de;
-  --color-surface: #ffffff;
-  --color-elevated: #f2f3f6;
+  /* Escala de la marca.
+     Pasan por `var()` y no por un literal porque el panel las redefine: con un
+     valor fijo acá, `bg-surface` y `border-line` quedaban claros adentro del
+     panel oscuro y no había forma de alcanzarlos desde un ámbito. */
+  --color-ink: var(--ink);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --color-elevated: var(--elevated);
+  --color-active: var(--active);
+  --color-active-foreground: var(--active-foreground);
   /* Un único violeta en todo el sitio: el exacto del logo. Tener variantes
      más claras u oscuras hacía que el acento no se leyera como el mismo
      color de marca según dónde apareciera. */
@@ -59,6 +64,13 @@
 }
 
 :root {
+  --ink: #0c0c10;
+  --line: #d5d6de;
+  --surface: #ffffff;
+  --elevated: #f2f3f6;
+  /* El ítem activo de una navegación: en claro va en tinta con texto blanco. */
+  --active: #101014;
+  --active-foreground: #ffffff;
   --background: #eaebef;
   --foreground: #101014;
   --card: #ffffff;
@@ -81,6 +93,55 @@
   /* Tinta, no violeta: el anillo de foco aparece sobre el contenido. */
   --ring: #101014;
   --radius: 0.625rem;
+}
+
+/*
+ * El panel, con la estética de la pantalla de login.
+ *
+ * Es un ámbito y no un tema global a propósito: la tienda es clara y seguirá
+ * siéndolo. `data-panel` lo activa en el contenedor del panel y todo lo que
+ * hay adentro —que usa tokens, no colores sueltos— se da vuelta solo.
+ *
+ * Los valores no son inventados: salen de la pantalla de login. El fondo es su
+ * #07070a, los bordes su `rgba(255,255,255,0.09)` del vidrio, y la escala de
+ * texto sus opacidades (blanco pleno, 70%, 45%, 35%).
+ */
+[data-panel] {
+  --ink: #07070a;
+  --line: rgba(255, 255, 255, 0.09);
+  --surface: #101016;
+  --elevated: #16161d;
+
+  --background: #07070a;
+  --foreground: #ffffff;
+  --card: #101016;
+  --card-foreground: #ffffff;
+  --popover: #16161d;
+  --popover-foreground: #ffffff;
+
+  /* Acá sí la acción va en violeta, y no en tinta como en la tienda: es el
+     botón "Ingresar" del login, que es la referencia que estamos siguiendo.
+     Sobre un fondo casi negro la tinta desaparece. */
+  --primary: #5e16eb;
+  --primary-foreground: #ffffff;
+
+  --secondary: rgba(255, 255, 255, 0.06);
+  --secondary-foreground: #ffffff;
+  --muted: rgba(255, 255, 255, 0.06);
+  --muted-foreground: rgba(255, 255, 255, 0.45);
+  --accent: rgba(255, 255, 255, 0.08);
+  --accent-foreground: #ffffff;
+  --destructive: #f87171;
+  --border: rgba(255, 255, 255, 0.09);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: #5e16eb;
+
+  /* El activo no puede ser tinta: sería negro sobre negro. Va el violeta de
+     marca, que es lo único de la paleta que se despega del fondo sin gritar. */
+  --active: #5e16eb;
+  --active-foreground: #ffffff;
+
+  color-scheme: dark;
 }
 
 @layer base {
@@ -543,6 +604,36 @@
     box-shadow:
       0 32px 80px -20px rgba(0, 0, 0, 0.75),
       inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
+  }
+
+  /*
+   * La misma familia que `.vidrio`, pero para superficies que se repiten.
+   *
+   * El vidrio del login lleva una sombra de 80 px porque es una tarjeta sola
+   * flotando sobre un fondo. Ocho tarjetas con esa sombra se ensucian entre
+   * ellas y el panel queda sucio, así que acá la sombra es corta y lo que
+   * sostiene la jerarquía es el borde y el brillo interior.
+   */
+  .vidrio-sutil {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 12px 32px -16px rgba(0, 0, 0, 0.7),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  }
+
+  /* Al pasar por encima, la superficie se aclara apenas. Lo justo para que se
+     lea como tocable sin que la grilla parpadee cuando el mouse la cruza. */
+  .vidrio-sutil-hover {
+    transition:
+      background-color 180ms ease,
+      border-color 180ms ease;
+  }
+  .vidrio-sutil-hover:hover {
+    background: rgba(255, 255, 255, 0.065);
+    border-color: rgba(255, 255, 255, 0.14);
   }
 
   /* Manchas de color que derivan muy despacio. Lo que se percibe no es el

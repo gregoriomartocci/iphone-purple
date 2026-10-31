@@ -21,7 +21,7 @@ function Aviso({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-amber-900">
+    <div className="rounded-xl border border-amber-400/25 bg-amber-400/[0.07] p-5 text-amber-100">
       <p className="flex items-center gap-2 font-medium">
         <Icono className="size-4 shrink-0" />
         {titulo}

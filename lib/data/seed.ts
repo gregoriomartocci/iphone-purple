@@ -32,7 +32,7 @@ export const SETTINGS: StoreSettings = {
   whatsappDisplay: "+54 9 11 0000-0000",
   instagram: "https://instagram.com/iphonepurple",
   tiktok: "https://tiktok.com/@iphonepurple",
-  email: "hola@iphonepurple.com.ar",
+  email: "info@iphonepurple.com",
   // TODO: reemplazar por la dirección real del local.
   address: "Calle 7 1234, La Plata",
   hours: "Lunes a sábado de 10 a 19 h",

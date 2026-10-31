@@ -99,7 +99,7 @@ export function SettingsForm({
                     field.type === "number" ? Number(e.target.value) : e.target.value,
                 }))
               }
-              className="border-line text-foreground focus-visible:border-ink bg-surface h-10 w-full rounded-lg border px-3 text-sm transition-colors outline-none"
+              className="border-line text-foreground focus-visible:border-ring bg-surface h-10 w-full rounded-lg border px-3 text-sm transition-colors outline-none"
             />
             {field.hint && (
               <span className="text-muted-foreground mt-1 block text-xs">
@@ -122,7 +122,7 @@ export function SettingsForm({
       </div>
 
       {!supabaseReady && (
-        <p className="mt-4 text-sm text-amber-700">
+        <p className="mt-4 text-sm text-amber-300">
           Conectá Supabase para poder guardar los ajustes. Mientras tanto, el sitio usa
           los valores de <code className="bg-surface rounded px-1">lib/data/seed.ts</code>
           .
@@ -132,7 +132,7 @@ export function SettingsForm({
       <button
         type="submit"
         disabled={pending || !supabaseReady}
-        className="bg-ink hover:bg-ink/85 mt-6 inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
+        className="bg-primary hover:bg-primary/85 text-primary-foreground mt-6 inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium transition-colors disabled:opacity-50"
       >
         {pending && <Loader2 className="size-4 animate-spin" />}
         Guardar ajustes

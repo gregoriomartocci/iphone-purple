@@ -56,7 +56,7 @@ export function ChatsDetectados({
   }
 
   const campo =
-    "h-10 w-full rounded-lg border border-line bg-surface px-3 text-sm text-foreground outline-none transition-colors focus-visible:border-ink";
+    "h-10 w-full rounded-lg border border-line bg-surface px-3 text-sm text-foreground outline-none transition-colors focus-visible:border-ring";
 
   if (autores.length === 0) {
     return (
@@ -82,7 +82,7 @@ export function ChatsDetectados({
                 <p className="flex items-center gap-2 font-medium">
                   {autor.nombre ?? autor.telefono}
                   {autor.proveedor && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-normal text-emerald-700">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/[0.07] px-2 py-0.5 text-xs font-normal text-emerald-300">
                       <Check className="size-3" />
                       {autor.proveedor.name}
                     </span>
@@ -159,7 +159,7 @@ export function ChatsDetectados({
                     type="button"
                     onClick={() => guardar(autor)}
                     disabled={pendiente || nombre.trim().length === 0}
-                    className="bg-ink inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+                    className="bg-primary text-primary-foreground inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50"
                   >
                     {pendiente && <Loader2 className="size-4 animate-spin" />}
                     Guardar

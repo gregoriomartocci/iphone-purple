@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 type Row = ParsedRow & { include: boolean; key: string };
 
 const inputClass =
-  "h-9 w-full rounded-lg border border-line bg-surface px-2.5 text-sm text-foreground outline-none transition-colors focus-visible:border-ink";
+  "h-9 w-full rounded-lg border border-line bg-surface px-2.5 text-sm text-foreground outline-none transition-colors focus-visible:border-ring";
 
 /** Mismo cálculo que `sellPrice` del servidor, para previsualizar sin ida y vuelta. */
 function preview(row: ParsedRow, marginPct: number, dollarRate: number) {
@@ -142,7 +142,7 @@ export function ImportWizard({
           placeholder={
             "Ejemplo:\n\nBUEN DÍA! LISTA DE HOY 🔥\niPhone 13 128 impecable bat 89 — 470\n15 pro max 256 sellado 1290 (x2)\nip 14 128gb usado 9/10 600 u$d"
           }
-          className="border-line text-foreground focus-visible:border-ink bg-surface mt-4 w-full resize-y rounded-lg border p-3 font-mono text-[13px] leading-relaxed transition-colors outline-none"
+          className="border-line text-foreground focus-visible:border-ring bg-surface mt-4 w-full resize-y rounded-lg border p-3 font-mono text-[13px] leading-relaxed transition-colors outline-none"
         />
 
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -196,7 +196,7 @@ export function ImportWizard({
           type="button"
           onClick={handleParse}
           disabled={parsing || !rawText.trim()}
-          className="bg-ink hover:bg-ink/85 mt-4 inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium text-white transition-colors disabled:opacity-50"
+          className="bg-primary hover:bg-primary/85 text-primary-foreground mt-4 inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium transition-colors disabled:opacity-50"
         >
           {parsing ? (
             <>
@@ -213,14 +213,14 @@ export function ImportWizard({
       </section>
 
       {warnings.length > 0 && (
-        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4">
-          <p className="flex items-center gap-2 text-sm font-medium text-amber-900">
+        <div className="rounded-xl border border-amber-400/25 bg-amber-400/[0.07] p-4">
+          <p className="flex items-center gap-2 text-sm font-medium text-amber-100">
             <AlertTriangle className="size-4" />
             Líneas que conviene revisar a mano
           </p>
           <ul className="mt-2 space-y-1 pl-6">
             {warnings.map((w, i) => (
-              <li key={i} className="list-disc text-sm text-amber-900">
+              <li key={i} className="list-disc text-sm text-amber-100">
                 {w}
               </li>
             ))}
@@ -408,7 +408,7 @@ export function ImportWizard({
 
           <div className="border-line flex flex-wrap items-center justify-between gap-3 border-t p-5">
             {!supabaseReady && (
-              <p className="text-sm text-amber-700">
+              <p className="text-sm text-amber-300">
                 Conectá Supabase para poder publicar. Mientras tanto podés probar la
                 interpretación.
               </p>
@@ -417,7 +417,7 @@ export function ImportWizard({
               type="button"
               onClick={handlePublish}
               disabled={publishing || included.length === 0 || !supabaseReady}
-              className="bg-ink hover:bg-ink/85 ml-auto inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
+              className="bg-primary hover:bg-primary/85 text-primary-foreground ml-auto inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium transition-colors disabled:opacity-50"
             >
               {publishing ? (
                 <>
