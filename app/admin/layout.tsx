@@ -14,6 +14,7 @@ import {
   Receipt,
   RefreshCcw,
   Settings,
+  Smartphone,
   Truck,
   Wrench,
 } from "lucide-react";
@@ -22,6 +23,7 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/admin", label: "Resumen", icon: LayoutDashboard },
+  { href: "/admin/whatsapp", label: "WhatsApp", icon: Smartphone },
   { href: "/admin/importar", label: "Importar lista", icon: MessageSquareText },
   { href: "/admin/productos", label: "Productos", icon: Package },
   { href: "/admin/margenes", label: "Margen y precios", icon: Percent },

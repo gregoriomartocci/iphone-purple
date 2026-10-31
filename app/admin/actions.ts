@@ -355,6 +355,9 @@ export async function saveSupplierAction(
     if (error) throw new Error(error.message);
 
     revalidatePath("/admin/proveedores");
+    // La pantalla de WhatsApp muestra qué autores ya están cargados: sin esto,
+    // el proveedor recién creado sigue apareciendo como pendiente.
+    revalidatePath("/admin/whatsapp");
     return { ok: true };
   } catch (err) {
     console.error("[admin] guardar proveedor:", err);
