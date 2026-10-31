@@ -84,10 +84,15 @@ git push origin staging
 
 ### Por qué el paso 6
 
-El PR de publicación se mergea con **rebase**, así que `main` queda con
-commits nuevos: mismo contenido que `staging`, distinto SHA. Si no se
+El PR de publicación se mergea con **squash**, así que `main` queda con un
+commit nuevo: mismo contenido que `staging`, distinto SHA. Si no se
 sincroniza, las dos ramas arrancan a separarse en el historial aunque los
 archivos sean idénticos, y el próximo PR muestra diferencias que no existen.
+
+El merge de este paso deja un merge commit dentro de `staging`. Eso es lo que
+obliga a publicar con squash y no con rebase: GitHub no puede rebasar una rama
+que contiene merge commits. Está contado en
+[`branch-protection.md`](branch-protection.md).
 
 Para comprobar que están a la par, comparar árboles y no commits:
 
