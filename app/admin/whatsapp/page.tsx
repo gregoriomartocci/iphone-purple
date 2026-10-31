@@ -4,6 +4,7 @@ import { AlertTriangle } from "lucide-react";
 import { ChatsDetectados } from "@/components/admin/ChatsDetectados";
 import { PlanWhatsapp } from "@/components/admin/PlanWhatsapp";
 import { VincularWhatsapp } from "@/components/admin/VincularWhatsapp";
+import { PrenderLector } from "@/components/admin/PrenderLector";
 import { autoresDetectados } from "@/lib/whatsapp/sincronizar";
 import { pedirMensajes, pedirSalud, servidorConfigurado } from "@/lib/whatsapp/servidor";
 import { getSuppliers } from "@/lib/data/admin";
@@ -89,8 +90,11 @@ export default async function AdminWhatsappPage() {
              justamente en producción. */
           <VincularWhatsapp />
         ) : (
-          <Aviso icono={AlertTriangle} titulo="No se pudo leer del servidor">
+          <Aviso icono={AlertTriangle} titulo="El lector no está andando">
             <p>{mensajes.detalle}</p>
+            {/* En producción el lector vive en su propio servicio y está
+                prendido siempre, así que el botón no tendría qué hacer. */}
+            {!process.env.VERCEL && <PrenderLector />}
             {mensajes.motivo === "sin-respuesta" && (
               <p>
                 Railway duerme los servicios sin tráfico. Si es la primera visita del día,

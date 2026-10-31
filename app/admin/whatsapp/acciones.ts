@@ -1,11 +1,19 @@
 "use server";
 
+import { spawn } from "node:child_process";
+import { mkdirSync, openSync } from "node:fs";
+import { join } from "node:path";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/server";
 import { getSettings, isSupabaseConfigured } from "@/lib/data";
 import { getSuppliers } from "@/lib/data/admin";
-import { pedirMensajes, pedirQr, servidorConfigurado } from "@/lib/whatsapp/servidor";
+import {
+  pedirMensajes,
+  pedirQr,
+  pedirSalud,
+  servidorConfigurado,
+} from "@/lib/whatsapp/servidor";
 import { parseSupplierList } from "@/lib/whatsapp/parser";
 import {
   listasParaImportar,
@@ -181,6 +189,102 @@ export async function planificarDesdeWhatsappAction(
     return {
       ok: false,
       error: err instanceof Error ? err.message : "No se pudo armar el plan.",
+    };
+  }
+}
+
+/**
+ * Prende el lector desde el panel, sin terminal.
+ *
+ * Esto arranca un proceso que **sobrevive al sitio**: `detached` lo saca del
+ * grupo del padre y `unref()` suelta la referencia, así que sigue andando
+ * cuando el servidor de desarrollo se reinicia o se cierra. Está verificado,
+ * no supuesto.
+ *
+ * Por qué no es un agujero de seguridad, que es la pregunta razonable al ver a
+ * una web lanzar procesos:
+ *
+ * - No recibe ningún parámetro. El ejecutable es el propio Node del proceso y
+ *   el script es una ruta fija del repo. Nada que venga del cliente llega a la
+ *   línea de comandos, así que no hay nada que inyectar.
+ * - Exige sesión y rol admin, como toda acción del panel.
+ * - Se niega en producción. Allá el lector vive en su propio servicio, siempre
+ *   prendido, y el sistema de archivos de Vercel no sostiene un proceso: dejar
+ *   que lo intente sería ofrecer un botón que no puede funcionar.
+ *
+ * La salida va a un archivo porque si no, un arranque fallido es invisible: el
+ * proceso muere sin dejar nada y la pantalla solo sabe que nadie contesta.
+ */
+export async function arrancarLectorAction(): Promise<
+  ActionResult<{ yaEstaba: boolean }>
+> {
+  if (!(await requireAdmin())) return { ok: false, error: "No autorizado" };
+
+  if (process.env.VERCEL) {
+    return {
+      ok: false,
+      error:
+        "En producción el lector corre en su propio servicio y queda prendido siempre. Este botón solo sirve en tu máquina.",
+    };
+  }
+
+  if (!servidorConfigurado()) {
+    return {
+      ok: false,
+      error: "Faltan WHATSAPP_SERVIDOR_URL y WHATSAPP_SERVIDOR_TOKEN en .env.local.",
+    };
+  }
+
+  // Si ya hay uno andando, no se levanta un segundo: pelearían por el puerto y
+  // por el directorio de sesión.
+  const antes = await pedirSalud();
+  if (antes.ok) return { ok: true, data: { yaEstaba: true } };
+
+  try {
+    const raiz = process.cwd();
+    const puerto = new URL(process.env.WHATSAPP_SERVIDOR_URL!).port || "8080";
+    const sesion = join(raiz, ".whatsapp-auth");
+    mkdirSync(sesion, { recursive: true });
+
+    const registro = openSync(join(raiz, ".whatsapp-auth", "lector.log"), "a");
+
+    const hijo = spawn(process.execPath, [join(raiz, "scripts/whatsapp/servidor.mjs")], {
+      cwd: raiz,
+      detached: true,
+      stdio: ["ignore", registro, registro],
+      env: {
+        ...process.env,
+        TOKEN_WHATSAPP: process.env.WHATSAPP_SERVIDOR_TOKEN,
+        PORT: puerto,
+        AUTH_DIR: sesion,
+        DIAS: process.env.WHATSAPP_DIAS ?? "3",
+      },
+    });
+    hijo.unref();
+
+    /*
+     * Se espera a que conteste en vez de devolver "lo lancé". Arrancar y
+     * fallar al segundo es un caso corriente —puerto ocupado, sesión corrupta—
+     * y en ese caso la pantalla mostraría un éxito que no pasó.
+     */
+    for (let intento = 0; intento < 24; intento++) {
+      await new Promise((listo) => setTimeout(listo, 500));
+      if ((await pedirSalud()).ok) {
+        revalidatePath("/admin/whatsapp");
+        return { ok: true, data: { yaEstaba: false } };
+      }
+    }
+
+    return {
+      ok: false,
+      error:
+        "El lector arrancó pero no contestó en 12 segundos. Mirá .whatsapp-auth/lector.log para ver qué dijo.",
+    };
+  } catch (err) {
+    console.error("[whatsapp] arrancar lector:", err);
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "No se pudo arrancar el lector.",
     };
   }
 }
