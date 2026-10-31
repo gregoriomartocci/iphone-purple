@@ -5,10 +5,10 @@ import { ChatsDetectados } from "@/components/admin/ChatsDetectados";
 import { PlanWhatsapp } from "@/components/admin/PlanWhatsapp";
 import { VincularWhatsapp } from "@/components/admin/VincularWhatsapp";
 import { PrenderLector } from "@/components/admin/PrenderLector";
-import { autoresDetectados } from "@/lib/whatsapp/sincronizar";
+import { autoresDetectados, telefonoComparable } from "@/lib/whatsapp/sincronizar";
 import { pedirMensajes, pedirSalud, servidorConfigurado } from "@/lib/whatsapp/servidor";
 import { getSuppliers } from "@/lib/data/admin";
-import { isSupabaseConfigured } from "@/lib/data";
+import { getSettings, isSupabaseConfigured } from "@/lib/data";
 
 export const metadata: Metadata = { title: "WhatsApp" };
 
@@ -70,10 +70,11 @@ export default async function AdminWhatsappPage() {
     );
   }
 
-  const [salud, mensajes, proveedores] = await Promise.all([
+  const [salud, mensajes, proveedores, settings] = await Promise.all([
     pedirSalud(),
     pedirMensajes(3),
     getSuppliers(),
+    getSettings(),
   ]);
 
   if (!mensajes.ok) {
@@ -109,6 +110,47 @@ export default async function AdminWhatsappPage() {
             )}
           </Aviso>
         )}
+      </div>
+    );
+  }
+
+  /*
+   * Segunda barrera de identidad, además de la del lector.
+   *
+   * El lector ya se niega si lo vincularon con otra línea, pero esto no
+   * depende de eso: si por un error quedara leyendo la cuenta personal de
+   * alguien, acá no se muestra ni un mensaje. Es el chequeo que protege de un
+   * bug del otro chequeo, y vale la duplicación porque lo que está en juego
+   * son conversaciones privadas.
+   */
+  const vinculada = salud.ok ? salud.datos.numero : null;
+  const esperada = settings.whatsappNumber;
+  const lineaEquivocada =
+    Boolean(vinculada) &&
+    Boolean(esperada) &&
+    telefonoComparable(vinculada) !== telefonoComparable(esperada);
+
+  if (lineaEquivocada) {
+    return (
+      <div className="max-w-3xl">
+        {header}
+        <Aviso icono={AlertTriangle} titulo="Esta no es la línea del negocio">
+          <p>
+            El lector está vinculado a <strong>{vinculada}</strong> y el número del
+            negocio es <strong>{esperada}</strong>. No se muestra ningún mensaje: si
+            escaneaste con tu WhatsApp personal, lo que hay del otro lado son
+            conversaciones privadas.
+          </p>
+          <p>
+            Apagá el lector, borrá la carpeta <code>.whatsapp-auth</code> y volvé a
+            vincular con la línea correcta. Si el número equivocado es el de la
+            configuración, corregilo en{" "}
+            <Link href="/admin/configuracion" className="underline">
+              Configuración
+            </Link>
+            .
+          </p>
+        </Aviso>
       </div>
     );
   }
@@ -152,6 +194,18 @@ export default async function AdminWhatsappPage() {
       <ChatsDetectados autores={autores} supabaseReady={isSupabaseConfigured()} />
 
       <p className="mt-4 text-xs text-white/35">
+        {vinculada && (
+          <>
+            Línea <strong className="font-medium text-white/60">{vinculada}</strong>
+            {salud.ok && !salud.datos.verificaNumero && (
+              <span className="text-amber-300/70">
+                {" "}
+                (el lector no está verificando el número)
+              </span>
+            )}{" "}
+            ·{" "}
+          </>
+        )}
         Ventana de {mensajes.datos.dias} días · {mensajes.datos.chats.length} chats ·
         leído {new Date(mensajes.datos.generado).toLocaleString("es-AR")} ·{" "}
         <Link href="/admin/proveedores" className="underline">

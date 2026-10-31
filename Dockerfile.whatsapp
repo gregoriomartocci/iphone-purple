@@ -11,7 +11,7 @@ COPY package.json package-lock.json ./
 # Solo lo que este proceso usa: no hace falta Next ni el resto del sitio acá.
 RUN npm install --omit=dev --no-audit --no-fund baileys qrcode-terminal qrcode
 
-COPY scripts/whatsapp/servidor.mjs ./scripts/whatsapp/servidor.mjs
+COPY scripts/whatsapp/servidor.mjs scripts/whatsapp/telefono.mjs ./scripts/whatsapp/
 
 # Ahí vive la sesión vinculada. Un volumen montado en este punto es lo que
 # hace que no haya que volver a escanear el QR en cada reinicio.

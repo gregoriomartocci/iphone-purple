@@ -16,11 +16,13 @@
  *
  * Variables:
  *   TOKEN_WHATSAPP   obligatoria. Protege los endpoints de mensajes y QR.
+ *   WHATSAPP_NUMERO  la línea que se espera. Si la vinculada es otra, el
+ *                    lector se desvincula solo y no sirve ni un mensaje.
  *   PORT             por defecto 8080.
  *   DIAS             ventana de mensajes que se conserva. Por defecto 3.
  */
 import { createServer } from "node:http";
-import { mkdir } from "node:fs/promises";
+import { mkdir, rm } from "node:fs/promises";
 import {
   DisconnectReason,
   fetchLatestBaileysVersion,
@@ -28,6 +30,7 @@ import {
   useMultiFileAuthState as cargarSesion,
 } from "baileys";
 import QRCode from "qrcode-terminal";
+import { comparable } from "./telefono.mjs";
 import { toString as qrSvg } from "qrcode";
 
 const PUERTO = Number(process.env.PORT ?? 8080);
@@ -44,6 +47,16 @@ if (!TOKEN) {
 
 const AUTH = process.env.AUTH_DIR ?? "/datos/whatsapp-auth";
 
+/**
+ * La línea que se espera, si alguien la declaró.
+ *
+ * Sin esto el lector lee lo que sea que haya escaneado, y escanear con el
+ * WhatsApp personal en vez del del negocio es un error de un segundo: se
+ * terminan leyendo conversaciones privadas y publicando precios de charlas que
+ * no son de proveedores.
+ */
+const ESPERADO = comparable(process.env.WHATSAPP_NUMERO);
+
 /** jid → { nombre, mensajes: Map<id, mensaje> } */
 const chats = new Map();
 
@@ -51,6 +64,10 @@ const estado = {
   conexion: "arrancando",
   vinculado: false,
   qr: null,
+  /** La línea vinculada, tal como la informa WhatsApp. */
+  numero: null,
+  /** La vinculada no es la esperada: no se sirve nada y se corta. */
+  lineaIncorrecta: false,
   desde: new Date().toISOString(),
   ultimoMensaje: null,
 };
@@ -159,18 +176,62 @@ async function conectar() {
     for (const m of messages ?? []) guardar(m);
   });
 
-  sock.ev.on("connection.update", (u) => {
+  sock.ev.on("connection.update", async (u) => {
     if (u.qr) {
       estado.qr = u.qr;
       estado.vinculado = false;
+      // Un QR nuevo es un intento de vinculación nuevo: lo que se haya
+      // rechazado antes deja de aplicar, si no habría que reiniciar el
+      // proceso para poder escanear la línea correcta.
+      estado.lineaIncorrecta = false;
+      estado.numero = null;
       console.log("\nVinculá la línea escaneando este código:\n");
       QRCode.generate(u.qr, { small: true });
     }
     if (u.connection) estado.conexion = u.connection;
     if (u.connection === "open") {
+      /*
+       * El JID viene como "5492211234567:12@s.whatsapp.net": el ":12" es el
+       * dispositivo y hay que sacarlo antes de comparar, porque si no se pega
+       * al número y ninguna línea coincide nunca.
+       */
+      const propio = String(sock.user?.id ?? "")
+        .split(":")[0]
+        .split("@")[0];
+      estado.numero = propio || null;
+
+      if (ESPERADO && comparable(propio) !== ESPERADO) {
+        /*
+         * Línea equivocada. Se falla cerrado y en este orden: primero se tira
+         * lo que ya se sincronizó —WhatsApp manda el historial apenas conecta,
+         * así que para cuando llegamos acá ya hay mensajes en memoria que no
+         * son nuestros— y recién después se desvincula.
+         *
+         * Desvincular no es cortés, es la reparación: deshace el error de
+         * haber escaneado con la cuenta personal en vez de la del negocio, y
+         * saca este dispositivo de la lista del teléfono. Sin eso quedaría
+         * vinculado y leyendo conversaciones privadas.
+         */
+        estado.lineaIncorrecta = true;
+        estado.vinculado = false;
+        chats.clear();
+        console.error(
+          `Línea equivocada: vinculaste ${propio} y se esperaba ${ESPERADO}. ` +
+            "Me desvinculo y borro la sesión."
+        );
+        try {
+          await sock.logout();
+        } catch {
+          // Si no se pudo avisar al servidor, igual se borra la sesión local:
+          // sin credenciales no hay con qué volver a leer nada.
+        }
+        await rm(AUTH, { recursive: true, force: true }).catch(() => {});
+        return;
+      }
+
       estado.vinculado = true;
       estado.qr = null;
-      console.log("Conectado a WhatsApp.");
+      console.log(`Conectado a WhatsApp como ${propio || "?"}.`);
     }
     if (u.connection === "close") {
       const codigo = u.lastDisconnect?.error?.output?.statusCode;
@@ -205,6 +266,12 @@ createServer((req, res) => {
       conexion: estado.conexion,
       vinculado: estado.vinculado,
       faltaVincular: Boolean(estado.qr),
+      /* El número sí se publica sin token: no es un secreto —está en la web
+         del negocio— y es lo que permite ver de un vistazo si se vinculó la
+         línea que correspondía. El QR, que sí es credencial, no. */
+      numero: estado.numero,
+      lineaIncorrecta: estado.lineaIncorrecta,
+      verificaNumero: Boolean(ESPERADO),
       chats: chats.size,
       mensajes: [...chats.values()].reduce((n, c) => n + c.mensajes.size, 0),
       ultimoMensaje: estado.ultimoMensaje,
@@ -227,6 +294,20 @@ createServer((req, res) => {
    * Se devuelve el SVG ya armado y no el string crudo, por lo mismo: el panel
    * lo muestra y nadie más necesita el contenido.
    */
+  /*
+   * Con la línea equivocada no se sirve nada, ni siquiera el QR: la respuesta
+   * explica qué pasó para que el panel pueda decirlo, y no se devuelve ningún
+   * mensaje. Es el único estado en que el lector está vivo y aun así calla.
+   */
+  if (estado.lineaIncorrecta) {
+    return responder(409, {
+      error: "linea-incorrecta",
+      numero: estado.numero,
+      detalle:
+        "La línea vinculada no es la esperada. Me desvinculé y borré lo leído. Reiniciá el lector para escanear de nuevo.",
+    });
+  }
+
   if (url.pathname === "/qr") {
     if (!estado.qr) {
       return responder(200, { svg: null, vinculado: estado.vinculado });

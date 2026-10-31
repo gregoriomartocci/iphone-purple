@@ -255,6 +255,14 @@ export async function arrancarLectorAction(): Promise<
       env: {
         ...process.env,
         TOKEN_WHATSAPP: process.env.WHATSAPP_SERVIDOR_TOKEN,
+        /*
+         * La línea que se espera sale de la configuración del negocio, que es
+         * donde ya estaba: el número que el sitio publica es el mismo que hay
+         * que vincular. Pasarlo acá hace que el lector se niegue solo si
+         * alguien escanea con otra cuenta, sin depender de que el panel lo
+         * chequee después.
+         */
+        WHATSAPP_NUMERO: (await getSettings()).whatsappNumber,
         PORT: puerto,
         AUTH_DIR: sesion,
         DIAS: process.env.WHATSAPP_DIAS ?? "3",

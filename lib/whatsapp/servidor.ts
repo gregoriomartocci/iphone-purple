@@ -19,6 +19,15 @@ export interface SaludServidor {
   vinculado: boolean;
   /** `true` cuando hay un QR esperando que alguien lo escanee. */
   faltaVincular: boolean;
+  /**
+   * La línea vinculada. No es secreta —está en la web del negocio— y es lo que
+   * permite ver si se escaneó con la cuenta que correspondía.
+   */
+  numero: string | null;
+  /** La línea vinculada no era la esperada: el lector se desvinculó solo. */
+  lineaIncorrecta: boolean;
+  /** Si el lector tiene configurado contra qué número comparar. */
+  verificaNumero: boolean;
   chats: number;
   mensajes: number;
   ultimoMensaje: string | null;
