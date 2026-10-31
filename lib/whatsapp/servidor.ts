@@ -49,6 +49,12 @@ export interface QrServidor {
    * credencial que vincula la cuenta, y acá no hace falta tenerlo.
    */
   svg: string | null;
+  /**
+   * Código de 8 caracteres para vincular sin escanear nada, cuando el lector
+   * sabe qué línea espera. Es el camino preferido: WhatsApp solo lo acepta en
+   * el teléfono de ese número, así que no hay forma de vincular otra cuenta.
+   */
+  codigo: string | null;
   vinculado: boolean;
 }
 

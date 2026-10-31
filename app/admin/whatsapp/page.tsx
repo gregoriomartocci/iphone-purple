@@ -89,7 +89,7 @@ export default async function AdminWhatsappPage() {
           /* El QR se muestra acá en vez de mandar a nadie a los logs del
              servicio, que es donde estaba antes y donde es más incómodo
              justamente en producción. */
-          <VincularWhatsapp />
+          <VincularWhatsapp numero={settings.whatsappDisplay} />
         ) : (
           <Aviso icono={AlertTriangle} titulo="El lector no está andando">
             <p>{mensajes.detalle}</p>

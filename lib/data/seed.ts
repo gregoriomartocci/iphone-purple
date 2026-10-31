@@ -35,7 +35,7 @@ export const SETTINGS: StoreSettings = {
   email: "info@iphonepurple.com",
   // TODO: reemplazar por la dirección real del local.
   address: "Calle 7 1234, La Plata",
-  hours: "Lunes a sábado de 10 a 19 h",
+  hours: "Lunes a viernes de 9 a 18 h · Sábados de 9 a 13 h",
   mapsUrl: "https://maps.google.com/?q=Calle+7+1234,+La+Plata",
 };
 

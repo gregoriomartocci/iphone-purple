@@ -308,7 +308,7 @@ export async function arrancarLectorAction(): Promise<
  * cuenta y no hace falta que pase por acá.
  */
 export async function pedirQrAction(): Promise<
-  ActionResult<{ svg: string | null; vinculado: boolean }>
+  ActionResult<{ svg: string | null; codigo: string | null; vinculado: boolean }>
 > {
   if (!(await requireAdmin())) return { ok: false, error: "No autorizado" };
   if (!servidorConfigurado()) {
@@ -317,7 +317,10 @@ export async function pedirQrAction(): Promise<
 
   const r = await pedirQr();
   if (!r.ok) return { ok: false, error: r.detalle };
-  return { ok: true, data: { svg: r.datos.svg, vinculado: r.datos.vinculado } };
+  return {
+    ok: true,
+    data: { svg: r.datos.svg, codigo: r.datos.codigo, vinculado: r.datos.vinculado },
+  };
 }
 
 const PublicarSchema = z.object({

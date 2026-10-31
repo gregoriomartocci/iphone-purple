@@ -57,6 +57,12 @@ const AUTH = process.env.AUTH_DIR ?? "/datos/whatsapp-auth";
  */
 const ESPERADO = comparable(process.env.WHATSAPP_NUMERO);
 
+/**
+ * El mismo número, en la forma que pide WhatsApp para vincular por código:
+ * solo dígitos, con código de país y sin el +.
+ */
+const ESPERADO_CRUDO = String(process.env.WHATSAPP_NUMERO ?? "").replace(/\D/g, "");
+
 /** jid → { nombre, mensajes: Map<id, mensaje> } */
 const chats = new Map();
 
@@ -64,6 +70,8 @@ const estado = {
   conexion: "arrancando",
   vinculado: false,
   qr: null,
+  /** Código de 8 caracteres para vincular sin escanear nada. */
+  codigo: null,
   /** La línea vinculada, tal como la informa WhatsApp. */
   numero: null,
   /** La vinculada no es la esperada: no se sirve nada y se corta. */
@@ -168,6 +176,36 @@ async function conectar() {
     browser: ["iPhone Purple — panel", "Chrome", "1.0.0"],
   });
 
+  /*
+   * Vincular por código en vez de por QR, cuando sabemos qué línea queremos.
+   *
+   * Esto es mejor que el QR y no solo más cómodo: el número se declara de
+   * antemano y WhatsApp solo acepta el código en el teléfono de ESA línea. Con
+   * el QR cualquiera puede escanear con la cuenta que tenga a mano —el error
+   * de un segundo que nos preocupaba— y recién después lo detectamos y
+   * deshacemos. Acá no puede pasar.
+   *
+   * El QR se sigue emitiendo por si esto falla: pedir el código es una llamada
+   * a los servidores de WhatsApp y puede no contestar.
+   *
+   * La espera es porque el socket tiene que estar abierto antes de pedirlo;
+   * sin ella la llamada se va contra una conexión que todavía no existe.
+   */
+  if (ESPERADO_CRUDO && !state.creds.registered) {
+    setTimeout(async () => {
+      try {
+        const codigo = await sock.requestPairingCode(ESPERADO_CRUDO);
+        estado.codigo = codigo;
+        console.log(`\nCódigo para vincular ${ESPERADO_CRUDO}: ${codigo}\n`);
+      } catch (e) {
+        console.error(
+          "No se pudo pedir el código de vinculación, queda el QR:",
+          e?.message ?? e
+        );
+      }
+    }, 4_000);
+  }
+
   sock.ev.on("creds.update", saveCreds);
   sock.ev.on("messaging-history.set", ({ messages }) => {
     for (const m of messages ?? []) guardar(m);
@@ -231,6 +269,7 @@ async function conectar() {
 
       estado.vinculado = true;
       estado.qr = null;
+      estado.codigo = null;
       console.log(`Conectado a WhatsApp como ${propio || "?"}.`);
     }
     if (u.connection === "close") {
@@ -265,13 +304,15 @@ createServer((req, res) => {
     return responder(200, {
       conexion: estado.conexion,
       vinculado: estado.vinculado,
-      faltaVincular: Boolean(estado.qr),
       /* El número sí se publica sin token: no es un secreto —está en la web
          del negocio— y es lo que permite ver de un vistazo si se vinculó la
          línea que correspondía. El QR, que sí es credencial, no. */
       numero: estado.numero,
       lineaIncorrecta: estado.lineaIncorrecta,
       verificaNumero: Boolean(ESPERADO),
+      /* Falta vincular si hay cualquiera de las dos vías esperando: el QR
+         para escanear, o el código para escribir en el teléfono. */
+      faltaVincular: Boolean(estado.qr || estado.codigo),
       chats: chats.size,
       mensajes: [...chats.values()].reduce((n, c) => n + c.mensajes.size, 0),
       ultimoMensaje: estado.ultimoMensaje,
@@ -310,11 +351,17 @@ createServer((req, res) => {
 
   if (url.pathname === "/qr") {
     if (!estado.qr) {
-      return responder(200, { svg: null, vinculado: estado.vinculado });
+      return responder(200, {
+        svg: null,
+        codigo: estado.codigo,
+        vinculado: estado.vinculado,
+      });
     }
     return qrSvg(estado.qr, { type: "svg", margin: 1, width: 280 })
-      .then((svg) => responder(200, { svg, vinculado: false }))
-      .catch(() => responder(500, { error: "No se pudo dibujar el QR" }));
+      .then((svg) => responder(200, { svg, codigo: estado.codigo, vinculado: false }))
+      .catch(() =>
+        responder(200, { svg: null, codigo: estado.codigo, vinculado: false })
+      );
   }
 
   if (url.pathname === "/mensajes") {

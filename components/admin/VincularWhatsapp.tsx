@@ -18,8 +18,9 @@ import { pedirQrAction } from "@/app/admin/whatsapp/acciones";
  */
 const CADA_MS = 9_000;
 
-export function VincularWhatsapp() {
+export function VincularWhatsapp({ numero }: { numero?: string }) {
   const [svg, setSvg] = useState<string | null>(null);
+  const [codigo, setCodigo] = useState<string | null>(null);
   const [vinculado, setVinculado] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cargando, setCargando] = useState(true);
@@ -45,6 +46,7 @@ export function VincularWhatsapp() {
       }
       setError(null);
       setSvg(r.data.svg);
+      setCodigo(r.data.codigo);
       setVinculado(r.data.vinculado);
     }
 
@@ -80,8 +82,21 @@ export function VincularWhatsapp() {
         <div>
           <h2 className="font-medium text-white">Vinculá la línea</h2>
           <p className="mt-1 text-sm text-white/45">
-            En el teléfono: WhatsApp → Ajustes → Dispositivos vinculados → Vincular un
-            dispositivo. Después escaneá este código.
+            {codigo ? (
+              <>
+                En el teléfono de{" "}
+                <strong className="font-medium text-white/70">
+                  {numero ?? "la línea del negocio"}
+                </strong>
+                : WhatsApp → Ajustes → Dispositivos vinculados → Vincular un dispositivo →{" "}
+                <em>Vincular con número de teléfono</em>. Después escribí este código.
+              </>
+            ) : (
+              <>
+                En el teléfono: WhatsApp → Ajustes → Dispositivos vinculados → Vincular un
+                dispositivo. Después escaneá este código.
+              </>
+            )}
           </p>
         </div>
       </div>
@@ -95,6 +110,22 @@ export function VincularWhatsapp() {
           <div className="w-full rounded-xl border border-amber-400/25 bg-amber-400/[0.07] p-4 text-sm text-amber-100">
             {error}
           </div>
+        ) : codigo ? (
+          <>
+            {/*
+              El código es la vía preferida: WhatsApp solo lo acepta en el
+              teléfono del número que el lector declaró, así que no hay manera
+              de vincular otra cuenta por error. El QR, en cambio, lo escanea
+              cualquiera con la cuenta que tenga a mano.
+            */}
+            <p className="tnum rounded-2xl border border-white/[0.09] bg-white/[0.04] px-7 py-5 text-center font-mono text-3xl font-semibold tracking-[0.3em] text-white">
+              {codigo}
+            </p>
+            <p className="max-w-sm text-center text-xs text-white/35">
+              Solo funciona en el teléfono de esa línea. Si el código vence, esperá: esta
+              pantalla pide uno nuevo sola.
+            </p>
+          </>
         ) : svg ? (
           <>
             {/* Fondo blanco: un QR sobre casi negro no lo lee ninguna cámara. */}
