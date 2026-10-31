@@ -1,4 +1,5 @@
 import type { ParsedRow, Supplier } from "@/types";
+import { slugify } from "@/utils/format";
 
 /**
  * Las decisiones que hay que tomar para publicar solo una lista de WhatsApp.
@@ -164,6 +165,46 @@ export function claveEquipo(fila: ParsedRow): string {
     fila.grade,
     fila.authenticity,
   ].join("|");
+}
+
+/**
+ * El SKU que identifica una variante. Tiene que dar igual entre importaciones.
+ *
+ * Lleva la autenticidad porque si no, una réplica y un original del mismo
+ * modelo, capacidad y grado comparten SKU, y al publicar uno pisa al otro: se
+ * actualiza la fila equivocada y un equipo original queda con el precio —y la
+ * marca— de una réplica. El sufijo va solo en las réplicas para que el SKU de
+ * un original siga siendo el corto y legible de siempre.
+ *
+ * Es también lo que hace que esto coincida con `claveEquipo` de
+ * `sincronizar.ts`, que sí distingue por autenticidad. Sin eso, el cálculo de
+ * qué quedó sin stock apuntaba a una variante distinta de la que había
+ * publicado.
+ */
+export function skuDe(row: ParsedRow): string {
+  /* La capacidad va en mayúsculas sí o sí. `claveEquipo` la pasa a minúsculas,
+     así que sin normalizar acá "256GB" y "256gb" eran SKUs distintos y poner en
+     cero el stock apuntaba a una variante que no existía: no fallaba, no
+     actualizaba nada. */
+  const capacidad = (row.storage || "NA").trim().toUpperCase();
+  const base = `${slugify(row.model).toUpperCase()}-${capacidad}-${row.grade}`;
+  return row.authenticity === "replica" ? `${base}-REPLICA` : base;
+}
+
+/**
+ * El mismo SKU, pero a partir de la clave que usa `claveEquipo`.
+ *
+ * Existe para poner en cero el stock de lo que un proveedor dejó de ofrecer:
+ * ahí no hay una fila, hay una clave de algo que ya no está.
+ */
+export function skuDesdeClave(clave: string): string {
+  const [model, storage, grade, authenticity] = clave.split("|");
+  return skuDe({
+    model,
+    storage,
+    grade,
+    authenticity,
+  } as unknown as ParsedRow);
 }
 
 /**

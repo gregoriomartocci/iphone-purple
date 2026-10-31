@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AlertTriangle, QrCode } from "lucide-react";
 import { ChatsDetectados } from "@/components/admin/ChatsDetectados";
+import { PlanWhatsapp } from "@/components/admin/PlanWhatsapp";
 import { autoresDetectados } from "@/lib/whatsapp/sincronizar";
 import { pedirMensajes, pedirSalud, servidorConfigurado } from "@/lib/whatsapp/servidor";
 import { getSuppliers } from "@/lib/data/admin";
@@ -137,9 +138,17 @@ export default async function AdminWhatsappPage() {
         </p>
       )}
 
+      {/* Primero importar, que es lo que se hace todos los días; mapear
+          proveedores es de las primeras veces y después casi nunca. */}
+      {isSupabaseConfigured() && (
+        <div className="mb-6">
+          <PlanWhatsapp hayProveedores={proveedores.some((p) => p.isActive)} />
+        </div>
+      )}
+
       <ChatsDetectados autores={autores} supabaseReady={isSupabaseConfigured()} />
 
-      <p className="text-muted-foreground mt-4 text-xs">
+      <p className="mt-4 text-xs text-white/35">
         Ventana de {mensajes.datos.dias} días · {mensajes.datos.chats.length} chats ·
         leído {new Date(mensajes.datos.generado).toLocaleString("es-AR")} ·{" "}
         <Link href="/admin/proveedores" className="underline">
