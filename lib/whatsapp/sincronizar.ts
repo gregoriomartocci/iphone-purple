@@ -65,10 +65,21 @@ export function telefonoComparable(valor: string | null | undefined): string {
   }
   if (d.startsWith("0")) d = d.slice(1);
 
-  // Área (2 a 4 dígitos) + 15 + abonado (6 a 8). Solo se saca cuando lo que
-  // queda a los costados tiene forma de número, para no mutilar uno que
-  // casualmente contenga un 15.
-  d = d.replace(/^(\d{2,4})15(\d{6,8})$/, "$1$2");
+  /*
+   * Área (2 a 4 dígitos) + 15 + abonado (6 a 8), el formato viejo de los
+   * celulares argentinos.
+   *
+   * La condición de los 12 dígitos no es cosmética: un número nacional tiene
+   * 10, así que solo tiene sentido sacar el 15 cuando quedan 10. Sin esa
+   * condición, un número que casualmente contiene un 15 se mutila. Pasó con
+   * una línea real de La Plata: 221 571-3416 queda como "2215713416", que se
+   * puede leer como 22|15|713416, y la función devolvía cadena vacía. Un
+   * número que no normaliza no empareja con nada, y donde se usa para
+   * verificar identidad apaga la verificación entera.
+   */
+  if (d.length === 12) {
+    d = d.replace(/^(\d{2,4})15(\d{6,8})$/, "$1$2");
+  }
 
   // Sin área no hay con qué desambiguar.
   if (d.length < 9) return "";

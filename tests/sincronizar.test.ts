@@ -86,6 +86,31 @@ describe("telefonoComparable", () => {
   it("distingue dos números realmente distintos", () => {
     expect(telefonoComparable("2211234567")).not.toBe(telefonoComparable("2217654321"));
   });
+
+  /**
+   * Un número real de La Plata que la función devolvía vacío.
+   *
+   * "2215713416" se puede leer como 22|15|713416, así que la regla que saca el
+   * 15 del formato viejo lo mutilaba a ocho dígitos y, por cortos, caía en el
+   * descarte. Un número que no normaliza no empareja con nadie; y donde se usa
+   * para verificar qué línea de WhatsApp se vinculó, un valor vacío es falsy y
+   * apaga la verificación entera: el lector pasaba a aceptar cualquier cuenta.
+   */
+  it("no mutila un número que casualmente contiene un 15", () => {
+    const formas = [
+      "+54 9 221 571 3416",
+      "5492215713416",
+      "542215713416",
+      "2215713416",
+      "0221 15 5713416",
+    ];
+    for (const forma of formas) expect(telefonoComparable(forma)).not.toBe("");
+    expect(new Set(formas.map(telefonoComparable)).size).toBe(1);
+  });
+
+  it("sigue sacando el 15 cuando de verdad es el del formato viejo", () => {
+    expect(telefonoComparable("0221 15 1234567")).toBe(telefonoComparable("221 1234567"));
+  });
 });
 
 function mensaje(p: Partial<MensajeWhatsapp> = {}): MensajeWhatsapp {
