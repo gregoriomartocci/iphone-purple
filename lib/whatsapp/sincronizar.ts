@@ -175,12 +175,25 @@ export function claveEquipo(fila: ParsedRow): string {
  * número más chico, que es exactamente al revés.
  */
 export function mejorPorEquipo(filas: ParsedRow[]): ParsedRow[] {
-  const mejores = new Map<string, ParsedRow>();
+  return mejorPorEquipoCon(filas, (f) => f);
+}
 
-  for (const fila of filas) {
+/**
+ * La misma elección, cuando lo que se compara trae algo más pegado.
+ *
+ * Al cruzar proveedores hace falta saber de quién era la fila que ganó —es
+ * quien define el margen—, y una fila sola no lo dice. En vez de repetir la
+ * regla del costo más bajo en dos lugares, que es como terminan difiriendo,
+ * se compara acá y `mejorPorEquipo` queda como el caso sin acompañante.
+ */
+export function mejorPorEquipoCon<T>(items: T[], filaDe: (item: T) => ParsedRow): T[] {
+  const mejores = new Map<string, T>();
+
+  for (const item of items) {
+    const fila = filaDe(item);
     const clave = `${claveEquipo(fila)}|${fila.currency}`;
     const actual = mejores.get(clave);
-    if (!actual || fila.cost < actual.cost) mejores.set(clave, fila);
+    if (!actual || fila.cost < filaDe(actual).cost) mejores.set(clave, item);
   }
 
   return [...mejores.values()];
