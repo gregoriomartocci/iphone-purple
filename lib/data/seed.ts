@@ -30,9 +30,9 @@ export const SETTINGS: StoreSettings = {
   defaultMarginPct: 18,
   whatsappNumber: "5492215713416",
   whatsappDisplay: "+54 9 221 571-3416",
-  instagram: "https://instagram.com/iphonepurple",
+  instagram: "https://www.instagram.com/iphonepurple.ar/",
   tiktok: "https://tiktok.com/@iphonepurple",
-  email: "info@iphonepurple.com",
+  email: "info.iphonepurple@gmail.com",
   // TODO: reemplazar por la dirección real del local.
   address: "Calle 7 1234, La Plata",
   hours: "Lunes a viernes de 9 a 18 h · Sábados de 9 a 13 h",
