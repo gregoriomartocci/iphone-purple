@@ -55,6 +55,8 @@ export interface QrServidor {
    * el teléfono de ese número, así que no hay forma de vincular otra cuenta.
    */
   codigo: string | null;
+  /** Cuándo se pidió ese código, para mostrar su edad y no adivinar. */
+  codigoDesde: string | null;
   vinculado: boolean;
 }
 
@@ -140,6 +142,13 @@ export function pedirSalud(): Promise<Resultado<SaludServidor>> {
 
 export function pedirQr(): Promise<Resultado<QrServidor>> {
   return pedir<QrServidor>("/qr", true);
+}
+
+/** Fuerza un código nuevo. Lo pide una persona, no un temporizador. */
+export function pedirCodigoNuevo(): Promise<
+  Resultado<{ codigo: string | null; codigoDesde: string | null }>
+> {
+  return pedir("/codigo-nuevo", true);
 }
 
 export function pedirMensajes(dias = 3): Promise<Resultado<MensajesServidor>> {

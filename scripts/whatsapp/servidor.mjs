@@ -24,6 +24,7 @@
 import { createServer } from "node:http";
 import { mkdir, rm } from "node:fs/promises";
 import {
+  Browsers,
   DisconnectReason,
   fetchLatestBaileysVersion,
   makeWASocket,
@@ -63,6 +64,17 @@ const ESPERADO = comparable(process.env.WHATSAPP_NUMERO);
  */
 const ESPERADO_CRUDO = String(process.env.WHATSAPP_NUMERO ?? "").replace(/\D/g, "");
 
+/**
+ * Pedir un código nuevo desde fuera de la conexión.
+ *
+ * `renovarCodigo` se define adentro de `conectar()`, porque necesita el socket
+ * de esa conexión en particular. El servidor HTTP no la alcanza desde ahí, así
+ * que cada conexión deja acá su versión y el endpoint usa la vigente.
+ */
+let pedirCodigoNuevo = async () => {
+  throw new Error("Todavía no hay conexión con WhatsApp.");
+};
+
 /** jid → { nombre, mensajes: Map<id, mensaje> } */
 const chats = new Map();
 
@@ -72,6 +84,8 @@ const estado = {
   qr: null,
   /** Código de 8 caracteres para vincular sin escanear nada. */
   codigo: null,
+  /** Cuándo se pidió, para poder mostrar su edad en el panel. */
+  codigoDesde: null,
   /** La línea vinculada, tal como la informa WhatsApp. */
   numero: null,
   /** La vinculada no es la esperada: no se sirve nada y se corta. */
@@ -172,8 +186,27 @@ async function conectar() {
     version,
     auth: state,
     markOnlineOnConnect: false,
-    syncFullHistory: true,
-    browser: ["iPhone Purple — panel", "Chrome", "1.0.0"],
+    /*
+     * Sin el historial completo.
+     *
+     * Con `true`, WhatsApp empuja todo el historial apenas se vincula, y es
+     * justo donde se caía: el log mostraba "logging in..." y enseguida
+     * "connection errored", con la sesión cerrada después. Un bloque enorme
+     * en el momento más frágil de la conexión.
+     *
+     * Y tampoco lo necesitamos: la ventana es de tres días. Lo que WhatsApp
+     * manda por defecto al vincular alcanza para eso.
+     */
+    syncFullHistory: false,
+    /*
+     * Un identificador estándar y no uno propio.
+     *
+     * Decía ["iPhone Purple — panel", "Chrome", "1.0.0"], que quedaba lindo en
+     * la lista de dispositivos vinculados del teléfono, pero WhatsApp rechaza
+     * la vinculación por código con descriptores que no reconoce. Lo lindo
+     * costaba que no se pudiera vincular.
+     */
+    browser: Browsers.ubuntu("Chrome"),
   });
 
   /*
@@ -191,19 +224,60 @@ async function conectar() {
    * La espera es porque el socket tiene que estar abierto antes de pedirlo;
    * sin ella la llamada se va contra una conexión que todavía no existe.
    */
+  /*
+   * El código se renueva, no se pide una sola vez.
+   *
+   * Este fue el bug que impedía vincular: WhatsApp rota el QR cada veinte
+   * segundos y cada rotación invalida el código anterior. Pidiéndolo una vez,
+   * el que mostraba el panel estaba muerto antes de que nadie alcanzara a
+   * escribirlo, y el teléfono decía "no se pudo vincular" sin más detalle.
+   *
+   * `pidiendo` evita dos pedidos solapados, y los 15 segundos evitan pedir uno
+   * nuevo por cada evento cuando llegan en ráfaga.
+   */
+  let pidiendo = false;
+  let ultimoPedido = 0;
+  /*
+   * Una vez que WhatsApp aceptó un código y empezó a loguear, no se pide otro.
+   *
+   * Esto fue un bug propio, y uno feo: la renovación disparaba en cada
+   * rotación del QR, incluso con un login ya en curso. O sea que la persona
+   * escribía el código, WhatsApp lo aceptaba, y nosotros pedíamos otro —que
+   * invalida el anterior— y matábamos nuestro propio intento. En el log se veía
+   * "logging in..." seguido de "connection errored", una y otra vez.
+   */
+  let vinculando = false;
+
+  pedirCodigoNuevo = () => renovarCodigo(true);
+
+  async function renovarCodigo(aMano = false) {
+    if (!ESPERADO_CRUDO) throw new Error("No hay número configurado para vincular.");
+    if (state.creds.registered) throw new Error("La línea ya está vinculada.");
+    if (vinculando)
+      throw new Error("Hay una vinculación en curso, esperá unos segundos.");
+    if (pidiendo) throw new Error("Ya hay un pedido en curso.");
+    // El freno de 15 segundos es contra ráfagas automáticas; pedirlo a mano es
+    // una decisión de una persona y no necesita protección contra sí misma.
+    if (!aMano && Date.now() - ultimoPedido < 15_000) return;
+    pidiendo = true;
+    ultimoPedido = Date.now();
+    try {
+      estado.codigo = await sock.requestPairingCode(ESPERADO_CRUDO);
+      estado.codigoDesde = new Date().toISOString();
+      console.log(`\nCódigo para vincular ${ESPERADO_CRUDO}: ${estado.codigo}\n`);
+    } catch (e) {
+      console.error("No se pudo pedir el código, queda el QR:", e?.message ?? e);
+      if (aMano) throw e;
+    } finally {
+      pidiendo = false;
+    }
+  }
+
   if (ESPERADO_CRUDO && !state.creds.registered) {
-    setTimeout(async () => {
-      try {
-        const codigo = await sock.requestPairingCode(ESPERADO_CRUDO);
-        estado.codigo = codigo;
-        console.log(`\nCódigo para vincular ${ESPERADO_CRUDO}: ${codigo}\n`);
-      } catch (e) {
-        console.error(
-          "No se pudo pedir el código de vinculación, queda el QR:",
-          e?.message ?? e
-        );
-      }
-    }, 4_000);
+    // El socket tiene que estar abierto antes del primer pedido.
+    // El `.catch` no es decorativo: `renovarCodigo` ahora lanza para poder
+    // contestarle al panel, y acá nadie espera la promesa.
+    setTimeout(() => void renovarCodigo().catch(() => {}), 4_000);
   }
 
   sock.ev.on("creds.update", saveCreds);
@@ -215,6 +289,15 @@ async function conectar() {
   });
 
   sock.ev.on("connection.update", async (u) => {
+    // Llega cuando el código o el QR fueron aceptados: desde acá no se pide
+    // ninguna credencial nueva, que sería pisar el login que está entrando.
+    if (u.isNewLogin) {
+      vinculando = true;
+      estado.codigo = null;
+      estado.qr = null;
+      console.log("Código aceptado, entrando…");
+    }
+
     if (u.qr) {
       estado.qr = u.qr;
       estado.vinculado = false;
@@ -223,8 +306,20 @@ async function conectar() {
       // proceso para poder escanear la línea correcta.
       estado.lineaIncorrecta = false;
       estado.numero = null;
-      console.log("\nVinculá la línea escaneando este código:\n");
-      QRCode.generate(u.qr, { small: true });
+      /*
+       * Acá antes se pedía un código nuevo en cada rotación del QR, y era un
+       * error: el código cambiaba debajo de la persona mientras lo escribía, y
+       * con un login en curso llegaba a matarlo.
+       *
+       * Ahora el código se pide una vez y se queda quieto hasta que alguien
+       * pide otro desde el panel. Si WhatsApp lo venció, el intento falla y se
+       * pide uno nuevo a mano: es un clic más y a cambio se sabe exactamente
+       * cuál está en pantalla.
+       */
+      if (!ESPERADO_CRUDO) {
+        console.log("\nVinculá la línea escaneando este código:\n");
+        QRCode.generate(u.qr, { small: true });
+      }
     }
     if (u.connection) estado.conexion = u.connection;
     if (u.connection === "open") {
@@ -270,16 +365,35 @@ async function conectar() {
       estado.vinculado = true;
       estado.qr = null;
       estado.codigo = null;
+      estado.codigoDesde = null;
       console.log(`Conectado a WhatsApp como ${propio || "?"}.`);
     }
     if (u.connection === "close") {
       const codigo = u.lastDisconnect?.error?.output?.statusCode;
       if (codigo === DisconnectReason.loggedOut) {
-        // Cerraron la sesión desde el teléfono: reconectar en bucle solo
-        // generaría intentos fallidos, que es lo que mira WhatsApp para
-        // bloquear. Se corta y se avisa.
-        estado.conexion = "desvinculado";
-        console.error("Sesión cerrada desde el teléfono. Hay que volver a vincular.");
+        /*
+         * Hay dos cosas distintas detrás del mismo código.
+         *
+         * Si ya estábamos vinculados, alguien cerró la sesión desde el
+         * teléfono: reconectar en bucle solo generaría intentos fallidos, que
+         * es lo que mira WhatsApp para bloquear una línea. Se corta y se avisa.
+         *
+         * Pero si nunca llegamos a vincular, es un intento de vinculación que
+         * no prosperó, y quedarse muerto deja la pantalla ofreciendo un código
+         * que ya no sirve. Ahí se arranca de nuevo con credenciales limpias.
+         */
+        if (state.creds.registered) {
+          estado.conexion = "desvinculado";
+          console.error("Sesión cerrada desde el teléfono. Hay que volver a vincular.");
+          return;
+        }
+
+        estado.conexion = "reintentando";
+        estado.codigo = null;
+        estado.qr = null;
+        console.log("El intento de vinculación no prosperó. Empiezo de nuevo…");
+        await rm(AUTH, { recursive: true, force: true }).catch(() => {});
+        setTimeout(conectar, 5_000);
         return;
       }
       // Cualquier otro corte es de red: se reintenta con una espera, no al toque.
@@ -354,14 +468,27 @@ createServer((req, res) => {
       return responder(200, {
         svg: null,
         codigo: estado.codigo,
+        codigoDesde: estado.codigoDesde,
         vinculado: estado.vinculado,
       });
     }
+    const cuerpo = {
+      codigo: estado.codigo,
+      codigoDesde: estado.codigoDesde,
+      vinculado: false,
+    };
     return qrSvg(estado.qr, { type: "svg", margin: 1, width: 280 })
-      .then((svg) => responder(200, { svg, codigo: estado.codigo, vinculado: false }))
-      .catch(() =>
-        responder(200, { svg: null, codigo: estado.codigo, vinculado: false })
-      );
+      .then((svg) => responder(200, { ...cuerpo, svg }))
+      .catch(() => responder(200, { ...cuerpo, svg: null }));
+  }
+
+  /* Pedir un código nuevo a mano, cuando el de pantalla ya no sirve. */
+  if (url.pathname === "/codigo-nuevo") {
+    return pedirCodigoNuevo()
+      .then(() =>
+        responder(200, { codigo: estado.codigo, codigoDesde: estado.codigoDesde })
+      )
+      .catch((e) => responder(500, { error: String(e?.message ?? e) }));
   }
 
   if (url.pathname === "/mensajes") {

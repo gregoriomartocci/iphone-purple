@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CheckCircle2, Loader2, RefreshCw, Smartphone } from "lucide-react";
-import { pedirQrAction } from "@/app/admin/whatsapp/acciones";
+import { pedirCodigoNuevoAction, pedirQrAction } from "@/app/admin/whatsapp/acciones";
 
 /**
  * Vincular la línea desde el panel, en vez de ir a buscar el QR a una terminal.
@@ -21,6 +21,9 @@ const CADA_MS = 9_000;
 export function VincularWhatsapp({ numero }: { numero?: string }) {
   const [svg, setSvg] = useState<string | null>(null);
   const [codigo, setCodigo] = useState<string | null>(null);
+  const [desde, setDesde] = useState<string | null>(null);
+  const [ahora, setAhora] = useState(() => Date.now());
+  const [pidiendo, setPidiendo] = useState(false);
   const [vinculado, setVinculado] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cargando, setCargando] = useState(true);
@@ -47,6 +50,7 @@ export function VincularWhatsapp({ numero }: { numero?: string }) {
       setError(null);
       setSvg(r.data.svg);
       setCodigo(r.data.codigo);
+      setDesde(r.data.codigoDesde);
       setVinculado(r.data.vinculado);
     }
 
@@ -58,6 +62,33 @@ export function VincularWhatsapp({ numero }: { numero?: string }) {
       clearInterval(repetir);
     };
   }, []);
+
+  /*
+   * Un reloj propio, de un segundo, solo para que la edad del código avance a
+   * la vista. La consulta al lector va cada nueve: mezclarlas haría nueve
+   * veces más pedidos de los necesarios para mover un número en pantalla.
+   */
+  useEffect(() => {
+    const id = setInterval(() => setAhora(Date.now()), 1_000);
+    return () => clearInterval(id);
+  }, []);
+
+  async function otroCodigo() {
+    setPidiendo(true);
+    const r = await pedirCodigoNuevoAction();
+    setPidiendo(false);
+    if (!r.ok) {
+      setError(r.error);
+      return;
+    }
+    setError(null);
+    setCodigo(r.data.codigo);
+    setDesde(r.data.codigoDesde);
+  }
+
+  const segundos = desde
+    ? Math.max(0, Math.round((ahora - Date.parse(desde)) / 1000))
+    : null;
 
   // Vinculada: la pantalla de al lado ya puede leer mensajes, así que se recarga.
   useEffect(() => {
@@ -110,37 +141,80 @@ export function VincularWhatsapp({ numero }: { numero?: string }) {
           <div className="w-full rounded-xl border border-amber-400/25 bg-amber-400/[0.07] p-4 text-sm text-amber-100">
             {error}
           </div>
-        ) : codigo ? (
+        ) : codigo || svg ? (
           <>
             {/*
-              El código es la vía preferida: WhatsApp solo lo acepta en el
+              Se muestran las dos vías, y el código primero.
+
+              El código es el camino seguro: WhatsApp solo lo acepta en el
               teléfono del número que el lector declaró, así que no hay manera
-              de vincular otra cuenta por error. El QR, en cambio, lo escanea
-              cualquiera con la cuenta que tenga a mano.
+              de vincular otra cuenta por error. Pero vence en menos de un
+              minuto y hay teléfonos donde falla, y quedarse sin alternativa
+              visible es quedarse trabado. El QR engancha siempre; que alguien
+              escanee con la cuenta equivocada ya está cubierto, porque el
+              lector la rechaza y se desvincula solo.
             */}
-            <p className="tnum rounded-2xl border border-white/[0.09] bg-white/[0.04] px-7 py-5 text-center font-mono text-3xl font-semibold tracking-[0.3em] text-white">
-              {codigo}
-            </p>
-            <p className="max-w-sm text-center text-xs text-white/35">
-              Solo funciona en el teléfono de esa línea. Si el código vence, esperá: esta
-              pantalla pide uno nuevo sola.
-            </p>
-          </>
-        ) : svg ? (
-          <>
-            {/* Fondo blanco: un QR sobre casi negro no lo lee ninguna cámara. */}
-            {/* eslint-disable-next-line @next/next/no-img-element -- es un data URI, no hay nada que optimizar. */}
-            <img
-              src={`data:image/svg+xml;utf8,${encodeURIComponent(svg)}`}
-              alt="Código QR para vincular WhatsApp"
-              width={280}
-              height={280}
-              className="rounded-2xl bg-white p-3"
-            />
-            <p className="flex items-center gap-1.5 text-xs text-white/35">
-              <RefreshCw className="size-3" />
-              Se renueva solo: el código caduca a los pocos segundos.
-            </p>
+            {codigo && (
+              <>
+                <p className="tnum rounded-2xl border border-white/[0.09] bg-white/[0.04] px-7 py-5 text-center font-mono text-3xl font-semibold tracking-[0.3em] text-white">
+                  {codigo}
+                </p>
+                <p className="max-w-sm text-center text-xs text-white/35">
+                  Escribilo en el teléfono, en Dispositivos vinculados. Ya no cambia solo:
+                  se queda hasta que pidas otro.
+                </p>
+
+                <div className="flex items-center gap-3 text-xs">
+                  {segundos !== null && (
+                    <span
+                      className={segundos > 90 ? "text-amber-300/80" : "text-white/35"}
+                    >
+                      generado hace {segundos} s
+                      {segundos > 90 && " — puede estar vencido"}
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={otroCodigo}
+                    disabled={pidiendo}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.12] px-3 py-1.5 text-white/70 transition-colors hover:border-white/25 hover:text-white disabled:opacity-50"
+                  >
+                    {pidiendo ? (
+                      <Loader2 className="size-3 animate-spin" />
+                    ) : (
+                      <RefreshCw className="size-3" />
+                    )}
+                    Pedir otro
+                  </button>
+                </div>
+              </>
+            )}
+
+            {codigo && svg && (
+              <div className="my-1 flex w-full items-center gap-3">
+                <span className="h-px flex-1 bg-white/[0.08]" />
+                <span className="text-xs text-white/30">o escaneá</span>
+                <span className="h-px flex-1 bg-white/[0.08]" />
+              </div>
+            )}
+
+            {svg && (
+              <>
+                {/* Fondo blanco: un QR sobre casi negro no lo lee ninguna cámara. */}
+                {/* eslint-disable-next-line @next/next/no-img-element -- es un data URI, no hay nada que optimizar. */}
+                <img
+                  src={`data:image/svg+xml;utf8,${encodeURIComponent(svg)}`}
+                  alt="Código QR para vincular WhatsApp"
+                  width={240}
+                  height={240}
+                  className="rounded-2xl bg-white p-3"
+                />
+                <p className="flex items-center gap-1.5 text-center text-xs text-white/35">
+                  <RefreshCw className="size-3 shrink-0" />
+                  Se renueva solo cada pocos segundos.
+                </p>
+              </>
+            )}
           </>
         ) : (
           <div className="w-full rounded-xl border border-white/[0.07] p-4 text-center text-sm text-white/45">
