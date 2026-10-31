@@ -129,7 +129,34 @@ frene el merge cuando ya estás por publicar.
 
 Cuál usar en cada caso:
 
-| Merge                | Cómo       | Por qué                                                                                                    |
-| -------------------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
-| `feat/…` → `staging` | **Squash** | La rama son diez commits de ida y vuelta; en `staging` interesa el cambio terminado, uno solo.             |
-| `staging` → `main`   | **Rebase** | Acá sí interesa cada commit por separado: es el historial de producción, y es lo que se lee para revertir. |
+| Merge                | Cómo       | Por qué                                                                                        |
+| -------------------- | ---------- | ---------------------------------------------------------------------------------------------- |
+| `feat/…` → `staging` | **Squash** | La rama son diez commits de ida y vuelta; en `staging` interesa el cambio terminado, uno solo. |
+| `staging` → `main`   | **Squash** | Un commit por publicación. No es la primera opción, es la única que funciona: ver abajo.       |
+
+---
+
+## Por qué publicar es squash y no rebase
+
+La primera versión de este documento decía rebase, con el argumento de que en
+`main` interesa cada commit por separado. Funcionó dos veces y después dejó de
+funcionar, con este error:
+
+```
+GraphQL: This branch can't be rebased (mergePullRequest)
+```
+
+La causa es que las dos reglas se peleaban entre sí. El paso 6 del circuito
+—sincronizar `staging` con `main` después de publicar— se hace con un merge, y
+eso deja un merge commit dentro de `staging`. GitHub no puede rebasar una rama
+que contiene merge commits. O sea: cada publicación sembraba el merge commit
+que iba a romper la siguiente.
+
+Las salidas posibles eran tres. Habilitar merge commits choca con
+`required_linear_history`. Sincronizar `staging` con un force push choca con
+`allow_force_pushes: false`, que no vale la pena aflojar. Queda el squash, que
+funciona sin importar qué tenga la rama adentro.
+
+Lo que se pierde: en `main` cada publicación es un commit solo. El detalle
+commit por commit sigue estando en `staging` y en el PR, que es donde se mira
+cuando hay que entender un cambio.
