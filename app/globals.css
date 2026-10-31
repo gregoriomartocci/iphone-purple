@@ -102,21 +102,26 @@
  * siéndolo. `data-panel` lo activa en el contenedor del panel y todo lo que
  * hay adentro —que usa tokens, no colores sueltos— se da vuelta solo.
  *
- * Los valores no son inventados: salen de la pantalla de login. El fondo es su
- * #07070a, los bordes su `rgba(255,255,255,0.09)` del vidrio, y la escala de
- * texto sus opacidades (blanco pleno, 70%, 45%, 35%).
+ * Los valores salen de la pantalla de login: los bordes son su
+ * `rgba(255,255,255,...)` del vidrio y la escala de texto sus opacidades
+ * (blanco pleno, 70%, 45%, 35%).
+ *
+ * El fondo es la excepción. El login usa #07070a, que sobre una tarjeta sola
+ * queda bien, pero en el panel —donde se pasan horas leyendo tablas— cansaba
+ * la vista. Está subido un paso, a #0f0f15: sigue siendo oscuro, deja de ser
+ * un pozo.
  */
 [data-panel] {
-  --ink: #07070a;
-  --line: rgba(255, 255, 255, 0.09);
-  --surface: #101016;
-  --elevated: #16161d;
+  --ink: #0f0f15;
+  --line: rgba(255, 255, 255, 0.1);
+  --surface: #191921;
+  --elevated: #20202a;
 
-  --background: #07070a;
+  --background: #0f0f15;
   --foreground: #ffffff;
-  --card: #101016;
+  --card: #191921;
   --card-foreground: #ffffff;
-  --popover: #16161d;
+  --popover: #20202a;
   --popover-foreground: #ffffff;
 
   /* Acá sí la acción va en violeta, y no en tinta como en la tienda: es el
@@ -615,7 +620,7 @@
    * sostiene la jerarquía es el borde y el brillo interior.
    */
   .vidrio-sutil {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.045);
     backdrop-filter: blur(20px) saturate(140%);
     -webkit-backdrop-filter: blur(20px) saturate(140%);
     border: 1px solid rgba(255, 255, 255, 0.08);

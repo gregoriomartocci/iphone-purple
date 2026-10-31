@@ -41,7 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const nav = (
     <nav className="flex h-full flex-col">
-      <div className="border-line border-b px-5 py-5">
+      <div className="border-line border-b px-5 py-6">
         <Link
           href="/"
           aria-label="iPhone Purple — inicio"
@@ -49,9 +49,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         >
           {/* `onDark` explícito y no por omisión: el panel era claro, servía la
               marca en blanco sobre fondo claro y el logo se veía fantasma. */}
-          <Logo tone="onDark" className="h-6" />
+          <Logo tone="onDark" className="h-9" />
         </Link>
-        <p className="mt-1 text-xs text-white/40">Panel interno</p>
       </div>
 
       <div className="flex-1 space-y-0.5 overflow-y-auto p-3">
@@ -120,7 +119,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           className="aurora aurora-2 right-[-10%] bottom-[-28%] h-[58vh] w-[58vh] opacity-45"
           style={{ background: "radial-gradient(circle, #2563eb 0%, transparent 68%)" }}
         />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_12%,#07070a_92%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_12%,#0f0f15_92%)]" />
         <div className="grano absolute inset-0 opacity-[0.16] mix-blend-overlay" />
       </div>
 
@@ -134,7 +133,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
-          <aside className="absolute inset-y-0 left-0 w-64 border-r border-white/[0.07] bg-[#0b0b11]/95 backdrop-blur-xl">
+          <aside className="absolute inset-y-0 left-0 w-64 border-r border-white/[0.07] bg-[#13131a]/95 backdrop-blur-xl">
             {nav}
           </aside>
         </div>
