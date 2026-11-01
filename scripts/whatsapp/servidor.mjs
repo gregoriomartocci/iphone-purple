@@ -22,7 +22,8 @@
  *   DIAS             ventana de mensajes que se conserva. Por defecto 3.
  */
 import { createServer } from "node:http";
-import { mkdir, rm } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
 import {
   Browsers,
   DisconnectReason,
@@ -113,6 +114,114 @@ function textoDe(m) {
   );
 }
 
+/**
+ * Nombres de grupo y de contacto, que no vienen con los mensajes.
+ *
+ * El mensaje trae `pushName`, que es el nombre de quien escribió, no el del
+ * grupo. Sin preguntar aparte, un chat de grupo queda identificado por su jid
+ * —"120363427939785789"— y no hay forma de saber de qué grupo se trata.
+ */
+/**
+ * Dónde se guardan los mensajes entre reinicios.
+ *
+ * Va al lado de la carpeta de sesión y no adentro, porque esa se borra entera
+ * cuando un intento de vinculación no prospera. En la imagen de Docker el
+ * volumen está montado en el directorio padre, así que esto cae dentro.
+ */
+const ARCHIVO = join(dirname(AUTH), "mensajes-whatsapp.json");
+
+const nombresDeChat = new Map();
+/** Identificador interno de un participante → su teléfono, cuando se puede. */
+const telefonoDeLid = new Map();
+
+/**
+ * Pregunta por todos los grupos de una sola vez.
+ *
+ * Una llamada en vez de una por grupo: pedirlas de a una, con diez o veinte
+ * grupos, es la clase de ráfaga que WhatsApp mira para bloquear una línea.
+ */
+async function traerNombresDeGrupos(sock) {
+  try {
+    const grupos = await sock.groupFetchAllParticipating();
+    for (const [jid, meta] of Object.entries(grupos ?? {})) {
+      if (meta?.subject) nombresDeChat.set(jid, meta.subject);
+      /*
+       * Los participantes a veces traen las dos identidades: el identificador
+       * interno con el que firman los mensajes y el teléfono real. Guardar esa
+       * correspondencia es lo que permite emparejar a un proveedor que escribe
+       * en un grupo con el mismo que escribe por privado.
+       */
+      for (const p of meta?.participants ?? []) {
+        const lid = String(p.id ?? "").split("@")[0];
+        const tel = String(p.jid ?? p.phoneNumber ?? "").split("@")[0];
+        if (lid && tel && lid !== tel) telefonoDeLid.set(lid, tel);
+      }
+    }
+    /* Los nombres llegan después de los mensajes —y después de los
+       recuperados del disco—, así que hay que aplicarlos a lo que ya está. */
+    for (const [jid, nombre] of nombresDeChat) {
+      const chat = chats.get(jid);
+      if (chat) chat.nombre = nombre;
+    }
+    if (nombresDeChat.size > 0) pedirGuardado();
+
+    console.log(
+      `Nombres de grupo: ${nombresDeChat.size} · identificadores resueltos a teléfono: ${telefonoDeLid.size}`
+    );
+  } catch (e) {
+    console.error("No se pudieron traer los nombres de los grupos:", e?.message ?? e);
+  }
+}
+
+/*
+ * Los mensajes se persisten porque si no, un reinicio los borra.
+ *
+ * Viven en memoria y WhatsApp no reenvía el historial al reconectar: solo lo
+ * manda la primera vez que se vincula un dispositivo. Sin esto, cada reinicio
+ * —un deploy, una caída de red, cambiar una variable— dejaba la ventana en
+ * cero hasta que entrara un mensaje nuevo, y el panel decía "todavía no juntó
+ * mensajes" aunque hubiera veinte listas de esta mañana.
+ *
+ * Se escribe con retraso y no en cada mensaje: cuando entra una ráfaga,
+ * grabar por cada uno escribe el archivo entero decenas de veces.
+ */
+let guardadoPendiente = null;
+
+function pedirGuardado() {
+  if (guardadoPendiente) return;
+  guardadoPendiente = setTimeout(async () => {
+    guardadoPendiente = null;
+    try {
+      const datos = [...chats.values()].map((c) => ({
+        jid: c.jid,
+        nombre: c.nombre,
+        mensajes: [...c.mensajes.entries()],
+      }));
+      await writeFile(ARCHIVO, JSON.stringify(datos), "utf8");
+    } catch (e) {
+      console.error("No se pudieron guardar los mensajes:", e?.message ?? e);
+    }
+  }, 5_000);
+}
+
+async function cargarDeDisco() {
+  try {
+    const datos = JSON.parse(await readFile(ARCHIVO, "utf8"));
+    for (const c of datos) {
+      chats.set(c.jid, {
+        jid: c.jid,
+        nombre: c.nombre ?? null,
+        mensajes: new Map(c.mensajes),
+      });
+    }
+    podar();
+    const n = [...chats.values()].reduce((t, c) => t + c.mensajes.size, 0);
+    console.log(`Recuperados ${n} mensajes de ${chats.size} chats del disco.`);
+  } catch {
+    // No existir es lo normal la primera vez.
+  }
+}
+
 function guardar(m) {
   const jid = m.key?.remoteJid;
   if (!jid || jid === "status@broadcast") return;
@@ -123,11 +232,19 @@ function guardar(m) {
   const texto = textoDe(m);
   if (!texto || texto.trim().length < 8) return;
 
+  /*
+   * El nombre de un grupo se pregunta; el de un chat de a dos es el `pushName`
+   * de la otra persona. Antes se usaba `pushName` para los dos, y en un grupo
+   * eso ponía de nombre al último que hubiera escrito.
+   */
+  const esGrupo = jid.endsWith("@g.us");
+  const nombre = esGrupo ? (nombresDeChat.get(jid) ?? null) : (m.pushName ?? null);
+
   if (!chats.has(jid)) {
-    chats.set(jid, { jid, nombre: m.pushName ?? null, mensajes: new Map() });
+    chats.set(jid, { jid, nombre, mensajes: new Map() });
   }
   const chat = chats.get(jid);
-  if (!chat.nombre && m.pushName) chat.nombre = m.pushName;
+  if (!chat.nombre && nombre) chat.nombre = nombre;
 
   /*
    * Quién escribió, que en un grupo no es lo mismo que el chat.
@@ -138,16 +255,21 @@ function guardar(m) {
    * este dato son todos "el grupo", no se puede saber de quién es cada lista
    * ni, por lo tanto, qué margen le toca.
    */
-  const autorJid = jid.endsWith("@g.us") ? (m.key.participant ?? null) : jid;
+  const autorJid = esGrupo ? (m.key.participant ?? null) : jid;
+  const autorId = autorJid ? autorJid.split("@")[0] : null;
 
   chat.mensajes.set(m.key.id, {
     fecha: new Date(marca).toISOString(),
     mio: Boolean(m.key.fromMe),
     texto: texto.trim(),
-    autor: autorJid ? autorJid.split("@")[0] : null,
+    // Si se pudo resolver el identificador interno a un teléfono, va el
+    // teléfono: es lo que permite reconocer al mismo proveedor en un grupo y
+    // por privado.
+    autor: autorId ? (telefonoDeLid.get(autorId) ?? autorId) : null,
     autorNombre: m.pushName ?? null,
   });
   estado.ultimoMensaje = new Date().toISOString();
+  pedirGuardado();
 }
 
 /**
@@ -185,6 +307,7 @@ function instantanea(dias = DIAS) {
 
 async function conectar() {
   await mkdir(AUTH, { recursive: true });
+  if (chats.size === 0) await cargarDeDisco();
   const { state, saveCreds } = await cargarSesion(AUTH);
   const { version } = await fetchLatestBaileysVersion();
 
@@ -279,7 +402,10 @@ async function conectar() {
     }
   }
 
-  if (ESPERADO_CRUDO && !state.creds.registered) {
+  /* `creds.me` es el chequeo que vale: con una sesión recuperada del disco,
+     `registered` puede venir en false y el lector pedía un código de
+     vinculación estando ya conectado. */
+  if (ESPERADO_CRUDO && !state.creds.registered && !state.creds.me) {
     // El socket tiene que estar abierto antes del primer pedido.
     // El `.catch` no es decorativo: `renovarCodigo` ahora lanza para poder
     // contestarle al panel, y acá nadie espera la promesa.
@@ -371,6 +497,7 @@ async function conectar() {
       estado.vinculado = true;
       estado.qr = null;
       estado.codigo = null;
+      void traerNombresDeGrupos(sock);
       estado.codigoDesde = null;
       console.log(`Conectado a WhatsApp como ${propio || "?"}.`);
     }
@@ -388,7 +515,20 @@ async function conectar() {
          * no prosperó, y quedarse muerto deja la pantalla ofreciendo un código
          * que ya no sirve. Ahí se arranca de nuevo con credenciales limpias.
          */
-        if (state.creds.registered) {
+        /*
+         * `creds.me` y no solo `registered`: una sesión recuperada del disco
+         * puede traer `registered` en false aunque tenga identidad y sea
+         * perfectamente válida.
+         *
+         * La distinción importa porque la otra rama BORRA las credenciales.
+         * Con el chequeo incompleto, un 401 sobre una sesión buena se leía
+         * como un intento de vinculación fallido y se la llevaba puesta:
+         * costaba volver a escanear por un error de clasificación.
+         *
+         * Ante la duda, no se borra. Reconectar de más es gratis; perder la
+         * sesión cuesta que alguien agarre el teléfono.
+         */
+        if (state.creds.registered || state.creds.me) {
           estado.conexion = "desvinculado";
           console.error("Sesión cerrada desde el teléfono. Hay que volver a vincular.");
           return;
