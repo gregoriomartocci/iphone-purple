@@ -7,9 +7,10 @@ FROM node:22-slim
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-# Solo lo que este proceso usa: no hace falta Next ni el resto del sitio acá.
-RUN npm install --omit=dev --no-audit --no-fund baileys qrcode-terminal qrcode
+# El lector declara sus propias dependencias: es un proceso aparte y no
+# comparte el arbol del sitio. Ver scripts/whatsapp/package.json.
+COPY scripts/whatsapp/package.json ./scripts/whatsapp/package.json
+RUN cd scripts/whatsapp && npm install --omit=dev --no-audit --no-fund
 
 COPY scripts/whatsapp/servidor.mjs scripts/whatsapp/telefono.mjs ./scripts/whatsapp/
 
