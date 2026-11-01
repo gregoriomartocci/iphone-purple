@@ -77,7 +77,15 @@ export interface PerfilContacto {
 }
 
 export type MotivoFalla =
-  "sin-configurar" | "sin-respuesta" | "no-autorizado" | "respuesta-rara";
+  | "sin-configurar"
+  /** No hay nadie escuchando: el proceso del lector no está corriendo. */
+  | "apagado"
+  /** Está corriendo pero tardó más de la cuenta en contestar. */
+  | "sin-respuesta"
+  /** La dirección no resuelve: está mal escrita o el servicio ya no existe. */
+  | "no-existe"
+  | "no-autorizado"
+  | "respuesta-rara";
 
 export type Resultado<T> =
   { ok: true; datos: T } | { ok: false; motivo: MotivoFalla; detalle: string };
@@ -117,10 +125,41 @@ async function pedir<T>(ruta: string, conToken: boolean): Promise<Resultado<T>> 
       cache: "no-store",
     });
   } catch (e) {
+    /*
+     * `fetch` de Node devuelve siempre "fetch failed" y guarda la causa real
+     * en `cause`. Sin desenvolverla, el panel mostraba ese texto tal cual, que
+     * no distingue entre el lector apagado, una URL mal escrita y una demora:
+     * tres problemas con tres soluciones distintas.
+     */
+    const causa = (e as { cause?: { code?: string } })?.cause?.code;
+    const nombreError = e instanceof Error ? e.name : "";
+
+    if (causa === "ECONNREFUSED") {
+      return {
+        ok: false,
+        motivo: "apagado",
+        detalle: "El lector no está corriendo: nadie contesta en esa dirección.",
+      };
+    }
+    if (causa === "ENOTFOUND" || causa === "EAI_AGAIN") {
+      return {
+        ok: false,
+        motivo: "no-existe",
+        detalle: "No se pudo resolver la dirección del lector. Revisá la URL.",
+      };
+    }
+    if (nombreError === "TimeoutError" || nombreError === "AbortError") {
+      return {
+        ok: false,
+        motivo: "sin-respuesta",
+        detalle: `El lector no contestó en ${ESPERA_MS / 1000} segundos.`,
+      };
+    }
     return {
       ok: false,
       motivo: "sin-respuesta",
-      detalle: e instanceof Error ? e.message : String(e),
+      detalle:
+        e instanceof Error ? `${e.message}${causa ? ` (${causa})` : ""}` : String(e),
     };
   }
 

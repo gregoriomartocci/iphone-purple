@@ -144,13 +144,33 @@ describe("cliente del servidor de WhatsApp", () => {
     expect(!r.ok && r.detalle).toContain("URL");
   });
 
-  it("no se cae cuando el servidor no está", async () => {
-    // Puerto cerrado: es lo que pasa mientras Railway despierta el servicio.
-    vi.stubEnv("WHATSAPP_SERVIDOR_URL", "http://127.0.0.1:1");
+  /*
+   * El error que se veía en pantalla era "fetch failed", el texto crudo de
+   * Node, que no dice nada: ni si el lector está apagado, ni si la URL está
+   * mal, ni si tardó. La causa real viene en `cause.code` y hay que
+   * desenvolverla, porque cada una se arregla distinto.
+   */
+  it("distingue el lector apagado de una demora", async () => {
+    /* Un puerto alto y cerrado, no el 1: Node rechaza los puertos reservados
+       antes de intentar conectarse, así que daría "bad port" y no el
+       ECONNREFUSED que se quiere probar. */
+    vi.stubEnv("WHATSAPP_SERVIDOR_URL", "http://127.0.0.1:59999");
     vi.stubEnv("WHATSAPP_SERVIDOR_TOKEN", "secreto");
 
     const r = await pedirMensajes();
 
-    expect(!r.ok && r.motivo).toBe("sin-respuesta");
+    expect(!r.ok && r.motivo).toBe("apagado");
+    expect(!r.ok && r.detalle).not.toContain("fetch failed");
+    expect(!r.ok && r.detalle).toMatch(/no está corriendo/i);
+  });
+
+  it("avisa cuando la dirección no resuelve", async () => {
+    vi.stubEnv("WHATSAPP_SERVIDOR_URL", "http://lector-que-no-existe.invalid");
+    vi.stubEnv("WHATSAPP_SERVIDOR_TOKEN", "secreto");
+
+    const r = await pedirMensajes();
+
+    expect(!r.ok && r.motivo).toBe("no-existe");
+    expect(!r.ok && r.detalle).toMatch(/URL/i);
   });
 });

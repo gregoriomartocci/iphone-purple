@@ -100,23 +100,58 @@ export default async function AdminWhatsappPage() {
              justamente en producción. */
           <VincularWhatsapp numero={settings.whatsappDisplay} />
         ) : (
-          <Aviso icono={AlertTriangle} titulo="El lector no está andando">
-            {/* Solo se llega acá con el pedido fallado; el otro camino —vivo
-                pero sin vincular— lo toma la rama de arriba. */}
+          /*
+           * Un cartel por causa, con lo que hay que hacer en cada una.
+           *
+           * Antes había uno solo que imprimía el mensaje crudo del error, y
+           * con el lector apagado decía "fetch failed": ni qué pasó, ni qué
+           * hacer. Las causas son distintas y las soluciones también —prender
+           * el proceso, corregir la URL, esperar, revisar el token— así que
+           * cada una se dice con su nombre.
+           */
+          <Aviso
+            icono={AlertTriangle}
+            titulo={
+              !mensajes.ok && mensajes.motivo === "apagado"
+                ? "El lector está apagado"
+                : !mensajes.ok && mensajes.motivo === "no-existe"
+                  ? "No se encuentra el lector"
+                  : !mensajes.ok && mensajes.motivo === "no-autorizado"
+                    ? "El lector rechazó la contraseña"
+                    : "El lector no contestó"
+            }
+          >
             <p>{!mensajes.ok && mensajes.detalle}</p>
-            {/* En producción el lector vive en su propio servicio y está
-                prendido siempre, así que el botón no tendría qué hacer. */}
-            {!process.env.VERCEL && <PrenderLector />}
+
+            {!mensajes.ok && mensajes.motivo === "apagado" && !process.env.VERCEL && (
+              <PrenderLector />
+            )}
+
+            {!mensajes.ok && mensajes.motivo === "apagado" && process.env.VERCEL && (
+              <p>
+                En producción el lector corre en su propio servicio. Revisá que esté
+                arriba y que <code>WHATSAPP_SERVIDOR_URL</code> apunte ahí.
+              </p>
+            )}
+
+            {!mensajes.ok && mensajes.motivo === "no-existe" && (
+              <p>
+                La dirección de <code>WHATSAPP_SERVIDOR_URL</code> no resuelve. Si el
+                servicio cambió de nombre o se borró, hay que actualizarla.
+              </p>
+            )}
+
             {!mensajes.ok && mensajes.motivo === "sin-respuesta" && (
               <p>
                 Railway duerme los servicios sin tráfico. Si es la primera visita del día,
-                recargá en un minuto.
+                recargá en un minuto; si se repite, mirá los logs del servicio.
               </p>
             )}
+
             {!mensajes.ok && mensajes.motivo === "no-autorizado" && (
               <p>
                 El <code>WHATSAPP_SERVIDOR_TOKEN</code> de acá no coincide con el{" "}
-                <code>TOKEN_WHATSAPP</code> del servicio.
+                <code>TOKEN_WHATSAPP</code> del servicio. Tienen que ser idénticos.
               </p>
             )}
           </Aviso>
