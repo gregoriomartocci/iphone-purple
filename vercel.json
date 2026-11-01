@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "comment": "La cotización del blue, cada mañana de día hábil. 13:00 UTC son las 10 de Argentina: el mercado informal ya abrió y el valor del día está formado. Sábado y domingo no corre porque no cotiza.",
+      "path": "/api/cotizacion",
+      "schedule": "0 13 * * 1-5"
+    }
+  ]
+}
