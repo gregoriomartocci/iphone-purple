@@ -131,6 +131,17 @@ function textoDe(m) {
 const ARCHIVO = join(dirname(AUTH), "mensajes-whatsapp.json");
 
 const nombresDeChat = new Map();
+
+/**
+ * Lo que WhatsApp sabe de cada proveedor, más allá de sus mensajes.
+ *
+ * Se pide una vez por contacto y se guarda. Un perfil de negocio no cambia de
+ * un día para el otro, y cada consulta es una llamada a WhatsApp: repetirlas
+ * en cada visita al panel sería una ráfaga sobre la misma línea, que es lo que
+ * mira WhatsApp para bloquear.
+ */
+const perfiles = new Map();
+let socketVivo = null;
 /** Identificador interno de un participante → su teléfono, cuando se puede. */
 const telefonoDeLid = new Map();
 
@@ -220,6 +231,54 @@ async function cargarDeDisco() {
   } catch {
     // No existir es lo normal la primera vez.
   }
+}
+
+/**
+ * Todo lo que se pueda averiguar de un contacto, de una sola pasada.
+ *
+ * Cada dato va en su propio try: un contacto sin perfil de negocio hace fallar
+ * esa consulta y no tiene por qué llevarse puestas las otras dos. Un proveedor
+ * del que sabemos la foto y el estado es mejor que uno del que no sabemos nada
+ * porque no tenía cuenta de empresa.
+ */
+async function traerPerfil(id) {
+  if (perfiles.has(id)) return perfiles.get(id);
+  if (!socketVivo) throw new Error("Sin conexión con WhatsApp.");
+
+  const jid = id.includes("@") ? id : `${id}@s.whatsapp.net`;
+  const perfil = { id, negocio: null, estado: null, foto: null };
+
+  try {
+    const n = await socketVivo.getBusinessProfile(jid);
+    if (n) {
+      perfil.negocio = {
+        descripcion: n.description || null,
+        categoria: n.category || null,
+        email: n.email || null,
+        sitios: Array.isArray(n.website) ? n.website.filter(Boolean) : [],
+        direccion: n.address || null,
+      };
+    }
+  } catch {
+    // La mayoría de los proveedores usan WhatsApp común, no Business.
+  }
+
+  try {
+    const r = await socketVivo.fetchStatus(jid);
+    const texto = Array.isArray(r) ? r[0]?.status?.status : r?.status;
+    if (texto) perfil.estado = String(texto);
+  } catch {
+    // El estado se puede tener oculto.
+  }
+
+  try {
+    perfil.foto = (await socketVivo.profilePictureUrl(jid, "preview")) ?? null;
+  } catch {
+    // Sin foto, o con la privacidad cerrada.
+  }
+
+  perfiles.set(id, perfil);
+  return perfil;
 }
 
 function guardar(m) {
@@ -497,6 +556,7 @@ async function conectar() {
       estado.vinculado = true;
       estado.qr = null;
       estado.codigo = null;
+      socketVivo = sock;
       void traerNombresDeGrupos(sock);
       estado.codigoDesde = null;
       console.log(`Conectado a WhatsApp como ${propio || "?"}.`);
@@ -647,6 +707,19 @@ createServer((req, res) => {
         responder(200, { codigo: estado.codigo, codigoDesde: estado.codigoDesde })
       )
       .catch((e) => responder(500, { error: String(e?.message ?? e) }));
+  }
+
+  /*
+   * El perfil se pide de a uno y cuando alguien lo mira, no para todos al
+   * conectar. Con veinte proveedores, pedirlos todos de golpe son sesenta
+   * llamadas seguidas sobre la misma línea.
+   */
+  if (url.pathname === "/perfil") {
+    const id = url.searchParams.get("id");
+    if (!id) return responder(400, { error: "Falta el id" });
+    return traerPerfil(id)
+      .then((p) => responder(200, p))
+      .catch((e) => responder(502, { error: String(e?.message ?? e) }));
   }
 
   if (url.pathname === "/mensajes") {

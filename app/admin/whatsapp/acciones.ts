@@ -10,6 +10,7 @@ import { getSettings, isSupabaseConfigured } from "@/lib/data";
 import { getSuppliers } from "@/lib/data/admin";
 import {
   pedirCodigoNuevo,
+  pedirPerfil,
   pedirMensajes,
   pedirQr,
   pedirSalud,
@@ -30,6 +31,7 @@ import {
   type ActionResult,
 } from "@/lib/admin/publicar";
 import type { ParsedRow } from "@/types";
+import type { PerfilContacto } from "@/lib/whatsapp/servidor";
 
 /**
  * El camino completo de WhatsApp al catálogo, partido en dos pasos.
@@ -354,6 +356,26 @@ export async function pedirCodigoNuevoAction(): Promise<
     return { ok: false, error: "El lector de WhatsApp no está configurado." };
   }
   const r = await pedirCodigoNuevo();
+  if (!r.ok) return { ok: false, error: r.detalle };
+  return { ok: true, data: r.datos };
+}
+
+/**
+ * Quién es ese remitente, según lo que WhatsApp deje ver.
+ *
+ * El identificador no dice nada y la lista a veces tampoco trae el nombre.
+ * Esto es el último recurso antes de preguntarle a una persona: el perfil de
+ * negocio —descripción, rubro, dirección, sitio— y el estado del contacto,
+ * donde muchos mayoristas escriben justamente a qué se dedican.
+ */
+export async function perfilDeContactoAction(
+  id: string
+): Promise<ActionResult<PerfilContacto>> {
+  if (!(await requireAdmin())) return { ok: false, error: "No autorizado" };
+  if (!servidorConfigurado()) {
+    return { ok: false, error: "El lector de WhatsApp no está configurado." };
+  }
+  const r = await pedirPerfil(id);
   if (!r.ok) return { ok: false, error: r.detalle };
   return { ok: true, data: r.datos };
 }

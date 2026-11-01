@@ -2,8 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Check, ChevronDown, Loader2, Sparkles, UserPlus } from "lucide-react";
+import { BadgeInfo, Check, ChevronDown, Loader2, Sparkles, UserPlus } from "lucide-react";
 import { saveSupplierAction } from "@/app/admin/actions";
+import { perfilDeContactoAction } from "@/app/admin/whatsapp/acciones";
+import type { PerfilContacto } from "@/lib/whatsapp/servidor";
 import type { AutorDetectado } from "@/lib/whatsapp/sincronizar";
 
 /** El mismo que usa el alta manual de proveedores, para no tener dos verdades. */
@@ -46,6 +48,21 @@ export function ChatsDetectados({
 }) {
   const [abierto, setAbierto] = useState<string | null>(null);
   const [verLista, setVerLista] = useState<string | null>(null);
+  const [perfiles, setPerfiles] = useState<Record<string, PerfilContacto | string>>({});
+  const [buscando, setBuscando] = useState<string | null>(null);
+
+  /*
+   * Una consulta por contacto y queda guardada, incluso si falla. Cada una es
+   * una llamada a WhatsApp: repetirla cada vez que alguien abre la fila son
+   * llamadas de más sobre la misma línea, que es lo que termina en bloqueo.
+   */
+  async function verQuienEs(autor: AutorDetectado) {
+    if (perfiles[autor.comparable]) return;
+    setBuscando(autor.comparable);
+    const r = await perfilDeContactoAction(autor.telefono);
+    setBuscando(null);
+    setPerfiles((p) => ({ ...p, [autor.comparable]: r.ok ? r.data : r.error }));
+  }
   const [nombre, setNombre] = useState("");
   const [margen, setMargen] = useState(MARGEN_POR_DEFECTO);
   const [pendiente, startTransition] = useTransition();
@@ -191,6 +208,72 @@ export function ChatsDetectados({
                 )}
               </div>
             )}
+
+            {(() => {
+              const perfil = perfiles[autor.comparable];
+              const hayDatos =
+                typeof perfil === "object" && Boolean(perfil.negocio || perfil.estado);
+
+              return (
+                <div className="mt-2">
+                  {perfil === undefined && (
+                    <button
+                      type="button"
+                      onClick={() => verQuienEs(autor)}
+                      disabled={buscando === autor.comparable}
+                      className="inline-flex items-center gap-1.5 text-xs text-white/45 transition-colors hover:text-white disabled:opacity-50"
+                    >
+                      {buscando === autor.comparable ? (
+                        <Loader2 className="size-3.5 animate-spin" />
+                      ) : (
+                        <BadgeInfo className="size-3.5" />
+                      )}
+                      Averiguar quién es
+                    </button>
+                  )}
+
+                  {typeof perfil === "string" && (
+                    <p className="text-xs text-amber-200/70">{perfil}</p>
+                  )}
+
+                  {typeof perfil === "object" && !hayDatos && (
+                    /* Que no haya nada también es información: quiere decir
+                       que el nombre lo va a tener que poner una persona. */
+                    <p className="text-xs text-white/35">
+                      No tiene perfil de empresa ni estado visible.
+                    </p>
+                  )}
+
+                  {typeof perfil === "object" && hayDatos && (
+                    <div className="space-y-1 rounded-xl border border-white/[0.07] bg-white/[0.03] p-3 text-xs">
+                      {perfil.negocio?.categoria && (
+                        <p className="text-white/70">
+                          Rubro:{" "}
+                          <span className="text-white">{perfil.negocio.categoria}</span>
+                        </p>
+                      )}
+                      {perfil.negocio?.descripcion && (
+                        <p className="text-white/55">{perfil.negocio.descripcion}</p>
+                      )}
+                      {perfil.estado && (
+                        <p className="text-white/55">Estado: {perfil.estado}</p>
+                      )}
+                      {perfil.negocio?.direccion && (
+                        <p className="text-white/55">{perfil.negocio.direccion}</p>
+                      )}
+                      {perfil.negocio?.email && (
+                        <p className="text-white/55">{perfil.negocio.email}</p>
+                      )}
+                      {perfil.negocio?.sitios.map((sitio) => (
+                        <p key={sitio} className="text-white/55">
+                          {sitio}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {pendienteDeCargar && abierto !== autor.comparable && (
               <button

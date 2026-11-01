@@ -60,6 +60,22 @@ export interface QrServidor {
   vinculado: boolean;
 }
 
+/** Lo que WhatsApp sabe de un contacto más allá de sus mensajes. */
+export interface PerfilContacto {
+  id: string;
+  /** Solo si usa WhatsApp Business. La mayoría de los proveedores no. */
+  negocio: {
+    descripcion: string | null;
+    categoria: string | null;
+    email: string | null;
+    sitios: string[];
+    direccion: string | null;
+  } | null;
+  /** El texto de "info" del contacto. Suele decir el rubro o el horario. */
+  estado: string | null;
+  foto: string | null;
+}
+
 export type MotivoFalla =
   "sin-configurar" | "sin-respuesta" | "no-autorizado" | "respuesta-rara";
 
@@ -142,6 +158,17 @@ export function pedirSalud(): Promise<Resultado<SaludServidor>> {
 
 export function pedirQr(): Promise<Resultado<QrServidor>> {
   return pedir<QrServidor>("/qr", true);
+}
+
+/**
+ * Todo lo que se sepa de un contacto.
+ *
+ * Es una consulta a WhatsApp, así que se pide cuando alguien la mira y no
+ * para toda la lista: con veinte proveedores serían sesenta llamadas seguidas
+ * sobre la misma línea. El lector la cachea.
+ */
+export function pedirPerfil(id: string): Promise<Resultado<PerfilContacto>> {
+  return pedir<PerfilContacto>(`/perfil?id=${encodeURIComponent(id)}`, true);
 }
 
 /** Fuerza un código nuevo. Lo pide una persona, no un temporizador. */
