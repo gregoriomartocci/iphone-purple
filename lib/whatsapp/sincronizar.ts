@@ -365,6 +365,93 @@ export interface AutorDetectado {
    * en que vuelvan de la base, que no es una decisión de nadie.
    */
   proveedorInactivo: boolean;
+  /** El texto de su última lista, para poder reconocerlo sin salir del panel. */
+  ultimoTexto: string | null;
+  /** En cuántos días distintos mandó listas. Un proveedor manda casi a diario. */
+  diasConListas: number;
+  /** Cuántos equipos se le contaron a la última lista. */
+  equiposEnUltima: number;
+  /** De 0 a 100, qué tan probable es que sea un proveedor. */
+  confianza: number;
+  /** Por qué se le dio esa confianza, en palabras. Nunca un número solo. */
+  senales: string[];
+}
+
+/**
+ * Cuántos renglones de la lista parecen un equipo con precio.
+ *
+ * Más exigente que `pareceLista`, que solo pide tres renglones con algún
+ * número de tres cifras: acá se pide además que el renglón tenga letras, para
+ * no contar una tanda de precios sueltos o un número de teléfono partido.
+ */
+export function renglonesDeEquipo(texto: string): number {
+  return texto
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => /\d{3,}/.test(l) && /[a-záéíóúñ]{3,}/i.test(l)).length;
+}
+
+/**
+ * Qué tan probable es que alguien sea un proveedor, y por qué.
+ *
+ * Esto es una sugerencia, no una decisión: quien carga al proveedor es una
+ * persona, porque equivocarse significa publicar precios de alguien que no
+ * vende. Por eso devuelve también las razones. Un número solo —"87% de
+ * confianza"— no se puede discutir; "manda listas 3 de los últimos 3 días, 42
+ * equipos en la última" sí, y se verifica de un vistazo.
+ *
+ * Las señales son las que se observan en los chats de verdad:
+ *
+ * - **Manda listas.** Es la condición, no una señal más: sin listas no hay
+ *   nada que importar por más que escriba todo el día.
+ * - **Las manda seguido.** Un proveedor pasa su lista casi a diario; quien
+ *   mandó una sola vez puede ser un revendedor reenviando algo.
+ * - **Las listas son largas.** Cuarenta equipos es un mayorista; cuatro es
+ *   alguien contestando por un modelo puntual.
+ * - **Tiene nombre guardado.** Débil pero suma: a los proveedores se los
+ *   agenda.
+ */
+export function confianzaProveedor(autor: {
+  listas: number;
+  diasConListas: number;
+  equiposEnUltima: number;
+  nombre: string | null;
+  mensajes: number;
+}): { puntos: number; senales: string[] } {
+  if (autor.listas === 0) {
+    return { puntos: 0, senales: ["Nunca mandó algo que parezca una lista"] };
+  }
+
+  let puntos = 35;
+  const senales = [
+    autor.listas === 1 ? "Mandó una lista" : `Mandó ${autor.listas} listas`,
+  ];
+
+  if (autor.diasConListas >= 3) {
+    puntos += 30;
+    senales.push(`En ${autor.diasConListas} días distintos`);
+  } else if (autor.diasConListas === 2) {
+    puntos += 18;
+    senales.push("En 2 días distintos");
+  }
+
+  if (autor.equiposEnUltima >= 25) {
+    puntos += 25;
+    senales.push(`${autor.equiposEnUltima} equipos en la última`);
+  } else if (autor.equiposEnUltima >= 10) {
+    puntos += 15;
+    senales.push(`${autor.equiposEnUltima} equipos en la última`);
+  } else if (autor.equiposEnUltima > 0) {
+    puntos += 5;
+    senales.push(`Solo ${autor.equiposEnUltima} equipos en la última`);
+  }
+
+  if (autor.nombre) {
+    puntos += 10;
+    senales.push("Está agendado");
+  }
+
+  return { puntos: Math.min(100, puntos), senales };
 }
 
 /**
@@ -390,6 +477,9 @@ export function autoresDetectados(
   chats: ChatWhatsapp[],
   proveedores: Supplier[]
 ): AutorDetectado[] {
+  /* Los días con lista se acumulan aparte porque hay que contarlos sin
+     repetir: tres listas en una tarde son un día, no tres. */
+  const dias = new Map<string, Set<string>>();
   const porAutor = new Map<string, AutorDetectado>();
 
   for (const chat of chats) {
@@ -416,8 +506,14 @@ export function autoresDetectados(
           proveedorInactivo: proveedores.some(
             (p) => !p.isActive && telefonoComparable(p.phone) === comparable
           ),
+          ultimoTexto: null,
+          diasConListas: 0,
+          equiposEnUltima: 0,
+          confianza: 0,
+          senales: [],
         };
         porAutor.set(comparable, autor);
+        dias.set(comparable, new Set());
       }
 
       if (mensaje.autorNombre && !autor.nombre) autor.nombre = mensaje.autorNombre;
@@ -428,23 +524,34 @@ export function autoresDetectados(
       autor.mensajes += 1;
       if (pareceLista(mensaje.texto)) {
         autor.listas += 1;
+        dias.get(comparable)?.add(mensaje.fecha.slice(0, 10));
         if (!autor.ultimaLista || mensaje.fecha > autor.ultimaLista) {
           autor.ultimaLista = mensaje.fecha;
+          autor.ultimoTexto = mensaje.texto;
+          autor.equiposEnUltima = renglonesDeEquipo(mensaje.texto);
         }
       }
     }
   }
 
+  for (const [comparable, autor] of porAutor) {
+    autor.diasConListas = dias.get(comparable)?.size ?? 0;
+    const { puntos, senales } = confianzaProveedor(autor);
+    autor.confianza = puntos;
+    autor.senales = senales;
+  }
+
   /*
    * El orden es el del trabajo que hay que hacer, no el alfabético: arriba
    * quien manda listas y todavía no está cargado, que es la fila que pide una
-   * acción. Después, a igualdad de condición, quien manda más listas.
+   * acción. Entre esos manda la confianza, que es el orden en que conviene
+   * mirarlos.
    */
   return [...porAutor.values()].sort((a, b) => {
     const pendienteA = a.listas > 0 && !a.proveedor;
     const pendienteB = b.listas > 0 && !b.proveedor;
     if (pendienteA !== pendienteB) return pendienteA ? -1 : 1;
-    if (a.listas !== b.listas) return b.listas - a.listas;
+    if (a.confianza !== b.confianza) return b.confianza - a.confianza;
     return b.mensajes - a.mensajes;
   });
 }

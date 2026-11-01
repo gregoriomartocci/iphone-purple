@@ -2,12 +2,32 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Check, Loader2, UserPlus } from "lucide-react";
+import { Check, ChevronDown, Loader2, Sparkles, UserPlus } from "lucide-react";
 import { saveSupplierAction } from "@/app/admin/actions";
 import type { AutorDetectado } from "@/lib/whatsapp/sincronizar";
 
 /** El mismo que usa el alta manual de proveedores, para no tener dos verdades. */
 const MARGEN_POR_DEFECTO = 18;
+
+/**
+ * Un identificador de WhatsApp no es un teléfono, y mostrarlo como si lo fuera
+ * confunde.
+ *
+ * Desde que WhatsApp dejó de exponer el número real de los participantes de un
+ * grupo, lo que llega es un identificador interno de quince dígitos. Sirve
+ * igual para emparejar —es estable— pero decirle "teléfono" hace que alguien
+ * lo compare con la agenda y no lo encuentre.
+ */
+function esTelefonoDeVerdad(valor: string): boolean {
+  const d = valor.replace(/\D/g, "");
+  return d.length <= 13 && (d.startsWith("54") || d.length <= 11);
+}
+
+function colorConfianza(puntos: number): string {
+  if (puntos >= 75) return "bg-emerald-400/[0.10] text-emerald-300";
+  if (puntos >= 50) return "bg-amber-400/[0.10] text-amber-200";
+  return "bg-white/[0.06] text-white/45";
+}
 
 function cuando(iso: string | null): string {
   if (!iso) return "—";
@@ -25,6 +45,7 @@ export function ChatsDetectados({
   supabaseReady: boolean;
 }) {
   const [abierto, setAbierto] = useState<string | null>(null);
+  const [verLista, setVerLista] = useState<string | null>(null);
   const [nombre, setNombre] = useState("");
   const [margen, setMargen] = useState(MARGEN_POR_DEFECTO);
   const [pendiente, startTransition] = useTransition();
@@ -79,8 +100,18 @@ export function ChatsDetectados({
           <li key={autor.comparable} className="p-4 sm:p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="flex items-center gap-2 font-medium">
-                  {autor.nombre ?? autor.telefono}
+                <p className="flex flex-wrap items-center gap-2 font-medium">
+                  {autor.nombre ?? (
+                    <span className="text-white/70">Sin nombre guardado</span>
+                  )}
+                  {autor.listas > 0 && !autor.proveedor && (
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-normal ${colorConfianza(autor.confianza)}`}
+                    >
+                      <Sparkles className="size-3" />
+                      {autor.confianza}% proveedor
+                    </span>
+                  )}
                   {autor.proveedor && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/[0.07] px-2 py-0.5 text-xs font-normal text-emerald-300">
                       <Check className="size-3" />
@@ -93,9 +124,27 @@ export function ChatsDetectados({
                     </span>
                   )}
                 </p>
-                <p className="text-muted-foreground mt-0.5 text-xs">
-                  {autor.telefono} · {autor.chats.join(" · ")}
+                <p className="text-muted-foreground mt-1 text-xs">
+                  {esTelefonoDeVerdad(autor.telefono)
+                    ? autor.telefono
+                    : `id de WhatsApp ${autor.telefono}`}{" "}
+                  · {autor.chats.join(" · ")}
                 </p>
+
+                {autor.senales.length > 0 && autor.listas > 0 && (
+                  /* Las razones, no solo el número: un porcentaje solo no se
+                     puede discutir, y acá la decisión la toma una persona. */
+                  <p className="mt-2 flex flex-wrap gap-1.5">
+                    {autor.senales.map((senal) => (
+                      <span
+                        key={senal}
+                        className="rounded-md bg-white/[0.05] px-2 py-0.5 text-xs text-white/50"
+                      >
+                        {senal}
+                      </span>
+                    ))}
+                  </p>
+                )}
               </div>
 
               <div className="text-muted-foreground shrink-0 text-right text-xs">
@@ -107,6 +156,33 @@ export function ChatsDetectados({
                 <p className="mt-0.5">última: {cuando(autor.ultimaLista)}</p>
               </div>
             </div>
+
+            {autor.ultimoTexto && (
+              /* Ver la lista es lo que permite reconocer al proveedor: el
+                 identificador no dice nada, pero "iPhone 15 Pro Max 256 1150"
+                 sí dice de quién es. */
+              <div className="mt-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setVerLista(verLista === autor.comparable ? null : autor.comparable)
+                  }
+                  className="inline-flex items-center gap-1.5 text-xs text-white/45 transition-colors hover:text-white"
+                >
+                  <ChevronDown
+                    className={`size-3.5 transition-transform ${verLista === autor.comparable ? "rotate-180" : ""}`}
+                  />
+                  {verLista === autor.comparable ? "Ocultar" : "Ver"} su última lista
+                  {autor.equiposEnUltima > 0 && ` (${autor.equiposEnUltima} equipos)`}
+                </button>
+
+                {verLista === autor.comparable && (
+                  <pre className="mt-2 max-h-72 overflow-auto rounded-xl border border-white/[0.07] bg-black/30 p-3 font-mono text-xs leading-relaxed whitespace-pre-wrap text-white/70">
+                    {autor.ultimoTexto}
+                  </pre>
+                )}
+              </div>
+            )}
 
             {pendienteDeCargar && abierto !== autor.comparable && (
               <button

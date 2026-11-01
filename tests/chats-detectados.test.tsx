@@ -20,6 +20,12 @@ function autor(p: Partial<AutorDetectado> = {}): AutorDetectado {
     ultimaLista: new Date().toISOString(),
     proveedor: null,
     proveedorInactivo: false,
+    ultimoTexto:
+      "iPhone 15 128 sellado 720\niPhone 14 128 impecable 540\niPad 10 64 nuevo 380",
+    diasConListas: 3,
+    equiposEnUltima: 3,
+    confianza: 85,
+    senales: ["Mandó 3 listas", "En 3 días distintos"],
     ...p,
   };
 }
