@@ -402,6 +402,18 @@ async function conectar() {
         setTimeout(conectar, 5_000);
         return;
       }
+      /*
+       * 515 no es un error: es lo que WhatsApp manda justo después de una
+       * vinculación exitosa para pedir que se reconecte con las credenciales
+       * nuevas. Hay que volver enseguida; esperar diez segundos como si fuera
+       * un corte de red deja pasar el momento.
+       */
+      if (codigo === DisconnectReason.restartRequired) {
+        console.log("Vinculación aceptada, reconectando con la sesión nueva…");
+        setTimeout(conectar, 500);
+        return;
+      }
+
       // Cualquier otro corte es de red: se reintenta con una espera, no al toque.
       console.log("Conexión caída, reintentando en 10 s…");
       setTimeout(conectar, 10_000);
