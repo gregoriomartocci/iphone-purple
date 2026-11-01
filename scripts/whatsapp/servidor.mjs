@@ -22,7 +22,9 @@
  *   DIAS             ventana de mensajes que se conserva. Por defecto 3.
  */
 import { createServer } from "node:http";
-import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { appendFile, cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { createReadStream } from "node:fs";
+import { createInterface } from "node:readline";
 import { dirname, join } from "node:path";
 import {
   Browsers,
@@ -129,6 +131,21 @@ function textoDe(m) {
  * volumen está montado en el directorio padre, así que esto cae dentro.
  */
 const ARCHIVO = join(dirname(AUTH), "mensajes-whatsapp.json");
+
+/**
+ * Todo lo que pasó, sin ventana.
+ *
+ * La poda borra de memoria lo más viejo que `DIAS` para que el proceso no se
+ * coma la RAM, y eso está bien para lo que el panel necesita ver. Pero WhatsApp
+ * no reenvía nada: lo que se podó y no se importó, se perdió para siempre. Si
+ * el lector estuvo caído cuatro días, esas listas no vuelven.
+ *
+ * Esto es la red debajo. Un renglón por mensaje, agregado al final y nunca
+ * reescrito —agregar al final es barato y sobrevive a que el proceso muera a
+ * mitad—, y no se carga en memoria: está para recuperar y para auditar un
+ * precio dentro de seis meses.
+ */
+const HISTORICO = join(dirname(AUTH), "historico-whatsapp.ndjson");
 
 const nombresDeChat = new Map();
 
@@ -358,6 +375,24 @@ function guardar(m) {
   });
   estado.ultimoMensaje = new Date().toISOString();
   pedirGuardado();
+
+  /*
+   * Al histórico va todo, no solo lo que parece lista. Filtrar acá obligaría
+   * a repetir la heurística del sitio dentro del lector, y el día que las dos
+   * se separen el archivo deja afuera justo lo que haría falta recuperar.
+   * Guardar de más cuesta unos megabytes al año.
+   */
+  void appendFile(
+    HISTORICO,
+    JSON.stringify({
+      jid,
+      chat: chat.nombre,
+      fecha: new Date(marca).toISOString(),
+      autor: autorId ? (telefonoDeLid.get(autorId) ?? autorId) : null,
+      texto: texto.trim(),
+    }) + "\n",
+    "utf8"
+  ).catch((e) => console.error("No se pudo escribir el histórico:", e?.message ?? e));
 }
 
 /**
@@ -789,6 +824,40 @@ createServer((req, res) => {
           error: `No hay respaldo para reponer: ${e?.message ?? e}`,
         });
       }
+    })();
+  }
+
+  /*
+   * El histórico, para recuperar lo que la ventana ya no tiene. Se lee de a
+   * renglones y no de una: el archivo crece sin techo y cargarlo entero en
+   * memoria sería reintroducir el problema que la poda vino a resolver.
+   */
+  if (url.pathname === "/historico") {
+    const desde = url.searchParams.get("desde") ?? "";
+    const tope = Math.min(Number(url.searchParams.get("tope") ?? 500), 2000);
+    return (async () => {
+      const filas = [];
+      try {
+        const lector = createInterface({
+          input: createReadStream(HISTORICO, "utf8"),
+          crlfDelay: Infinity,
+        });
+        for await (const linea of lector) {
+          if (!linea) continue;
+          try {
+            const m = JSON.parse(linea);
+            if (desde && m.fecha < desde) continue;
+            filas.push(m);
+            if (filas.length > tope) filas.shift();
+          } catch {
+            // Un renglón a medio escribir —el proceso murió justo ahí— no
+            // puede invalidar los otros diez mil.
+          }
+        }
+      } catch {
+        // Todavía no existe: la primera vez es lo normal.
+      }
+      return responder(200, { desde, cantidad: filas.length, mensajes: filas });
     })();
   }
 
