@@ -190,15 +190,17 @@ export function VincularWhatsapp({ numero }: { numero?: string }) {
               </>
             )}
 
-            {codigo && svg && (
-              <div className="my-1 flex w-full items-center gap-3">
-                <span className="h-px flex-1 bg-white/[0.08]" />
-                <span className="text-xs text-white/30">o escaneá</span>
-                <span className="h-px flex-1 bg-white/[0.08]" />
-              </div>
-            )}
+            {/*
+              El QR solo cuando NO hay código, nunca los dos.
 
-            {svg && (
+              Parecían alternativas y no lo son: al pedir un código de
+              vinculación, WhatsApp pasa a esperar ese código y el QR que
+              Baileys sigue emitiendo deja de servir. Mostrarlos juntos
+              ofrecía un camino muerto, y escanearlo devolvía "revisa tu
+              conexión y vuelve a intentarlo", que no dice nada de lo que
+              realmente pasaba.
+            */}
+            {!codigo && svg && (
               <>
                 {/* Fondo blanco: un QR sobre casi negro no lo lee ninguna cámara. */}
                 {/* eslint-disable-next-line @next/next/no-img-element -- es un data URI, no hay nada que optimizar. */}
