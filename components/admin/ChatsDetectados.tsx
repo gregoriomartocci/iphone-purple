@@ -52,9 +52,12 @@ export function ChatsDetectados({
 
   function abrir(autor: AutorDetectado) {
     setAbierto(autor.comparable);
-    // El nombre que WhatsApp muestra es casi siempre el que el dueño usa para
-    // referirse al proveedor; si no vino, queda el nombre del chat.
-    setNombre(autor.nombre ?? autor.chats[0] ?? "");
+    /*
+     * El orden va de lo más confiable a lo más adivinado: lo que el proveedor
+     * escribe en su propia lista, después cómo está agendado, y recién al
+     * final el chat donde apareció.
+     */
+    setNombre(autor.nombreDeLaLista ?? autor.nombre ?? autor.chats[0] ?? "");
     setMargen(MARGEN_POR_DEFECTO);
   }
 
@@ -101,8 +104,13 @@ export function ChatsDetectados({
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
                 <p className="flex flex-wrap items-center gap-2 font-medium">
-                  {autor.nombre ?? (
+                  {autor.nombre ?? autor.nombreDeLaLista ?? (
                     <span className="text-white/70">Sin nombre guardado</span>
+                  )}
+                  {!autor.nombre && autor.nombreDeLaLista && (
+                    <span className="rounded-md bg-white/[0.06] px-1.5 py-0.5 text-xs font-normal text-white/50">
+                      según su lista
+                    </span>
                   )}
                   {autor.listas > 0 && !autor.proveedor && (
                     <span
@@ -189,7 +197,7 @@ export function ChatsDetectados({
                 type="button"
                 onClick={() => abrir(autor)}
                 disabled={!supabaseReady}
-                className="border-line hover:bg-surface mt-3 inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors disabled:opacity-50"
+                className="mt-3 inline-flex items-center gap-2 rounded-lg border border-white/[0.14] bg-white/[0.05] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:border-white/25 hover:bg-white/[0.10] disabled:opacity-50"
               >
                 <UserPlus className="size-4" />
                 Cargar como proveedor

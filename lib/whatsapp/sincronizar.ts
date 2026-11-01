@@ -367,6 +367,8 @@ export interface AutorDetectado {
   proveedorInactivo: boolean;
   /** El texto de su última lista, para poder reconocerlo sin salir del panel. */
   ultimoTexto: string | null;
+  /** El nombre que dice su propia lista, si lo dice. Para proponerlo al cargar. */
+  nombreDeLaLista: string | null;
   /** En cuántos días distintos mandó listas. Un proveedor manda casi a diario. */
   diasConListas: number;
   /** Cuántos equipos se le contaron a la última lista. */
@@ -375,6 +377,164 @@ export interface AutorDetectado {
   confianza: number;
   /** Por qué se le dio esa confianza, en palabras. Nunca un número solo. */
   senales: string[];
+}
+
+/**
+ * Palabras que aparecen en el encabezado de casi toda lista y no nombran a
+ * nadie. Un candidato que solo tiene de estas no es un nombre.
+ */
+const PALABRAS_GENERICAS = new Set([
+  "lista",
+  "listado",
+  "precios",
+  "precio",
+  "stock",
+  "actualizado",
+  "actualizada",
+  "mayorista",
+  "mayoristas",
+  "revendedores",
+  "revendedor",
+  "usados",
+  "usado",
+  "nuevos",
+  "nuevo",
+  "sellados",
+  "sellado",
+  "vip",
+  "hoy",
+  "al",
+  "de",
+  "del",
+  "la",
+  "el",
+  "los",
+  "las",
+  "y",
+  "o",
+  "con",
+  "para",
+  "buenos",
+  "dias",
+  "buen",
+  "dia",
+  "tarde",
+  "apple",
+  "iphone",
+  "samsung",
+  "xiaomi",
+  "motorola",
+  "watch",
+  "macbook",
+  "macbooks",
+  "ipad",
+  "playstation",
+  "camaras",
+  "camara",
+  "deportivas",
+  "accesorios",
+  "entrega",
+  "inmediata",
+  "disponible",
+  "oferta",
+  "ofertas",
+  "tester",
+  "seminuevos",
+  "importados",
+
+  "usd",
+  "ars",
+  "pesos",
+  "dolares",
+  "envio",
+  "envios",
+  "en",
+]);
+
+/**
+ * El nombre del proveedor, si lo dice en su propia lista.
+ *
+ * Los proveedores encabezan la lista con su marca —PROVE-TECH, TECHDOG— pero
+ * no todos: muchos arrancan con "LISTADO USADOS AL 30/10" o con la categoría
+ * de lo que venden. Esto devuelve `null` cuando no encuentra algo que parezca
+ * un nombre, que es lo correcto: sugerir "Lista Vip" como nombre de proveedor
+ * es peor que no sugerir nada.
+ *
+ * La normalización no es un detalle. Varios escriben el encabezado con los
+ * caracteres matemáticos de Unicode para que se vea en negrita —𝗧𝗘𝗖𝗛𝗗𝗢𝗚 no
+ * tiene una sola letra ASCII— y sin pasarlos a su forma simple no coinciden
+ * con nada ni se pueden comparar con la lista de palabras genéricas.
+ */
+export function nombreSugerido(texto: string | null): string | null {
+  if (!texto) return null;
+
+  const lineas = texto
+    .normalize("NFKC")
+    .split("\n")
+    .map((l) =>
+      l
+        // Separadores con los que encadenan nombre y rubro: "TECHDOG · APPLE".
+        .split(/[·|]/)[0]
+        // Markdown de WhatsApp y adornos.
+        .replace(/[*_~`]/g, "")
+        // Emoji, banderas y símbolos sueltos.
+        .replace(
+          /[\p{Extended_Pictographic}\p{Emoji_Presentation}\u{1F1E6}-\u{1F1FF}]/gu,
+          ""
+        )
+        .replace(/\s+/g, " ")
+        .trim()
+    )
+    .filter(Boolean);
+
+  /*
+   * Solo el primer renglón.
+   *
+   * Medido contra las listas reales: mirando los primeros cuatro, de seis
+   * proveedores salían dos nombres buenos y tres inventados —"Midnight", que
+   * es un color; "En Usd", de un renglón de moneda; "Envio", de un saludo—.
+   * Los dos nombres de verdad estaban en el primer renglón.
+   *
+   * Un nombre inventado es peor que ninguno: alguien lo acepta sin mirar y
+   * queda un proveedor llamado Midnight para siempre. Mejor pedirlo a mano.
+   */
+  for (const linea of lineas.slice(0, 1)) {
+    // Una fecha en el encabezado es "LISTADO AL 30/10", no un nombre.
+    if (/\d{1,2}[/-]\d{1,2}/.test(linea)) continue;
+    if (linea.length < 3 || linea.length > 40) continue;
+
+    const palabras = linea.split(" ").filter(Boolean);
+    if (palabras.length > 4) continue;
+
+    /* Sin acentos para comparar: la lista de genéricas dice "camaras" y el
+       encabezado dice "CÁMARAS". Con acento no coincidía y "Cámaras
+       Deportivas" se colaba como nombre de proveedor. */
+    const propias = palabras.filter((w) => {
+      const limpia = w
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[.,:;!¡?¿]/g, "");
+      return !PALABRAS_GENERICAS.has(limpia);
+    });
+    if (propias.length === 0) continue;
+
+    const nombre = propias
+      .join(" ")
+      .replace(/[.,:;]+$/, "")
+      .trim();
+    if (nombre.length < 3) continue;
+
+    /* Casi todos lo escriben en mayúsculas. Se pasa a capitalizado porque va a
+       un campo que después se lee en pantallas y listados, no a un cartel. */
+    /* También después de un guion: PROVE-TECH es "Prove-Tech", no
+       "Prove-tech". Son marcas y así es como las escriben. */
+    return nombre
+      .toLowerCase()
+      .replace(/(^|[\s-])(\p{L})/gu, (_, antes, letra) => antes + letra.toUpperCase());
+  }
+
+  return null;
 }
 
 /**
@@ -507,6 +667,7 @@ export function autoresDetectados(
             (p) => !p.isActive && telefonoComparable(p.phone) === comparable
           ),
           ultimoTexto: null,
+          nombreDeLaLista: null,
           diasConListas: 0,
           equiposEnUltima: 0,
           confianza: 0,
@@ -529,6 +690,7 @@ export function autoresDetectados(
           autor.ultimaLista = mensaje.fecha;
           autor.ultimoTexto = mensaje.texto;
           autor.equiposEnUltima = renglonesDeEquipo(mensaje.texto);
+          autor.nombreDeLaLista = nombreSugerido(mensaje.texto);
         }
       }
     }

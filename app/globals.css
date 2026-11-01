@@ -146,6 +146,21 @@
   --active: #5e16eb;
   --active-foreground: #ffffff;
 
+  /*
+   * Esto no es redundante con el token: es lo que lo hace servir.
+   *
+   * `color` se hereda como valor ya calculado, no como la variable que lo
+   * produjo. El `body` está fuera de este ámbito, así que su color se resolvió
+   * con el `--foreground` claro del `:root`, y todo lo que hay adentro del
+   * panel sin color propio heredaba ese gris casi negro sobre un fondo casi
+   * negro. Quedaba ilegible: había que seleccionar el texto para leerlo.
+   *
+   * Redeclarar `color` acá lo recalcula con el token del panel, y con eso
+   * hereda bien todo lo de adentro sin tener que pintar cada elemento.
+   */
+  color: var(--foreground);
+  background-color: var(--background);
+
   color-scheme: dark;
 }
 
