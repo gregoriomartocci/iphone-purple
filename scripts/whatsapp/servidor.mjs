@@ -22,7 +22,7 @@
  *   DIAS             ventana de mensajes que se conserva. Por defecto 3.
  */
 import { createServer } from "node:http";
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import {
   Browsers,
@@ -142,6 +142,35 @@ const nombresDeChat = new Map();
  */
 const perfiles = new Map();
 let socketVivo = null;
+
+/**
+ * Cuánto esperar antes de reconectar, creciendo.
+ *
+ * Antes eran diez segundos fijos. Cuando WhatsApp rechaza —y rechaza por
+ * tandas— reintentar cada diez segundos es insistir seis veces por minuto
+ * sobre una línea que ya dijo que no, y eso es lo que termina en un bloqueo.
+ * Creciendo, un corte de red se recupera igual de rápido y un rechazo
+ * sostenido deja de ser una ráfaga.
+ */
+const ESPERA_MINIMA = 5_000;
+const ESPERA_MAXIMA = 300_000;
+let espera = ESPERA_MINIMA;
+
+/**
+ * Una copia de la sesión, hecha cuando se sabe que funciona.
+ *
+ * Volver a vincular cuesta que alguien agarre el teléfono. Si los archivos se
+ * corrompen —un corte de luz a mitad de una escritura— tener de dónde volver
+ * es la diferencia entre reiniciar y repetir todo el trámite.
+ */
+async function respaldarSesion() {
+  try {
+    await rm(`${AUTH}-respaldo`, { recursive: true, force: true });
+    await cp(AUTH, `${AUTH}-respaldo`, { recursive: true });
+  } catch (e) {
+    console.error("No se pudo respaldar la sesión:", e?.message ?? e);
+  }
+}
 /** Identificador interno de un participante → su teléfono, cuando se puede. */
 const telefonoDeLid = new Map();
 
@@ -557,6 +586,10 @@ async function conectar() {
       estado.qr = null;
       estado.codigo = null;
       socketVivo = sock;
+      // Conectó: la espera vuelve al piso y la sesión se respalda, porque
+      // recién ahora se sabe que estas credenciales sirven.
+      espera = ESPERA_MINIMA;
+      void respaldarSesion();
       void traerNombresDeGrupos(sock);
       estado.codigoDesde = null;
       console.log(`Conectado a WhatsApp como ${propio || "?"}.`);
@@ -594,12 +627,25 @@ async function conectar() {
           return;
         }
 
+        /*
+         * Reconectar sin borrar nada.
+         *
+         * Acá antes se limpiaba la carpeta de sesión, y eso fue lo que se
+         * llevó puesta una sesión que andaba: con las credenciales a medio
+         * cargar, un 401 se leía como "la vinculación falló" cuando en
+         * realidad era otra cosa.
+         *
+         * Baileys genera un QR nuevo solo si de verdad no hay credenciales,
+         * así que no borrar no impide volver a vincular. Y si quedaron
+         * corruptas, para eso está el respaldo y el endpoint que lo repone:
+         * una decisión de una persona, no de un `catch`.
+         */
         estado.conexion = "reintentando";
         estado.codigo = null;
         estado.qr = null;
-        console.log("El intento de vinculación no prosperó. Empiezo de nuevo…");
-        await rm(AUTH, { recursive: true, force: true }).catch(() => {});
-        setTimeout(conectar, 5_000);
+        console.log("El intento de vinculación no prosperó. Reintento…");
+        setTimeout(conectar, espera);
+        espera = Math.min(espera * 2, ESPERA_MAXIMA);
         return;
       }
       /*
@@ -615,8 +661,9 @@ async function conectar() {
       }
 
       // Cualquier otro corte es de red: se reintenta con una espera, no al toque.
-      console.log("Conexión caída, reintentando en 10 s…");
-      setTimeout(conectar, 10_000);
+      console.log(`Conexión caída, reintentando en ${Math.round(espera / 1000)} s…`);
+      setTimeout(conectar, espera);
+      espera = Math.min(espera * 2, ESPERA_MAXIMA);
     }
   });
 }
@@ -720,6 +767,29 @@ createServer((req, res) => {
     return traerPerfil(id)
       .then((p) => responder(200, p))
       .catch((e) => responder(502, { error: String(e?.message ?? e) }));
+  }
+
+  /*
+   * Reponer la sesión desde el respaldo.
+   *
+   * Es destructivo —pisa las credenciales actuales— así que lo dispara una
+   * persona y nunca un `catch`. Es justamente lo contrario de lo que hacía el
+   * reintento automático, que borraba por su cuenta y se llevó puesta una
+   * sesión buena.
+   */
+  if (url.pathname === "/restaurar-sesion") {
+    return (async () => {
+      try {
+        await cp(`${AUTH}-respaldo`, AUTH, { recursive: true, force: true });
+        console.log("Sesión repuesta desde el respaldo. Reconectando…");
+        setTimeout(conectar, 1_000);
+        return responder(200, { ok: true });
+      } catch (e) {
+        return responder(404, {
+          error: `No hay respaldo para reponer: ${e?.message ?? e}`,
+        });
+      }
+    })();
   }
 
   if (url.pathname === "/mensajes") {
