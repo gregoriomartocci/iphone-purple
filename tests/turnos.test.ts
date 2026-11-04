@@ -28,15 +28,15 @@ describe("turnos para retirar en el local", () => {
     const sabado = diasDisponibles(miercoles).find((d) => desdeFecha(d).getDay() === 6)!;
     const habil = diasDisponibles(miercoles).find((d) => desdeFecha(d).getDay() === 3)!;
     expect(horariosDe(sabado).length).toBeLessThan(horariosDe(habil).length);
-    expect(horariosDe(sabado).at(-1)).toBe("13:00");
+    expect(horariosDe(sabado).at(-1)).toBe("11:00");
   });
 
   it("todos los horarios ofrecidos caen dentro del horario de atención", () => {
     for (const dia of diasDisponibles(miercoles)) {
       for (const hora of horariosDe(dia)) {
         const h = Number(hora.split(":")[0]);
-        expect(h).toBeGreaterThanOrEqual(10);
-        expect(h).toBeLessThanOrEqual(18);
+        expect(h).toBeGreaterThanOrEqual(9);
+        expect(h).toBeLessThanOrEqual(17);
       }
     }
   });
@@ -46,7 +46,8 @@ describe("turnos para retirar en el local", () => {
     const valido = diasDisponibles(miercoles)[0];
     expect(turnoValido(valido, "11:00", miercoles)).toBe(true);
     expect(turnoValido(valido, "23:00", miercoles)).toBe(false);
-    expect(turnoValido("2026-09-03", "11:00", miercoles)).toBe(false);
+    // El mismo día no: hay que darle tiempo a traer el equipo.
+    expect(turnoValido("2026-09-02", "11:00", miercoles)).toBe(false);
   });
 
   it("interpreta las fechas en horario local y no se corre de día", () => {
