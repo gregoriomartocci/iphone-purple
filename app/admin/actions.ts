@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/server";
-import { isSupabaseConfigured } from "@/lib/data";
+import { getSettings, isSupabaseConfigured } from "@/lib/data";
+import { getOfertasPorVariante } from "@/lib/data/admin";
 import { parseSupplierList } from "@/lib/whatsapp/parser";
 import type { ParsedRow } from "@/types";
 import {
@@ -134,6 +135,53 @@ export async function updateVariantAction(
   } catch (err) {
     console.error("[admin] actualizar variante:", err);
     return { ok: false, error: "No se pudo guardar el cambio." };
+  }
+}
+
+const ElegirOfertaSchema = z.object({
+  variantId: z.string().min(1),
+  proveedorId: z.string().min(1),
+});
+
+/**
+ * Publica una variante con la oferta de otro proveedor. El costo sale de su
+ * última lista guardada, no de lo que manda la pantalla.
+ *
+ * La próxima importación vuelve a elegir la más barata.
+ */
+export async function elegirOfertaAction(
+  input: z.input<typeof ElegirOfertaSchema>
+): Promise<ActionResult> {
+  if (!(await requireAdmin())) return { ok: false, error: "No autorizado" };
+  if (!isSupabaseConfigured()) return { ok: false, error: NO_DB };
+
+  const parsed = ElegirOfertaSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "Datos inválidos" };
+
+  try {
+    const { dollarRate } = await getSettings();
+    const ofertas = await getOfertasPorVariante(dollarRate);
+    const oferta = ofertas[parsed.data.variantId]?.ofertas.find(
+      (o) => o.proveedorId === parsed.data.proveedorId
+    );
+    if (!oferta) return { ok: false, error: "Esa oferta ya no está en su última lista." };
+
+    const { error } = await createAdminClient()
+      .from("product_variants")
+      .update({
+        supplier_id: oferta.proveedorId,
+        cost_usd: Math.round(oferta.costoUsd * 100) / 100,
+        price_usd: oferta.precioUsd,
+        price_ars: oferta.precioArs,
+      })
+      .eq("id", parsed.data.variantId);
+    if (error) throw new Error(error.message);
+
+    revalidatePath("/", "layout");
+    return { ok: true };
+  } catch (err) {
+    console.error("[admin] elegir oferta:", err);
+    return { ok: false, error: "No se pudo cambiar el proveedor." };
   }
 }
 

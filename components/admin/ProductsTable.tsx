@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { Fragment, useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Check, Loader2, Search } from "lucide-react";
-import { updateVariantAction } from "@/app/admin/actions";
-import { formatARS } from "@/utils/format";
+import { Check, ChevronDown, Loader2, Search } from "lucide-react";
+import { elegirOfertaAction, updateVariantAction } from "@/app/admin/actions";
+import type { ExtraVariante } from "@/lib/data/admin";
+import { formatARS, formatUSD } from "@/utils/format";
 import { GRADE_LABELS, type Product } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -21,11 +22,24 @@ export function ProductsTable({
   products,
   dollarRate,
   supabaseReady,
+  extras = {},
 }: {
   products: Product[];
   dollarRate: number;
   supabaseReady: boolean;
+  extras?: Record<string, ExtraVariante>;
 }) {
+  const [abierta, setAbierta] = useState<string | null>(null);
+
+  function elegir(variantId: string, proveedorId: string) {
+    setSavingId(variantId);
+    startSaving(async () => {
+      const r = await elegirOfertaAction({ variantId, proveedorId });
+      setSavingId(null);
+      if (r.ok) toast.success("Listo: publicado con ese proveedor.");
+      else toast.error(r.error);
+    });
+  }
   const [query, setQuery] = useState("");
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -94,15 +108,16 @@ export function ProductsTable({
       </p>
 
       <div className="border-line mt-4 overflow-x-auto rounded-xl border">
-        <table className="w-full min-w-[820px] text-sm">
+        <table className="w-full min-w-[980px] text-sm">
           <thead>
             <tr className="border-line text-muted-foreground border-b text-left text-xs">
               <th className="p-3 font-medium">Equipo</th>
               <th className="p-3 font-medium">Estado</th>
               <th className="p-3 font-medium">Costo</th>
-              <th className="p-3 font-medium">Precio (ARS)</th>
+              <th className="p-3 font-medium">Precio</th>
+              <th className="p-3 font-medium">Ganancia</th>
               <th className="p-3 font-medium">Stock</th>
-              <th className="p-3 text-right font-medium">Margen</th>
+              <th className="p-3 font-medium">Proveedores</th>
               <th className="w-24 p-3"></th>
             </tr>
           </thead>
@@ -114,93 +129,217 @@ export function ProductsTable({
                 draft.priceArs !== variant.priceArs || draft.stock !== variant.stock;
               const costArs =
                 variant.costUsd === null ? null : variant.costUsd * dollarRate;
+              const gananciaArs = costArs === null ? null : draft.priceArs - costArs;
               const marginPct =
-                costArs && costArs > 0
-                  ? Math.round(((draft.priceArs - costArs) / costArs) * 100)
+                costArs && costArs > 0 && gananciaArs !== null
+                  ? (gananciaArs / costArs) * 100
                   : null;
+              const extra = extras[variant.id];
+              const ofertas = extra?.ofertas ?? [];
+              const abiertaEsta = abierta === variant.id;
 
               return (
-                <tr key={variant.id} className="border-line border-b last:border-0">
-                  <td className="p-3">
-                    <p className="text-foreground font-medium">{product.name}</p>
-                    <p className="text-muted-foreground text-xs">
-                      {variant.storage} · {variant.color}
-                    </p>
-                  </td>
-                  <td className="p-3">
-                    <span className="text-muted-foreground text-xs">
-                      {GRADE_LABELS[variant.grade]}
-                      {variant.batteryHealth !== null && ` · ${variant.batteryHealth}%`}
-                    </span>
-                  </td>
-                  <td className="tnum text-muted-foreground p-3">
-                    {costArs === null ? "—" : formatARS(costArs)}
-                  </td>
-                  <td className="p-3">
-                    <input
-                      type="number"
-                      min={0}
-                      step={1000}
-                      value={draft.priceArs}
-                      onChange={(e) =>
-                        setDrafts((d) => ({
-                          ...d,
-                          [variant.id]: { ...draft, priceArs: Number(e.target.value) },
-                        }))
-                      }
-                      className={cn(inputClass, "tnum w-32")}
-                    />
-                  </td>
-                  <td className="p-3">
-                    <input
-                      type="number"
-                      min={0}
-                      value={draft.stock}
-                      onChange={(e) =>
-                        setDrafts((d) => ({
-                          ...d,
-                          [variant.id]: { ...draft, stock: Number(e.target.value) },
-                        }))
-                      }
-                      className={cn(
-                        inputClass,
-                        "tnum w-20",
-                        draft.stock === 0 && "text-muted-foreground"
+                <Fragment key={variant.id}>
+                  <tr className={cn("border-line border-b", abiertaEsta && "border-b-0")}>
+                    <td className="p-3">
+                      <p className="text-foreground font-medium">{product.name}</p>
+                      <p className="text-muted-foreground text-xs">
+                        {variant.storage} · {variant.color}
+                      </p>
+                      {extra?.proveedor && (
+                        <p className="text-muted-foreground text-xs">
+                          De {extra.proveedor}
+                        </p>
                       )}
-                    />
-                  </td>
-                  <td className="tnum p-3 text-right">
-                    {marginPct === null ? (
-                      <span className="text-muted-foreground">—</span>
-                    ) : (
-                      <span
-                        className={cn(
-                          "font-medium",
-                          marginPct < 10 ? "text-destructive" : "text-foreground"
-                        )}
-                      >
-                        {marginPct}%
+                    </td>
+                    <td className="p-3">
+                      <span className="text-muted-foreground text-xs">
+                        {GRADE_LABELS[variant.grade]}
+                        {variant.batteryHealth !== null && ` · ${variant.batteryHealth}%`}
                       </span>
-                    )}
-                  </td>
-                  <td className="p-3">
-                    {dirty && (
-                      <button
-                        type="button"
-                        onClick={() => save(variant.id, draft)}
-                        disabled={savingId === variant.id}
-                        className="bg-primary hover:bg-primary/85 text-primary-foreground inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-colors disabled:opacity-50"
-                      >
-                        {savingId === variant.id ? (
-                          <Loader2 className="size-3 animate-spin" />
-                        ) : (
-                          <Check className="size-3" />
+                    </td>
+                    <td className="tnum p-3">
+                      {variant.costUsd === null ? (
+                        <span className="text-muted-foreground">—</span>
+                      ) : (
+                        <>
+                          <p className="text-foreground">{formatUSD(variant.costUsd)}</p>
+                          <p className="text-muted-foreground text-xs">
+                            {formatARS(costArs ?? 0)}
+                          </p>
+                        </>
+                      )}
+                    </td>
+                    <td className="p-3">
+                      <input
+                        type="number"
+                        min={0}
+                        step={1000}
+                        value={draft.priceArs}
+                        onChange={(e) =>
+                          setDrafts((d) => ({
+                            ...d,
+                            [variant.id]: { ...draft, priceArs: Number(e.target.value) },
+                          }))
+                        }
+                        className={cn(inputClass, "tnum w-32")}
+                      />
+                      <p className="tnum text-muted-foreground mt-1 text-xs">
+                        {formatUSD(draft.priceArs / dollarRate)}
+                      </p>
+                    </td>
+                    <td className="tnum p-3">
+                      {gananciaArs === null || marginPct === null ? (
+                        <span className="text-muted-foreground">—</span>
+                      ) : (
+                        <>
+                          <p
+                            className={cn(
+                              "font-medium",
+                              marginPct < 4.95 ? "text-destructive" : "text-foreground"
+                            )}
+                          >
+                            {formatUSD(gananciaArs / dollarRate)} · {marginPct.toFixed(1)}
+                            %
+                          </p>
+                          <p className="text-muted-foreground text-xs">
+                            {formatARS(gananciaArs)}
+                          </p>
+                        </>
+                      )}
+                    </td>
+                    <td className="p-3">
+                      <input
+                        type="number"
+                        min={0}
+                        value={draft.stock}
+                        onChange={(e) =>
+                          setDrafts((d) => ({
+                            ...d,
+                            [variant.id]: { ...draft, stock: Number(e.target.value) },
+                          }))
+                        }
+                        className={cn(
+                          inputClass,
+                          "tnum w-20",
+                          draft.stock === 0 && "text-muted-foreground"
                         )}
-                        Guardar
-                      </button>
-                    )}
-                  </td>
-                </tr>
+                      />
+                    </td>
+                    <td className="p-3">
+                      {ofertas.length === 0 ? (
+                        <span className="text-muted-foreground text-xs">Sin lista</span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setAbierta(abiertaEsta ? null : variant.id)}
+                          aria-expanded={abiertaEsta}
+                          className="border-line text-foreground hover:bg-surface inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-xs transition-colors"
+                        >
+                          {ofertas.length} {ofertas.length === 1 ? "opción" : "opciones"}
+                          <ChevronDown
+                            className={cn(
+                              "size-3 transition-transform",
+                              abiertaEsta && "rotate-180"
+                            )}
+                          />
+                        </button>
+                      )}
+                    </td>
+                    <td className="p-3">
+                      {dirty && (
+                        <button
+                          type="button"
+                          onClick={() => save(variant.id, draft)}
+                          disabled={savingId === variant.id}
+                          className="bg-primary hover:bg-primary/85 text-primary-foreground inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-colors disabled:opacity-50"
+                        >
+                          {savingId === variant.id ? (
+                            <Loader2 className="size-3 animate-spin" />
+                          ) : (
+                            <Check className="size-3" />
+                          )}
+                          Guardar
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                  {abiertaEsta && (
+                    <tr className="border-line border-b">
+                      <td colSpan={8} className="bg-surface/60 px-3 pb-3">
+                        <ul className="divide-line divide-y">
+                          {ofertas.map((o, i) => {
+                            const actual = o.proveedorId === extra?.proveedorId;
+                            const gana = o.precioArs - o.costoUsd * dollarRate;
+                            return (
+                              <li
+                                key={o.proveedorId}
+                                className="flex flex-wrap items-center justify-between gap-3 py-2.5 text-sm"
+                              >
+                                <div>
+                                  <p className="text-foreground font-medium">
+                                    {o.proveedor}
+                                    {i === 0 && (
+                                      <span className="text-muted-foreground ml-2 text-xs font-normal">
+                                        más barato
+                                      </span>
+                                    )}
+                                    {o.ingresando && (
+                                      <span className="text-muted-foreground ml-2 text-xs font-normal">
+                                        ingresando
+                                      </span>
+                                    )}
+                                  </p>
+                                  <p className="tnum text-muted-foreground text-xs">
+                                    Costo{" "}
+                                    {o.moneda === "USD"
+                                      ? formatUSD(o.costo)
+                                      : formatARS(o.costo)}
+                                    {i > 0 &&
+                                      ` · +${formatUSD(o.costoUsd - ofertas[0].costoUsd)}`}
+                                    {" · lista del "}
+                                    {new Date(o.fecha).toLocaleDateString("es-AR", {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      timeZone: "America/Argentina/Buenos_Aires",
+                                    })}
+                                  </p>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  <div className="tnum text-right">
+                                    <p className="text-foreground">
+                                      {formatUSD(o.precioUsd)} · {formatARS(o.precioArs)}
+                                    </p>
+                                    <p className="text-muted-foreground text-xs">
+                                      Ganás {formatUSD(gana / dollarRate)}
+                                    </p>
+                                  </div>
+                                  {actual ? (
+                                    <span className="text-muted-foreground w-28 text-right text-xs">
+                                      Publicado
+                                    </span>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      disabled={savingId === variant.id || !supabaseReady}
+                                      onClick={() => elegir(variant.id, o.proveedorId)}
+                                      className="border-line text-foreground hover:bg-surface inline-flex h-8 w-28 items-center justify-center rounded-full border text-xs transition-colors disabled:opacity-50"
+                                    >
+                                      Usar este
+                                    </button>
+                                  )}
+                                </div>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                        <p className="text-muted-foreground mt-1 text-xs">
+                          La próxima importación vuelve a elegir el más barato.
+                        </p>
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
               );
             })}
           </tbody>
