@@ -8,7 +8,7 @@ import type { CatalogFacets } from "@/lib/data";
 import { formatARS } from "@/utils/format";
 import {
   AUTHENTICITY_LABELS,
-  CATEGORY_LABELS,
+  etiquetaCategoria,
   GRADE_LABELS,
   GRADE_SPECS,
   STATE_LABELS,
@@ -126,14 +126,14 @@ export function CatalogSidebar({
       {facets.categories.length > 1 && (
         <Section
           title="Categoría"
-          summary={filters.category && CATEGORY_LABELS[filters.category]}
+          summary={filters.category && etiquetaCategoria(filters.category, filters.brand)}
           open={isOpen("category", Boolean(filters.category))}
           onToggle={() => toggleSection("category", Boolean(filters.category))}
         >
           {facets.categories.map((f) => (
             <FilterRow
               key={f.value}
-              label={CATEGORY_LABELS[f.value as Category]}
+              label={etiquetaCategoria(f.value as Category, filters.brand)}
               count={f.count}
               checked={filters.category === f.value}
               onChange={() =>

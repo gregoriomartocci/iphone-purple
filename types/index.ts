@@ -54,6 +54,25 @@ export const CATEGORY_LABELS: Record<Category, string> = {
 };
 
 /**
+ * Con la marca Apple elegida, las categorías se llaman como las llama Apple:
+ * nadie busca "tablets de Apple", busca un iPad. "Mac" junta MacBook y Mac mini.
+ */
+const CATEGORIAS_APPLE: Partial<Record<Category, string>> = {
+  celular: "iPhone",
+  tablet: "iPad",
+  notebook: "Mac",
+  reloj: "Apple Watch",
+  audio: "AirPods",
+};
+
+export function etiquetaCategoria(categoria: Category, marca?: string | null): string {
+  return (
+    (marca?.toLowerCase() === "apple" ? CATEGORIAS_APPLE[categoria] : undefined) ??
+    CATEGORY_LABELS[categoria]
+  );
+}
+
+/**
  * Original o réplica.
  *
  * Nunca puede quedar ambiguo: una réplica vendida sin que se entienda que lo
