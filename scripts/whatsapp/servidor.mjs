@@ -18,6 +18,7 @@
  *   TOKEN_WHATSAPP   obligatoria. Protege los endpoints de mensajes y QR.
  *   WHATSAPP_NUMERO  la línea que se espera. Si la vinculada es otra, el
  *                    lector se desvincula solo y no sirve ni un mensaje.
+ *                    Es solo verificación: vincular siempre es por QR.
  *   PORT             por defecto 8080.
  *   DIAS             ventana de mensajes que se conserva. Por defecto 3.
  */
@@ -67,23 +68,6 @@ const AUTH = process.env.AUTH_DIR ?? "/datos/whatsapp-auth";
  */
 const ESPERADO = comparable(process.env.WHATSAPP_NUMERO);
 
-/**
- * El mismo número, en la forma que pide WhatsApp para vincular por código:
- * solo dígitos, con código de país y sin el +.
- */
-const ESPERADO_CRUDO = String(process.env.WHATSAPP_NUMERO ?? "").replace(/\D/g, "");
-
-/**
- * Pedir un código nuevo desde fuera de la conexión.
- *
- * `renovarCodigo` se define adentro de `conectar()`, porque necesita el socket
- * de esa conexión en particular. El servidor HTTP no la alcanza desde ahí, así
- * que cada conexión deja acá su versión y el endpoint usa la vigente.
- */
-let pedirCodigoNuevo = async () => {
-  throw new Error("Todavía no hay conexión con WhatsApp.");
-};
-
 /** jid → { nombre, mensajes: Map<id, mensaje> } */
 const chats = new Map();
 
@@ -91,10 +75,6 @@ const estado = {
   conexion: "arrancando",
   vinculado: false,
   qr: null,
-  /** Código de 8 caracteres para vincular sin escanear nada. */
-  codigo: null,
-  /** Cuándo se pidió, para poder mostrar su edad en el panel. */
-  codigoDesde: null,
   /** La línea vinculada, tal como la informa WhatsApp. */
   numero: null,
   /** La vinculada no es la esperada: no se sirve nada y se corta. */
@@ -197,8 +177,6 @@ function pausar() {
   estado.enPausa = true;
   estado.conexion = "en pausa";
   estado.qr = null;
-  estado.codigo = null;
-  estado.codigoDesde = null;
   try {
     socketVivo?.end?.(undefined);
   } catch {
@@ -537,41 +515,6 @@ async function conectar() {
    */
   let vinculando = false;
 
-  pedirCodigoNuevo = () => renovarCodigo(true);
-
-  async function renovarCodigo(aMano = false) {
-    if (!ESPERADO_CRUDO) throw new Error("No hay número configurado para vincular.");
-    if (state.creds.registered) throw new Error("La línea ya está vinculada.");
-    if (vinculando)
-      throw new Error("Hay una vinculación en curso, esperá unos segundos.");
-    if (pidiendo) throw new Error("Ya hay un pedido en curso.");
-    // El freno de 15 segundos es contra ráfagas automáticas; pedirlo a mano es
-    // una decisión de una persona y no necesita protección contra sí misma.
-    if (!aMano && Date.now() - ultimoPedido < 15_000) return;
-    pidiendo = true;
-    ultimoPedido = Date.now();
-    try {
-      estado.codigo = await sock.requestPairingCode(ESPERADO_CRUDO);
-      estado.codigoDesde = new Date().toISOString();
-      console.log(`\nCódigo para vincular ${ESPERADO_CRUDO}: ${estado.codigo}\n`);
-    } catch (e) {
-      console.error("No se pudo pedir el código, queda el QR:", e?.message ?? e);
-      if (aMano) throw e;
-    } finally {
-      pidiendo = false;
-    }
-  }
-
-  /* `creds.me` es el chequeo que vale: con una sesión recuperada del disco,
-     `registered` puede venir en false y el lector pedía un código de
-     vinculación estando ya conectado. */
-  if (ESPERADO_CRUDO && !state.creds.registered && !state.creds.me) {
-    // El socket tiene que estar abierto antes del primer pedido.
-    // El `.catch` no es decorativo: `renovarCodigo` ahora lanza para poder
-    // contestarle al panel, y acá nadie espera la promesa.
-    setTimeout(() => void renovarCodigo().catch(() => {}), 4_000);
-  }
-
   sock.ev.on("creds.update", saveCreds);
   sock.ev.on("messaging-history.set", ({ messages }) => {
     for (const m of messages ?? []) guardar(m);
@@ -581,13 +524,12 @@ async function conectar() {
   });
 
   sock.ev.on("connection.update", async (u) => {
-    // Llega cuando el código o el QR fueron aceptados: desde acá no se pide
-    // ninguna credencial nueva, que sería pisar el login que está entrando.
+    // Llega cuando el QR fue escaneado y aceptado: desde acá ya no se ofrece
+    // otro, que sería pisar el login que está entrando.
     if (u.isNewLogin) {
       vinculando = true;
-      estado.codigo = null;
       estado.qr = null;
-      console.log("Código aceptado, entrando…");
+      console.log("QR aceptado, entrando…");
     }
 
     if (u.qr) {
@@ -616,10 +558,8 @@ async function conectar() {
        * pide uno nuevo a mano: es un clic más y a cambio se sabe exactamente
        * cuál está en pantalla.
        */
-      if (!ESPERADO_CRUDO) {
-        console.log("\nVinculá la línea escaneando este código:\n");
-        QRCode.generate(u.qr, { small: true });
-      }
+      console.log("\nVinculá la línea escaneando este código:\n");
+      QRCode.generate(u.qr, { small: true });
     }
     if (u.connection) estado.conexion = u.connection;
     if (u.connection === "open") {
@@ -664,7 +604,6 @@ async function conectar() {
 
       estado.vinculado = true;
       estado.qr = null;
-      estado.codigo = null;
       socketVivo = sock;
       // Conectó: la espera vuelve al piso, el contador de intentos también, y
       // la sesión se respalda, porque recién ahora se sabe que sirve.
@@ -673,7 +612,6 @@ async function conectar() {
       estado.enPausa = false;
       void respaldarSesion();
       void traerNombresDeGrupos(sock);
-      estado.codigoDesde = null;
       console.log(`Conectado a WhatsApp como ${propio || "?"}.`);
     }
     if (u.connection === "close") {
@@ -723,7 +661,6 @@ async function conectar() {
          * una decisión de una persona, no de un `catch`.
          */
         estado.conexion = "reintentando";
-        estado.codigo = null;
         estado.qr = null;
         console.log("El intento de vinculación no prosperó. Reintento…");
         if (!estado.enPausa) setTimeout(conectar, espera);
@@ -776,7 +713,7 @@ createServer((req, res) => {
       verificaNumero: Boolean(ESPERADO),
       /* Falta vincular si hay cualquiera de las dos vías esperando: el QR
          para escanear, o el código para escribir en el teléfono. */
-      faltaVincular: Boolean(estado.qr || estado.codigo),
+      faltaVincular: Boolean(estado.qr),
       chats: chats.size,
       mensajes: [...chats.values()].reduce((n, c) => n + c.mensajes.size, 0),
       ultimoMensaje: estado.ultimoMensaje,
@@ -815,104 +752,13 @@ createServer((req, res) => {
 
   if (url.pathname === "/qr") {
     if (!estado.qr) {
-      return responder(200, {
-        svg: null,
-        codigo: estado.codigo,
-        codigoDesde: estado.codigoDesde,
-        vinculado: estado.vinculado,
-      });
+      return responder(200, { svg: null, vinculado: estado.vinculado });
     }
-    const cuerpo = {
-      codigo: estado.codigo,
-      codigoDesde: estado.codigoDesde,
-      vinculado: false,
-    };
     return qrSvg(estado.qr, { type: "svg", margin: 1, width: 280 })
-      .then((svg) => responder(200, { ...cuerpo, svg }))
-      .catch(() => responder(200, { ...cuerpo, svg: null }));
+      .then((svg) => responder(200, { svg, vinculado: false }))
+      .catch(() => responder(200, { svg: null, vinculado: false }));
   }
 
-  /* Pedir un código nuevo a mano, cuando el de pantalla ya no sirve. */
-  if (url.pathname === "/codigo-nuevo") {
-    return pedirCodigoNuevo()
-      .then(() =>
-        responder(200, { codigo: estado.codigo, codigoDesde: estado.codigoDesde })
-      )
-      .catch((e) => responder(500, { error: String(e?.message ?? e) }));
-  }
-
-  /*
-   * El perfil se pide de a uno y cuando alguien lo mira, no para todos al
-   * conectar. Con veinte proveedores, pedirlos todos de golpe son sesenta
-   * llamadas seguidas sobre la misma línea.
-   */
-  if (url.pathname === "/perfil") {
-    const id = url.searchParams.get("id");
-    if (!id) return responder(400, { error: "Falta el id" });
-    return traerPerfil(id)
-      .then((p) => responder(200, p))
-      .catch((e) => responder(502, { error: String(e?.message ?? e) }));
-  }
-
-  /*
-   * Reponer la sesión desde el respaldo.
-   *
-   * Es destructivo —pisa las credenciales actuales— así que lo dispara una
-   * persona y nunca un `catch`. Es justamente lo contrario de lo que hacía el
-   * reintento automático, que borraba por su cuenta y se llevó puesta una
-   * sesión buena.
-   */
-  if (url.pathname === "/restaurar-sesion") {
-    return (async () => {
-      try {
-        await cp(`${AUTH}-respaldo`, AUTH, { recursive: true, force: true });
-        console.log("Sesión repuesta desde el respaldo. Reconectando…");
-        setTimeout(conectar, 1_000);
-        return responder(200, { ok: true });
-      } catch (e) {
-        return responder(404, {
-          error: `No hay respaldo para reponer: ${e?.message ?? e}`,
-        });
-      }
-    })();
-  }
-
-  /*
-   * El histórico, para recuperar lo que la ventana ya no tiene. Se lee de a
-   * renglones y no de una: el archivo crece sin techo y cargarlo entero en
-   * memoria sería reintroducir el problema que la poda vino a resolver.
-   */
-  if (url.pathname === "/historico") {
-    const desde = url.searchParams.get("desde") ?? "";
-    const tope = Math.min(Number(url.searchParams.get("tope") ?? 500), 2000);
-    return (async () => {
-      const filas = [];
-      try {
-        const lector = createInterface({
-          input: createReadStream(HISTORICO, "utf8"),
-          crlfDelay: Infinity,
-        });
-        for await (const linea of lector) {
-          if (!linea) continue;
-          try {
-            const m = JSON.parse(linea);
-            if (desde && m.fecha < desde) continue;
-            filas.push(m);
-            if (filas.length > tope) filas.shift();
-          } catch {
-            // Un renglón a medio escribir —el proceso murió justo ahí— no
-            // puede invalidar los otros diez mil.
-          }
-        }
-      } catch {
-        // Todavía no existe: la primera vez es lo normal.
-      }
-      return responder(200, { desde, cantidad: filas.length, mensajes: filas });
-    })();
-  }
-
-  /* Volver a pedir vinculación después de una pausa. Lo dispara una persona
-     que está mirando la pantalla, que es justo lo que faltaba. */
   if (url.pathname === "/reanudar") {
     estado.enPausa = false;
     intentosDeVinculacion = 0;

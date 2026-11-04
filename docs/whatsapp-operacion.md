@@ -35,6 +35,29 @@ se va a usar, se apaga.
 
 ---
 
+## Se vincula por QR, y solo por QR
+
+Baileys también sabe vincular por un código de ocho caracteres que se escribe
+en el teléfono. Sobre el papel es mejor: el número se declara de antemano y
+WhatsApp solo acepta el código en el teléfono de esa línea, así que vincular la
+cuenta equivocada no puede pasar.
+
+En la práctica no funcionó una sola vez. El código se aceptaba —en el log
+aparecía `logging in...`— y WhatsApp cortaba con un 401 inmediatamente después,
+en todos los intentos, con la versión candidata de Baileys y con la estable. El
+QR enganchó a la primera.
+
+Así que está sacado. No conviene mantener un camino que no funciona al lado de
+uno que sí: ofrecerlos juntos además rompía el QR, porque al pedir un código
+WhatsApp deja de aceptar el escaneo.
+
+**La verificación de la línea no dependía de eso.** `WHATSAPP_NUMERO` sigue
+comparando el número vinculado contra el del negocio apenas conecta, y si no
+coincide el lector se desvincula solo. Esa protección es del momento de
+conectar, no de cómo se vinculó.
+
+---
+
 ## Las cuatro memorias
 
 Nada depende de volver a preguntarle a WhatsApp, porque WhatsApp no reenvía
@@ -81,7 +104,7 @@ recargá en un minuto.
 **WhatsApp dice que no se pueden vincular dispositivos.** Esperá. Horas, no
 minutos. Cada intento estira el bloqueo.
 
-El lector ya no puede empeorarlo solo: después de seis códigos sin que nadie
+El lector ya no puede empeorarlo solo: después de seis QR sin que nadie
 escanee se pone en pausa y deja de pedir. El panel muestra un botón para
 reanudar, y conviene apretarlo con el teléfono ya en la mano.
 

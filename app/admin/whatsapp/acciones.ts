@@ -9,7 +9,6 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { getSettings, isSupabaseConfigured } from "@/lib/data";
 import { getSuppliers } from "@/lib/data/admin";
 import {
-  pedirCodigoNuevo,
   pedirPerfil,
   reanudarLector,
   pedirMensajes,
@@ -333,12 +332,7 @@ export async function reanudarLectorAction(): Promise<ActionResult> {
  * cuenta y no hace falta que pase por acá.
  */
 export async function pedirQrAction(): Promise<
-  ActionResult<{
-    svg: string | null;
-    codigo: string | null;
-    codigoDesde: string | null;
-    vinculado: boolean;
-  }>
+  ActionResult<{ svg: string | null; vinculado: boolean }>
 > {
   if (!(await requireAdmin())) return { ok: false, error: "No autorizado" };
   if (!servidorConfigurado()) {
@@ -347,36 +341,7 @@ export async function pedirQrAction(): Promise<
 
   const r = await pedirQr();
   if (!r.ok) return { ok: false, error: r.detalle };
-  return {
-    ok: true,
-    data: {
-      svg: r.datos.svg,
-      codigo: r.datos.codigo,
-      codigoDesde: r.datos.codigoDesde,
-      vinculado: r.datos.vinculado,
-    },
-  };
-}
-
-/**
- * Pide un código nuevo porque alguien lo decidió.
- *
- * Antes el lector lo renovaba solo cada vez que WhatsApp rotaba el QR, y era
- * peor de lo que parecía: el código cambiaba debajo de la persona mientras lo
- * escribía, y si el login ya había arrancado, pedir otro lo mataba. Ahora el
- * de pantalla se queda quieto y esto existe para cuando de verdad haga falta
- * otro.
- */
-export async function pedirCodigoNuevoAction(): Promise<
-  ActionResult<{ codigo: string | null; codigoDesde: string | null }>
-> {
-  if (!(await requireAdmin())) return { ok: false, error: "No autorizado" };
-  if (!servidorConfigurado()) {
-    return { ok: false, error: "El lector de WhatsApp no está configurado." };
-  }
-  const r = await pedirCodigoNuevo();
-  if (!r.ok) return { ok: false, error: r.detalle };
-  return { ok: true, data: r.datos };
+  return { ok: true, data: { svg: r.datos.svg, vinculado: r.datos.vinculado } };
 }
 
 /**

@@ -56,14 +56,6 @@ export interface QrServidor {
    * credencial que vincula la cuenta, y acá no hace falta tenerlo.
    */
   svg: string | null;
-  /**
-   * Código de 8 caracteres para vincular sin escanear nada, cuando el lector
-   * sabe qué línea espera. Es el camino preferido: WhatsApp solo lo acepta en
-   * el teléfono de ese número, así que no hay forma de vincular otra cuenta.
-   */
-  codigo: string | null;
-  /** Cuándo se pidió ese código, para mostrar su edad y no adivinar. */
-  codigoDesde: string | null;
   vinculado: boolean;
 }
 
@@ -220,13 +212,6 @@ export function pedirPerfil(id: string): Promise<Resultado<PerfilContacto>> {
 /** Saca al lector de la pausa y vuelve a pedir vinculación. */
 export function reanudarLector(): Promise<Resultado<{ ok: boolean }>> {
   return pedir("/reanudar", true);
-}
-
-/** Fuerza un código nuevo. Lo pide una persona, no un temporizador. */
-export function pedirCodigoNuevo(): Promise<
-  Resultado<{ codigo: string | null; codigoDesde: string | null }>
-> {
-  return pedir("/codigo-nuevo", true);
 }
 
 export function pedirMensajes(dias = 3): Promise<Resultado<MensajesServidor>> {
