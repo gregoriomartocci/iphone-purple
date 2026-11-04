@@ -3,13 +3,21 @@ import { MercadoPanel } from "@/components/admin/MercadoPanel";
 import { getSettings } from "@/lib/data";
 import { getUltimasListas } from "@/lib/data/admin";
 import { armarMercado } from "@/lib/whatsapp/mercado";
+import { pedirMensajes } from "@/lib/whatsapp/servidor";
+import { ultimasListasVistas } from "@/lib/whatsapp/sincronizar";
+import { getSuppliers } from "@/lib/data/admin";
 
 export const metadata: Metadata = { title: "Mercado" };
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminMercadoPage() {
-  const [listas, settings] = await Promise.all([getUltimasListas(), getSettings()]);
+  const [listas, settings, proveedores, mensajes] = await Promise.all([
+    getUltimasListas(),
+    getSettings(),
+    getSuppliers(),
+    pedirMensajes().catch(() => null),
+  ]);
   const equipos = armarMercado(listas, settings.dollarRate);
 
   return (
@@ -23,7 +31,12 @@ export default async function AdminMercadoPage() {
           antes de vender: las listas casi nunca dicen cuántas unidades quedan.
         </p>
       </header>
-      <MercadoPanel equipos={equipos} />
+      <MercadoPanel
+        equipos={equipos}
+        vistas={
+          mensajes?.ok ? ultimasListasVistas(mensajes.datos.chats, proveedores) : null
+        }
+      />
     </div>
   );
 }

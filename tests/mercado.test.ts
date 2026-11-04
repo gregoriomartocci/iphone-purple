@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { esTelefonoReal, mensajeDeStock } from "@/lib/whatsapp/consulta-stock";
 import { armarMercado, type ListaDeProveedor } from "@/lib/whatsapp/mercado";
+import { proveedorDelMensaje, ultimasListasVistas } from "@/lib/whatsapp/sincronizar";
 import type { ParsedRow, Supplier } from "@/types";
 
 function fila(p: Partial<ParsedRow> = {}): ParsedRow {
@@ -83,4 +84,62 @@ describe("consulta de stock", () => {
       "Hola! ¿Tenés stock de iPhone 16 128GB sellado a USD 825? Gracias!"
     );
   });
+});
+
+describe("listas en comunidades", () => {
+  const prov = (name: string, phone: string | null = null): Supplier => ({
+    id: name,
+    name,
+    phone,
+    defaultMarginPct: 5,
+    isActive: true,
+  });
+  const lista = "iPhone 15 128 USD 680\niPhone 16 128 USD 785\niPhone 17 256 USD 950";
+  const chat = (nombre: string, soloAdmins: boolean, fecha = "2026-11-04T18:43:00Z") => ({
+    jid: "1@g.us",
+    nombre,
+    telefono: "1",
+    grupo: true,
+    soloAdmins,
+    avisos: soloAdmins,
+    mensajes: [{ fecha, mio: false, texto: lista, autor: "153270672691321" }],
+  });
+
+  it("reconoce al proveedor por el nombre de su grupo de avisos", () => {
+    const c = chat("Mundo Wholesale 🔥 - Mayorista", true);
+    expect(proveedorDelMensaje(c, c.mensajes[0], [prov("Mundo Wholesale")])?.name).toBe(
+      "Mundo Wholesale"
+    );
+    const o = chat("Onpres.ar", true);
+    expect(proveedorDelMensaje(o, o.mensajes[0], [prov("Onpres.ar")])?.name).toBe(
+      "Onpres.ar"
+    );
+  });
+
+  it("no atribuye por nombre en un grupo donde escribe cualquiera", () => {
+    const c = chat("Mundo Wholesale charla", false);
+    expect(proveedorDelMensaje(c, c.mensajes[0], [prov("Mundo Wholesale")])).toBeNull();
+  });
+
+  it("el teléfono del autor gana sobre el nombre del grupo", () => {
+    const c = chat("Mundo Wholesale", true);
+    const autor = prov("Otro", "153270672691321");
+    expect(
+      proveedorDelMensaje(c, c.mensajes[0], [prov("Mundo Wholesale"), autor])?.name
+    ).toBe("Otro");
+  });
+
+  it("dice dónde está su última lista", () => {
+    const c = chat("Onpres.ar", true);
+    expect(ultimasListasVistas([c], [prov("Onpres.ar")])["Onpres.ar"]).toEqual({
+      fecha: "2026-11-04T18:43:00Z",
+      chat: "Avisos de Onpres.ar",
+      comunidad: true,
+    });
+  });
+});
+
+it("marca lo que todavía no llegó", () => {
+  const [equipo] = armarMercado([lista("Onpres", [fila({ quantity: 0 })])], 1500);
+  expect(equipo.ofertas[0].ingresando).toBe(true);
 });

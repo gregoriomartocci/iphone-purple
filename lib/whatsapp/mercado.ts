@@ -10,6 +10,8 @@ export interface OfertaMercado {
   moneda: "USD" | "ARS";
   costoUsd: number;
   fecha: string;
+  /** La lista dice que todavía no llegó. */
+  ingresando: boolean;
 }
 
 export interface EquipoMercado {
@@ -59,6 +61,7 @@ export function armarMercado(listas: ListaDeProveedor[], dolar: number): EquipoM
         moneda: fila.currency,
         costoUsd: fila.currency === "USD" ? fila.cost : fila.cost / dolar,
         fecha,
+        ingresando: fila.quantity === 0,
       });
     }
   }

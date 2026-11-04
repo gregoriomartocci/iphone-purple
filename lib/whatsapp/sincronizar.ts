@@ -32,6 +32,10 @@ export interface ChatWhatsapp {
   nombre: string | null;
   telefono: string;
   grupo: boolean;
+  /** Solo escriben los administradores: todo lo que aparece es del dueño del grupo. */
+  soloAdmins?: boolean;
+  /** Es el grupo "Avisos" de una comunidad. */
+  avisos?: boolean;
   mensajes: MensajeWhatsapp[];
 }
 
@@ -110,11 +114,71 @@ export function proveedorDelMensaje(
   // En un grupo el chat es el grupo: el único dato útil es el autor.
   const telefono = chat.grupo ? mensaje.autor : (mensaje.autor ?? chat.telefono);
   const buscado = telefonoComparable(telefono);
-  if (!buscado) return null;
+  const porTelefono = buscado
+    ? proveedores.find((p) => p.isActive && telefonoComparable(p.phone) === buscado)
+    : null;
 
-  return (
-    proveedores.find((p) => p.isActive && telefonoComparable(p.phone) === buscado) ?? null
-  );
+  return porTelefono ?? proveedorDelGrupo(chat, proveedores);
+}
+
+function nombreComparable(nombre: string): string {
+  return nombre
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
+/**
+ * En una comunidad los mensajes vienen firmados con un identificador interno,
+ * que no coincide con el teléfono del proveedor. Pero en un grupo donde solo
+ * escriben los administradores, todo es del dueño, así que alcanza con que el
+ * nombre del grupo contenga el del proveedor.
+ *
+ * Nunca en un grupo abierto: ahí publican varios y sería atribuirle a uno la
+ * lista de otro.
+ */
+export function proveedorDelGrupo(
+  chat: ChatWhatsapp,
+  proveedores: Supplier[]
+): Supplier | null {
+  if (!chat.grupo || !chat.soloAdmins || !chat.nombre) return null;
+  const grupo = nombreComparable(chat.nombre);
+  const candidatos = proveedores
+    .filter((p) => p.isActive && nombreComparable(p.name).length >= 4)
+    .filter((p) => grupo.includes(nombreComparable(p.name)))
+    .sort((a, b) => b.name.length - a.name.length);
+  return candidatos[0] ?? null;
+}
+
+/** La última lista que se ve de un proveedor en sus chats, y dónde está. */
+export interface ListaVista {
+  fecha: string;
+  chat: string;
+  comunidad: boolean;
+}
+
+export function ultimasListasVistas(
+  chats: ChatWhatsapp[],
+  proveedores: Supplier[]
+): Record<string, ListaVista> {
+  const vistas: Record<string, ListaVista> = {};
+  for (const chat of chats) {
+    for (const mensaje of chat.mensajes) {
+      if (mensaje.mio || !pareceLista(mensaje.texto)) continue;
+      const proveedor = proveedorDelMensaje(chat, mensaje, proveedores);
+      if (!proveedor) continue;
+      const actual = vistas[proveedor.id];
+      if (!actual || mensaje.fecha > actual.fecha) {
+        vistas[proveedor.id] = {
+          fecha: mensaje.fecha,
+          chat: chat.avisos ? `Avisos de ${chat.nombre}` : (chat.nombre ?? "su chat"),
+          comunidad: Boolean(chat.avisos),
+        };
+      }
+    }
+  }
+  return vistas;
 }
 
 /**
