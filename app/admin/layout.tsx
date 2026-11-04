@@ -16,6 +16,7 @@ import {
   Settings,
   Smartphone,
   Store,
+  Megaphone,
   Truck,
   Wrench,
 } from "lucide-react";
@@ -28,6 +29,7 @@ const NAV = [
   { href: "/admin/importar", label: "Importar lista", icon: MessageSquareText },
   { href: "/admin/mercado", label: "Mercado", icon: Store },
   { href: "/admin/productos", label: "Productos", icon: Package },
+  { href: "/admin/contenido", label: "Contenido", icon: Megaphone },
   { href: "/admin/margenes", label: "Margen y precios", icon: Percent },
   { href: "/admin/ventas", label: "Ventas", icon: Receipt },
   { href: "/admin/plan-canje", label: "Plan Canje", icon: RefreshCcw },
