@@ -12,7 +12,9 @@ import {
   chatsDesdeHistorico,
   pareceLista,
   proveedorDelMensaje,
+  ultimaPorEquipo,
 } from "@/lib/whatsapp/sincronizar";
+import { canonizarFila } from "@/lib/whatsapp/nombres";
 import { pedirGrupos, pedirHistorico } from "@/lib/whatsapp/servidor";
 
 /**
@@ -224,7 +226,9 @@ export async function getUltimasListas(): Promise<ListaDeProveedor[]> {
     listas.push({
       proveedor,
       fecha: fila.created_at as string,
-      filas: (fila.parsed_json ?? []) as ParsedRow[],
+      filas: ultimaPorEquipo(
+        ((fila.parsed_json ?? []) as ParsedRow[]).map(canonizarFila)
+      ),
     });
   }
   return listas;
