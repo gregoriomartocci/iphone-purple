@@ -79,8 +79,16 @@ resuelve. Suele ser que el servicio cambió de nombre.
 recargá en un minuto.
 
 **WhatsApp dice que no se pueden vincular dispositivos.** Esperá. Horas, no
-minutos. Apagá el lector mientras tanto: encendido y sin vincular, sigue
-pidiendo. Cada intento estira el bloqueo.
+minutos. Cada intento estira el bloqueo.
+
+El lector ya no puede empeorarlo solo: después de seis códigos sin que nadie
+escanee se pone en pausa y deja de pedir. El panel muestra un botón para
+reanudar, y conviene apretarlo con el teléfono ya en la mano.
+
+Esa pausa existe por una lección cara: el 31/10 quedó encendido y sin vincular
+tres días y pidió 3247 vinculaciones, una cada veinte segundos. Baileys
+abandona solo después de unos pocos intentos, pero nuestra reconexión lo
+volvía a levantar, para siempre.
 
 **La sesión se rompió pero el respaldo está.** El lector copia la carpeta de
 sesión cada vez que la conexión abre, que es el momento en que se sabe que

@@ -99,6 +99,8 @@ const estado = {
   numero: null,
   /** La vinculada no es la esperada: no se sirve nada y se corta. */
   lineaIncorrecta: false,
+  /** Dejó de pedir vinculaciones porque nadie escaneaba. */
+  enPausa: false,
   desde: new Date().toISOString(),
   ultimoMensaje: null,
 };
@@ -172,6 +174,41 @@ let socketVivo = null;
 const ESPERA_MINIMA = 5_000;
 const ESPERA_MAXIMA = 300_000;
 let espera = ESPERA_MINIMA;
+
+/**
+ * Cuántos códigos se ofrecen antes de dejar de pedir.
+ *
+ * Esto es lo que faltaba y costó caro: el lector quedó prendido tres días sin
+ * que nadie escaneara y pidió 3247 vinculaciones, una cada veinte segundos.
+ * WhatsApp cuenta eso y termina frenando la línea.
+ *
+ * Baileys abandona solo después de unos pocos QR —"QR refs attempts ended"—
+ * pero nuestro reconexión lo volvía a levantar, para siempre. Con seis
+ * intentos hay unos dos minutos para agarrar el teléfono, que es de sobra para
+ * alguien que está mirando la pantalla, y nada para una máquina olvidada.
+ *
+ * No es un error: es esperar a que haya alguien. Se reanuda desde el panel.
+ */
+const INTENTOS_MAXIMOS = Number(process.env.INTENTOS_VINCULACION ?? 6);
+let intentosDeVinculacion = 0;
+
+/** Deja de pedir y se queda quieto hasta que alguien lo reanude. */
+function pausar() {
+  estado.enPausa = true;
+  estado.conexion = "en pausa";
+  estado.qr = null;
+  estado.codigo = null;
+  estado.codigoDesde = null;
+  try {
+    socketVivo?.end?.(undefined);
+  } catch {
+    // Si ya estaba cerrado, mejor.
+  }
+  socketVivo = null;
+  console.log(
+    `Nadie escaneó en ${INTENTOS_MAXIMOS} intentos. Me quedo quieto para no gastar vinculaciones; reanudá desde el panel.`
+  );
+}
 
 /**
  * Una copia de la sesión, hecha cuando se sabe que funciona.
@@ -554,6 +591,14 @@ async function conectar() {
     }
 
     if (u.qr) {
+      /*
+       * Cada QR nuevo es un intento más contra el cupo de la línea. Se cuentan
+       * y, pasado el tope, se deja de pedir: un lector olvidado encendido no
+       * puede seguir gastando vinculaciones solo.
+       */
+      intentosDeVinculacion += 1;
+      if (intentosDeVinculacion > INTENTOS_MAXIMOS) return pausar();
+
       estado.qr = u.qr;
       estado.vinculado = false;
       // Un QR nuevo es un intento de vinculación nuevo: lo que se haya
@@ -621,9 +666,11 @@ async function conectar() {
       estado.qr = null;
       estado.codigo = null;
       socketVivo = sock;
-      // Conectó: la espera vuelve al piso y la sesión se respalda, porque
-      // recién ahora se sabe que estas credenciales sirven.
+      // Conectó: la espera vuelve al piso, el contador de intentos también, y
+      // la sesión se respalda, porque recién ahora se sabe que sirve.
       espera = ESPERA_MINIMA;
+      intentosDeVinculacion = 0;
+      estado.enPausa = false;
       void respaldarSesion();
       void traerNombresDeGrupos(sock);
       estado.codigoDesde = null;
@@ -679,7 +726,7 @@ async function conectar() {
         estado.codigo = null;
         estado.qr = null;
         console.log("El intento de vinculación no prosperó. Reintento…");
-        setTimeout(conectar, espera);
+        if (!estado.enPausa) setTimeout(conectar, espera);
         espera = Math.min(espera * 2, ESPERA_MAXIMA);
         return;
       }
@@ -697,7 +744,7 @@ async function conectar() {
 
       // Cualquier otro corte es de red: se reintenta con una espera, no al toque.
       console.log(`Conexión caída, reintentando en ${Math.round(espera / 1000)} s…`);
-      setTimeout(conectar, espera);
+      if (!estado.enPausa) setTimeout(conectar, espera);
       espera = Math.min(espera * 2, ESPERA_MAXIMA);
     }
   });
@@ -723,6 +770,9 @@ createServer((req, res) => {
          línea que correspondía. El QR, que sí es credencial, no. */
       numero: estado.numero,
       lineaIncorrecta: estado.lineaIncorrecta,
+      /* En pausa = dejó de pedir vinculaciones porque nadie escaneaba. No es
+         un error: está esperando que haya alguien del otro lado. */
+      enPausa: estado.enPausa,
       verificaNumero: Boolean(ESPERADO),
       /* Falta vincular si hay cualquiera de las dos vías esperando: el QR
          para escanear, o el código para escribir en el teléfono. */
@@ -859,6 +909,16 @@ createServer((req, res) => {
       }
       return responder(200, { desde, cantidad: filas.length, mensajes: filas });
     })();
+  }
+
+  /* Volver a pedir vinculación después de una pausa. Lo dispara una persona
+     que está mirando la pantalla, que es justo lo que faltaba. */
+  if (url.pathname === "/reanudar") {
+    estado.enPausa = false;
+    intentosDeVinculacion = 0;
+    espera = ESPERA_MINIMA;
+    setTimeout(conectar, 200);
+    return responder(200, { ok: true });
   }
 
   if (url.pathname === "/mensajes") {

@@ -11,6 +11,7 @@ import { getSuppliers } from "@/lib/data/admin";
 import {
   pedirCodigoNuevo,
   pedirPerfil,
+  reanudarLector,
   pedirMensajes,
   pedirQr,
   pedirSalud,
@@ -301,6 +302,24 @@ export async function arrancarLectorAction(): Promise<
       error: err instanceof Error ? err.message : "No se pudo arrancar el lector.",
     };
   }
+}
+
+/**
+ * Vuelve a pedir vinculación después de que el lector se puso en pausa.
+ *
+ * La pausa existe porque un lector encendido y sin vincular pide un QR nuevo
+ * cada veinte segundos para siempre: así gastó 3247 vinculaciones en tres
+ * días y WhatsApp terminó frenando la línea. Reanudar lo decide una persona
+ * que está mirando la pantalla, que es la condición que faltaba.
+ */
+export async function reanudarLectorAction(): Promise<ActionResult> {
+  if (!(await requireAdmin())) return { ok: false, error: "No autorizado" };
+  if (!servidorConfigurado()) {
+    return { ok: false, error: "El lector de WhatsApp no está configurado." };
+  }
+  const r = await reanudarLector();
+  if (!r.ok) return { ok: false, error: r.detalle };
+  return { ok: true };
 }
 
 /**

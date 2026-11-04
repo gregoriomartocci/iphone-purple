@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { CheckCircle2, Loader2, RefreshCw, Smartphone } from "lucide-react";
-import { pedirCodigoNuevoAction, pedirQrAction } from "@/app/admin/whatsapp/acciones";
+import {
+  pedirCodigoNuevoAction,
+  pedirQrAction,
+  reanudarLectorAction,
+} from "@/app/admin/whatsapp/acciones";
 
 /**
  * Vincular la línea desde el panel, en vez de ir a buscar el QR a una terminal.
@@ -18,7 +22,13 @@ import { pedirCodigoNuevoAction, pedirQrAction } from "@/app/admin/whatsapp/acci
  */
 const CADA_MS = 9_000;
 
-export function VincularWhatsapp({ numero }: { numero?: string }) {
+export function VincularWhatsapp({
+  numero,
+  enPausa = false,
+}: {
+  numero?: string;
+  enPausa?: boolean;
+}) {
   const [svg, setSvg] = useState<string | null>(null);
   const [codigo, setCodigo] = useState<string | null>(null);
   const [desde, setDesde] = useState<string | null>(null);
@@ -96,6 +106,47 @@ export function VincularWhatsapp({ numero }: { numero?: string }) {
     const id = setTimeout(() => window.location.reload(), 1200);
     return () => clearTimeout(id);
   }, [vinculado]);
+
+  /*
+   * En pausa no se muestra ni código ni QR, a propósito: mostrarlos invitaría
+   * a quedarse esperando a que aparezca algo, cuando lo que hay que hacer es
+   * avisarle al lector que ahora sí hay alguien mirando.
+   */
+  if (enPausa) {
+    return (
+      <div className="vidrio-sutil rounded-2xl p-6">
+        <h2 className="font-medium text-white">El lector se puso en pausa</h2>
+        <p className="mt-1.5 max-w-xl text-sm text-white/45">
+          Dejó de pedir vinculaciones porque nadie escaneaba. No es un error: un lector
+          encendido y olvidado pide un código cada veinte segundos, y WhatsApp termina
+          frenando la línea por eso.
+        </p>
+        <p className="mt-2 max-w-xl text-sm text-white/45">
+          Tené el teléfono en la mano antes de apretar, así no se vuelve a pausar.
+        </p>
+        <button
+          type="button"
+          onClick={async () => {
+            setPidiendo(true);
+            const r = await reanudarLectorAction();
+            setPidiendo(false);
+            if (!r.ok) setError(r.error);
+            else window.location.reload();
+          }}
+          disabled={pidiendo}
+          className="bg-primary text-primary-foreground hover:bg-primary/85 mt-5 inline-flex h-11 items-center gap-2 rounded-xl px-5 text-sm font-semibold shadow-[0_10px_30px_-12px_#5e16eb] transition-all active:scale-[0.985] disabled:opacity-60"
+        >
+          {pidiendo ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <RefreshCw className="size-4" />
+          )}
+          Estoy acá, pedí el código
+        </button>
+        {error && <p className="mt-3 text-sm text-amber-200/80">{error}</p>}
+      </div>
+    );
+  }
 
   if (vinculado) {
     return (

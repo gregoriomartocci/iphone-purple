@@ -28,6 +28,13 @@ export interface SaludServidor {
   lineaIncorrecta: boolean;
   /** Si el lector tiene configurado contra qué número comparar. */
   verificaNumero: boolean;
+  /**
+   * Dejó de pedir vinculaciones porque nadie escaneaba.
+   *
+   * No es un error: es la protección que evita que un lector encendido y
+   * olvidado gaste el cupo de vinculaciones de la línea.
+   */
+  enPausa: boolean;
   chats: number;
   mensajes: number;
   ultimoMensaje: string | null;
@@ -208,6 +215,11 @@ export function pedirQr(): Promise<Resultado<QrServidor>> {
  */
 export function pedirPerfil(id: string): Promise<Resultado<PerfilContacto>> {
   return pedir<PerfilContacto>(`/perfil?id=${encodeURIComponent(id)}`, true);
+}
+
+/** Saca al lector de la pausa y vuelve a pedir vinculación. */
+export function reanudarLector(): Promise<Resultado<{ ok: boolean }>> {
+  return pedir("/reanudar", true);
 }
 
 /** Fuerza un código nuevo. Lo pide una persona, no un temporizador. */

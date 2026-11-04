@@ -98,7 +98,10 @@ export default async function AdminWhatsappPage() {
           /* El QR se muestra acá en vez de mandar a nadie a los logs del
              servicio, que es donde estaba antes y donde es más incómodo
              justamente en producción. */
-          <VincularWhatsapp numero={settings.whatsappDisplay} />
+          <VincularWhatsapp
+            numero={settings.whatsappDisplay}
+            enPausa={salud.ok && salud.datos.enPausa}
+          />
         ) : (
           /*
            * Un cartel por causa, con lo que hay que hacer en cada una.
