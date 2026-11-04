@@ -18,8 +18,10 @@ import {
 } from "@/lib/whatsapp/servidor";
 import { parseSupplierList } from "@/lib/whatsapp/parser";
 import {
+  coincidenciaEnCatalogo,
   listasParaImportar,
   planificarPublicacion,
+  type Coincidencia,
   type ListaInterpretada,
 } from "@/lib/whatsapp/plan";
 import {
@@ -30,6 +32,8 @@ import {
   skuDesdeClave,
   type ActionResult,
 } from "@/lib/admin/publicar";
+import { skuDe, ultimaPorEquipo } from "@/lib/whatsapp/sincronizar";
+import { slugify } from "@/utils/format";
 import type { ParsedRow } from "@/types";
 import type { PerfilContacto } from "@/lib/whatsapp/servidor";
 
@@ -54,6 +58,8 @@ export interface LoteProveedor {
   /** El mensaje original. Va a `supplier_imports` para poder auditar después. */
   rawText: string;
   filas: ParsedRow[];
+  /** Para cada fila, en el mismo orden: su precio final y qué hace en el catálogo. */
+  previa: { precioArs: number; coincidencia: Coincidencia }[];
 }
 
 export interface PlanParaRevisar {
@@ -129,7 +135,21 @@ export async function planificarDesdeWhatsappAction(
     const textoDe = new Map<string, string>();
 
     for (const lista of listas) {
-      const { rows, warnings } = await parseSupplierList(lista.mensaje.texto);
+      // Si falla un proveedor, los demás siguen: ya se pagó por interpretarlos.
+      let leidas: ParsedRow[];
+      let warnings: string[];
+      try {
+        ({ rows: leidas, warnings } = await parseSupplierList(lista.mensaje.texto));
+      } catch (err) {
+        avisos.push({
+          proveedor: lista.proveedor.name,
+          textos: [
+            `No se pudo interpretar su lista: ${err instanceof Error ? err.message : String(err)}`,
+          ],
+        });
+        continue;
+      }
+      const rows = ultimaPorEquipo(leidas);
       if (rows.length === 0) {
         avisos.push({
           proveedor: lista.proveedor.name,
@@ -157,8 +177,26 @@ export async function planificarDesdeWhatsappAction(
      * que el cliente arme los lotes sería darle a la UI la decisión de qué
      * margen se aplica a qué fila.
      */
+    const [{ data: productos }, { data: variantes }] = await Promise.all([
+      supabase
+        .from("products")
+        .select("slug")
+        .in("slug", [...new Set(plan.publicar.map((p) => slugify(p.fila.model.trim())))]),
+      supabase
+        .from("product_variants")
+        .select("sku, price_ars")
+        .in(
+          "sku",
+          plan.publicar.map((p) => skuDe(p.fila))
+        ),
+    ]);
+    const slugs = new Set((productos ?? []).map((p) => p.slug as string));
+    const preciosActuales = new Map(
+      (variantes ?? []).map((v) => [v.sku as string, Number(v.price_ars)])
+    );
+
     const porProveedor = new Map<string, LoteProveedor>();
-    for (const { fila, proveedor } of plan.publicar) {
+    for (const { fila, proveedor, precioArs } of plan.publicar) {
       let lote = porProveedor.get(proveedor.id);
       if (!lote) {
         lote = {
@@ -167,10 +205,15 @@ export async function planificarDesdeWhatsappAction(
           marginPct: proveedor.defaultMarginPct,
           rawText: textoDe.get(proveedor.id) ?? "",
           filas: [],
+          previa: [],
         };
         porProveedor.set(proveedor.id, lote);
       }
       lote.filas.push(fila);
+      lote.previa.push({
+        precioArs,
+        coincidencia: coincidenciaEnCatalogo(fila, slugs, preciosActuales),
+      });
     }
 
     return {

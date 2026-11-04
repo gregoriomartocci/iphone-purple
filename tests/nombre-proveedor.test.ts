@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { nombreSugerido } from "@/lib/whatsapp/sincronizar";
+import { nombreDesdeGrupo, nombreSugerido } from "@/lib/whatsapp/sincronizar";
 
 /**
  * Los encabezados son los de las listas reales que llegan a los grupos, con
@@ -67,5 +67,22 @@ describe("nombreSugerido, contra encabezados reales", () => {
     expect(
       nombreSugerido("Hola a todos los clientes de la zona sur y alrededores gente")
     ).toBeNull();
+  });
+});
+
+describe("nombreDesdeGrupo, contra nombres de grupo reales", () => {
+  it.each([
+    ["Fany Lista", "Fany"],
+    ["📱DIFUSIÓN VIP -FRAN-", "Fran"],
+    ["Comunidad iCell Oeste📲", "iCell Oeste"],
+    ["Canal Mayorista | @provetech.ar 🇺🇸🇦🇷", "Provetech"],
+    ["Dg technology mayorista ESCOBAR", "Dg technology Escobar"],
+  ])("%s → %s", (grupo, nombre) => {
+    expect(nombreDesdeGrupo(grupo)).toBe(nombre);
+  });
+
+  it("no inventa un nombre si el grupo solo describe el rubro", () => {
+    expect(nombreDesdeGrupo("REVENDEDORES IPHONE")).toBeNull();
+    expect(nombreDesdeGrupo(null)).toBeNull();
   });
 });

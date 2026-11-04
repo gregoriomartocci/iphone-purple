@@ -1,11 +1,13 @@
 import type { ParsedRow, Supplier } from "@/types";
-import { sellPrice } from "./parser";
+import { slugify } from "@/utils/format";
+import { SEPARADOR_DE_MENSAJES, sellPrice } from "./parser";
 import {
   equiposSinStock,
-  listaPendiente,
+  tandaPendiente,
   mejorPorEquipoCon,
   proveedorDelMensaje,
   revisarAntesDePublicar,
+  skuDe,
   type ChatWhatsapp,
   type MensajeWhatsapp,
   type Revision,
@@ -78,13 +80,17 @@ export function listasParaImportar(
   const listas: ListaParaImportar[] = [];
 
   for (const { proveedor, mensajes, chats: dondeVino } of porProveedor.values()) {
-    const mensaje = listaPendiente(mensajes, ultimaImportacion(proveedor.id));
-    if (!mensaje) continue;
+    const tanda = tandaPendiente(mensajes, ultimaImportacion(proveedor.id));
+    const ultimo = tanda.at(-1);
+    if (!ultimo) continue;
 
     listas.push({
       proveedor,
-      mensaje,
-      chat: dondeVino.get(mensaje.fecha + mensaje.texto) ?? "—",
+      mensaje: {
+        ...ultimo,
+        texto: tanda.map((m) => m.texto).join(SEPARADOR_DE_MENSAJES),
+      },
+      chat: dondeVino.get(ultimo.fecha + ultimo.texto) ?? "—",
     });
   }
 
@@ -209,4 +215,28 @@ export function planificarPublicacion(
   );
 
   return { publicar, frenadas, sinStock };
+}
+
+/** Qué le pasaría al catálogo si se publica esta fila. */
+export type Coincidencia =
+  | { tipo: "producto-nuevo" }
+  | { tipo: "variante-nueva" }
+  | { tipo: "actualiza"; precioActual: number };
+
+/**
+ * Si un equipo ya está en el catálogo o hay que crearlo.
+ *
+ * Usa los mismos identificadores que la publicación, el slug del producto y el
+ * SKU de la variante, para que lo que se muestra sea lo que va a pasar.
+ */
+export function coincidenciaEnCatalogo(
+  fila: ParsedRow,
+  slugs: ReadonlySet<string>,
+  variantes: ReadonlyMap<string, number>
+): Coincidencia {
+  const precioActual = variantes.get(skuDe(fila));
+  if (precioActual !== undefined) return { tipo: "actualiza", precioActual };
+  return slugs.has(slugify(fila.model.trim()))
+    ? { tipo: "variante-nueva" }
+    : { tipo: "producto-nuevo" };
 }

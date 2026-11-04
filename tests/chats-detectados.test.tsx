@@ -39,6 +39,7 @@ function autor(p: Partial<AutorDetectado> = {}): AutorDetectado {
     ultimoTexto:
       "iPhone 15 128 sellado 720\niPhone 14 128 impecable 540\niPad 10 64 nuevo 380",
     nombreDeLaLista: null,
+    nombreDelGrupo: null,
     diasConListas: 3,
     equiposEnUltima: 3,
     confianza: 85,
@@ -135,6 +136,17 @@ describe("ChatsDetectados", () => {
     fireEvent.change(screen.getByDisplayValue("Fran"), { target: { value: "  " } });
 
     expect(screen.getByRole("button", { name: "Guardar" })).toBeDisabled();
+  });
+
+  it("nombra al proveedor por su grupo cuando no hay nada mejor", () => {
+    render(
+      <ChatsDetectados
+        autores={[autor({ nombre: null, nombreDelGrupo: "Fany" })]}
+        supabaseReady
+      />
+    );
+    expect(screen.getByText("Fany")).toBeInTheDocument();
+    expect(screen.getByText("según su grupo")).toBeInTheDocument();
   });
 
   it("muestra en qué chats aparece, que es como se lo reconoce", () => {
