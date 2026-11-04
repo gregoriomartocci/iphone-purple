@@ -7,14 +7,14 @@
  */
 
 /** Desde cuántos días se puede reservar. Antes de eso el equipo puede no estar listo. */
-export const DIAS_DE_ANTICIPACION = 4;
+export const DIAS_DE_ANTICIPACION = 1;
 
 /** Cuántos días hacia adelante se ofrecen para elegir. */
 export const DIAS_OFRECIDOS = 21;
 
-/** Horario de atención: de 10 a 19, con el último turno a las 18. */
-export const PRIMER_TURNO = 10;
-export const ULTIMO_TURNO = 18;
+/** Horario de atención: de 9 a 18, con el último turno a las 17. */
+export const PRIMER_TURNO = 9;
+export const ULTIMO_TURNO = 17;
 
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const MESES = [
@@ -48,7 +48,7 @@ export function desdeFecha(f: Fecha): Date {
 /**
  * Días que se pueden reservar.
  *
- * Arranca a los cuatro días para dar margen a preparar el equipo, y salta los
+ * Arranca al día siguiente para dar margen a traer el equipo, y salta los
  * domingos porque el local no abre. `hoy` se pasa como parámetro en vez de
  * leer el reloj adentro: así la función es determinista y se puede testear.
  */
@@ -72,7 +72,8 @@ export function diasDisponibles(hoy: Date = new Date()): Fecha[] {
  */
 export function horariosDe(fecha: Fecha): string[] {
   const dia = desdeFecha(fecha).getDay();
-  const ultimo = dia === 6 ? 13 : ULTIMO_TURNO;
+  // Los sábados abre hasta el mediodía.
+  const ultimo = dia === 6 ? 11 : ULTIMO_TURNO;
   const horas: string[] = [];
   for (let h = PRIMER_TURNO; h <= ultimo; h++)
     horas.push(`${String(h).padStart(2, "0")}:00`);

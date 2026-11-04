@@ -27,7 +27,8 @@ const PESTANIAS: { id: Pestania; label: string; icono: typeof User }[] = [
  * sitio los perdió.
  */
 export function PanelCuenta() {
-  const [pestania, setPestania] = useState<Pestania>("pedidos");
+  // La web ya no toma pedidos: la pestaña queda solo para quien tenga alguno viejo.
+  const [pestania, setPestania] = useState<Pestania>("favoritos");
   const cuenta = useCuenta();
 
   if (!cuenta.listo) {
@@ -44,26 +45,28 @@ export function PanelCuenta() {
   return (
     <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-8">
       <nav className="border-line bg-surface h-fit rounded-2xl border p-2 shadow-sm">
-        {PESTANIAS.map(({ id, label, icono: Icono }) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setPestania(id)}
-            aria-current={pestania === id}
-            className={cn(
-              "flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-left text-[15px] transition-colors",
-              pestania === id
-                ? "bg-elevated text-foreground font-medium"
-                : "text-muted-foreground hover:bg-elevated/60 hover:text-foreground"
-            )}
-          >
-            <Icono className="size-[18px] shrink-0" />
-            <span className="flex-1">{label}</span>
-            {conteo[id] > 0 && (
-              <span className="tnum text-muted-foreground text-xs">{conteo[id]}</span>
-            )}
-          </button>
-        ))}
+        {PESTANIAS.filter((p) => p.id !== "pedidos" || cuenta.pedidos.length > 0).map(
+          ({ id, label, icono: Icono }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setPestania(id)}
+              aria-current={pestania === id}
+              className={cn(
+                "flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-left text-[15px] transition-colors",
+                pestania === id
+                  ? "bg-elevated text-foreground font-medium"
+                  : "text-muted-foreground hover:bg-elevated/60 hover:text-foreground"
+              )}
+            >
+              <Icono className="size-[18px] shrink-0" />
+              <span className="flex-1">{label}</span>
+              {conteo[id] > 0 && (
+                <span className="tnum text-muted-foreground text-xs">{conteo[id]}</span>
+              )}
+            </button>
+          )
+        )}
       </nav>
 
       <div className="min-w-0">
