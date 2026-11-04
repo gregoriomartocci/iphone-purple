@@ -16,6 +16,8 @@ import { precioArsDesdeUsd, revisarCotizacion, traerCotizacion } from "@/lib/cot
  * El costo en dólares no se toca: es lo que pagó el negocio, un hecho que ya
  * ocurrió.
  *
+ * El cron está en `vercel.json`: días hábiles a las 13:00 UTC, las 10 de Argentina.
+ *
  * Entra por dos puertas: el cron manda el `CRON_SECRET`, y una persona del
  * panel entra con su sesión. Sin ninguna de las dos no se dispara algo que
  * reescribe todos los precios del catálogo.

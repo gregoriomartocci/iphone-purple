@@ -164,6 +164,24 @@ describe("cliente del servidor de WhatsApp", () => {
     expect(!r.ok && r.detalle).toMatch(/no está corriendo/i);
   });
 
+  it("completa lo que no manda un lector de una versión anterior", async () => {
+    const base = await levantar((_req, res) => {
+      res.setHeader("content-type", "application/json");
+      res.end(JSON.stringify({ conexion: "open", vinculado: true, chats: 2 }));
+    });
+    vi.stubEnv("WHATSAPP_SERVIDOR_URL", base);
+
+    const r = await pedirSalud();
+
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.datos.conexion).toBe("open");
+    expect(r.datos.chats).toBe(2);
+    expect(r.datos.eventos).toEqual([]);
+    expect(r.datos.enPausa).toBe(false);
+    expect(Number.isNaN(Date.parse(r.datos.ahora))).toBe(false);
+  });
+
   it("avisa cuando la dirección no resuelve", async () => {
     vi.stubEnv("WHATSAPP_SERVIDOR_URL", "http://lector-que-no-existe.invalid");
     vi.stubEnv("WHATSAPP_SERVIDOR_TOKEN", "secreto");

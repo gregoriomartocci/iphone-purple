@@ -218,8 +218,37 @@ async function pedir<T>(ruta: string, conToken: boolean): Promise<Resultado<T>> 
   }
 }
 
-export function pedirSalud(): Promise<Resultado<SaludServidor>> {
-  return pedir<SaludServidor>("/salud", false);
+/**
+ * Completa lo que falte en la respuesta de `/salud`.
+ *
+ * El lector y el sitio se despliegan por separado, así que uno puede estar en
+ * una versión anterior. Un campo faltante no puede tirar la pantalla que
+ * justamente sirve para entender qué le pasa a la conexión.
+ */
+function completarSalud(datos: Partial<SaludServidor>): SaludServidor {
+  return {
+    conexion: datos.conexion ?? "desconocida",
+    vinculado: datos.vinculado ?? false,
+    faltaVincular: datos.faltaVincular ?? false,
+    numero: datos.numero ?? null,
+    lineaIncorrecta: datos.lineaIncorrecta ?? false,
+    verificaNumero: datos.verificaNumero ?? false,
+    enPausa: datos.enPausa ?? false,
+    intentos: datos.intentos ?? 0,
+    intentosMaximos: datos.intentosMaximos ?? 0,
+    ultimoRechazo: datos.ultimoRechazo ?? null,
+    eventos: datos.eventos ?? [],
+    ahora: datos.ahora ?? new Date().toISOString(),
+    chats: datos.chats ?? 0,
+    mensajes: datos.mensajes ?? 0,
+    ultimoMensaje: datos.ultimoMensaje ?? null,
+    desde: datos.desde ?? "",
+  };
+}
+
+export async function pedirSalud(): Promise<Resultado<SaludServidor>> {
+  const r = await pedir<Partial<SaludServidor>>("/salud", false);
+  return r.ok ? { ok: true, datos: completarSalud(r.datos) } : r;
 }
 
 export function pedirQr(): Promise<Resultado<QrServidor>> {

@@ -85,7 +85,10 @@ function resumen(salud: SaludServidor): {
   if (salud.faltaVincular) {
     return {
       titulo: "Esperando que escanees",
-      detalle: `Código ${salud.intentos} de ${salud.intentosMaximos} antes de pausar`,
+      detalle:
+        salud.intentosMaximos > 0
+          ? `Código ${salud.intentos} de ${salud.intentosMaximos} antes de pausar`
+          : "Escaneá el código desde el teléfono",
       color: "text-sky-300",
       icono: ScanLine,
     };
