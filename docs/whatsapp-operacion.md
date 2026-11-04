@@ -101,17 +101,18 @@ resuelve. Suele ser que el servicio cambió de nombre.
 **El panel dice "no contestó".** Railway duerme los servicios sin tráfico;
 recargá en un minuto.
 
-**WhatsApp dice que no se pueden vincular dispositivos.** Esperá. Horas, no
-minutos. Cada intento estira el bloqueo.
+**WhatsApp dice que no se pueden vincular dispositivos.** Lo dice el teléfono y
+WhatsApp no informa la causa ni cuánto dura, así que el panel no muestra una
+cuenta regresiva. Lo razonable es probar pocas veces y espaciadas. Que la
+cantidad de intentos lo provoque o lo alargue es una sospecha, no algo medido.
 
-El lector ya no puede empeorarlo solo: después de seis QR sin que nadie
-escanee se pone en pausa y deja de pedir. El panel muestra un botón para
-reanudar, y conviene apretarlo con el teléfono ya en la mano.
+El lector se pone en pausa después de seis QR sin escanear, para no quedar
+pidiendo solo. El 31/10 quedó encendido tres días y dibujó 3247.
 
-Esa pausa existe por una lección cara: el 31/10 quedó encendido y sin vincular
-tres días y pidió 3247 vinculaciones, una cada veinte segundos. Baileys
-abandona solo después de unos pocos intentos, pero nuestra reconexión lo
-volvía a levantar, para siempre.
+**El panel dice "Hay que vincular de nuevo".** WhatsApp respondió 401 a la sesión
+guardada. Esas credenciales ya no sirven y reconectar con ellas da otro 401, sin
+llegar a pedir un QR. El botón las aparta en `.whatsapp-auth-rechazada-*` y
+arranca limpio.
 
 **La sesión se rompió pero el respaldo está.** El lector copia la carpeta de
 sesión cada vez que la conexión abre, que es el momento en que se sabe que

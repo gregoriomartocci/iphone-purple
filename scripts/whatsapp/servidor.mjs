@@ -23,7 +23,7 @@
  *   DIAS             ventana de mensajes que se conserva. Por defecto 3.
  */
 import { createServer } from "node:http";
-import { appendFile, cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { appendFile, cp, rename, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { createReadStream } from "node:fs";
 import { createInterface } from "node:readline";
 import { dirname, join } from "node:path";
@@ -81,6 +81,20 @@ const estado = {
   lineaIncorrecta: false,
   /** Dejó de pedir vinculaciones porque nadie escaneaba. */
   enPausa: false,
+  /** Cuántos QR se ofrecieron desde el último enganche, y cuántos admite. */
+  intentos: 0,
+  intentosMaximos: 0,
+  /** Cuándo WhatsApp rechazó la conexión por última vez. */
+  ultimoRechazo: null,
+  /**
+   * Las últimas cosas que pasaron, con su hora.
+   *
+   * Hasta ahora todo esto vivía solo en el log del proceso, que nadie mira. Sin
+   * eso, desde el panel la conexión era una caja negra: no se podía saber si
+   * recién arrancó, si WhatsApp venía rechazando, o si hacía rato que esperaba
+   * un escaneo. Cada problema parecía un misterio nuevo.
+   */
+  eventos: [],
   desde: new Date().toISOString(),
   ultimoMensaje: null,
 };
@@ -141,6 +155,8 @@ const nombresDeChat = new Map();
  */
 const perfiles = new Map();
 let socketVivo = null;
+/** El socket en curso, vinculado o no: `socketVivo` recién existe al conectar. */
+let socketActual = null;
 
 /**
  * Cuánto esperar antes de reconectar, creciendo.
@@ -172,17 +188,26 @@ let espera = ESPERA_MINIMA;
 const INTENTOS_MAXIMOS = Number(process.env.INTENTOS_VINCULACION ?? 6);
 let intentosDeVinculacion = 0;
 
+/** Deja constancia de algo que pasó, para que el panel pueda contarlo. */
+function anotar(tipo, detalle = null) {
+  estado.eventos.push({ cuando: new Date().toISOString(), tipo, detalle });
+  // Un anillo corto: lo viejo no ayuda a entender qué está pasando ahora, y
+  // el proceso tiene que poder quedar prendido meses sin crecer.
+  if (estado.eventos.length > 40) estado.eventos.shift();
+}
+
 /** Deja de pedir y se queda quieto hasta que alguien lo reanude. */
 function pausar() {
   estado.enPausa = true;
   estado.conexion = "en pausa";
   estado.qr = null;
   try {
-    socketVivo?.end?.(undefined);
+    socketActual?.end?.(undefined);
   } catch {
     // Si ya estaba cerrado, mejor.
   }
   socketVivo = null;
+  anotar("pausa", `Nadie escaneó en ${INTENTOS_MAXIMOS} códigos`);
   console.log(
     `Nadie escaneó en ${INTENTOS_MAXIMOS} intentos. Me quedo quieto para no gastar vinculaciones; reanudá desde el panel.`
   );
@@ -476,6 +501,7 @@ async function conectar() {
     browser: Browsers.ubuntu("Chrome"),
   });
 
+  socketActual = sock;
   sock.ev.on("creds.update", saveCreds);
   sock.ev.on("messaging-history.set", ({ messages }) => {
     for (const m of messages ?? []) guardar(m);
@@ -489,6 +515,7 @@ async function conectar() {
     // otro, que sería pisar el login que está entrando.
     if (u.isNewLogin) {
       estado.qr = null;
+      anotar("escaneado", "Alguien escaneó el código");
       console.log("QR aceptado, entrando…");
     }
 
@@ -499,7 +526,9 @@ async function conectar() {
        * puede seguir gastando vinculaciones solo.
        */
       intentosDeVinculacion += 1;
+      estado.intentos = intentosDeVinculacion;
       if (intentosDeVinculacion > INTENTOS_MAXIMOS) return pausar();
+      anotar("qr", `Código ${intentosDeVinculacion} de ${INTENTOS_MAXIMOS}`);
 
       estado.qr = u.qr;
       estado.vinculado = false;
@@ -569,7 +598,9 @@ async function conectar() {
       // la sesión se respalda, porque recién ahora se sabe que sirve.
       espera = ESPERA_MINIMA;
       intentosDeVinculacion = 0;
+      estado.intentos = 0;
       estado.enPausa = false;
+      anotar("conectado", propio || null);
       void respaldarSesion();
       void traerNombresDeGrupos(sock);
       console.log(`Conectado a WhatsApp como ${propio || "?"}.`);
@@ -601,9 +632,13 @@ async function conectar() {
          * Ante la duda, no se borra. Reconectar de más es gratis; perder la
          * sesión cuesta que alguien agarre el teléfono.
          */
+        estado.ultimoRechazo = new Date().toISOString();
         if (state.creds.registered || state.creds.me) {
           estado.conexion = "desvinculado";
-          console.error("Sesión cerrada desde el teléfono. Hay que volver a vincular.");
+          anotar("rechazado", "WhatsApp no aceptó la sesión guardada (401)");
+          console.error(
+            "WhatsApp no aceptó la sesión guardada. Hay que volver a vincular."
+          );
           return;
         }
 
@@ -622,6 +657,7 @@ async function conectar() {
          */
         estado.conexion = "reintentando";
         estado.qr = null;
+        anotar("rechazado", "El intento de vinculación no prosperó");
         console.log("El intento de vinculación no prosperó. Reintento…");
         if (!estado.enPausa) setTimeout(conectar, espera);
         espera = Math.min(espera * 2, ESPERA_MAXIMA);
@@ -640,6 +676,7 @@ async function conectar() {
       }
 
       // Cualquier otro corte es de red: se reintenta con una espera, no al toque.
+      anotar("caida", `Reintenta en ${Math.round(espera / 1000)} s`);
       console.log(`Conexión caída, reintentando en ${Math.round(espera / 1000)} s…`);
       if (!estado.enPausa) setTimeout(conectar, espera);
       espera = Math.min(espera * 2, ESPERA_MAXIMA);
@@ -670,6 +707,14 @@ createServer((req, res) => {
       /* En pausa = dejó de pedir vinculaciones porque nadie escaneaba. No es
          un error: está esperando que haya alguien del otro lado. */
       enPausa: estado.enPausa,
+      intentos: estado.intentos,
+      intentosMaximos: INTENTOS_MAXIMOS,
+      ultimoRechazo: estado.ultimoRechazo,
+      eventos: estado.eventos,
+      /* La hora del lector, que es el reloj con el que están sellados los
+         eventos. Comparar contra él y no contra el del sitio evita diferencias
+         si los dos relojes no están en hora. */
+      ahora: new Date().toISOString(),
       verificaNumero: Boolean(ESPERADO),
       /* Falta vincular si hay cualquiera de las dos vías esperando: el QR
          para escanear, o el código para escribir en el teléfono. */
@@ -792,9 +837,24 @@ createServer((req, res) => {
   if (url.pathname === "/reanudar") {
     estado.enPausa = false;
     intentosDeVinculacion = 0;
+    estado.intentos = 0;
     espera = ESPERA_MINIMA;
-    setTimeout(conectar, 200);
-    return responder(200, { ok: true });
+    if (estado.vinculado) return responder(200, { ok: true, yaVinculado: true });
+    anotar("reanudado", "Alguien pidió reintentar desde el panel");
+    /*
+     * Después de un 401 las credenciales guardadas están muertas: reconectar
+     * con ellas da otro 401 y nunca llega a pedir un QR. Se apartan, sin
+     * borrarlas, para que la conexión arranque limpia. Lo decide una persona.
+     */
+    const descartar = estado.conexion === "desvinculado";
+    estado.conexion = "conectando";
+    return (async () => {
+      if (descartar) {
+        await rename(AUTH, `${AUTH}-rechazada-${Date.now()}`).catch(() => {});
+      }
+      setTimeout(conectar, 200);
+      return responder(200, { ok: true });
+    })();
   }
 
   if (url.pathname === "/mensajes") {

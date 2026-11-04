@@ -74,3 +74,6 @@ scripts/whatsapp/node_modules/
 historico-whatsapp.ndjson
 mensajes-whatsapp.json
 .whatsapp-auth-respaldo/
+
+# Sesiones que WhatsApp rechazó, apartadas al pedir un QR nuevo.
+.whatsapp-auth-rechazada-*/

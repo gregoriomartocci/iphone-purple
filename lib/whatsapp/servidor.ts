@@ -14,6 +14,13 @@ import type { ChatWhatsapp } from "./sincronizar";
  */
 
 /** Lo que devuelve `/salud`, que no pide token. */
+/** Algo que le pasó a la conexión, para poder contarlo en orden. */
+export interface EventoConexion {
+  cuando: string;
+  tipo: "qr" | "escaneado" | "conectado" | "rechazado" | "caida" | "pausa" | "reanudado";
+  detalle: string | null;
+}
+
 export interface SaludServidor {
   /**
    * El estado crudo de la conexión con WhatsApp.
@@ -41,6 +48,21 @@ export interface SaludServidor {
    * olvidado gaste el cupo de vinculaciones de la línea.
    */
   enPausa: boolean;
+  /** Cuántos códigos se ofrecieron desde el último enganche, y cuántos admite. */
+  intentos: number;
+  intentosMaximos: number;
+  /** Cuándo WhatsApp rechazó la conexión por última vez, si pasó. */
+  ultimoRechazo: string | null;
+  /**
+   * Lo último que le pasó a la conexión, con su hora.
+   *
+   * Sin esto el panel solo podía mostrar el estado de ahora, y un estado sin
+   * historia no se entiende: "esperando escaneo" significa cosas muy distintas
+   * si recién arrancó o si viene rechazado cinco veces en la última hora.
+   */
+  eventos: EventoConexion[];
+  /** La hora del lector, que es con la que están sellados los eventos. */
+  ahora: string;
   chats: number;
   mensajes: number;
   ultimoMensaje: string | null;

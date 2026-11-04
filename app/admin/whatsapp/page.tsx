@@ -5,6 +5,7 @@ import { ChatsDetectados } from "@/components/admin/ChatsDetectados";
 import { PlanWhatsapp } from "@/components/admin/PlanWhatsapp";
 import { VincularWhatsapp } from "@/components/admin/VincularWhatsapp";
 import { PrenderLector } from "@/components/admin/PrenderLector";
+import { EstadoConexion } from "@/components/admin/EstadoConexion";
 import { autoresDetectados, telefonoComparable } from "@/lib/whatsapp/sincronizar";
 import { pedirMensajes, pedirSalud, servidorConfigurado } from "@/lib/whatsapp/servidor";
 import { getSuppliers } from "@/lib/data/admin";
@@ -94,6 +95,14 @@ export default async function AdminWhatsappPage() {
     return (
       <div className="max-w-3xl">
         {header}
+        {/* El estado va primero y en todas las ramas: saber qué viene pasando
+            cambia qué conviene hacer, y antes eso solo estaba en el log. */}
+        {salud.ok && (
+          <div className="mb-5">
+            <EstadoConexion salud={salud.datos} />
+          </div>
+        )}
+
         {faltaVincular ? (
           /* El QR se muestra acá en vez de mandar a nadie a los logs del
              servicio, que es donde estaba antes y donde es más incómodo
@@ -211,6 +220,12 @@ export default async function AdminWhatsappPage() {
   return (
     <div className="max-w-3xl">
       {header}
+
+      {salud.ok && (
+        <div className="mb-5">
+          <EstadoConexion salud={salud.datos} />
+        </div>
+      )}
 
       {!isSupabaseConfigured() && (
         <div className="mb-5">
