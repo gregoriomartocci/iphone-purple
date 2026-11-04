@@ -24,6 +24,7 @@
  *   SITIO_URL y CRON_SECRET  para refrescar el dólar cada hora.
  */
 import { createServer } from "node:http";
+import { randomBytes } from "node:crypto";
 import { appendFile, cp, rename, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { createReadStream } from "node:fs";
 import { createInterface } from "node:readline";
@@ -264,6 +265,9 @@ const gruposConocidos = new Map();
 
 /** Qué llega realmente de WhatsApp, para distinguir "silencio" de "no recibe". */
 const recibidos = { eventos: 0, mensajes: 0, deGrupo: 0, ultimo: null };
+
+/** Lo que devolvió el teléfono al pedirle el historial de un chat. */
+const historialPedido = { pedidos: 0, respuestas: 0, mensajes: 0, porChat: {} };
 
 /**
  * Pregunta por todos los grupos de una sola vez.
@@ -572,11 +576,23 @@ async function conectar() {
   sock.ev.on("contacts.upsert", anotarContactos);
   sock.ev.on("contacts.update", anotarContactos);
   sock.ev.on("chats.upsert", anotarContactos);
-  sock.ev.on("messaging-history.set", ({ messages, contacts, chats: listaDeChats }) => {
-    anotarContactos(contacts);
-    anotarContactos(listaDeChats);
-    for (const m of messages ?? []) guardar(m);
-  });
+  sock.ev.on(
+    "messaging-history.set",
+    ({ messages, contacts, chats: listaDeChats, syncType }) => {
+      anotarContactos(contacts);
+      anotarContactos(listaDeChats);
+      historialPedido.respuestas += 1;
+      console.log(
+        `Historial recibido: tipo ${syncType}, ${messages?.length ?? 0} mensajes`
+      );
+      for (const m of messages ?? []) {
+        const jid = m.key?.remoteJid;
+        if (jid) historialPedido.porChat[jid] = (historialPedido.porChat[jid] ?? 0) + 1;
+        historialPedido.mensajes += 1;
+        guardar(m);
+      }
+    }
+  );
   sock.ev.on("messages.upsert", ({ messages }) => {
     recibidos.eventos += 1;
     for (const m of messages ?? []) {
@@ -909,9 +925,52 @@ createServer((req, res) => {
    * renglones y no de una: el archivo crece sin techo y cargarlo entero en
    * memoria sería reintroducir el problema que la poda vino a resolver.
    */
+  /*
+   * Le pide al teléfono mensajes de un chat, como WhatsApp Web al subir en la
+   * conversación. No le escribe a nadie: es un pedido a la propia cuenta. La
+   * respuesta llega después, por messaging-history.set.
+   */
+  if (url.pathname === "/pedir-historial" && req.method === "POST") {
+    const jid = url.searchParams.get("jid") ?? "";
+    const cuantos = Math.min(Number(url.searchParams.get("cuantos") ?? 50), 50);
+    if (
+      !jid.endsWith("@g.us") &&
+      !jid.endsWith("@lid") &&
+      !jid.endsWith("@s.whatsapp.net")
+    ) {
+      return responder(400, { error: "jid inválido" });
+    }
+    if (!socketActual || estado.conexion !== "open") {
+      return responder(503, { error: "sin conexión" });
+    }
+    return (async () => {
+      /* Sin mensajes de ese chat no hay ancla real: se pide "desde ahora". */
+      const conocidos = [...(chats.get(jid)?.mensajes.entries() ?? [])].sort((a, b) =>
+        a[1].fecha.localeCompare(b[1].fecha)
+      );
+      const desdeAhora =
+        url.searchParams.get("desde") === "ahora" || conocidos.length === 0;
+      const ancla = desdeAhora ? null : conocidos[0];
+      const clave = {
+        remoteJid: jid,
+        fromMe: ancla ? ancla[1].mio : false,
+        id: ancla ? ancla[0] : randomBytes(10).toString("hex").toUpperCase(),
+      };
+      const marca = ancla ? new Date(ancla[1].fecha).getTime() : Date.now();
+      try {
+        const id = await socketActual.fetchMessageHistory(cuantos, clave, marca);
+        historialPedido.pedidos += 1;
+        responder(200, { pedido: id ?? true, desdeAhora });
+      } catch (e) {
+        responder(502, { error: String(e?.message ?? e) });
+      }
+    })();
+  }
+
   if (url.pathname === "/grupos") {
     return responder(200, {
       recibidos,
+      historialPedido,
       grupos: [...gruposConocidos.values()].map((g) => ({
         ...g,
         conMensajes: chats.has(g.jid),

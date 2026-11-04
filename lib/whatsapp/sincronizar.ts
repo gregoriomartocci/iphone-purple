@@ -151,6 +151,38 @@ export function proveedorDelGrupo(
   return candidatos[0] ?? null;
 }
 
+/** Rearma los chats a partir del histórico, que guarda cada mensaje por separado. */
+export function chatsDesdeHistorico(
+  filas: {
+    jid: string;
+    chat: string | null;
+    fecha: string;
+    autor: string | null;
+    texto: string;
+  }[],
+  grupos: { jid: string; nombre: string | null; avisos: boolean; soloAdmins: boolean }[]
+): ChatWhatsapp[] {
+  const chats = new Map<string, ChatWhatsapp>();
+  for (const f of filas) {
+    let chat = chats.get(f.jid);
+    if (!chat) {
+      const grupo = grupos.find((g) => g.jid === f.jid);
+      chat = {
+        jid: f.jid,
+        nombre: grupo?.nombre ?? f.chat,
+        telefono: f.jid.split("@")[0],
+        grupo: f.jid.endsWith("@g.us"),
+        soloAdmins: grupo?.soloAdmins ?? false,
+        avisos: grupo?.avisos ?? false,
+        mensajes: [],
+      };
+      chats.set(f.jid, chat);
+    }
+    chat.mensajes.push({ fecha: f.fecha, mio: false, texto: f.texto, autor: f.autor });
+  }
+  return [...chats.values()];
+}
+
 /** La última lista que se ve de un proveedor en sus chats, y dónde está. */
 export interface ListaVista {
   fecha: string;

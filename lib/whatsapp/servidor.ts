@@ -271,6 +271,32 @@ export function reanudarLector(): Promise<Resultado<{ ok: boolean }>> {
   return pedir("/reanudar", true);
 }
 
+/** Un renglón del histórico que el lector guarda sin vencimiento. */
+export interface FilaHistorico {
+  jid: string;
+  chat: string | null;
+  fecha: string;
+  autor: string | null;
+  texto: string;
+}
+
+export function pedirHistorico(
+  desde: string
+): Promise<Resultado<{ cantidad: number; mensajes: FilaHistorico[] }>> {
+  return pedir(`/historico?desde=${encodeURIComponent(desde)}&tope=2000`, true);
+}
+
+export interface GrupoServidor {
+  jid: string;
+  nombre: string | null;
+  avisos: boolean;
+  soloAdmins: boolean;
+}
+
+export function pedirGrupos(): Promise<Resultado<{ grupos: GrupoServidor[] }>> {
+  return pedir("/grupos", true);
+}
+
 export function pedirMensajes(dias = 3): Promise<Resultado<MensajesServidor>> {
   return pedir<MensajesServidor>(`/mensajes?dias=${dias}`, true);
 }
