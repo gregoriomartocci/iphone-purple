@@ -7,7 +7,7 @@ import { SelectorMoneda } from "./SelectorMoneda";
 import { PARAM_MONEDA, esMoneda } from "@/lib/moneda";
 import { formatARS } from "@/utils/format";
 import {
-  CATEGORY_LABELS,
+  etiquetaCategoria,
   GRADE_LABELS,
   LINE_LABELS,
   STATE_LABELS,
@@ -107,7 +107,7 @@ export function CatalogToolbar({
       clear: { brand: undefined, color: undefined },
     },
     filters.category && {
-      label: CATEGORY_LABELS[filters.category as Category],
+      label: etiquetaCategoria(filters.category as Category, filters.brand),
       clear: { category: undefined, color: undefined },
     },
     filters.model && { label: filters.model, clear: { model: undefined } },
