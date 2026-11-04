@@ -11,10 +11,13 @@ export const dynamic = "force-dynamic";
 
 function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <div className="border-line rounded-xl border p-5">
-      <p className="text-muted-foreground text-sm">{label}</p>
-      <p className="tnum text-foreground mt-1.5 text-2xl font-semibold">{value}</p>
-      {hint && <p className="text-muted-foreground mt-1 text-xs">{hint}</p>}
+    <div className="vidrio-sutil rounded-2xl p-5">
+      <p className="text-sm text-white/45">{label}</p>
+      {/* El número es lo único que se mira de reojo, así que carga el peso. */}
+      <p className="tnum mt-2 text-[2rem] leading-none font-semibold tracking-[-0.02em] text-white">
+        {value}
+      </p>
+      {hint && <p className="mt-2 text-xs text-white/35">{hint}</p>}
     </div>
   );
 }
@@ -31,23 +34,28 @@ export default async function AdminDashboard() {
   return (
     <div className="max-w-6xl">
       <header className="mb-8">
-        <h1 className="text-2xl font-semibold">Resumen</h1>
-        <p className="text-muted-foreground mt-1.5">
-          Cómo viene el stock y las ventas del mes.
-        </p>
+        <h1 className="text-[1.75rem] font-semibold tracking-[-0.02em] text-white">
+          Resumen
+        </h1>
+        <p className="mt-1.5 text-white/45">Cómo viene el stock y las ventas del mes.</p>
       </header>
 
       {!ready && (
-        <div className="mb-8 flex flex-col gap-3 rounded-xl border border-amber-300 bg-amber-50 p-5 sm:flex-row sm:items-center">
-          <Database className="size-5 shrink-0 text-amber-700" />
+        <div className="mb-8 flex flex-col gap-3 rounded-2xl border border-amber-400/25 bg-amber-400/[0.07] p-5 sm:flex-row sm:items-center">
+          <Database className="size-5 shrink-0 text-amber-300" />
           <div className="flex-1">
-            <p className="text-sm font-medium text-amber-900">
+            <p className="text-sm font-medium text-amber-100">
               Supabase todavía no está conectado
             </p>
-            <p className="mt-0.5 text-sm text-amber-800">
+            <p className="mt-0.5 text-sm text-amber-200/70">
               Estás viendo el catálogo de demostración. Cargá las claves en{" "}
-              <code className="rounded bg-amber-100 px-1">.env.local</code> y aplicá{" "}
-              <code className="rounded bg-amber-100 px-1">lib/supabase/schema.sql</code>{" "}
+              <code className="rounded bg-amber-400/15 px-1 text-amber-100">
+                .env.local
+              </code>{" "}
+              y aplicá{" "}
+              <code className="rounded bg-amber-400/15 px-1 text-amber-100">
+                lib/supabase/schema.sql
+              </code>{" "}
               para empezar a guardar datos reales.
             </p>
           </div>
@@ -82,12 +90,12 @@ export default async function AdminDashboard() {
       </section>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <section className="border-line rounded-xl border">
-          <div className="border-line flex items-center justify-between border-b p-5">
-            <h2 className="font-medium">Poco stock</h2>
+        <section className="vidrio-sutil overflow-hidden rounded-2xl">
+          <div className="flex items-center justify-between border-b border-white/[0.07] p-5">
+            <h2 className="font-medium text-white">Poco stock</h2>
             <Link
               href="/admin/productos"
-              className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm"
+              className="inline-flex items-center gap-1 text-sm text-white/45 transition-colors hover:text-white"
             >
               Ver productos
               <ArrowRight className="size-3.5" />
@@ -95,20 +103,16 @@ export default async function AdminDashboard() {
           </div>
 
           {stats.lowStock.length === 0 ? (
-            <p className="text-muted-foreground p-5 text-sm">
-              Nada por reponer con urgencia.
-            </p>
+            <p className="p-5 text-sm text-white/35">Nada por reponer con urgencia.</p>
           ) : (
-            <ul className="divide-line divide-y">
+            <ul className="divide-y divide-white/[0.06]">
               {stats.lowStock.map((item, i) => (
                 <li key={i} className="flex items-center justify-between gap-4 p-4">
                   <div className="min-w-0">
-                    <p className="text-foreground truncate text-sm">{item.name}</p>
-                    <p className="text-muted-foreground truncate text-xs">
-                      {item.variant}
-                    </p>
+                    <p className="truncate text-sm text-white">{item.name}</p>
+                    <p className="truncate text-xs text-white/40">{item.variant}</p>
                   </div>
-                  <span className="text-foreground inline-flex shrink-0 items-center gap-1.5 text-sm font-medium">
+                  <span className="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-amber-300">
                     <AlertTriangle className="size-3.5" />
                     {item.stock}
                   </span>
@@ -118,12 +122,12 @@ export default async function AdminDashboard() {
           )}
         </section>
 
-        <section className="border-line rounded-xl border">
-          <div className="border-line flex items-center justify-between border-b p-5">
-            <h2 className="font-medium">Últimas ventas</h2>
+        <section className="vidrio-sutil overflow-hidden rounded-2xl">
+          <div className="flex items-center justify-between border-b border-white/[0.07] p-5">
+            <h2 className="font-medium text-white">Últimas ventas</h2>
             <Link
               href="/admin/ventas"
-              className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm"
+              className="inline-flex items-center gap-1 text-sm text-white/45 transition-colors hover:text-white"
             >
               Ver todas
               <ArrowRight className="size-3.5" />
@@ -131,20 +135,20 @@ export default async function AdminDashboard() {
           </div>
 
           {sales.length === 0 ? (
-            <p className="text-muted-foreground p-5 text-sm">
+            <p className="p-5 text-sm text-white/35">
               Todavía no registraste ninguna venta.
             </p>
           ) : (
-            <ul className="divide-line divide-y">
+            <ul className="divide-y divide-white/[0.06]">
               {sales.map((sale) => (
                 <li key={sale.id} className="flex items-center justify-between gap-4 p-4">
                   <div className="min-w-0">
-                    <p className="text-foreground truncate text-sm">{sale.productName}</p>
-                    <p className="text-muted-foreground truncate text-xs">
+                    <p className="truncate text-sm text-white">{sale.productName}</p>
+                    <p className="truncate text-xs text-white/40">
                       {sale.customerName} · {sale.saleNumber}
                     </p>
                   </div>
-                  <span className="tnum text-foreground shrink-0 text-sm font-medium">
+                  <span className="tnum shrink-0 text-sm font-medium text-white">
                     {formatARS(sale.salePrice * sale.quantity)}
                   </span>
                 </li>
@@ -157,20 +161,20 @@ export default async function AdminDashboard() {
       {stats.pendingLeads > 0 && (
         <Link
           href="/admin/plan-canje"
-          className="border-line hover:border-foreground/25 mt-6 flex items-center justify-between gap-4 rounded-xl border p-5 transition-colors"
+          className="vidrio-sutil vidrio-sutil-hover mt-6 flex items-center justify-between gap-4 rounded-2xl p-5"
         >
           <div>
-            <p className="text-foreground font-medium">
+            <p className="font-medium text-white">
               {stats.pendingLeads}{" "}
               {stats.pendingLeads === 1
                 ? "consulta de Plan Canje sin responder"
                 : "consultas de Plan Canje sin responder"}
             </p>
-            <p className="text-muted-foreground mt-0.5 text-sm">
+            <p className="mt-0.5 text-sm text-white/45">
               Cuanto antes las contestes, más chances de cerrar.
             </p>
           </div>
-          <ArrowRight className="text-muted-foreground size-4 shrink-0" />
+          <ArrowRight className="size-4 shrink-0 text-white/40" />
         </Link>
       )}
     </div>

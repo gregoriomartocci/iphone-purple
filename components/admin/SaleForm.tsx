@@ -99,14 +99,14 @@ export function SaleForm({
   }
 
   const fieldClass =
-    "h-10 w-full rounded-lg border border-line bg-surface px-3 text-sm text-foreground outline-none transition-colors focus-visible:border-ink";
+    "h-10 w-full rounded-lg border border-line bg-surface px-3 text-sm text-foreground outline-none transition-colors focus-visible:border-ring";
 
   if (!open) {
     return (
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="bg-ink hover:bg-ink/85 inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium text-white transition-colors"
+        className="bg-primary hover:bg-primary/85 text-primary-foreground inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium transition-colors"
       >
         <Plus className="size-4" />
         Registrar venta
@@ -231,7 +231,7 @@ export function SaleForm({
       </div>
 
       {!supabaseReady && (
-        <p className="mt-4 text-sm text-amber-700">
+        <p className="mt-4 text-sm text-amber-300">
           Conectá Supabase para poder registrar ventas.
         </p>
       )}
@@ -240,7 +240,7 @@ export function SaleForm({
         <button
           type="submit"
           disabled={pending || !supabaseReady}
-          className="bg-ink hover:bg-ink/85 inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-colors disabled:opacity-50"
+          className="bg-primary hover:bg-primary/85 text-primary-foreground inline-flex h-10 items-center gap-2 rounded-full px-6 text-sm font-medium transition-colors disabled:opacity-50"
         >
           {pending && <Loader2 className="size-4 animate-spin" />}
           Guardar venta

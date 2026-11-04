@@ -2,6 +2,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { z } from "zod";
 import type { ParsedRow } from "@/types";
+import { precioArsDesdeUsd } from "@/lib/cotizacion";
+import { elegirInterprete, interpretarConSesion } from "./interprete";
 
 /**
  * Interpretación de listas de proveedores.
@@ -114,22 +116,15 @@ Reglas:
 
 let cached: Anthropic | null = null;
 
-/** Cliente perezoso: si la clave falta, queremos un error claro y no un crash al importar el módulo. */
+/** Cliente perezoso: construirlo al importar el módulo haría fallar hasta a quien no interpreta nada. */
 function client(): Anthropic {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey || apiKey.length < 30) {
-    throw new Error(
-      "Falta configurar ANTHROPIC_API_KEY para interpretar listas de proveedores."
-    );
-  }
-  if (!cached) cached = new Anthropic({ apiKey });
+  if (!cached) cached = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   return cached;
 }
 
-export async function parseSupplierList(rawText: string): Promise<ParsedList> {
-  const text = rawText.trim();
-  if (!text) return { rows: [], warnings: [] };
+type Lista = z.infer<typeof ListSchema>;
 
+async function porApi(text: string): Promise<Lista> {
   const response = await client().messages.parse({
     model: "claude-opus-5",
     max_tokens: 16000,
@@ -144,12 +139,57 @@ export async function parseSupplierList(rawText: string): Promise<ParsedList> {
     ],
   });
 
-  const parsed = response.parsed_output;
-  if (!parsed) {
+  if (!response.parsed_output) {
     throw new Error(
       "No se pudo interpretar la lista. Probá pegando menos líneas por vez."
     );
   }
+  return response.parsed_output;
+}
+
+/*
+ * El esquema en JSON Schema, que es cómo se le explica la forma a la sesión.
+ * `z.toJSONSchema` arrastra los `.describe()` de cada campo, así que las reglas
+ * de interpretación —qué es 'replica', cuándo va 'sellado'— viajan iguales por
+ * los dos caminos. Se calcula una vez: no cambia entre listas.
+ */
+let esquemaJson: string | null = null;
+
+/**
+ * Por sesión no hay salida estructurada, así que lo que vuelve es texto y hay
+ * que validarlo contra el mismo esquema. Esta validación es la que hace que el
+ * camino de sesión sea tan confiable como el de API: si el modelo se desvía de
+ * la forma, el error aparece acá y no más adelante, con un precio mal cargado.
+ */
+async function porSesion(binario: string, text: string): Promise<Lista> {
+  esquemaJson ??= JSON.stringify(z.toJSONSchema(ListSchema), null, 1);
+  const crudo = await interpretarConSesion(binario, SYSTEM_PROMPT, esquemaJson, text);
+
+  const validado = ListSchema.safeParse(crudo);
+  if (!validado.success) {
+    const donde = validado.error.issues
+      .slice(0, 3)
+      .map((i) => `${i.path.join(".") || "(raíz)"}: ${i.message}`)
+      .join("; ");
+    throw new Error(
+      `La sesión devolvió datos que no cumplen el formato esperado (${donde}). ` +
+        "Probá de nuevo, o cargá ANTHROPIC_API_KEY para usar la API, que garantiza la forma."
+    );
+  }
+  return validado.data;
+}
+
+export async function parseSupplierList(rawText: string): Promise<ParsedList> {
+  const text = rawText.trim();
+  if (!text) return { rows: [], warnings: [] };
+
+  const eleccion = elegirInterprete();
+  if (eleccion.modo === null) throw new Error(eleccion.error);
+
+  const parsed =
+    eleccion.modo === "api"
+      ? await porApi(text)
+      : await porSesion(eleccion.binario, text);
 
   return { rows: parsed.rows as ParsedRow[], warnings: parsed.warnings };
 }
@@ -157,8 +197,9 @@ export async function parseSupplierList(rawText: string): Promise<ParsedList> {
 /**
  * Precio de venta a partir del costo.
  *
- * Se redondea hacia arriba a la decena de miles más cercana para que los precios
- * queden en cifras presentables ($1.250.000 y no $1.247.318).
+ * El redondeo del precio en pesos vive en `lib/cotizacion.ts`, porque el
+ * recálculo diario por cambio de cotización tiene que dar exactamente lo
+ * mismo que esto.
  */
 export function sellPrice(
   cost: number,
@@ -168,11 +209,10 @@ export function sellPrice(
 ): { priceArs: number; priceUsd: number; costUsd: number } {
   const costUsd = currency === "USD" ? cost : cost / dollarRate;
   const priceUsd = Math.round(costUsd * (1 + marginPct / 100));
-  const rawArs = priceUsd * dollarRate;
 
   return {
     costUsd: Math.round(costUsd * 100) / 100,
     priceUsd,
-    priceArs: Math.ceil(rawArs / 10_000) * 10_000,
+    priceArs: precioArsDesdeUsd(priceUsd, dollarRate),
   };
 }

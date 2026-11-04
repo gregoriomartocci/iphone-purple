@@ -8,6 +8,12 @@ const SITE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://iphonepurple.com.ar
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSettings();
 
+  // "Calle 20 4243, Gonnet, La Plata" → calle y localidad, que es como las
+  // pide schema.org. Sin coma, todo es calle y la localidad cae al partido.
+  const [calle, localidad = "La Plata"] = settings.address
+    .split(",")
+    .map((parte) => parte.trim());
+
   /**
    * Ficha del negocio para Google, en el formato que arma el resultado con
    * mapa, horarios y teléfono.
@@ -33,8 +39,17 @@ export default async function StoreLayout({ children }: { children: React.ReactN
     paymentAccepted: "Efectivo, transferencia, tarjeta",
     address: {
       "@type": "PostalAddress",
-      streetAddress: settings.address,
-      addressLocality: "La Plata",
+      /*
+       * La dirección se guarda como un solo texto porque es un solo campo del
+       * panel, pero el schema la quiere partida. Se corta en la primera coma:
+       * lo de antes es la calle, lo que sigue la localidad.
+       *
+       * Antes la localidad estaba fija en "La Plata" y la calle llevaba la
+       * dirección entera, así que el partido aparecía dos veces y la
+       * localidad real —Gonnet, City Bell, lo que sea— se perdía.
+       */
+      streetAddress: calle,
+      addressLocality: localidad,
       addressRegion: "Buenos Aires",
       addressCountry: "AR",
     },

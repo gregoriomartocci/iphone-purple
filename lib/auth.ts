@@ -1,14 +1,9 @@
 import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { createAdminClient } from "@/lib/supabase/server";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
     Credentials({
       credentials: {
         email: { label: "Email", type: "email" },
@@ -32,11 +27,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user, account }) {
+    /**
+     * El rol se resuelve una sola vez, al iniciar sesión: `user` llega solo en
+     * ese momento y después el rol viaja en el token, así que no hay una
+     * consulta a la base por cada request.
+     *
+     * Antes esta búsqueda estaba detrás de `account?.provider === "google"`, y
+     * como el panel entra por mail y contraseña, el rol quedaba `undefined`
+     * siempre. `proxy.ts` exige 'admin' o 'super_admin', así que el login
+     * funcionaba y aun así el panel expulsaba a la home: parecía un problema de
+     * contraseña y era de rol.
+     *
+     * La contracara de cachearlo en el token: cambiarle el rol a alguien no
+     * tiene efecto hasta que vuelva a entrar. Para un panel de un solo
+     * administrador es el intercambio correcto.
+     */
+    async jwt({ token, user }) {
       if (user) {
         token.sub = user.id;
-      }
-      if (account?.provider === "google" && token.sub) {
         const supabase = createAdminClient();
         const { data: profile } = await supabase
           .from("profiles")

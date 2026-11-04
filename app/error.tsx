@@ -5,10 +5,10 @@ import Link from "next/link";
 
 export default function Error({
   error,
-  reset,
+  retry,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
+  retry: () => void;
 }) {
   useEffect(() => {
     console.error(error);
@@ -27,7 +27,7 @@ export default function Error({
       )}
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <button
-          onClick={reset}
+          onClick={() => retry()}
           className="bg-ink hover:bg-ink/85 inline-flex h-12 items-center justify-center rounded-full px-7 text-sm font-medium text-white transition-colors"
         >
           Reintentar

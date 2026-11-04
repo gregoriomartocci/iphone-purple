@@ -1,4 +1,5 @@
 import type { ParsedRow, Supplier } from "@/types";
+import { slugify } from "@/utils/format";
 
 /**
  * Las decisiones que hay que tomar para publicar solo una lista de WhatsApp.
@@ -64,10 +65,21 @@ export function telefonoComparable(valor: string | null | undefined): string {
   }
   if (d.startsWith("0")) d = d.slice(1);
 
-  // Área (2 a 4 dígitos) + 15 + abonado (6 a 8). Solo se saca cuando lo que
-  // queda a los costados tiene forma de número, para no mutilar uno que
-  // casualmente contenga un 15.
-  d = d.replace(/^(\d{2,4})15(\d{6,8})$/, "$1$2");
+  /*
+   * Área (2 a 4 dígitos) + 15 + abonado (6 a 8), el formato viejo de los
+   * celulares argentinos.
+   *
+   * La condición de los 12 dígitos no es cosmética: un número nacional tiene
+   * 10, así que solo tiene sentido sacar el 15 cuando quedan 10. Sin esa
+   * condición, un número que casualmente contiene un 15 se mutila. Pasó con
+   * una línea real de La Plata: 221 571-3416 queda como "2215713416", que se
+   * puede leer como 22|15|713416, y la función devolvía cadena vacía. Un
+   * número que no normaliza no empareja con nada, y donde se usa para
+   * verificar identidad apaga la verificación entera.
+   */
+  if (d.length === 12) {
+    d = d.replace(/^(\d{2,4})15(\d{6,8})$/, "$1$2");
+  }
 
   // Sin área no hay con qué desambiguar.
   if (d.length < 9) return "";
@@ -167,6 +179,46 @@ export function claveEquipo(fila: ParsedRow): string {
 }
 
 /**
+ * El SKU que identifica una variante. Tiene que dar igual entre importaciones.
+ *
+ * Lleva la autenticidad porque si no, una réplica y un original del mismo
+ * modelo, capacidad y grado comparten SKU, y al publicar uno pisa al otro: se
+ * actualiza la fila equivocada y un equipo original queda con el precio —y la
+ * marca— de una réplica. El sufijo va solo en las réplicas para que el SKU de
+ * un original siga siendo el corto y legible de siempre.
+ *
+ * Es también lo que hace que esto coincida con `claveEquipo` de
+ * `sincronizar.ts`, que sí distingue por autenticidad. Sin eso, el cálculo de
+ * qué quedó sin stock apuntaba a una variante distinta de la que había
+ * publicado.
+ */
+export function skuDe(row: ParsedRow): string {
+  /* La capacidad va en mayúsculas sí o sí. `claveEquipo` la pasa a minúsculas,
+     así que sin normalizar acá "256GB" y "256gb" eran SKUs distintos y poner en
+     cero el stock apuntaba a una variante que no existía: no fallaba, no
+     actualizaba nada. */
+  const capacidad = (row.storage || "NA").trim().toUpperCase();
+  const base = `${slugify(row.model).toUpperCase()}-${capacidad}-${row.grade}`;
+  return row.authenticity === "replica" ? `${base}-REPLICA` : base;
+}
+
+/**
+ * El mismo SKU, pero a partir de la clave que usa `claveEquipo`.
+ *
+ * Existe para poner en cero el stock de lo que un proveedor dejó de ofrecer:
+ * ahí no hay una fila, hay una clave de algo que ya no está.
+ */
+export function skuDesdeClave(clave: string): string {
+  const [model, storage, grade, authenticity] = clave.split("|");
+  return skuDe({
+    model,
+    storage,
+    grade,
+    authenticity,
+  } as unknown as ParsedRow);
+}
+
+/**
  * Con qué proveedor nos quedamos cuando varios ofrecen lo mismo.
  *
  * Gana el costo más bajo, que es el que deja más margen con el mismo precio
@@ -175,12 +227,25 @@ export function claveEquipo(fila: ParsedRow): string {
  * número más chico, que es exactamente al revés.
  */
 export function mejorPorEquipo(filas: ParsedRow[]): ParsedRow[] {
-  const mejores = new Map<string, ParsedRow>();
+  return mejorPorEquipoCon(filas, (f) => f);
+}
 
-  for (const fila of filas) {
+/**
+ * La misma elección, cuando lo que se compara trae algo más pegado.
+ *
+ * Al cruzar proveedores hace falta saber de quién era la fila que ganó —es
+ * quien define el margen—, y una fila sola no lo dice. En vez de repetir la
+ * regla del costo más bajo en dos lugares, que es como terminan difiriendo,
+ * se compara acá y `mejorPorEquipo` queda como el caso sin acompañante.
+ */
+export function mejorPorEquipoCon<T>(items: T[], filaDe: (item: T) => ParsedRow): T[] {
+  const mejores = new Map<string, T>();
+
+  for (const item of items) {
+    const fila = filaDe(item);
     const clave = `${claveEquipo(fila)}|${fila.currency}`;
     const actual = mejores.get(clave);
-    if (!actual || fila.cost < actual.cost) mejores.set(clave, fila);
+    if (!actual || fila.cost < filaDe(actual).cost) mejores.set(clave, item);
   }
 
   return [...mejores.values()];
@@ -273,4 +338,382 @@ export function equiposSinStock(
   return [...new Set(filasAnteriores.map(claveEquipo))].filter(
     (clave) => !vigentes.has(clave)
   );
+}
+
+/** Una persona que escribe en los chats, con lo que se sabe de ella. */
+export interface AutorDetectado {
+  /** El teléfono tal como lo entrega WhatsApp, para mostrarlo y copiarlo. */
+  telefono: string;
+  /** La forma reducida, que es con la que se empareja. */
+  comparable: string;
+  nombre: string | null;
+  /** En qué chats apareció, por nombre. Un proveedor suele estar en varios. */
+  chats: string[];
+  mensajes: number;
+  /** Cuántos de esos mensajes tienen pinta de lista de precios. */
+  listas: number;
+  /** Fecha del último mensaje que parecía lista, o `null` si nunca mandó una. */
+  ultimaLista: string | null;
+  /** El proveedor con el que empareja, o `null` si todavía no está cargado. */
+  proveedor: Supplier | null;
+  /**
+   * Ya existe un proveedor con este teléfono, pero está desactivado.
+   *
+   * Sin este dato, el desactivado se vería igual que uno que nunca se cargó,
+   * y volver a cargarlo dejaría dos proveedores con el mismo teléfono y
+   * márgenes distintos. Cuál de los dos gana al emparejar depende del orden
+   * en que vuelvan de la base, que no es una decisión de nadie.
+   */
+  proveedorInactivo: boolean;
+  /** El texto de su última lista, para poder reconocerlo sin salir del panel. */
+  ultimoTexto: string | null;
+  /** El nombre que dice su propia lista, si lo dice. Para proponerlo al cargar. */
+  nombreDeLaLista: string | null;
+  /** En cuántos días distintos mandó listas. Un proveedor manda casi a diario. */
+  diasConListas: number;
+  /** Cuántos equipos se le contaron a la última lista. */
+  equiposEnUltima: number;
+  /** De 0 a 100, qué tan probable es que sea un proveedor. */
+  confianza: number;
+  /** Por qué se le dio esa confianza, en palabras. Nunca un número solo. */
+  senales: string[];
+}
+
+/**
+ * Palabras que aparecen en el encabezado de casi toda lista y no nombran a
+ * nadie. Un candidato que solo tiene de estas no es un nombre.
+ */
+const PALABRAS_GENERICAS = new Set([
+  "lista",
+  "listado",
+  "precios",
+  "precio",
+  "stock",
+  "actualizado",
+  "actualizada",
+  "mayorista",
+  "mayoristas",
+  "revendedores",
+  "revendedor",
+  "usados",
+  "usado",
+  "nuevos",
+  "nuevo",
+  "sellados",
+  "sellado",
+  "vip",
+  "hoy",
+  "al",
+  "de",
+  "del",
+  "la",
+  "el",
+  "los",
+  "las",
+  "y",
+  "o",
+  "con",
+  "para",
+  "buenos",
+  "dias",
+  "buen",
+  "dia",
+  "tarde",
+  "apple",
+  "iphone",
+  "samsung",
+  "xiaomi",
+  "motorola",
+  "watch",
+  "macbook",
+  "macbooks",
+  "ipad",
+  "playstation",
+  "camaras",
+  "camara",
+  "deportivas",
+  "accesorios",
+  "entrega",
+  "inmediata",
+  "disponible",
+  "oferta",
+  "ofertas",
+  "tester",
+  "seminuevos",
+  "importados",
+
+  "usd",
+  "ars",
+  "pesos",
+  "dolares",
+  "envio",
+  "envios",
+  "en",
+]);
+
+/**
+ * El nombre del proveedor, si lo dice en su propia lista.
+ *
+ * Los proveedores encabezan la lista con su marca —PROVE-TECH, TECHDOG— pero
+ * no todos: muchos arrancan con "LISTADO USADOS AL 30/10" o con la categoría
+ * de lo que venden. Esto devuelve `null` cuando no encuentra algo que parezca
+ * un nombre, que es lo correcto: sugerir "Lista Vip" como nombre de proveedor
+ * es peor que no sugerir nada.
+ *
+ * La normalización no es un detalle. Varios escriben el encabezado con los
+ * caracteres matemáticos de Unicode para que se vea en negrita —𝗧𝗘𝗖𝗛𝗗𝗢𝗚 no
+ * tiene una sola letra ASCII— y sin pasarlos a su forma simple no coinciden
+ * con nada ni se pueden comparar con la lista de palabras genéricas.
+ */
+export function nombreSugerido(texto: string | null): string | null {
+  if (!texto) return null;
+
+  const lineas = texto
+    .normalize("NFKC")
+    .split("\n")
+    .map((l) =>
+      l
+        // Separadores con los que encadenan nombre y rubro: "TECHDOG · APPLE".
+        .split(/[·|]/)[0]
+        // Markdown de WhatsApp y adornos.
+        .replace(/[*_~`]/g, "")
+        // Emoji, banderas y símbolos sueltos.
+        .replace(
+          /[\p{Extended_Pictographic}\p{Emoji_Presentation}\u{1F1E6}-\u{1F1FF}]/gu,
+          ""
+        )
+        .replace(/\s+/g, " ")
+        .trim()
+    )
+    .filter(Boolean);
+
+  /*
+   * Solo el primer renglón.
+   *
+   * Medido contra las listas reales: mirando los primeros cuatro, de seis
+   * proveedores salían dos nombres buenos y tres inventados —"Midnight", que
+   * es un color; "En Usd", de un renglón de moneda; "Envio", de un saludo—.
+   * Los dos nombres de verdad estaban en el primer renglón.
+   *
+   * Un nombre inventado es peor que ninguno: alguien lo acepta sin mirar y
+   * queda un proveedor llamado Midnight para siempre. Mejor pedirlo a mano.
+   */
+  for (const linea of lineas.slice(0, 1)) {
+    // Una fecha en el encabezado es "LISTADO AL 30/10", no un nombre.
+    if (/\d{1,2}[/-]\d{1,2}/.test(linea)) continue;
+    if (linea.length < 3 || linea.length > 40) continue;
+
+    const palabras = linea.split(" ").filter(Boolean);
+    if (palabras.length > 4) continue;
+
+    /* Sin acentos para comparar: la lista de genéricas dice "camaras" y el
+       encabezado dice "CÁMARAS". Con acento no coincidía y "Cámaras
+       Deportivas" se colaba como nombre de proveedor. */
+    const propias = palabras.filter((w) => {
+      const limpia = w
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[.,:;!¡?¿]/g, "");
+      return !PALABRAS_GENERICAS.has(limpia);
+    });
+    if (propias.length === 0) continue;
+
+    const nombre = propias
+      .join(" ")
+      .replace(/[.,:;]+$/, "")
+      .trim();
+    if (nombre.length < 3) continue;
+
+    /* Casi todos lo escriben en mayúsculas. Se pasa a capitalizado porque va a
+       un campo que después se lee en pantallas y listados, no a un cartel. */
+    /* También después de un guion: PROVE-TECH es "Prove-Tech", no
+       "Prove-tech". Son marcas y así es como las escriben. */
+    return nombre
+      .toLowerCase()
+      .replace(/(^|[\s-])(\p{L})/gu, (_, antes, letra) => antes + letra.toUpperCase());
+  }
+
+  return null;
+}
+
+/**
+ * Cuántos renglones de la lista parecen un equipo con precio.
+ *
+ * Más exigente que `pareceLista`, que solo pide tres renglones con algún
+ * número de tres cifras: acá se pide además que el renglón tenga letras, para
+ * no contar una tanda de precios sueltos o un número de teléfono partido.
+ */
+export function renglonesDeEquipo(texto: string): number {
+  return texto
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => /\d{3,}/.test(l) && /[a-záéíóúñ]{3,}/i.test(l)).length;
+}
+
+/**
+ * Qué tan probable es que alguien sea un proveedor, y por qué.
+ *
+ * Esto es una sugerencia, no una decisión: quien carga al proveedor es una
+ * persona, porque equivocarse significa publicar precios de alguien que no
+ * vende. Por eso devuelve también las razones. Un número solo —"87% de
+ * confianza"— no se puede discutir; "manda listas 3 de los últimos 3 días, 42
+ * equipos en la última" sí, y se verifica de un vistazo.
+ *
+ * Las señales son las que se observan en los chats de verdad:
+ *
+ * - **Manda listas.** Es la condición, no una señal más: sin listas no hay
+ *   nada que importar por más que escriba todo el día.
+ * - **Las manda seguido.** Un proveedor pasa su lista casi a diario; quien
+ *   mandó una sola vez puede ser un revendedor reenviando algo.
+ * - **Las listas son largas.** Cuarenta equipos es un mayorista; cuatro es
+ *   alguien contestando por un modelo puntual.
+ * - **Tiene nombre guardado.** Débil pero suma: a los proveedores se los
+ *   agenda.
+ */
+export function confianzaProveedor(autor: {
+  listas: number;
+  diasConListas: number;
+  equiposEnUltima: number;
+  nombre: string | null;
+  mensajes: number;
+}): { puntos: number; senales: string[] } {
+  if (autor.listas === 0) {
+    return { puntos: 0, senales: ["Nunca mandó algo que parezca una lista"] };
+  }
+
+  let puntos = 35;
+  const senales = [
+    autor.listas === 1 ? "Mandó una lista" : `Mandó ${autor.listas} listas`,
+  ];
+
+  if (autor.diasConListas >= 3) {
+    puntos += 30;
+    senales.push(`En ${autor.diasConListas} días distintos`);
+  } else if (autor.diasConListas === 2) {
+    puntos += 18;
+    senales.push("En 2 días distintos");
+  }
+
+  if (autor.equiposEnUltima >= 25) {
+    puntos += 25;
+    senales.push(`${autor.equiposEnUltima} equipos en la última`);
+  } else if (autor.equiposEnUltima >= 10) {
+    puntos += 15;
+    senales.push(`${autor.equiposEnUltima} equipos en la última`);
+  } else if (autor.equiposEnUltima > 0) {
+    puntos += 5;
+    senales.push(`Solo ${autor.equiposEnUltima} equipos en la última`);
+  }
+
+  if (autor.nombre) {
+    puntos += 10;
+    senales.push("Está agendado");
+  }
+
+  return { puntos: Math.min(100, puntos), senales };
+}
+
+/**
+ * Quiénes escriben en los chats, y cuáles de ellos ya son proveedores cargados.
+ *
+ * Esta es la pantalla previa a todo lo demás. El panel no puede pedirle al
+ * dueño que cargue el teléfono de once proveedores a mano y sin equivocarse:
+ * los teléfonos no están a la vista en WhatsApp, y basta un dígito mal para
+ * que una lista se publique con el margen de otro proveedor.
+ *
+ * Se agrupa por **autor y no por chat**, por la misma razón que
+ * `proveedorDelMensaje` mira el autor: en un grupo de revendedores publican
+ * varios proveedores distintos. Agrupar por chat los mostraría como una sola
+ * fila —"comunidad iCell Oeste"— y no habría forma de mapear a cada uno.
+ *
+ * El mismo autor que escribe en un grupo y también por privado es una sola
+ * fila, porque la clave es el teléfono reducido. Sus dos chats quedan
+ * listados en `chats`, que es justamente el dato que permite reconocerlo.
+ *
+ * Los mensajes propios se descartan: nunca son listas de proveedor.
+ */
+export function autoresDetectados(
+  chats: ChatWhatsapp[],
+  proveedores: Supplier[]
+): AutorDetectado[] {
+  /* Los días con lista se acumulan aparte porque hay que contarlos sin
+     repetir: tres listas en una tarde son un día, no tres. */
+  const dias = new Map<string, Set<string>>();
+  const porAutor = new Map<string, AutorDetectado>();
+
+  for (const chat of chats) {
+    for (const mensaje of chat.mensajes) {
+      if (mensaje.mio) continue;
+
+      const telefono = chat.grupo ? mensaje.autor : (mensaje.autor ?? chat.telefono);
+      const comparable = telefonoComparable(telefono);
+      // Sin código de área no se puede emparejar sin riesgo de confundir a dos
+      // proveedores de ciudades distintas: no se muestra como mapeable.
+      if (!comparable || !telefono) continue;
+
+      let autor = porAutor.get(comparable);
+      if (!autor) {
+        autor = {
+          telefono,
+          comparable,
+          nombre: null,
+          chats: [],
+          mensajes: 0,
+          listas: 0,
+          ultimaLista: null,
+          proveedor: proveedorDelMensaje(chat, mensaje, proveedores),
+          proveedorInactivo: proveedores.some(
+            (p) => !p.isActive && telefonoComparable(p.phone) === comparable
+          ),
+          ultimoTexto: null,
+          nombreDeLaLista: null,
+          diasConListas: 0,
+          equiposEnUltima: 0,
+          confianza: 0,
+          senales: [],
+        };
+        porAutor.set(comparable, autor);
+        dias.set(comparable, new Set());
+      }
+
+      if (mensaje.autorNombre && !autor.nombre) autor.nombre = mensaje.autorNombre;
+
+      const dondeEscribio = chat.nombre ?? chat.telefono;
+      if (!autor.chats.includes(dondeEscribio)) autor.chats.push(dondeEscribio);
+
+      autor.mensajes += 1;
+      if (pareceLista(mensaje.texto)) {
+        autor.listas += 1;
+        dias.get(comparable)?.add(mensaje.fecha.slice(0, 10));
+        if (!autor.ultimaLista || mensaje.fecha > autor.ultimaLista) {
+          autor.ultimaLista = mensaje.fecha;
+          autor.ultimoTexto = mensaje.texto;
+          autor.equiposEnUltima = renglonesDeEquipo(mensaje.texto);
+          autor.nombreDeLaLista = nombreSugerido(mensaje.texto);
+        }
+      }
+    }
+  }
+
+  for (const [comparable, autor] of porAutor) {
+    autor.diasConListas = dias.get(comparable)?.size ?? 0;
+    const { puntos, senales } = confianzaProveedor(autor);
+    autor.confianza = puntos;
+    autor.senales = senales;
+  }
+
+  /*
+   * El orden es el del trabajo que hay que hacer, no el alfabético: arriba
+   * quien manda listas y todavía no está cargado, que es la fila que pide una
+   * acción. Entre esos manda la confianza, que es el orden en que conviene
+   * mirarlos.
+   */
+  return [...porAutor.values()].sort((a, b) => {
+    const pendienteA = a.listas > 0 && !a.proveedor;
+    const pendienteB = b.listas > 0 && !b.proveedor;
+    if (pendienteA !== pendienteB) return pendienteA ? -1 : 1;
+    if (a.confianza !== b.confianza) return b.confianza - a.confianza;
+    return b.mensajes - a.mensajes;
+  });
 }

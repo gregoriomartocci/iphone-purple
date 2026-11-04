@@ -39,14 +39,51 @@ export {
  * más adelante no obliga a tocar ninguna vista.
  */
 
+/** Ya se avisó por consola de una clave secreta mal puesta: no hace falta repetirlo. */
+let avisadoDeClaveSecreta = false;
+
 /**
- * Las claves de ejemplo son cortas; una anon key real de Supabase es un JWT largo.
- * Ese contraste alcanza para distinguir "configurado" de "placeholder".
+ * Si hay credenciales de Supabase de verdad, o hay que servir la semilla.
+ *
+ * La versión anterior medía el largo de la clave: una anon key es un JWT largo y
+ * un placeholder es corto, así que el contraste alcanzaba. Ese supuesto se
+ * venció. Supabase emite ahora claves `sb_publishable_…`, que son **cortas a
+ * propósito** y no son JWT. Con el chequeo viejo, cargar una clave nueva y
+ * correcta daba `false`: el sitio volvía a la semilla y apagaba el cartel de
+ * demostración —que da por hecho que hay base—, o sea datos falsos sin aviso.
+ *
+ * Así que se mira la forma y no el tamaño, y se aceptan las dos que Supabase
+ * emite hoy: la nueva por su prefijo, y la legacy por el `eyJ` de todo JWT.
  */
 export function isSupabaseConfigured(): boolean {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
-  return url.startsWith("https://") && url.includes(".supabase.co") && key.length > 40;
+
+  if (!url.startsWith("https://") || !url.includes(".supabase.co")) return false;
+
+  /*
+   * Una clave secreta en la variable pública la manda al navegador en cada
+   * visita, y saltea RLS: es la llave maestra de la base repartida a cualquiera.
+   * Devolver `false` la deja sin usar, pero en silencio parece "falta
+   * configurar", así que además se avisa. Una vez, porque esto se llama en cada
+   * consulta de cada página.
+   */
+  if (key.startsWith("sb_secret_") || key.startsWith("service_role")) {
+    if (!avisadoDeClaveSecreta) {
+      avisadoDeClaveSecreta = true;
+      console.error(
+        "[supabase] NEXT_PUBLIC_SUPABASE_ANON_KEY tiene una clave SECRETA. " +
+          "Esa variable viaja al navegador: poné la publishable y rotá la secreta ya."
+      );
+    }
+    return false;
+  }
+
+  // La nueva: corta, con prefijo. El resto es el identificador, de largo variable.
+  if (/^sb_publishable_[A-Za-z0-9_-]{10,}$/.test(key)) return true;
+
+  // La legacy: un JWT. Sigue valiendo hasta que Supabase las retire.
+  return key.startsWith("eyJ") && key.length > 40;
 }
 
 /**
