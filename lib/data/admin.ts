@@ -8,8 +8,12 @@ import { SUPPLIERS as SEED_SUPPLIERS } from "./seed";
 import type { Grade, ParsedRow, Product, Sale, Supplier, TradeInLead } from "@/types";
 import { armarMercado, type ListaDeProveedor } from "@/lib/whatsapp/mercado";
 import { armarRanking, type FilaRanking } from "@/lib/whatsapp/ranking";
-import { pareceLista, proveedorDelMensaje } from "@/lib/whatsapp/sincronizar";
-import { pedirMensajes } from "@/lib/whatsapp/servidor";
+import {
+  chatsDesdeHistorico,
+  pareceLista,
+  proveedorDelMensaje,
+} from "@/lib/whatsapp/sincronizar";
+import { pedirGrupos, pedirHistorico } from "@/lib/whatsapp/servidor";
 
 /**
  * Lecturas del panel.
@@ -228,16 +232,18 @@ export async function getUltimasListas(): Promise<ListaDeProveedor[]> {
 
 /**
  * El ranking de proveedores. Las fechas salen de las importaciones y, si el
- * lector responde, de los mensajes que está viendo: sin él el ranking sigue
- * andando, con menos historia.
+ * lector responde, de su histórico: sin él el ranking sigue andando, con menos
+ * historia.
  */
 export async function getRankingProveedores(dolar: number): Promise<FilaRanking[]> {
   if (!isSupabaseConfigured()) return [];
-  const [proveedores, listas, importaciones, mensajes] = await Promise.all([
+  const desde = new Date(Date.now() - 30 * 86_400_000).toISOString();
+  const [proveedores, listas, importaciones, historico, grupos] = await Promise.all([
     getSuppliers(),
     getUltimasListas(),
     createAdminClient().from("supplier_imports").select("supplier_id, created_at"),
-    pedirMensajes(30).catch(() => null),
+    pedirHistorico(desde).catch(() => null),
+    pedirGrupos().catch(() => null),
   ]);
   if (importaciones.error) throw new Error(importaciones.error.message);
 
@@ -248,10 +254,14 @@ export async function getRankingProveedores(dolar: number): Promise<FilaRanking[
   for (const i of importaciones.data ?? []) {
     if (i.supplier_id) anotar(i.supplier_id as string, i.created_at as string);
   }
-  if (mensajes?.ok) {
-    for (const chat of mensajes.datos.chats) {
+  if (historico?.ok) {
+    const chats = chatsDesdeHistorico(
+      historico.datos.mensajes,
+      grupos?.ok ? grupos.datos.grupos : []
+    );
+    for (const chat of chats) {
       for (const m of chat.mensajes) {
-        if (m.mio || !pareceLista(m.texto)) continue;
+        if (!pareceLista(m.texto)) continue;
         const proveedor = proveedorDelMensaje(chat, m, proveedores);
         if (proveedor) anotar(proveedor.id, m.fecha);
       }

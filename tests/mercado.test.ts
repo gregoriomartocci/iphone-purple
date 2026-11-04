@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { esTelefonoReal, mensajeDeStock } from "@/lib/whatsapp/consulta-stock";
 import { armarMercado, type ListaDeProveedor } from "@/lib/whatsapp/mercado";
-import { proveedorDelMensaje, ultimasListasVistas } from "@/lib/whatsapp/sincronizar";
+import {
+  chatsDesdeHistorico,
+  proveedorDelMensaje,
+  ultimasListasVistas,
+} from "@/lib/whatsapp/sincronizar";
 import type { ParsedRow, Supplier } from "@/types";
 
 function fila(p: Partial<ParsedRow> = {}): ParsedRow {
@@ -142,4 +146,21 @@ describe("listas en comunidades", () => {
 it("marca lo que todavía no llegó", () => {
   const [equipo] = armarMercado([lista("Onpres", [fila({ quantity: 0 })])], 1500);
   expect(equipo.ofertas[0].ingresando).toBe(true);
+});
+
+it("rearma los chats del histórico con los datos del grupo", () => {
+  const [chat] = chatsDesdeHistorico(
+    [
+      {
+        jid: "1@g.us",
+        chat: null,
+        fecha: "2026-11-04T10:00:00Z",
+        autor: "9",
+        texto: "hola",
+      },
+    ],
+    [{ jid: "1@g.us", nombre: "Onpres.ar", avisos: true, soloAdmins: true }]
+  );
+  expect(chat).toMatchObject({ nombre: "Onpres.ar", grupo: true, soloAdmins: true });
+  expect(chat.mensajes).toHaveLength(1);
 });
