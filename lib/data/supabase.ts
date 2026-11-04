@@ -35,6 +35,7 @@ type VariantRow = {
   cost_usd?: number | string | null;
   stock: number | null;
   sku: string | null;
+  is_active?: boolean | null;
 };
 
 type ImageRow = { url: string; alt: string | null; sort_order: number | null };
@@ -112,7 +113,9 @@ function mapProduct(row: ProductRow): Product {
     description: row.description ?? "",
     specs: row.specs ?? {},
     images: images.map((i) => ({ url: i.url, alt: i.alt ?? row.name })),
-    variants: (row.variants ?? []).map(mapVariant),
+    /* Una variante desactivada —por ejemplo, la más cara de dos equipos que
+       se unificaron— no se vende: no se muestra ni en el sitio ni en el panel. */
+    variants: (row.variants ?? []).filter((v) => v.is_active !== false).map(mapVariant),
     isFeatured: row.is_featured ?? false,
     createdAt: row.created_at,
   };

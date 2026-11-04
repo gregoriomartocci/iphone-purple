@@ -12,8 +12,10 @@ import {
   chatsDesdeHistorico,
   pareceLista,
   proveedorDelMensaje,
+  skuDe,
   ultimaPorEquipo,
 } from "@/lib/whatsapp/sincronizar";
+import { sellPrice } from "@/lib/whatsapp/parser";
 import { canonizarFila } from "@/lib/whatsapp/nombres";
 import { pedirGrupos, pedirHistorico } from "@/lib/whatsapp/servidor";
 
@@ -273,4 +275,84 @@ export async function getRankingProveedores(dolar: number): Promise<FilaRanking[
   }
 
   return armarRanking(proveedores, armarMercado(listas, dolar), fechas, new Date());
+}
+
+/** Una oferta de la última lista de un proveedor, con el precio que quedaría. */
+export interface OfertaProducto {
+  proveedorId: string;
+  proveedor: string;
+  costo: number;
+  moneda: "USD" | "ARS";
+  costoUsd: number;
+  precioUsd: number;
+  precioArs: number;
+  fecha: string;
+  ingresando: boolean;
+}
+
+export interface ExtraVariante {
+  proveedorId: string | null;
+  proveedor: string | null;
+  /** De más barata a más cara, incluida la que está publicada. */
+  ofertas: OfertaProducto[];
+}
+
+/** Proveedor de cada variante y todas las ofertas del mercado para ese equipo. */
+export async function getOfertasPorVariante(
+  dolar: number
+): Promise<Record<string, ExtraVariante>> {
+  if (!isSupabaseConfigured()) return {};
+  const [proveedores, listas, { data, error }] = await Promise.all([
+    getSuppliers(),
+    getUltimasListas(),
+    createAdminClient()
+      .from("product_variants")
+      .select("id, sku, supplier_id")
+      .eq("is_active", true),
+  ]);
+  if (error) throw new Error(error.message);
+
+  const margen = new Map(proveedores.map((p) => [p.id, p.defaultMarginPct]));
+  const porSku = new Map<string, OfertaProducto[]>();
+  for (const equipo of armarMercado(listas, dolar)) {
+    const sku = skuDe({
+      model: equipo.modelo,
+      storage: equipo.capacidad,
+      grade: equipo.grado,
+      authenticity: equipo.autenticidad,
+    } as ParsedRow);
+    porSku.set(
+      sku,
+      equipo.ofertas.map((o) => {
+        const precio = sellPrice(
+          o.costo,
+          o.moneda,
+          margen.get(o.proveedorId) ?? 0,
+          dolar
+        );
+        return {
+          proveedorId: o.proveedorId,
+          proveedor: o.proveedor,
+          costo: o.costo,
+          moneda: o.moneda,
+          costoUsd: o.costoUsd,
+          precioUsd: precio.priceUsd,
+          precioArs: precio.priceArs,
+          fecha: o.fecha,
+          ingresando: o.ingresando,
+        };
+      })
+    );
+  }
+
+  const extras: Record<string, ExtraVariante> = {};
+  for (const v of data ?? []) {
+    const proveedorId = (v.supplier_id as string | null) ?? null;
+    extras[v.id as string] = {
+      proveedorId,
+      proveedor: proveedores.find((p) => p.id === proveedorId)?.name ?? null,
+      ofertas: porSku.get(v.sku as string) ?? [],
+    };
+  }
+  return extras;
 }

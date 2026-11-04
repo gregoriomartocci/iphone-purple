@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ProductsTable } from "@/components/admin/ProductsTable";
 import { getSettings, isSupabaseConfigured } from "@/lib/data";
-import { getProductsConCosto } from "@/lib/data/admin";
+import { getOfertasPorVariante, getProductsConCosto } from "@/lib/data/admin";
 
 export const metadata: Metadata = { title: "Productos" };
 
@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminProductsPage() {
   const [products, settings] = await Promise.all([getProductsConCosto(), getSettings()]);
+  const extras = await getOfertasPorVariante(settings.dollarRate);
 
   return (
     <div className="max-w-6xl">
@@ -34,6 +35,7 @@ export default async function AdminProductsPage() {
       <ProductsTable
         products={products}
         dollarRate={settings.dollarRate}
+        extras={extras}
         supabaseReady={isSupabaseConfigured()}
       />
     </div>
