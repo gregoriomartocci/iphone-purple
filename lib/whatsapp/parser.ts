@@ -147,6 +147,40 @@ async function porApi(text: string): Promise<Lista> {
   return response.parsed_output;
 }
 
+/**
+ * Valida fila por fila lo que devolvió la sesión.
+ *
+ * Una fila incompleta queda afuera y se informa como aviso, sin completarla:
+ * adivinar una marca o un precio es peor que no publicar ese equipo. Solo se
+ * rechaza todo si la respuesta no tiene forma de lista.
+ */
+export function validarLista(crudo: unknown): Lista {
+  const raiz = z
+    .object({ rows: z.array(z.unknown()), warnings: z.array(z.string()).default([]) })
+    .safeParse(crudo);
+  if (!raiz.success) {
+    throw new Error(
+      "La sesión devolvió una respuesta sin forma de lista. Probá de nuevo, o cargá ANTHROPIC_API_KEY para usar la API."
+    );
+  }
+
+  const rows: Lista["rows"] = [];
+  const warnings = [...raiz.data.warnings];
+  for (const fila of raiz.data.rows) {
+    const validada = RowSchema.safeParse(fila);
+    if (validada.success) {
+      rows.push(validada.data);
+      continue;
+    }
+    const modelo = (fila as { model?: unknown } | null)?.model;
+    const campo = validada.error.issues[0]?.path.join(".") ?? "?";
+    warnings.push(
+      `Fila descartada por datos incompletos (${campo}): ${typeof modelo === "string" ? modelo : "sin modelo"}`
+    );
+  }
+  return { rows, warnings };
+}
+
 /*
  * El esquema en JSON Schema, que es cómo se le explica la forma a la sesión.
  * `z.toJSONSchema` arrastra los `.describe()` de cada campo, así que las reglas
@@ -165,18 +199,33 @@ async function porSesion(binario: string, text: string): Promise<Lista> {
   esquemaJson ??= JSON.stringify(z.toJSONSchema(ListSchema), null, 1);
   const crudo = await interpretarConSesion(binario, SYSTEM_PROMPT, esquemaJson, text);
 
-  const validado = ListSchema.safeParse(crudo);
-  if (!validado.success) {
-    const donde = validado.error.issues
-      .slice(0, 3)
-      .map((i) => `${i.path.join(".") || "(raíz)"}: ${i.message}`)
-      .join("; ");
-    throw new Error(
-      `La sesión devolvió datos que no cumplen el formato esperado (${donde}). ` +
-        "Probá de nuevo, o cargá ANTHROPIC_API_KEY para usar la API, que garantiza la forma."
-    );
+  return validarLista(crudo);
+}
+
+/** Une los mensajes de una tanda. La lista se corta solo acá, nunca a mitad de uno. */
+export const SEPARADOR_DE_MENSAJES = "\n\n=== mensaje siguiente ===\n\n";
+
+const MAXIMO_POR_TROZO = 8_000;
+const TROZOS_EN_PARALELO = 3;
+
+/**
+ * Agrupa los mensajes en trozos de un tamaño que el intérprete resuelve a tiempo.
+ *
+ * Un mensaje nunca se parte: su encabezado, como "USADOS", define cómo leer sus
+ * renglones. Un mensaje enorme queda como un trozo propio.
+ */
+export function trozosDeLista(texto: string): string[] {
+  const trozos: string[] = [];
+  let actual = "";
+  for (const mensaje of texto.split(SEPARADOR_DE_MENSAJES)) {
+    if (actual && actual.length + mensaje.length > MAXIMO_POR_TROZO) {
+      trozos.push(actual);
+      actual = "";
+    }
+    actual = actual ? `${actual}\n\n${mensaje}` : mensaje;
   }
-  return validado.data;
+  if (actual) trozos.push(actual);
+  return trozos;
 }
 
 export async function parseSupplierList(rawText: string): Promise<ParsedList> {
@@ -186,12 +235,28 @@ export async function parseSupplierList(rawText: string): Promise<ParsedList> {
   const eleccion = elegirInterprete();
   if (eleccion.modo === null) throw new Error(eleccion.error);
 
-  const parsed =
-    eleccion.modo === "api"
-      ? await porApi(text)
-      : await porSesion(eleccion.binario, text);
+  const trozos = trozosDeLista(text);
+  const resultados: Lista[] = [];
+  /*
+   * Si falla un trozo falla toda la lista. Una lista parcial se leería como que
+   * el proveedor dejó de ofrecer lo demás, y eso pasaría a stock cero.
+   */
+  for (let i = 0; i < trozos.length; i += TROZOS_EN_PARALELO) {
+    resultados.push(
+      ...(await Promise.all(
+        trozos
+          .slice(i, i + TROZOS_EN_PARALELO)
+          .map((t) =>
+            eleccion.modo === "api" ? porApi(t) : porSesion(eleccion.binario, t)
+          )
+      ))
+    );
+  }
 
-  return { rows: parsed.rows as ParsedRow[], warnings: parsed.warnings };
+  return {
+    rows: resultados.flatMap((r) => r.rows) as ParsedRow[],
+    warnings: resultados.flatMap((r) => r.warnings),
+  };
 }
 
 /**

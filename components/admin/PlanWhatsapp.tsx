@@ -9,6 +9,7 @@ import {
   type PlanParaRevisar,
 } from "@/app/admin/whatsapp/acciones";
 import { formatARS } from "@/utils/format";
+import type { Coincidencia } from "@/lib/whatsapp/plan";
 
 /**
  * El paso entre "el lector tiene mensajes" y "el catálogo tiene precios".
@@ -18,6 +19,12 @@ import { formatARS } from "@/utils/format";
  * precios que ve el cliente. Tenerlos separados da el único momento en que una
  * persona puede mirar qué va a pasar antes de que pase.
  */
+function textoCoincidencia(c: Coincidencia): string {
+  if (c.tipo === "producto-nuevo") return "Producto nuevo";
+  if (c.tipo === "variante-nueva") return "Variante nueva";
+  return `Actualiza: antes ${formatARS(c.precioActual)}`;
+}
+
 export function PlanWhatsapp({ hayProveedores }: { hayProveedores: boolean }) {
   const [plan, setPlan] = useState<PlanParaRevisar | null>(null);
   const [armando, setArmando] = useState(false);
@@ -141,15 +148,14 @@ export function PlanWhatsapp({ hayProveedores }: { hayProveedores: boolean }) {
                         {f.grade} · costo {f.cost} {f.currency} · {f.quantity} u.
                       </p>
                     </div>
-                    <span className="tnum shrink-0 text-sm text-white/70">
-                      {formatARS(
-                        Math.round(
-                          (f.currency === "USD" ? f.cost : f.cost / plan.dollarRate) *
-                            (1 + lote.marginPct / 100) *
-                            plan.dollarRate
-                        )
-                      )}
-                    </span>
+                    <div className="shrink-0 text-right">
+                      <p className="tnum text-sm text-white">
+                        {formatARS(lote.previa[i].precioArs)}
+                      </p>
+                      <p className="mt-0.5 text-[0.7rem] text-white/40">
+                        {textoCoincidencia(lote.previa[i].coincidencia)}
+                      </p>
+                    </div>
                   </li>
                 ))}
               </ul>

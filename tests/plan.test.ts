@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { listasParaImportar, planificarPublicacion } from "@/lib/whatsapp/plan";
+import {
+  coincidenciaEnCatalogo,
+  listasParaImportar,
+  planificarPublicacion,
+} from "@/lib/whatsapp/plan";
+import { skuDe, ultimaPorEquipo } from "@/lib/whatsapp/sincronizar";
 import type { ChatWhatsapp, MensajeWhatsapp } from "@/lib/whatsapp/sincronizar";
 import type { ParsedRow, Supplier } from "@/types";
 
@@ -325,5 +330,52 @@ describe("planificarPublicacion", () => {
       frenadas: [],
       sinStock: [],
     });
+  });
+});
+
+describe("listas por partes", () => {
+  it("une los mensajes de una tanda, pero no los de otro día", () => {
+    const listas = listasParaImportar(
+      [
+        chat({
+          mensajes: [
+            mensaje({ fecha: "2026-11-03T13:09:00Z", texto: `AYER\n${LISTA}` }),
+            mensaje({ fecha: "2026-11-04T13:09:00Z", texto: `IPHONE\n${LISTA}` }),
+            mensaje({ fecha: "2026-11-04T13:10:00Z", texto: `SAMSUNG\n${LISTA}` }),
+          ],
+        }),
+      ],
+      [proveedor()],
+      () => null
+    );
+
+    expect(listas).toHaveLength(1);
+    expect(listas[0].mensaje.texto).toContain("IPHONE");
+    expect(listas[0].mensaje.texto).toContain("SAMSUNG");
+    expect(listas[0].mensaje.texto).not.toContain("AYER");
+  });
+});
+
+describe("coincidenciaEnCatalogo", () => {
+  const f = fila({ model: "iPhone 15", storage: "128GB", grade: "a" });
+
+  it("distingue producto nuevo, variante nueva y actualización", () => {
+    expect(coincidenciaEnCatalogo(f, new Set(), new Map())).toEqual({
+      tipo: "producto-nuevo",
+    });
+    expect(coincidenciaEnCatalogo(f, new Set(["iphone-15"]), new Map())).toEqual({
+      tipo: "variante-nueva",
+    });
+    expect(
+      coincidenciaEnCatalogo(f, new Set(["iphone-15"]), new Map([[skuDe(f), 1_000_000]]))
+    ).toEqual({ tipo: "actualiza", precioActual: 1_000_000 });
+  });
+});
+
+describe("ultimaPorEquipo", () => {
+  it("una corrección vale aunque el precio anterior fuera más bajo", () => {
+    const r = ultimaPorEquipo([fila({ cost: 700 }), fila({ cost: 720 })]);
+    expect(r).toHaveLength(1);
+    expect(r[0].cost).toBe(720);
   });
 });

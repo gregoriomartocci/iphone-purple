@@ -77,3 +77,6 @@ mensajes-whatsapp.json
 
 # Sesiones que WhatsApp rechazó, apartadas al pedir un QR nuevo.
 .whatsapp-auth-rechazada-*/
+
+# Nombres de contactos que informa WhatsApp.
+contactos-whatsapp.json
