@@ -76,7 +76,9 @@ const RowSchema = z.object({
   cost: z
     .number()
     .positive()
-    .describe("Costo unitario que cobra el proveedor, solo el número."),
+    .describe(
+      "Costo de comprar UNA sola unidad, solo el número. Si hay precios por cantidad (x1, x3, x5), es el de x1."
+    ),
   quantity: z
     .number()
     .int()
@@ -106,6 +108,7 @@ const SYSTEM_PROMPT = `Interpretás listas de precios que los proveedores mayori
 El texto viene desprolijo: abreviaturas ("ip13", "15 PM", "SE 3"), emojis, líneas de saludo, precios sin símbolo, capacidades pegadas al modelo, estados escritos de mil formas ("impecable", "9 de 10", "usado a nuevo").
 
 Reglas:
+- Si un equipo tiene precios por cantidad ("USD 850 (x1)", "USD 840 (x3)", "USD 830 (x5)"), el costo es SIEMPRE el de una unidad: el de x1. Nunca el de x3 ni el de x5, aunque sea el más barato. Se vende de a uno y el margen se calcula sobre lo que cuesta comprar uno. Si no figura el precio por unidad, usá el de menor cantidad y avisalo en warnings.
 - Una fila por equipo concreto ofrecido. Si una línea lista varias capacidades con distintos precios, generá una fila por cada una.
 - Normalizá los modelos al nombre comercial completo de Apple.
 - No inventes datos. Si un dato no está, usá null (o cadena vacía en storage).

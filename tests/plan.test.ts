@@ -3,6 +3,7 @@ import {
   coincidenciaEnCatalogo,
   listasParaImportar,
   planificarPublicacion,
+  listasAceptadas,
   sumarListasVigentes,
 } from "@/lib/whatsapp/plan";
 import { skuDe, ultimaPorEquipo } from "@/lib/whatsapp/sincronizar";
@@ -401,5 +402,24 @@ describe("sumarListasVigentes", () => {
   it("no suma a un proveedor desactivado", () => {
     const r = sumarListasVigentes([], [proveedor({ isActive: false })], () => [fila()]);
     expect(r).toEqual([]);
+  });
+});
+
+describe("listasAceptadas", () => {
+  it("deja afuera solo las listas frenadas", () => {
+    const buena = proveedor({ id: "buena" });
+    const frenada = proveedor({ id: "frenada" });
+    const lista = (p: typeof buena) => ({
+      proveedor: p,
+      filas: [fila()],
+      filasAnteriores: [],
+    });
+
+    const r = listasAceptadas(
+      [lista(buena), lista(frenada)],
+      [{ proveedor: frenada, revisiones: [] }]
+    );
+
+    expect(r.map((i) => i.proveedor.id)).toEqual(["buena"]);
   });
 });

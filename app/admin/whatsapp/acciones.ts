@@ -21,6 +21,7 @@ import {
   coincidenciaEnCatalogo,
   listasParaImportar,
   planificarPublicacion,
+  listasAceptadas,
   sumarListasVigentes,
   type Coincidencia,
   type ListaInterpretada,
@@ -59,6 +60,8 @@ export interface LoteProveedor {
   /** El mensaje original. Va a `supplier_imports` para poder auditar después. */
   rawText: string;
   filas: ParsedRow[];
+  /** Toda la lista, también lo que perdió contra otro proveedor. */
+  listaCompleta: ParsedRow[];
   /** Para cada fila, en el mismo orden: su precio final y qué hace en el catálogo. */
   previa: { precioArs: number; coincidencia: Coincidencia }[];
 }
@@ -199,22 +202,27 @@ export async function planificarDesdeWhatsappAction(
       (variantes ?? []).map((v) => [v.sku as string, Number(v.price_ars)])
     );
 
+    /*
+     * Un lote por cada lista aceptada, aunque no haya ganado en ningún equipo:
+     * lo que ofrece igual tiene que quedar guardado para compararlo y para verlo
+     * en Mercado.
+     */
     const porProveedor = new Map<string, LoteProveedor>();
+    for (const { proveedor, filas } of listasAceptadas(interpretadas, plan.frenadas)) {
+      porProveedor.set(proveedor.id, {
+        proveedorId: proveedor.id,
+        proveedorNombre: proveedor.name,
+        marginPct: proveedor.defaultMarginPct,
+        rawText: textoDe.get(proveedor.id) ?? "",
+        filas: [],
+        listaCompleta: filas,
+        previa: [],
+      });
+    }
     for (const { fila, proveedor, precioArs } of plan.publicar) {
       // Lo que ganó una lista anterior ya está publicado: no se reescribe.
-      if (!textoDe.has(proveedor.id)) continue;
-      let lote = porProveedor.get(proveedor.id);
-      if (!lote) {
-        lote = {
-          proveedorId: proveedor.id,
-          proveedorNombre: proveedor.name,
-          marginPct: proveedor.defaultMarginPct,
-          rawText: textoDe.get(proveedor.id) ?? "",
-          filas: [],
-          previa: [],
-        };
-        porProveedor.set(proveedor.id, lote);
-      }
+      const lote = porProveedor.get(proveedor.id);
+      if (!lote) continue;
       lote.filas.push(fila);
       lote.previa.push({
         precioArs,
@@ -421,7 +429,8 @@ const PublicarSchema = z.object({
         proveedorId: z.string().min(1),
         marginPct: z.number().min(0).max(300),
         rawText: z.string(),
-        filas: z.array(ParsedRowSchema).min(1),
+        filas: z.array(ParsedRowSchema),
+        listaCompleta: z.array(ParsedRowSchema),
       })
     )
     .min(1, "No hay nada para publicar."),
@@ -454,6 +463,7 @@ export async function publicarPlanAction(
         dollarRate,
         rows: lote.filas as ParsedRow[],
         rawText: lote.rawText,
+        listaCompleta: lote.listaCompleta as ParsedRow[],
       });
     }
 

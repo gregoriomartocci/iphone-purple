@@ -205,9 +205,9 @@ export function planificarPublicacion(
    * frenada no dice nada sobre qué dejó de estar: tratarla como si lo dijera
    * pondría en cero todo el catálogo de ese proveedor por un precio raro.
    */
-  const anteriores = interpretadas
-    .filter((i) => !frenadas.some((f) => f.proveedor.id === i.proveedor.id))
-    .flatMap((i) => i.filasAnteriores);
+  const anteriores = listasAceptadas(interpretadas, frenadas).flatMap(
+    (i) => i.filasAnteriores
+  );
 
   const sinStock = equiposSinStock(
     publicar.map((p) => p.fila),
@@ -215,6 +215,19 @@ export function planificarPublicacion(
   );
 
   return { publicar, frenadas, sinStock };
+}
+
+/**
+ * Las listas que se pueden tomar como vigentes. Una frenada queda afuera: si se
+ * guardara, su precio sospechoso pasaría a ser contra lo que se compara mañana.
+ */
+export function listasAceptadas(
+  interpretadas: ListaInterpretada[],
+  frenadas: ListaFrenada[]
+): ListaInterpretada[] {
+  return interpretadas.filter(
+    (i) => !frenadas.some((f) => f.proveedor.id === i.proveedor.id)
+  );
 }
 
 /** Qué le pasaría al catálogo si se publica esta fila. */

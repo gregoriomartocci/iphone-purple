@@ -5,7 +5,8 @@ import { fetchProducts } from "./supabase";
 import { PRODUCTS as PRODUCTOS_SEMILLA } from "./seed";
 import { totalStock } from "@/lib/catalog";
 import { SUPPLIERS as SEED_SUPPLIERS } from "./seed";
-import type { Grade, Product, Sale, Supplier, TradeInLead } from "@/types";
+import type { Grade, ParsedRow, Product, Sale, Supplier, TradeInLead } from "@/types";
+import type { ListaDeProveedor } from "@/lib/whatsapp/mercado";
 
 /**
  * Lecturas del panel.
@@ -193,4 +194,31 @@ export async function getDashboardStats(dollarRate: number): Promise<DashboardSt
 export async function getProductsConCosto(): Promise<Product[]> {
   if (!isSupabaseConfigured()) return PRODUCTOS_SEMILLA;
   return fetchProducts({ conCosto: true });
+}
+
+/** La última lista importada de cada proveedor activo. */
+export async function getUltimasListas(): Promise<ListaDeProveedor[]> {
+  if (!isSupabaseConfigured()) return [];
+  const [proveedores, { data, error }] = await Promise.all([
+    getSuppliers(),
+    createAdminClient()
+      .from("supplier_imports")
+      .select("supplier_id, created_at, parsed_json")
+      .order("created_at", { ascending: false }),
+  ]);
+  if (error) throw new Error(error.message);
+
+  const vistos = new Set<string>();
+  const listas: ListaDeProveedor[] = [];
+  for (const fila of data ?? []) {
+    const proveedor = proveedores.find((p) => p.id === fila.supplier_id && p.isActive);
+    if (!proveedor || vistos.has(proveedor.id)) continue;
+    vistos.add(proveedor.id);
+    listas.push({
+      proveedor,
+      fecha: fila.created_at as string,
+      filas: (fila.parsed_json ?? []) as ParsedRow[],
+    });
+  }
+  return listas;
 }
