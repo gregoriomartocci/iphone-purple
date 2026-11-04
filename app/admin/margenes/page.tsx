@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { MargenesPanel } from "@/components/admin/MargenesPanel";
-import { getProducts, getSettings } from "@/lib/data";
-import { getSuppliers } from "@/lib/data/admin";
+import { getSettings } from "@/lib/data";
+import { getProductsConCosto, getSuppliers } from "@/lib/data/admin";
 import type { ReglasMargen } from "@/lib/margen";
 
 export const metadata: Metadata = { title: "Margen y precios" };
@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminMargenesPage() {
   const [items, settings, proveedores] = await Promise.all([
-    getProducts({}),
+    getProductsConCosto(),
     getSettings(),
     getSuppliers(),
   ]);

@@ -1,9 +1,11 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/server";
-import { isSupabaseConfigured, getProducts } from "./index";
+import { isSupabaseConfigured } from "./index";
+import { fetchProducts } from "./supabase";
+import { PRODUCTS as PRODUCTOS_SEMILLA } from "./seed";
 import { totalStock } from "@/lib/catalog";
 import { SUPPLIERS as SEED_SUPPLIERS } from "./seed";
-import type { Sale, Supplier, TradeInLead, Grade } from "@/types";
+import type { Grade, Product, Sale, Supplier, TradeInLead } from "@/types";
 
 /**
  * Lecturas del panel.
@@ -129,7 +131,7 @@ export type DashboardStats = {
 
 export async function getDashboardStats(dollarRate: number): Promise<DashboardStats> {
   const [products, sales, leads] = await Promise.all([
-    getProducts(),
+    getProductsConCosto(),
     getSales(200),
     getTradeInLeads(),
   ]);
@@ -185,4 +187,10 @@ export async function getDashboardStats(dollarRate: number): Promise<DashboardSt
     marginThisMonth,
     pendingLeads: leads.filter((l) => l.status === "pending").length,
   };
+}
+
+/** El catálogo con costos. Solo para pantallas del panel, nunca para la tienda. */
+export async function getProductsConCosto(): Promise<Product[]> {
+  if (!isSupabaseConfigured()) return PRODUCTOS_SEMILLA;
+  return fetchProducts({ conCosto: true });
 }

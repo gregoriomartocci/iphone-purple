@@ -240,3 +240,24 @@ export function coincidenciaEnCatalogo(
     ? { tipo: "variante-nueva" }
     : { tipo: "producto-nuevo" };
 }
+
+/**
+ * Suma la última lista de los proveedores que hoy no mandaron nada nuevo.
+ *
+ * Sin esto, el mejor precio se elige solo entre las listas de hoy, y una lista
+ * nueva más cara pisa un precio más barato que ya está publicado.
+ */
+export function sumarListasVigentes(
+  interpretadas: ListaInterpretada[],
+  proveedores: Supplier[],
+  filasVigentes: (proveedorId: string) => ParsedRow[] | undefined
+): ListaInterpretada[] {
+  const yaEstan = new Set(interpretadas.map((i) => i.proveedor.id));
+  const vigentes = proveedores.flatMap((proveedor) => {
+    const filas = filasVigentes(proveedor.id);
+    return proveedor.isActive && !yaEstan.has(proveedor.id) && filas?.length
+      ? [{ proveedor, filas, filasAnteriores: filas }]
+      : [];
+  });
+  return [...interpretadas, ...vigentes];
+}

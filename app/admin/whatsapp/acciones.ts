@@ -21,6 +21,7 @@ import {
   coincidenciaEnCatalogo,
   listasParaImportar,
   planificarPublicacion,
+  sumarListasVigentes,
   type Coincidencia,
   type ListaInterpretada,
 } from "@/lib/whatsapp/plan";
@@ -169,7 +170,10 @@ export async function planificarDesdeWhatsappAction(
       }
     }
 
-    const plan = planificarPublicacion(interpretadas, settings.dollarRate);
+    const plan = planificarPublicacion(
+      sumarListasVigentes(interpretadas, proveedores, (id) => ultima.get(id)?.filas),
+      settings.dollarRate
+    );
 
     /*
      * El plan viene por equipo y la escritura va por proveedor —cada uno con su
@@ -197,6 +201,8 @@ export async function planificarDesdeWhatsappAction(
 
     const porProveedor = new Map<string, LoteProveedor>();
     for (const { fila, proveedor, precioArs } of plan.publicar) {
+      // Lo que ganó una lista anterior ya está publicado: no se reescribe.
+      if (!textoDe.has(proveedor.id)) continue;
       let lote = porProveedor.get(proveedor.id);
       if (!lote) {
         lote = {
@@ -227,7 +233,7 @@ export async function planificarDesdeWhatsappAction(
         sinStock: plan.sinStock,
         dollarRate: settings.dollarRate,
         avisos,
-        listasInterpretadas: interpretadas.length,
+        listasInterpretadas: textoDe.size,
       },
     };
   } catch (err) {
@@ -469,10 +475,8 @@ export async function publicarPlanAction(
       enCero = data?.length ?? 0;
     }
 
-    revalidatePath("/catalogo");
-    revalidatePath("/admin/productos");
-    revalidatePath("/admin/whatsapp");
-    revalidatePath("/admin");
+    // También las fichas de cada producto, que muestran el precio.
+    revalidatePath("/", "layout");
 
     return { ok: true, data: { publicados, enCero } };
   } catch (err) {

@@ -318,3 +318,12 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER on_sale_created
   AFTER INSERT ON sales
   FOR EACH ROW EXECUTE FUNCTION apply_sale_stock();
+
+-- ---------------------------------------------------------------- costos
+-- El costo y el proveedor no se leen con la clave pública. RLS filtra filas, no
+-- columnas, así que hace falta restringir también las columnas.
+REVOKE SELECT ON product_variants FROM anon, authenticated;
+GRANT SELECT (id, product_id, storage, color, color_hex, grade, authenticity,
+  battery_health, price_ars, price_usd, stock, sku, is_active)
+  ON product_variants TO anon, authenticated;
+

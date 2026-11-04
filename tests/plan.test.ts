@@ -3,6 +3,7 @@ import {
   coincidenciaEnCatalogo,
   listasParaImportar,
   planificarPublicacion,
+  sumarListasVigentes,
 } from "@/lib/whatsapp/plan";
 import { skuDe, ultimaPorEquipo } from "@/lib/whatsapp/sincronizar";
 import type { ChatWhatsapp, MensajeWhatsapp } from "@/lib/whatsapp/sincronizar";
@@ -377,5 +378,28 @@ describe("ultimaPorEquipo", () => {
     const r = ultimaPorEquipo([fila({ cost: 700 }), fila({ cost: 720 })]);
     expect(r).toHaveLength(1);
     expect(r[0].cost).toBe(720);
+  });
+});
+
+describe("sumarListasVigentes", () => {
+  it("una lista nueva más cara no le gana a un precio ya publicado", () => {
+    const caro = proveedor({ id: "caro" });
+    const barato = proveedor({ id: "barato" });
+    const plan = planificarPublicacion(
+      sumarListasVigentes(
+        [{ proveedor: caro, filas: [fila({ cost: 900 })], filasAnteriores: [] }],
+        [caro, barato],
+        (id) => (id === "barato" ? [fila({ cost: 800 })] : undefined)
+      ),
+      DOLAR
+    );
+
+    expect(plan.publicar).toHaveLength(1);
+    expect(plan.publicar[0].proveedor.id).toBe("barato");
+  });
+
+  it("no suma a un proveedor desactivado", () => {
+    const r = sumarListasVigentes([], [proveedor({ isActive: false })], () => [fila()]);
+    expect(r).toEqual([]);
   });
 });

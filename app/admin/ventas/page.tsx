@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SaleForm } from "@/components/admin/SaleForm";
-import { getSales } from "@/lib/data/admin";
-import { getProducts, getSettings, isSupabaseConfigured } from "@/lib/data";
+import { getProductsConCosto, getSales } from "@/lib/data/admin";
+import { getSettings, isSupabaseConfigured } from "@/lib/data";
 import { formatARS } from "@/utils/format";
 
 export const metadata: Metadata = { title: "Ventas" };
@@ -18,7 +18,7 @@ const PAYMENT_LABELS: Record<string, string> = {
 export default async function AdminSalesPage() {
   const [sales, products, settings] = await Promise.all([
     getSales(100),
-    getProducts(),
+    getProductsConCosto(),
     getSettings(),
   ]);
 
