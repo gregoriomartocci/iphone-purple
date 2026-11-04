@@ -23,6 +23,7 @@ export async function publicarFilas({
   dollarRate,
   rows,
   rawText,
+  listaCompleta = rows,
 }: {
   supabase: SupabaseClient;
   supplierId: string | null;
@@ -30,6 +31,8 @@ export async function publicarFilas({
   dollarRate: number;
   rows: ParsedRow[];
   rawText: string;
+  /** Toda la lista del proveedor, también lo que no ganó: la usa la comparación. */
+  listaCompleta?: ParsedRow[];
 }): Promise<number> {
   let published = 0;
 
@@ -102,7 +105,7 @@ export async function publicarFilas({
   await supabase.from("supplier_imports").insert({
     supplier_id: supplierId,
     raw_text: rawText,
-    parsed_json: rows,
+    parsed_json: listaCompleta,
     margin_pct: marginPct,
     dollar_rate: dollarRate,
     rows_published: published,
