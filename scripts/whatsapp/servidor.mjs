@@ -476,45 +476,6 @@ async function conectar() {
     browser: Browsers.ubuntu("Chrome"),
   });
 
-  /*
-   * Vincular por código en vez de por QR, cuando sabemos qué línea queremos.
-   *
-   * Esto es mejor que el QR y no solo más cómodo: el número se declara de
-   * antemano y WhatsApp solo acepta el código en el teléfono de ESA línea. Con
-   * el QR cualquiera puede escanear con la cuenta que tenga a mano —el error
-   * de un segundo que nos preocupaba— y recién después lo detectamos y
-   * deshacemos. Acá no puede pasar.
-   *
-   * El QR se sigue emitiendo por si esto falla: pedir el código es una llamada
-   * a los servidores de WhatsApp y puede no contestar.
-   *
-   * La espera es porque el socket tiene que estar abierto antes de pedirlo;
-   * sin ella la llamada se va contra una conexión que todavía no existe.
-   */
-  /*
-   * El código se renueva, no se pide una sola vez.
-   *
-   * Este fue el bug que impedía vincular: WhatsApp rota el QR cada veinte
-   * segundos y cada rotación invalida el código anterior. Pidiéndolo una vez,
-   * el que mostraba el panel estaba muerto antes de que nadie alcanzara a
-   * escribirlo, y el teléfono decía "no se pudo vincular" sin más detalle.
-   *
-   * `pidiendo` evita dos pedidos solapados, y los 15 segundos evitan pedir uno
-   * nuevo por cada evento cuando llegan en ráfaga.
-   */
-  let pidiendo = false;
-  let ultimoPedido = 0;
-  /*
-   * Una vez que WhatsApp aceptó un código y empezó a loguear, no se pide otro.
-   *
-   * Esto fue un bug propio, y uno feo: la renovación disparaba en cada
-   * rotación del QR, incluso con un login ya en curso. O sea que la persona
-   * escribía el código, WhatsApp lo aceptaba, y nosotros pedíamos otro —que
-   * invalida el anterior— y matábamos nuestro propio intento. En el log se veía
-   * "logging in..." seguido de "connection errored", una y otra vez.
-   */
-  let vinculando = false;
-
   sock.ev.on("creds.update", saveCreds);
   sock.ev.on("messaging-history.set", ({ messages }) => {
     for (const m of messages ?? []) guardar(m);
@@ -527,7 +488,6 @@ async function conectar() {
     // Llega cuando el QR fue escaneado y aceptado: desde acá ya no se ofrece
     // otro, que sería pisar el login que está entrando.
     if (u.isNewLogin) {
-      vinculando = true;
       estado.qr = null;
       console.log("QR aceptado, entrando…");
     }
@@ -757,6 +717,76 @@ createServer((req, res) => {
     return qrSvg(estado.qr, { type: "svg", margin: 1, width: 280 })
       .then((svg) => responder(200, { svg, vinculado: false }))
       .catch(() => responder(200, { svg: null, vinculado: false }));
+  }
+
+  /*
+   * El perfil se pide de a uno y cuando alguien lo mira, no para todos al
+   * conectar. Con veinte proveedores, pedirlos todos de golpe son sesenta
+   * llamadas seguidas sobre la misma línea.
+   */
+  if (url.pathname === "/perfil") {
+    const id = url.searchParams.get("id");
+    if (!id) return responder(400, { error: "Falta el id" });
+    return traerPerfil(id)
+      .then((p) => responder(200, p))
+      .catch((e) => responder(502, { error: String(e?.message ?? e) }));
+  }
+
+  /*
+   * Reponer la sesión desde el respaldo.
+   *
+   * Es destructivo —pisa las credenciales actuales— así que lo dispara una
+   * persona y nunca un `catch`. Es justamente lo contrario de lo que hacía el
+   * reintento automático, que borraba por su cuenta y se llevó puesta una
+   * sesión buena.
+   */
+  if (url.pathname === "/restaurar-sesion") {
+    return (async () => {
+      try {
+        await cp(`${AUTH}-respaldo`, AUTH, { recursive: true, force: true });
+        console.log("Sesión repuesta desde el respaldo. Reconectando…");
+        setTimeout(conectar, 1_000);
+        return responder(200, { ok: true });
+      } catch (e) {
+        return responder(404, {
+          error: `No hay respaldo para reponer: ${e?.message ?? e}`,
+        });
+      }
+    })();
+  }
+
+  /*
+   * El histórico, para recuperar lo que la ventana ya no tiene. Se lee de a
+   * renglones y no de una: el archivo crece sin techo y cargarlo entero en
+   * memoria sería reintroducir el problema que la poda vino a resolver.
+   */
+  if (url.pathname === "/historico") {
+    const desde = url.searchParams.get("desde") ?? "";
+    const tope = Math.min(Number(url.searchParams.get("tope") ?? 500), 2000);
+    return (async () => {
+      const filas = [];
+      try {
+        const lector = createInterface({
+          input: createReadStream(HISTORICO, "utf8"),
+          crlfDelay: Infinity,
+        });
+        for await (const linea of lector) {
+          if (!linea) continue;
+          try {
+            const m = JSON.parse(linea);
+            if (desde && m.fecha < desde) continue;
+            filas.push(m);
+            if (filas.length > tope) filas.shift();
+          } catch {
+            // Un renglón a medio escribir —el proceso murió justo ahí— no
+            // puede invalidar los otros diez mil.
+          }
+        }
+      } catch {
+        // Todavía no existe: la primera vez es lo normal.
+      }
+      return responder(200, { desde, cantidad: filas.length, mensajes: filas });
+    })();
   }
 
   if (url.pathname === "/reanudar") {
