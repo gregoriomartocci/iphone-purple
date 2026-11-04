@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/server";
@@ -117,6 +118,9 @@ export async function GET(req: Request) {
       if (errorUpdate) throw new Error(errorUpdate.message);
       recalculadas += 1;
     }
+
+    // Si no, las páginas guardadas seguirían mostrando el precio anterior.
+    revalidatePath("/", "layout");
 
     return NextResponse.json({
       aplicada: true,

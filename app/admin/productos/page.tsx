@@ -2,14 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ProductsTable } from "@/components/admin/ProductsTable";
-import { getProducts, getSettings, isSupabaseConfigured } from "@/lib/data";
+import { getSettings, isSupabaseConfigured } from "@/lib/data";
+import { getProductsConCosto } from "@/lib/data/admin";
 
 export const metadata: Metadata = { title: "Productos" };
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminProductsPage() {
-  const [products, settings] = await Promise.all([getProducts(), getSettings()]);
+  const [products, settings] = await Promise.all([getProductsConCosto(), getSettings()]);
 
   return (
     <div className="max-w-6xl">
