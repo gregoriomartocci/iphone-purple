@@ -4,6 +4,7 @@ import { z } from "zod";
 import type { ParsedRow } from "@/types";
 import { precioArsDesdeUsd } from "@/lib/cotizacion";
 import { elegirInterprete, interpretarConSesion } from "./interprete";
+import { canonizarFila } from "./nombres";
 
 /**
  * Interpretación de listas de proveedores.
@@ -258,7 +259,7 @@ export async function parseSupplierList(rawText: string): Promise<ParsedList> {
   }
 
   return {
-    rows: resultados.flatMap((r) => r.rows) as ParsedRow[],
+    rows: (resultados.flatMap((r) => r.rows) as ParsedRow[]).map(canonizarFila),
     warnings: resultados.flatMap((r) => r.warnings),
   };
 }
