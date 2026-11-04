@@ -15,6 +15,7 @@ import {
   RefreshCcw,
   Settings,
   Smartphone,
+  Store,
   Truck,
   Wrench,
 } from "lucide-react";
@@ -40,11 +41,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const nav = (
     <nav className="flex h-full flex-col">
-      <div className="border-line border-b px-5 py-5">
-        <Link href="/" aria-label="iPhone Purple — inicio">
-          <Logo className="h-6" />
+      <div className="border-line border-b px-5 py-6">
+        <Link
+          href="/"
+          aria-label="iPhone Purple — inicio"
+          className="inline-block transition-opacity hover:opacity-80"
+        >
+          {/* `onDark` explícito y no por omisión: el panel era claro, servía la
+              marca en blanco sobre fondo claro y el logo se veía fantasma. */}
+          <Logo tone="onDark" className="h-9" />
         </Link>
-        <p className="text-muted-foreground mt-0.5 text-xs">Panel interno</p>
       </div>
 
       <div className="flex-1 space-y-0.5 overflow-y-auto p-3">
@@ -57,10 +63,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               href={href}
               onClick={() => setOpen(false)}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors",
+                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all",
                 active
-                  ? "bg-ink font-medium text-white"
-                  : "text-muted-foreground hover:bg-surface hover:text-foreground"
+                  ? // El resplandor es el mismo del botón "Ingresar" del login.
+                    "bg-active text-active-foreground font-medium shadow-[0_8px_24px_-10px_#5e16eb]"
+                  : "text-white/55 hover:bg-white/[0.06] hover:text-white"
               )}
             >
               <Icon className="size-4 shrink-0" />
@@ -73,14 +80,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="border-line border-t p-3">
         <Link
           href="/"
-          className="text-muted-foreground hover:bg-surface hover:text-foreground flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors"
+          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-white/55 transition-colors hover:bg-white/[0.06] hover:text-white"
         >
+          <Store className="size-4 shrink-0" />
           Ver la tienda
         </Link>
         <button
           type="button"
           onClick={() => signOut({ callbackUrl: "/" })}
-          className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors"
+          className="hover:text-destructive flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-white/55 transition-colors hover:bg-red-500/10"
         >
           <LogOut className="size-4 shrink-0" />
           Cerrar sesión
@@ -90,29 +98,58 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   );
 
   return (
-    <div className="bg-background flex min-h-dvh">
-      <aside className="border-line hidden w-60 shrink-0 border-r lg:block">{nav}</aside>
+    <div data-panel className="bg-background relative flex min-h-dvh">
+      {/*
+       * El fondo del login, traído tal cual: base casi negra, dos auroras que
+       * derivan muy despacio y grano encima.
+       *
+       * Va `fixed` y no `absolute` porque acá el contenido scrollea: con
+       * `absolute` las auroras se iban hacia arriba al bajar en una tabla
+       * larga y el fondo quedaba liso justo donde hay más para leer.
+       *
+       * `pointer-events-none` porque es decoración: si intercepta clics, se
+       * come el primero de cada interacción del panel.
+       */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div
+          className="aurora aurora-1 -top-[22%] left-[-14%] h-[64vh] w-[64vh] opacity-60"
+          style={{ background: "radial-gradient(circle, #5e16eb 0%, transparent 66%)" }}
+        />
+        <div
+          className="aurora aurora-2 right-[-10%] bottom-[-28%] h-[58vh] w-[58vh] opacity-45"
+          style={{ background: "radial-gradient(circle, #2563eb 0%, transparent 68%)" }}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_12%,#0f0f15_92%)]" />
+        <div className="grano absolute inset-0 opacity-[0.16] mix-blend-overlay" />
+      </div>
+
+      <aside className="relative hidden w-60 shrink-0 border-r border-white/[0.07] bg-white/[0.02] backdrop-blur-xl lg:block">
+        {nav}
+      </aside>
 
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
-          <aside className="border-line bg-background absolute inset-y-0 left-0 w-64 border-r">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+          />
+          <aside className="absolute inset-y-0 left-0 w-64 border-r border-white/[0.07] bg-[#13131a]/95 backdrop-blur-xl">
             {nav}
           </aside>
         </div>
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="border-line flex h-14 items-center gap-3 border-b px-5 lg:hidden">
+      <div className="relative flex min-w-0 flex-1 flex-col">
+        <header className="flex h-14 items-center gap-3 border-b border-white/[0.07] px-5 lg:hidden">
           <button
             type="button"
             onClick={() => setOpen(true)}
             aria-label="Abrir menú"
-            className="text-foreground hover:bg-surface rounded-lg p-2"
+            className="rounded-xl p-2 text-white/70 transition-colors hover:bg-white/[0.06] hover:text-white"
           >
             <Menu className="size-5" />
           </button>
-          <span className="text-sm font-medium">
+          <span className="text-sm font-medium text-white">
             {NAV.find((i) => i.href === pathname)?.label ?? "Panel"}
           </span>
         </header>

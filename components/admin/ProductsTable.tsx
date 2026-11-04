@@ -75,7 +75,7 @@ export function ProductsTable({
   }
 
   const inputClass =
-    "h-9 rounded-lg border border-line bg-surface px-2.5 text-sm text-foreground outline-none transition-colors focus-visible:border-ink";
+    "h-9 rounded-lg border border-line bg-surface px-2.5 text-sm text-foreground outline-none transition-colors focus-visible:border-ring";
 
   return (
     <div>
@@ -85,7 +85,7 @@ export function ProductsTable({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Buscar modelo, color o SKU…"
-          className="border-line text-foreground focus-visible:border-ink bg-surface h-10 w-full rounded-lg border pr-3 pl-9 text-sm transition-colors outline-none"
+          className="border-line text-foreground focus-visible:border-ring bg-surface h-10 w-full rounded-lg border pr-3 pl-9 text-sm transition-colors outline-none"
         />
       </div>
 
@@ -189,7 +189,7 @@ export function ProductsTable({
                         type="button"
                         onClick={() => save(variant.id, draft)}
                         disabled={savingId === variant.id}
-                        className="bg-ink hover:bg-ink/85 inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium text-white transition-colors disabled:opacity-50"
+                        className="bg-primary hover:bg-primary/85 text-primary-foreground inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-colors disabled:opacity-50"
                       >
                         {savingId === variant.id ? (
                           <Loader2 className="size-3 animate-spin" />

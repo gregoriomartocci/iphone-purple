@@ -1,0 +1,11 @@
+{
+  "name": "iphone-purple-lector-whatsapp",
+  "private": true,
+  "type": "module",
+  "description": "El lector de WhatsApp. Tiene su propio package.json porque es un proceso aparte del sitio: corre en otra máquina, no comparte su ciclo de vida y, sobre todo, no tiene por qué compartir su árbol de dependencias. Baileys 6 pide sharp ^0.32 y el sitio usa la 0.35 para Next; mezclarlos obligaba a aflojar la resolución de todo el proyecto para una librería que el sitio ni importa.",
+  "dependencies": {
+    "baileys": "6.17.16",
+    "qrcode": "^1.5.4",
+    "qrcode-terminal": "^0.12.0"
+  }
+}

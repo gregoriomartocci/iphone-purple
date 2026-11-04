@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { z } from "zod";
 import type { ParsedRow } from "@/types";
+import { precioArsDesdeUsd } from "@/lib/cotizacion";
 import { elegirInterprete, interpretarConSesion } from "./interprete";
 
 /**
@@ -196,8 +197,9 @@ export async function parseSupplierList(rawText: string): Promise<ParsedList> {
 /**
  * Precio de venta a partir del costo.
  *
- * Se redondea hacia arriba a la decena de miles más cercana para que los precios
- * queden en cifras presentables ($1.250.000 y no $1.247.318).
+ * El redondeo del precio en pesos vive en `lib/cotizacion.ts`, porque el
+ * recálculo diario por cambio de cotización tiene que dar exactamente lo
+ * mismo que esto.
  */
 export function sellPrice(
   cost: number,
@@ -207,11 +209,10 @@ export function sellPrice(
 ): { priceArs: number; priceUsd: number; costUsd: number } {
   const costUsd = currency === "USD" ? cost : cost / dollarRate;
   const priceUsd = Math.round(costUsd * (1 + marginPct / 100));
-  const rawArs = priceUsd * dollarRate;
 
   return {
     costUsd: Math.round(costUsd * 100) / 100,
     priceUsd,
-    priceArs: Math.ceil(rawArs / 10_000) * 10_000,
+    priceArs: precioArsDesdeUsd(priceUsd, dollarRate),
   };
 }

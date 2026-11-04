@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 import {
   autoresDetectados,
   claveEquipo,
+  confianzaProveedor,
   equiposSinStock,
   listaPendiente,
   mejorPorEquipo,
   pareceLista,
   proveedorDelMensaje,
+  renglonesDeEquipo,
   revisarAntesDePublicar,
   telefonoComparable,
   type ChatWhatsapp,
@@ -85,6 +87,31 @@ describe("telefonoComparable", () => {
 
   it("distingue dos números realmente distintos", () => {
     expect(telefonoComparable("2211234567")).not.toBe(telefonoComparable("2217654321"));
+  });
+
+  /**
+   * Un número real de La Plata que la función devolvía vacío.
+   *
+   * "2215713416" se puede leer como 22|15|713416, así que la regla que saca el
+   * 15 del formato viejo lo mutilaba a ocho dígitos y, por cortos, caía en el
+   * descarte. Un número que no normaliza no empareja con nadie; y donde se usa
+   * para verificar qué línea de WhatsApp se vinculó, un valor vacío es falsy y
+   * apaga la verificación entera: el lector pasaba a aceptar cualquier cuenta.
+   */
+  it("no mutila un número que casualmente contiene un 15", () => {
+    const formas = [
+      "+54 9 221 571 3416",
+      "5492215713416",
+      "542215713416",
+      "2215713416",
+      "0221 15 5713416",
+    ];
+    for (const forma of formas) expect(telefonoComparable(forma)).not.toBe("");
+    expect(new Set(formas.map(telefonoComparable)).size).toBe(1);
+  });
+
+  it("sigue sacando el 15 cuando de verdad es el del formato viejo", () => {
+    expect(telefonoComparable("0221 15 1234567")).toBe(telefonoComparable("221 1234567"));
   });
 });
 
@@ -449,5 +476,100 @@ describe("autoresDetectados", () => {
     );
 
     expect(autores[0].ultimaLista).toBe("2026-10-30T10:00:00Z");
+  });
+});
+
+describe("renglonesDeEquipo", () => {
+  it("cuenta los renglones que tienen modelo y precio", () => {
+    const lista = `Buenas!
+iPhone 15 128 sellado 720
+iPhone 14 128 impecable 540
+gracias`;
+    expect(renglonesDeEquipo(lista)).toBe(2);
+  });
+
+  /*
+   * Es más exigente que `pareceLista` a propósito. Una tanda de números
+   * sueltos —un teléfono partido, un CBU, una lista de precios sin modelo— no
+   * son equipos, y contarlos infla la confianza de alguien que no es
+   * proveedor.
+   */
+  it("no cuenta números sueltos sin texto", () => {
+    expect(renglonesDeEquipo("1234567\n9876543\n5555555")).toBe(0);
+  });
+
+  it("no cuenta texto sin precio", () => {
+    expect(renglonesDeEquipo("hola\nque tal\ntodo bien")).toBe(0);
+  });
+});
+
+describe("confianzaProveedor", () => {
+  const base = {
+    listas: 0,
+    diasConListas: 0,
+    equiposEnUltima: 0,
+    nombre: null,
+    mensajes: 5,
+  };
+
+  it("sin listas no es proveedor, por más que escriba", () => {
+    const r = confianzaProveedor({ ...base, mensajes: 80, nombre: "Juan" });
+    expect(r.puntos).toBe(0);
+    expect(r.senales[0]).toMatch(/nunca mandó/i);
+  });
+
+  it("el que manda listas todos los días y son largas llega arriba", () => {
+    const r = confianzaProveedor({
+      ...base,
+      listas: 6,
+      diasConListas: 3,
+      equiposEnUltima: 40,
+      nombre: "Fran",
+    });
+    expect(r.puntos).toBeGreaterThanOrEqual(90);
+  });
+
+  /*
+   * El caso que la puntuación tiene que separar: alguien que mandó una lista
+   * corta una sola vez puede ser un revendedor reenviando algo, no un
+   * proveedor. Tiene que quedar claramente por debajo.
+   */
+  it("una sola lista corta queda muy por debajo de un proveedor regular", () => {
+    const ocasional = confianzaProveedor({
+      ...base,
+      listas: 1,
+      diasConListas: 1,
+      equiposEnUltima: 3,
+    });
+    const habitual = confianzaProveedor({
+      ...base,
+      listas: 6,
+      diasConListas: 3,
+      equiposEnUltima: 40,
+    });
+    expect(habitual.puntos - ocasional.puntos).toBeGreaterThan(40);
+  });
+
+  it("nunca pasa de 100", () => {
+    const r = confianzaProveedor({
+      ...base,
+      listas: 99,
+      diasConListas: 30,
+      equiposEnUltima: 500,
+      nombre: "Fran",
+    });
+    expect(r.puntos).toBeLessThanOrEqual(100);
+  });
+
+  it("siempre explica por qué, no solo cuánto", () => {
+    const r = confianzaProveedor({
+      ...base,
+      listas: 2,
+      diasConListas: 2,
+      equiposEnUltima: 12,
+    });
+    expect(r.senales.length).toBeGreaterThanOrEqual(3);
+    expect(r.senales.join(" ")).toMatch(/2 listas/);
+    expect(r.senales.join(" ")).toMatch(/12 equipos/);
   });
 });

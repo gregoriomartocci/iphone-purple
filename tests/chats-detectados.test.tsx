@@ -7,6 +7,22 @@ const guardar = vi.fn();
 vi.mock("@/app/admin/actions", () => ({
   saveSupplierAction: (...args: unknown[]) => guardar(...args),
 }));
+
+/*
+ * Las acciones de WhatsApp arrastran `lib/admin/publicar`, que es
+ * `server-only`: importarlo desde un test de componente cliente lanza antes de
+ * que corra una sola aserción, y el archivo entero queda sin ejecutar.
+ *
+ * El síntoma engaña: vitest informa "306 tests passed" y el archivo fallado
+ * aparece arriba del resumen, así que mirando solo el final parece todo verde.
+ */
+const perfil = vi.fn(async (_id: string) => ({
+  ok: false as const,
+  error: "sin perfil",
+}));
+vi.mock("@/app/admin/whatsapp/acciones", () => ({
+  perfilDeContactoAction: (id: string) => perfil(id),
+}));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 function autor(p: Partial<AutorDetectado> = {}): AutorDetectado {
@@ -20,6 +36,13 @@ function autor(p: Partial<AutorDetectado> = {}): AutorDetectado {
     ultimaLista: new Date().toISOString(),
     proveedor: null,
     proveedorInactivo: false,
+    ultimoTexto:
+      "iPhone 15 128 sellado 720\niPhone 14 128 impecable 540\niPad 10 64 nuevo 380",
+    nombreDeLaLista: null,
+    diasConListas: 3,
+    equiposEnUltima: 3,
+    confianza: 85,
+    senales: ["Mandó 3 listas", "En 3 días distintos"],
     ...p,
   };
 }

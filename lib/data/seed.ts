@@ -28,15 +28,15 @@ export const SETTINGS: StoreSettings = {
   dollarRate: 1450,
   dollarRateUpdatedAt: new Date().toISOString(),
   defaultMarginPct: 18,
-  whatsappNumber: "5491100000000",
-  whatsappDisplay: "+54 9 11 0000-0000",
-  instagram: "https://instagram.com/iphonepurple",
-  tiktok: "https://tiktok.com/@iphonepurple",
-  email: "hola@iphonepurple.com.ar",
-  // TODO: reemplazar por la dirección real del local.
-  address: "Calle 7 1234, La Plata",
-  hours: "Lunes a sábado de 10 a 19 h",
-  mapsUrl: "https://maps.google.com/?q=Calle+7+1234,+La+Plata",
+  whatsappNumber: "5492215713416",
+  whatsappDisplay: "+54 9 221 571-3416",
+  instagram: "https://www.instagram.com/iphonepurple.ar/",
+  tiktok: "",
+  email: "info.iphonepurple@gmail.com",
+  address: "Calle 20 4243, Gonnet, La Plata",
+  hours: "Lunes a viernes de 9 a 18 h · Sábados de 9 a 13 h",
+  mapsUrl:
+    "https://www.google.com/maps/search/?api=1&query=Calle%2020%204243%2C%20Gonnet%2C%20La%20Plata%2C%20Buenos%20Aires%2C%20Argentina",
 };
 
 /**

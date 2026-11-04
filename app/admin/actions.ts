@@ -2,49 +2,21 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { auth } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/data";
-import { parseSupplierList, sellPrice } from "@/lib/whatsapp/parser";
-import { CATEGORIES, GRADES, type ParsedRow } from "@/types";
-import { slugify } from "@/utils/format";
+import { parseSupplierList } from "@/lib/whatsapp/parser";
+import type { ParsedRow } from "@/types";
+import {
+  NO_DB,
+  ParsedRowSchema,
+  publicarFilas,
+  requireAdmin,
+  type ActionResult,
+} from "@/lib/admin/publicar";
 
-export type ActionResult<T = undefined> =
-  | ({ ok: true } & (T extends undefined ? object : { data: T }))
-  | { ok: false; error: string };
-
-const NO_DB =
-  "Necesitás conectar Supabase para guardar cambios. Cargá las claves en .env.local y aplicá lib/supabase/schema.sql.";
-
-/**
- * Las Server Actions se pueden invocar con un POST directo, sin pasar por la UI ni
- * por `proxy.ts`. Por eso cada una vuelve a verificar sesión y rol acá adentro:
- * el redirect del proxy es comodidad, esto es la barrera.
- */
-async function requireAdmin(): Promise<{ id: string } | null> {
-  const session = await auth();
-  const user = session?.user as { id?: string; role?: string } | undefined;
-  if (!user?.id) return null;
-  if (user.role !== "admin" && user.role !== "super_admin") return null;
-  return { id: user.id };
-}
+export type { ActionResult };
 
 // ------------------------------------------------------- importar listas
-
-const ParsedRowSchema = z.object({
-  brand: z.string().min(1),
-  model: z.string().min(1),
-  category: z.enum(CATEGORIES as [string, ...string[]]),
-  authenticity: z.enum(["original", "replica"]),
-  storage: z.string(),
-  color: z.string().nullable(),
-  grade: z.enum(GRADES as [string, ...string[]]),
-  batteryHealth: z.number().int().min(0).max(100).nullable(),
-  currency: z.enum(["USD", "ARS"]),
-  cost: z.number().positive(),
-  quantity: z.number().int().min(0),
-  notes: z.string().nullable(),
-});
 
 export async function parseListAction(
   rawText: string
@@ -105,85 +77,13 @@ export async function publishImportAction(
   const { supplierId, marginPct, dollarRate, rawText, rows } = parsed.data;
 
   try {
-    const supabase = createAdminClient();
-    let published = 0;
-
-    for (const row of rows) {
-      const name = `${row.model}`.trim();
-      const slug = slugify(name);
-
-      // Reutilizamos el producto si ya está; si no, lo creamos.
-      const { data: existing } = await supabase
-        .from("products")
-        .select("id")
-        .eq("slug", slug)
-        .maybeSingle();
-
-      let productId = existing?.id as string | undefined;
-
-      if (!productId) {
-        const { data: created, error: createError } = await supabase
-          .from("products")
-          .insert({
-            name,
-            slug,
-            brand: row.brand,
-            model: row.model,
-            category: row.category,
-            description: "",
-            specs: {},
-            status: "active",
-          })
-          .select("id")
-          .single();
-
-        if (createError) throw new Error(createError.message);
-        productId = created.id;
-      }
-
-      const price = sellPrice(row.cost, row.currency, marginPct, dollarRate);
-      const sku = `${slug.toUpperCase()}-${row.storage || "NA"}-${row.grade}`;
-
-      const { data: variant } = await supabase
-        .from("product_variants")
-        .select("id, stock")
-        .eq("sku", sku)
-        .maybeSingle();
-
-      const payload = {
-        product_id: productId,
-        storage: row.storage || "—",
-        color: row.color ?? "Sin especificar",
-        color_hex: "#cccccc",
-        grade: row.grade,
-        authenticity: row.authenticity,
-        battery_health: row.batteryHealth,
-        price_ars: price.priceArs,
-        price_usd: price.priceUsd,
-        cost_usd: price.costUsd,
-        stock: row.quantity,
-        sku,
-        supplier_id: supplierId,
-        is_active: true,
-      };
-
-      const { error: variantError } = variant
-        ? await supabase.from("product_variants").update(payload).eq("id", variant.id)
-        : await supabase.from("product_variants").insert(payload);
-
-      if (variantError) throw new Error(variantError.message);
-      published += 1;
-    }
-
-    // Queda el texto original junto al resultado, para poder auditar un parseo dudoso.
-    await supabase.from("supplier_imports").insert({
-      supplier_id: supplierId,
-      raw_text: rawText,
-      parsed_json: rows,
-      margin_pct: marginPct,
-      dollar_rate: dollarRate,
-      rows_published: published,
-      status: "approved",
+    const published = await publicarFilas({
+      supabase: createAdminClient(),
+      supplierId,
+      marginPct,
+      dollarRate,
+      rows: rows as ParsedRow[],
+      rawText,
     });
 
     revalidatePath("/catalogo");

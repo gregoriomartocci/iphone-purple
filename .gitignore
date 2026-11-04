@@ -61,3 +61,19 @@ fotos-proveedor/
 
 # Lo que baja el lector de WhatsApp: mensajes de proveedores con precios.
 datos-proveedor/
+
+# Registro del lector. Va fuera de .whatsapp-auth porque ese directorio se
+# borra entero cuando un intento de vinculación no prospera.
+lector-whatsapp.log
+
+# El lector tiene su propio arbol de dependencias: es un proceso aparte y
+# Baileys pide una version de sharp que choca con la que necesita Next.
+scripts/whatsapp/node_modules/
+
+# El historico de mensajes del lector y el respaldo de su sesion.
+historico-whatsapp.ndjson
+mensajes-whatsapp.json
+.whatsapp-auth-respaldo/
+
+# Sesiones que WhatsApp rechazó, apartadas al pedir un QR nuevo.
+.whatsapp-auth-rechazada-*/
