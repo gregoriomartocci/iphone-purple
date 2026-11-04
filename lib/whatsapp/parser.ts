@@ -273,7 +273,9 @@ export function sellPrice(
   dollarRate: number
 ): { priceArs: number; priceUsd: number; costUsd: number } {
   const costUsd = currency === "USD" ? cost : cost / dollarRate;
-  const priceUsd = Math.round(costUsd * (1 + marginPct / 100));
+  // Hacia arriba: redondear para abajo dejaba el precio por debajo del margen.
+  // El descuento evita que el error de los decimales sume un dólar de más.
+  const priceUsd = Math.ceil(costUsd * (1 + marginPct / 100) - 1e-9);
 
   return {
     costUsd: Math.round(costUsd * 100) / 100,

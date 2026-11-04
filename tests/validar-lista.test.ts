@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   SEPARADOR_DE_MENSAJES,
+  sellPrice,
   trozosDeLista,
   validarLista,
 } from "@/lib/whatsapp/parser";
@@ -54,5 +55,17 @@ describe("trozosDeLista", () => {
   it("deja igual una lista de un solo mensaje, aunque sea larga", () => {
     const uno = "y".repeat(20_000);
     expect(trozosDeLista(uno)).toEqual([uno]);
+  });
+});
+
+describe("sellPrice", () => {
+  it("nunca queda por debajo del costo más el margen", () => {
+    const { priceUsd, priceArs } = sellPrice(825, "USD", 5, 1662.49);
+    expect(priceUsd).toBe(867);
+    expect(priceArs).toBeGreaterThanOrEqual(825 * 1.05 * 1662.49);
+  });
+
+  it("no suma un dólar de más por los decimales", () => {
+    expect(sellPrice(1000, "USD", 5, 1662.49).priceUsd).toBe(1050);
   });
 });
