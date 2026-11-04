@@ -9,7 +9,7 @@ import type { PerfilContacto } from "@/lib/whatsapp/servidor";
 import type { AutorDetectado } from "@/lib/whatsapp/sincronizar";
 
 /** El mismo que usa el alta manual de proveedores, para no tener dos verdades. */
-const MARGEN_POR_DEFECTO = 18;
+const MARGEN_POR_DEFECTO = 5;
 
 /**
  * Un identificador de WhatsApp no es un teléfono, y mostrarlo como si lo fuera

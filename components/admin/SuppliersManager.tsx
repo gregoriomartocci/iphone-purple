@@ -7,7 +7,7 @@ import { saveSupplierAction } from "@/app/admin/actions";
 import { WhatsAppLink } from "@/components/site/WhatsAppLink";
 import type { Supplier } from "@/types";
 
-const EMPTY = { id: null as string | null, name: "", phone: "", defaultMarginPct: 18 };
+const EMPTY = { id: null as string | null, name: "", phone: "", defaultMarginPct: 5 };
 
 export function SuppliersManager({
   suppliers,

@@ -21,6 +21,7 @@
  *                    Es solo verificación: vincular siempre es por QR.
  *   PORT             por defecto 8080.
  *   DIAS             ventana de mensajes que se conserva. Por defecto 3.
+ *   SITIO_URL y CRON_SECRET  para refrescar el dólar cada hora.
  */
 import { createServer } from "node:http";
 import { appendFile, cp, rename, mkdir, readFile, rm, writeFile } from "node:fs/promises";
@@ -743,6 +744,23 @@ async function conectar() {
 }
 
 setInterval(podar, 3_600_000);
+
+/*
+ * Refresca el dólar cada hora. Va acá porque este proceso está siempre prendido
+ * y un cron de Vercel en este plan corre como mucho una vez por día.
+ */
+if (process.env.SITIO_URL && process.env.CRON_SECRET) {
+  setInterval(() => {
+    fetch(new URL("/api/cotizacion", process.env.SITIO_URL), {
+      headers: { authorization: `Bearer ${process.env.CRON_SECRET}` },
+      signal: AbortSignal.timeout(60_000),
+    })
+      .then(async (r) => console.log(`Cotización: HTTP ${r.status} ${await r.text()}`))
+      .catch((e) =>
+        console.error("No se pudo refrescar la cotización:", e?.message ?? e)
+      );
+  }, 3_600_000);
+}
 
 createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);

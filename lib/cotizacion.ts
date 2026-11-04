@@ -1,5 +1,6 @@
 /**
- * La cotización del dólar, que es de lo que cuelga todo precio en pesos.
+ * La cotización del dólar, que es de lo que cuelga todo precio en pesos. Es el
+ * USDT de Binance P2P: lo que cuesta reponer los dólares con que se paga al proveedor.
  *
  * Los proveedores cotizan en dólares y el catálogo publica en pesos, así que
  * este número multiplica a todo. Equivocarlo no rompe nada visiblemente: deja
@@ -86,40 +87,102 @@ export function revisarCotizacion(
   return { ok: true };
 }
 
+/** Lo que hace falta de un aviso de compra de Binance P2P. */
+export interface AvisoP2P {
+  adv: { price: string; surplusAmount: string };
+  advertiser: { monthOrderCount: number; monthFinishRate: number };
+}
+
+/** Por debajo de esto, un vendedor no tiene historial suficiente para confiar. */
+const ORDENES_MINIMAS = 50;
+const CUMPLIMIENTO_MINIMO = 0.95;
+/** Tiene que alcanzar para pagar al menos un equipo caro. */
+const USDT_DISPONIBLES_MINIMOS = 1_000;
+
 /**
- * Trae el blue vendedor, con una fuente de respaldo.
+ * El precio más bajo al que de verdad se puede comprar USDT.
  *
- * Dos fuentes y no una porque esto va a correr solo todos los días: si la
- * única se cae un martes, el catálogo se queda con la cotización del lunes sin
- * que nadie se entere.
+ * Son avisos de compra porque ese es el costo de reponer dólares para pagarle
+ * al proveedor. El más barato a secas suele tener poco saldo o poco historial,
+ * y usarlo publicaría un precio que después no se consigue.
+ */
+export function mejorOfertaP2P(avisos: AvisoP2P[]): number | null {
+  const precios = avisos
+    .filter(
+      (a) =>
+        a.advertiser.monthOrderCount >= ORDENES_MINIMAS &&
+        a.advertiser.monthFinishRate >= CUMPLIMIENTO_MINIMO &&
+        Number(a.adv.surplusAmount) >= USDT_DISPONIBLES_MINIMOS
+    )
+    .map((a) => Number(a.adv.price))
+    .filter((precio) => Number.isFinite(precio) && precio > 0);
+  return precios.length > 0 ? Math.min(...precios) : null;
+}
+
+/** Por debajo de este cambio no vale la pena reescribir los precios del catálogo. */
+export const CAMBIO_MINIMO = 0.005;
+
+export function cambioMenor(nueva: number, actual: number | null): boolean {
+  return Boolean(
+    actual && actual > 0 && Math.abs(nueva - actual) / actual < CAMBIO_MINIMO
+  );
+}
+
+/**
+ * Trae el USDT de Binance P2P, con dos respaldos.
+ *
+ * El endpoint de Binance es público pero no está documentado, y puede rechazar
+ * pedidos según la región. Los respaldos son referencias del mismo mercado.
  */
 export async function traerCotizacion(): Promise<Cotizacion> {
-  const fuentes = [
+  const ahora = new Date().toISOString();
+  const fuentes: {
+    nombre: string;
+    url: string;
+    init?: RequestInit;
+    leer: (d: Record<string, unknown>) => Cotizacion | null;
+  }[] = [
     {
-      nombre: "dolarapi",
-      url: "https://dolarapi.com/v1/dolares/blue",
-      leer: (d: Record<string, unknown>): Cotizacion | null =>
-        typeof d.venta === "number"
-          ? {
-              venta: d.venta,
-              fecha: String(d.fechaActualizacion ?? new Date().toISOString()),
-              fuente: "dolarapi",
-            }
+      nombre: "binance-p2p",
+      url: "https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search",
+      init: {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          asset: "USDT",
+          fiat: "ARS",
+          tradeType: "BUY",
+          page: 1,
+          rows: 20,
+          payTypes: [],
+          publisherType: null,
+          transAmount: 1_000_000,
+        }),
+      },
+      leer: (d) => {
+        const venta = mejorOfertaP2P((d.data ?? []) as AvisoP2P[]);
+        return venta ? { venta, fecha: ahora, fuente: "binance-p2p" } : null;
+      },
+    },
+    {
+      nombre: "criptoya",
+      url: "https://criptoya.com/api/binancep2p/usdt/ars/1000",
+      leer: (d) =>
+        typeof d.ask === "number"
+          ? { venta: d.ask, fecha: ahora, fuente: "criptoya" }
           : null,
     },
     {
-      nombre: "bluelytics",
-      url: "https://api.bluelytics.com.ar/v2/latest",
-      leer: (d: Record<string, unknown>): Cotizacion | null => {
-        const blue = d.blue as { value_sell?: unknown } | undefined;
-        return typeof blue?.value_sell === "number"
+      nombre: "dolarapi-cripto",
+      url: "https://dolarapi.com/v1/dolares/cripto",
+      leer: (d) =>
+        typeof d.venta === "number"
           ? {
-              venta: blue.value_sell,
-              fecha: String(d.last_update ?? new Date().toISOString()),
-              fuente: "bluelytics",
+              venta: d.venta,
+              fecha: String(d.fechaActualizacion ?? ahora),
+              fuente: "dolarapi-cripto",
             }
-          : null;
-      },
+          : null,
     },
   ];
 
@@ -128,6 +191,7 @@ export async function traerCotizacion(): Promise<Cotizacion> {
   for (const fuente of fuentes) {
     try {
       const res = await fetch(fuente.url, {
+        ...fuente.init,
         signal: AbortSignal.timeout(10_000),
         cache: "no-store",
       });
@@ -137,7 +201,7 @@ export async function traerCotizacion(): Promise<Cotizacion> {
       }
       const leida = fuente.leer(await res.json());
       if (leida) return leida;
-      fallas.push(`${fuente.nombre}: la respuesta no traía el valor de venta`);
+      fallas.push(`${fuente.nombre}: la respuesta no traía un precio utilizable`);
     } catch (err) {
       fallas.push(
         `${fuente.nombre}: ${err instanceof Error ? err.message : String(err)}`

@@ -312,6 +312,7 @@ export async function arrancarLectorAction(): Promise<
          * chequee después.
          */
         WHATSAPP_NUMERO: (await getSettings()).whatsappNumber,
+        SITIO_URL: process.env.NEXT_PUBLIC_APP_URL,
         PORT: puerto,
         AUTH_DIR: sesion,
         DIAS: process.env.WHATSAPP_DIAS ?? "3",

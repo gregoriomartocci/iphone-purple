@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { precioArsDesdeUsd, revisarCotizacion } from "@/lib/cotizacion";
+import {
+  cambioMenor,
+  mejorOfertaP2P,
+  precioArsDesdeUsd,
+  revisarCotizacion,
+} from "@/lib/cotizacion";
 
 const hoy = () => new Date().toISOString();
 const cot = (venta: number, fecha = hoy()) => ({ venta, fecha, fuente: "test" });
@@ -85,5 +90,36 @@ describe("revisarCotizacion", () => {
     const r = revisarCotizacion(cot(15_650), 1565);
     expect(r.ok === false && r.detalle).toContain("1565");
     expect(r.ok === false && r.detalle).toContain("15650");
+  });
+});
+
+describe("mejorOfertaP2P", () => {
+  const aviso = (price: string, ordenes = 200, cumplimiento = 1, saldo = "5000") => ({
+    adv: { price, surplusAmount: saldo },
+    advertiser: { monthOrderCount: ordenes, monthFinishRate: cumplimiento },
+  });
+
+  it("elige el precio más bajo", () => {
+    expect(mejorOfertaP2P([aviso("1670"), aviso("1662.5")])).toBe(1662.5);
+  });
+
+  it.each([
+    ["poco historial", aviso("1500", 10)],
+    ["mal cumplimiento", aviso("1500", 200, 0.8)],
+    ["poco saldo", aviso("1500", 200, 1, "100")],
+  ])("ignora un precio bajo con %s", (_, malo) => {
+    expect(mejorOfertaP2P([malo, aviso("1662.5")])).toBe(1662.5);
+  });
+
+  it("sin avisos confiables no devuelve nada", () => {
+    expect(mejorOfertaP2P([aviso("1500", 1)])).toBeNull();
+  });
+});
+
+describe("cambioMenor", () => {
+  it("no reescribe precios por un movimiento mínimo, pero sí por uno real", () => {
+    expect(cambioMenor(1665, 1662.5)).toBe(true);
+    expect(cambioMenor(1680, 1662.5)).toBe(false);
+    expect(cambioMenor(1662.5, null)).toBe(false);
   });
 });

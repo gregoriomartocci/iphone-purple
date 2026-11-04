@@ -27,7 +27,7 @@ import type {
 export const SETTINGS: StoreSettings = {
   dollarRate: 1450,
   dollarRateUpdatedAt: new Date().toISOString(),
-  defaultMarginPct: 18,
+  defaultMarginPct: 5,
   whatsappNumber: "5492215713416",
   whatsappDisplay: "+54 9 221 571-3416",
   instagram: "https://www.instagram.com/iphonepurple.ar/",
