@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Copy, MessageCircle, Search, Trophy } from "lucide-react";
 import { esTelefonoReal, mensajeDeStock } from "@/lib/whatsapp/consulta-stock";
 import type { EquipoMercado, OfertaMercado } from "@/lib/whatsapp/mercado";
+import type { ListaVista } from "@/lib/whatsapp/sincronizar";
 import { waLink } from "@/lib/whatsapp";
 import { formatARS } from "@/utils/format";
 
@@ -78,7 +79,38 @@ function ConsultarStock({
   );
 }
 
-export function MercadoPanel({ equipos }: { equipos: EquipoMercado[] }) {
+/** Lo que se pudo revisar de su chat justo antes de consultarle. */
+function Verificacion({
+  oferta,
+  vistas,
+}: {
+  oferta: OfertaMercado;
+  vistas: Record<string, ListaVista> | null;
+}) {
+  if (!vistas) {
+    return <p className="text-xs text-white/35">Lector apagado: su chat no se revisó.</p>;
+  }
+  const vista = vistas[oferta.proveedorId];
+  if (!vista) {
+    return <p className="text-xs text-white/35">Sin mensajes recientes en sus chats.</p>;
+  }
+  return vista.fecha > oferta.fecha ? (
+    <p className="text-xs text-amber-300">
+      Hay una lista más nueva en {vista.chat} ({fechaCorta(vista.fecha)}): el precio puede
+      haber cambiado.
+    </p>
+  ) : (
+    <p className="text-xs text-white/35">Al día con {vista.chat}.</p>
+  );
+}
+
+export function MercadoPanel({
+  equipos,
+  vistas,
+}: {
+  equipos: EquipoMercado[];
+  vistas: Record<string, ListaVista> | null;
+}) {
   const [busqueda, setBusqueda] = useState("");
   const [proveedor, setProveedor] = useState<string | null>(null);
 
@@ -188,6 +220,11 @@ export function MercadoPanel({ equipos }: { equipos: EquipoMercado[] }) {
                     <div className="min-w-0">
                       <p className="flex items-center gap-1.5 text-sm text-white">
                         {o.proveedor}
+                        {o.ingresando && (
+                          <span className="rounded-full bg-amber-400/[0.10] px-2 py-0.5 text-xs text-amber-300">
+                            Ingresando
+                          </span>
+                        )}
                         {i === 0 && e.ofertas.length > 1 && (
                           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/[0.10] px-2 py-0.5 text-xs text-emerald-300">
                             <Trophy className="size-3" />
@@ -200,6 +237,7 @@ export function MercadoPanel({ equipos }: { equipos: EquipoMercado[] }) {
                         {i > 0 &&
                           ` · +USD ${Math.round(o.costoUsd - e.ofertas[0].costoUsd)}`}
                       </p>
+                      <Verificacion oferta={o} vistas={vistas} />
                     </div>
                   </div>
                   <ConsultarStock equipo={e} oferta={o} />

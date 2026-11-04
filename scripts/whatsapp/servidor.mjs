@@ -256,6 +256,16 @@ async function respaldarSesion() {
 const telefonoDeLid = new Map();
 
 /**
+ * Los grupos en los que está la línea, tal como los describe WhatsApp. El grupo
+ * "Avisos" de una comunidad es un grupo más, marcado con `isCommunityAnnounce`,
+ * y es donde publican varios proveedores.
+ */
+const gruposConocidos = new Map();
+
+/** Qué llega realmente de WhatsApp, para distinguir "silencio" de "no recibe". */
+const recibidos = { eventos: 0, mensajes: 0, deGrupo: 0, ultimo: null };
+
+/**
  * Pregunta por todos los grupos de una sola vez.
  *
  * Una llamada en vez de una por grupo: pedirlas de a una, con diez o veinte
@@ -266,6 +276,15 @@ async function traerNombresDeGrupos(sock) {
     const grupos = await sock.groupFetchAllParticipating();
     for (const [jid, meta] of Object.entries(grupos ?? {})) {
       if (meta?.subject) nombresDeChat.set(jid, meta.subject);
+      gruposConocidos.set(jid, {
+        jid,
+        nombre: meta?.subject ?? null,
+        comunidad: Boolean(meta?.isCommunity),
+        avisos: Boolean(meta?.isCommunityAnnounce),
+        comunidadPadre: meta?.linkedParent ?? null,
+        soloAdmins: Boolean(meta?.announce),
+        participantes: meta?.size ?? meta?.participants?.length ?? null,
+      });
       /*
        * Los participantes a veces traen las dos identidades: el identificador
        * interno con el que firman los mensajes y el teléfono real. Guardar esa
@@ -492,6 +511,8 @@ function instantanea(dias = DIAS) {
       nombre: c.nombre ?? nombreDeContacto(contactos, c.jid),
       telefono: c.jid.split("@")[0],
       grupo: c.jid.endsWith("@g.us"),
+      soloAdmins: gruposConocidos.get(c.jid)?.soloAdmins ?? false,
+      avisos: gruposConocidos.get(c.jid)?.avisos ?? false,
       mensajes: [...c.mensajes.values()]
         .filter((m) => new Date(m.fecha).getTime() >= desde)
         .map((m) => ({
@@ -557,7 +578,13 @@ async function conectar() {
     for (const m of messages ?? []) guardar(m);
   });
   sock.ev.on("messages.upsert", ({ messages }) => {
-    for (const m of messages ?? []) guardar(m);
+    recibidos.eventos += 1;
+    for (const m of messages ?? []) {
+      recibidos.mensajes += 1;
+      if (m.key?.remoteJid?.endsWith("@g.us")) recibidos.deGrupo += 1;
+      recibidos.ultimo = new Date().toISOString();
+      guardar(m);
+    }
   });
 
   sock.ev.on("connection.update", async (u) => {
@@ -882,6 +909,17 @@ createServer((req, res) => {
    * renglones y no de una: el archivo crece sin techo y cargarlo entero en
    * memoria sería reintroducir el problema que la poda vino a resolver.
    */
+  if (url.pathname === "/grupos") {
+    return responder(200, {
+      recibidos,
+      grupos: [...gruposConocidos.values()].map((g) => ({
+        ...g,
+        conMensajes: chats.has(g.jid),
+        nombreComunidad: gruposConocidos.get(g.comunidadPadre)?.nombre ?? null,
+      })),
+    });
+  }
+
   if (url.pathname === "/historico") {
     const desde = url.searchParams.get("desde") ?? "";
     const tope = Math.min(Number(url.searchParams.get("tope") ?? 500), 2000);
