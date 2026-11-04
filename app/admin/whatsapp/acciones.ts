@@ -4,6 +4,7 @@ import { spawn } from "node:child_process";
 import { mkdirSync, openSync } from "node:fs";
 import { join } from "node:path";
 import { revalidatePath } from "next/cache";
+import { canonizarFila } from "@/lib/whatsapp/nombres";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/server";
 import { getSettings, isSupabaseConfigured } from "@/lib/data";
@@ -119,7 +120,7 @@ export async function planificarDesdeWhatsappAction(
       if (!id || ultima.has(id)) continue;
       ultima.set(id, {
         fecha: fila.created_at as string,
-        filas: (fila.parsed_json ?? []) as ParsedRow[],
+        filas: ((fila.parsed_json ?? []) as ParsedRow[]).map(canonizarFila),
       });
     }
 
