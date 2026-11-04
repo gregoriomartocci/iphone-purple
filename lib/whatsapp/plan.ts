@@ -1,11 +1,13 @@
 import type { ParsedRow, Supplier } from "@/types";
-import { sellPrice } from "./parser";
+import { slugify } from "@/utils/format";
+import { SEPARADOR_DE_MENSAJES, sellPrice } from "./parser";
 import {
   equiposSinStock,
-  listaPendiente,
+  tandaPendiente,
   mejorPorEquipoCon,
   proveedorDelMensaje,
   revisarAntesDePublicar,
+  skuDe,
   type ChatWhatsapp,
   type MensajeWhatsapp,
   type Revision,
@@ -78,13 +80,17 @@ export function listasParaImportar(
   const listas: ListaParaImportar[] = [];
 
   for (const { proveedor, mensajes, chats: dondeVino } of porProveedor.values()) {
-    const mensaje = listaPendiente(mensajes, ultimaImportacion(proveedor.id));
-    if (!mensaje) continue;
+    const tanda = tandaPendiente(mensajes, ultimaImportacion(proveedor.id));
+    const ultimo = tanda.at(-1);
+    if (!ultimo) continue;
 
     listas.push({
       proveedor,
-      mensaje,
-      chat: dondeVino.get(mensaje.fecha + mensaje.texto) ?? "—",
+      mensaje: {
+        ...ultimo,
+        texto: tanda.map((m) => m.texto).join(SEPARADOR_DE_MENSAJES),
+      },
+      chat: dondeVino.get(ultimo.fecha + ultimo.texto) ?? "—",
     });
   }
 
@@ -199,9 +205,9 @@ export function planificarPublicacion(
    * frenada no dice nada sobre qué dejó de estar: tratarla como si lo dijera
    * pondría en cero todo el catálogo de ese proveedor por un precio raro.
    */
-  const anteriores = interpretadas
-    .filter((i) => !frenadas.some((f) => f.proveedor.id === i.proveedor.id))
-    .flatMap((i) => i.filasAnteriores);
+  const anteriores = listasAceptadas(interpretadas, frenadas).flatMap(
+    (i) => i.filasAnteriores
+  );
 
   const sinStock = equiposSinStock(
     publicar.map((p) => p.fila),
@@ -209,4 +215,62 @@ export function planificarPublicacion(
   );
 
   return { publicar, frenadas, sinStock };
+}
+
+/**
+ * Las listas que se pueden tomar como vigentes. Una frenada queda afuera: si se
+ * guardara, su precio sospechoso pasaría a ser contra lo que se compara mañana.
+ */
+export function listasAceptadas(
+  interpretadas: ListaInterpretada[],
+  frenadas: ListaFrenada[]
+): ListaInterpretada[] {
+  return interpretadas.filter(
+    (i) => !frenadas.some((f) => f.proveedor.id === i.proveedor.id)
+  );
+}
+
+/** Qué le pasaría al catálogo si se publica esta fila. */
+export type Coincidencia =
+  | { tipo: "producto-nuevo" }
+  | { tipo: "variante-nueva" }
+  | { tipo: "actualiza"; precioActual: number };
+
+/**
+ * Si un equipo ya está en el catálogo o hay que crearlo.
+ *
+ * Usa los mismos identificadores que la publicación, el slug del producto y el
+ * SKU de la variante, para que lo que se muestra sea lo que va a pasar.
+ */
+export function coincidenciaEnCatalogo(
+  fila: ParsedRow,
+  slugs: ReadonlySet<string>,
+  variantes: ReadonlyMap<string, number>
+): Coincidencia {
+  const precioActual = variantes.get(skuDe(fila));
+  if (precioActual !== undefined) return { tipo: "actualiza", precioActual };
+  return slugs.has(slugify(fila.model.trim()))
+    ? { tipo: "variante-nueva" }
+    : { tipo: "producto-nuevo" };
+}
+
+/**
+ * Suma la última lista de los proveedores que hoy no mandaron nada nuevo.
+ *
+ * Sin esto, el mejor precio se elige solo entre las listas de hoy, y una lista
+ * nueva más cara pisa un precio más barato que ya está publicado.
+ */
+export function sumarListasVigentes(
+  interpretadas: ListaInterpretada[],
+  proveedores: Supplier[],
+  filasVigentes: (proveedorId: string) => ParsedRow[] | undefined
+): ListaInterpretada[] {
+  const yaEstan = new Set(interpretadas.map((i) => i.proveedor.id));
+  const vigentes = proveedores.flatMap((proveedor) => {
+    const filas = filasVigentes(proveedor.id);
+    return proveedor.isActive && !yaEstan.has(proveedor.id) && filas?.length
+      ? [{ proveedor, filas, filasAnteriores: filas }]
+      : [];
+  });
+  return [...interpretadas, ...vigentes];
 }

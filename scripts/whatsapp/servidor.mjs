@@ -21,6 +21,7 @@
  *                    Es solo verificación: vincular siempre es por QR.
  *   PORT             por defecto 8080.
  *   DIAS             ventana de mensajes que se conserva. Por defecto 3.
+ *   SITIO_URL y CRON_SECRET  para refrescar el dólar cada hora.
  */
 import { createServer } from "node:http";
 import { appendFile, cp, rename, mkdir, readFile, rm, writeFile } from "node:fs/promises";
@@ -32,10 +33,12 @@ import {
   DisconnectReason,
   fetchLatestBaileysVersion,
   makeWASocket,
+  normalizeMessageContent,
   useMultiFileAuthState as cargarSesion,
 } from "baileys";
 import QRCode from "qrcode-terminal";
 import { comparable } from "./telefono.mjs";
+import { jidParaConsultar, nombreDeContacto, registrarContacto } from "./contactos.mjs";
 import { toString as qrSvg } from "qrcode";
 
 const PUERTO = Number(process.env.PORT ?? 8080);
@@ -100,7 +103,8 @@ const estado = {
 };
 
 function textoDe(m) {
-  const c = m.message;
+  // Abre los envoltorios: mensajes temporales, de una sola vista, documentos.
+  const c = normalizeMessageContent(m.message);
   if (!c) return null;
   return (
     c.conversation ??
@@ -142,6 +146,26 @@ const ARCHIVO = join(dirname(AUTH), "mensajes-whatsapp.json");
  * precio dentro de seis meses.
  */
 const HISTORICO = join(dirname(AUTH), "historico-whatsapp.ndjson");
+
+const ARCHIVO_CONTACTOS = join(dirname(AUTH), "contactos-whatsapp.json");
+/** Lo que WhatsApp informa de cada contacto. Sobrevive reinicios. */
+const contactos = new Map();
+let guardadoContactos = null;
+
+function anotarContactos(lista) {
+  let cambio = false;
+  for (const c of lista ?? []) cambio = registrarContacto(contactos, c) || cambio;
+  if (!cambio || guardadoContactos) return;
+  guardadoContactos = setTimeout(() => {
+    guardadoContactos = null;
+    writeFile(ARCHIVO_CONTACTOS, JSON.stringify([...contactos]), "utf8").catch((e) =>
+      console.error("No se pudieron guardar los contactos:", e?.message ?? e)
+    );
+  }, 5_000);
+}
+
+/** Mensajes descartados por no traer texto, por tipo. Una lista en foto cae acá. */
+const sinTexto = {};
 
 const nombresDeChat = new Map();
 
@@ -331,7 +355,7 @@ async function traerPerfil(id) {
   if (perfiles.has(id)) return perfiles.get(id);
   if (!socketVivo) throw new Error("Sin conexión con WhatsApp.");
 
-  const jid = id.includes("@") ? id : `${id}@s.whatsapp.net`;
+  const jid = jidParaConsultar(contactos, id);
   const perfil = { id, negocio: null, estado: null, foto: null };
 
   try {
@@ -375,6 +399,11 @@ function guardar(m) {
   if (!marca) return;
 
   const texto = textoDe(m);
+  if (!texto) {
+    const tipo =
+      Object.keys(normalizeMessageContent(m.message) ?? {})[0] ?? "sin-contenido";
+    sinTexto[tipo] = (sinTexto[tipo] ?? 0) + 1;
+  }
   if (!texto || texto.trim().length < 8) return;
 
   /*
@@ -401,6 +430,9 @@ function guardar(m) {
    * ni, por lo tanto, qué margen le toca.
    */
   const autorJid = esGrupo ? (m.key.participant ?? null) : jid;
+  if (autorJid && m.pushName && !m.key.fromMe) {
+    anotarContactos([{ id: autorJid, notify: m.pushName }]);
+  }
   const autorId = autorJid ? autorJid.split("@")[0] : null;
 
   chat.mensajes.set(m.key.id, {
@@ -457,11 +489,15 @@ function instantanea(dias = DIAS) {
   return [...chats.values()]
     .map((c) => ({
       jid: c.jid,
-      nombre: c.nombre,
+      nombre: c.nombre ?? nombreDeContacto(contactos, c.jid),
       telefono: c.jid.split("@")[0],
       grupo: c.jid.endsWith("@g.us"),
       mensajes: [...c.mensajes.values()]
         .filter((m) => new Date(m.fecha).getTime() >= desde)
+        .map((m) => ({
+          ...m,
+          autorNombre: m.autorNombre ?? nombreDeContacto(contactos, m.autor ?? ""),
+        }))
         .sort((a, b) => a.fecha.localeCompare(b.fecha)),
     }))
     .filter((c) => c.mensajes.length > 0)
@@ -470,6 +506,15 @@ function instantanea(dias = DIAS) {
 
 async function conectar() {
   await mkdir(AUTH, { recursive: true });
+  if (contactos.size === 0) {
+    try {
+      for (const [id, c] of JSON.parse(await readFile(ARCHIVO_CONTACTOS, "utf8"))) {
+        contactos.set(id, c);
+      }
+    } catch {
+      // No existir es lo normal la primera vez.
+    }
+  }
   if (chats.size === 0) await cargarDeDisco();
   const { state, saveCreds } = await cargarSesion(AUTH);
   const { version } = await fetchLatestBaileysVersion();
@@ -503,7 +548,12 @@ async function conectar() {
 
   socketActual = sock;
   sock.ev.on("creds.update", saveCreds);
-  sock.ev.on("messaging-history.set", ({ messages }) => {
+  sock.ev.on("contacts.upsert", anotarContactos);
+  sock.ev.on("contacts.update", anotarContactos);
+  sock.ev.on("chats.upsert", anotarContactos);
+  sock.ev.on("messaging-history.set", ({ messages, contacts, chats: listaDeChats }) => {
+    anotarContactos(contacts);
+    anotarContactos(listaDeChats);
     for (const m of messages ?? []) guardar(m);
   });
   sock.ev.on("messages.upsert", ({ messages }) => {
@@ -603,6 +653,15 @@ async function conectar() {
       anotar("conectado", propio || null);
       void respaldarSesion();
       void traerNombresDeGrupos(sock);
+      /*
+       * Los nombres de la agenda llegan solos únicamente al vincular. Si esta
+       * sesión ya estaba vinculada, se piden una vez a su colección.
+       */
+      if (![...contactos.values()].some((c) => c.agenda)) {
+        void sock
+          .resyncAppState(["critical_unblock_low"], true)
+          .catch((e) => console.error("No se pudo pedir la agenda:", e?.message ?? e));
+      }
       console.log(`Conectado a WhatsApp como ${propio || "?"}.`);
     }
     if (u.connection === "close") {
@@ -686,6 +745,23 @@ async function conectar() {
 
 setInterval(podar, 3_600_000);
 
+/*
+ * Refresca el dólar cada hora. Va acá porque este proceso está siempre prendido
+ * y un cron de Vercel en este plan corre como mucho una vez por día.
+ */
+if (process.env.SITIO_URL && process.env.CRON_SECRET) {
+  setInterval(() => {
+    fetch(new URL("/api/cotizacion", process.env.SITIO_URL), {
+      headers: { authorization: `Bearer ${process.env.CRON_SECRET}` },
+      signal: AbortSignal.timeout(60_000),
+    })
+      .then(async (r) => console.log(`Cotización: HTTP ${r.status} ${await r.text()}`))
+      .catch((e) =>
+        console.error("No se pudo refrescar la cotización:", e?.message ?? e)
+      );
+  }, 3_600_000);
+}
+
 createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const responder = (codigo, cuerpo) => {
@@ -711,6 +787,7 @@ createServer((req, res) => {
       intentosMaximos: INTENTOS_MAXIMOS,
       ultimoRechazo: estado.ultimoRechazo,
       eventos: estado.eventos,
+      sinTexto,
       /* La hora del lector, que es el reloj con el que están sellados los
          eventos. Comparar contra él y no contra el del sitio evita diferencias
          si los dos relojes no están en hora. */

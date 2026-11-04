@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient, createClient } from "@/lib/supabase/server";
 import { parseModel } from "@/lib/catalog";
 import type {
   Category,
@@ -32,7 +32,7 @@ type VariantRow = {
   battery_health: number | null;
   price_ars: number | string | null;
   price_usd: number | string | null;
-  cost_usd: number | string | null;
+  cost_usd?: number | string | null;
   stock: number | null;
   sku: string | null;
 };
@@ -90,7 +90,7 @@ function mapVariant(row: VariantRow): Variant {
     batteryHealth: row.battery_health,
     priceArs: num(row.price_ars),
     priceUsd: num(row.price_usd),
-    costUsd: row.cost_usd === null ? null : num(row.cost_usd),
+    costUsd: row.cost_usd == null ? null : num(row.cost_usd),
     stock: row.stock ?? 0,
     sku: row.sku,
   };
@@ -118,14 +118,19 @@ function mapProduct(row: ProductRow): Product {
   };
 }
 
-export async function fetchProducts(): Promise<Product[]> {
-  const supabase = createClient();
+/**
+ * El catálogo. Por defecto sin costos: esto alimenta páginas públicas, y lo que
+ * reciben termina en el HTML que cualquiera puede leer. Con costos solo se pide
+ * desde el panel, con su propio cliente.
+ */
+export async function fetchProducts({ conCosto = false } = {}): Promise<Product[]> {
+  const supabase = conCosto ? createAdminClient() : createClient();
   const { data, error } = await supabase
     .from("products")
     .select(
       `id, name, slug, brand, model, category, description, specs, is_featured, created_at,
        variants:product_variants(id, product_id, storage, color, color_hex, grade,
-         battery_health, price_ars, price_usd, cost_usd, stock, sku, authenticity, is_active),
+         battery_health, price_ars, price_usd, ${conCosto ? "cost_usd," : ""} stock, sku, authenticity, is_active),
        images:product_images(url, alt, sort_order)`
     )
     .eq("status", "active");

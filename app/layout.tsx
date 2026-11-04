@@ -101,7 +101,12 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${jost.variable} ${geistMono.variable}`}>
+    <html
+      lang="es"
+      className={`${jost.variable} ${geistMono.variable}`}
+      // El script de abajo agrega `data-moneda` antes de que React arranque.
+      suppressHydrationWarning
+    >
       <head>
         {/*
           Aplica la moneda elegida antes del primer pintado.

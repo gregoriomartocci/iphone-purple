@@ -9,6 +9,7 @@ import {
   type PlanParaRevisar,
 } from "@/app/admin/whatsapp/acciones";
 import { formatARS } from "@/utils/format";
+import type { Coincidencia } from "@/lib/whatsapp/plan";
 
 /**
  * El paso entre "el lector tiene mensajes" y "el catálogo tiene precios".
@@ -18,6 +19,12 @@ import { formatARS } from "@/utils/format";
  * precios que ve el cliente. Tenerlos separados da el único momento en que una
  * persona puede mirar qué va a pasar antes de que pase.
  */
+function textoCoincidencia(c: Coincidencia): string {
+  if (c.tipo === "producto-nuevo") return "Producto nuevo";
+  if (c.tipo === "variante-nueva") return "Variante nueva";
+  return `Actualiza: antes ${formatARS(c.precioActual)}`;
+}
+
 export function PlanWhatsapp({ hayProveedores }: { hayProveedores: boolean }) {
   const [plan, setPlan] = useState<PlanParaRevisar | null>(null);
   const [armando, setArmando] = useState(false);
@@ -59,6 +66,8 @@ export function PlanWhatsapp({ hayProveedores }: { hayProveedores: boolean }) {
   }
 
   const aPublicar = plan?.lotes.reduce((n, l) => n + l.filas.length, 0) ?? 0;
+  const conEquipos = plan?.lotes.filter((l) => l.filas.length > 0) ?? [];
+  const sinGanar = plan?.lotes.filter((l) => l.filas.length === 0) ?? [];
 
   return (
     <section className="vidrio-sutil rounded-2xl p-5">
@@ -98,7 +107,7 @@ export function PlanWhatsapp({ hayProveedores }: { hayProveedores: boolean }) {
           <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
             <span className="text-white">
               <strong className="font-semibold">{aPublicar}</strong> equipos de{" "}
-              {plan.lotes.length} {plan.lotes.length === 1 ? "proveedor" : "proveedores"}
+              {conEquipos.length} {conEquipos.length === 1 ? "proveedor" : "proveedores"}
             </span>
             {plan.sinStock.length > 0 && (
               <span className="inline-flex items-center gap-1.5 text-white/45">
@@ -108,7 +117,14 @@ export function PlanWhatsapp({ hayProveedores }: { hayProveedores: boolean }) {
             )}
           </div>
 
-          {plan.lotes.map((lote) => (
+          {sinGanar.length > 0 && (
+            <p className="text-sm text-white/45">
+              {sinGanar.map((l) => l.proveedorNombre).join(", ")}: ningún equipo más
+              barato que el resto. Su lista se guarda igual para verla en Mercado.
+            </p>
+          )}
+
+          {conEquipos.map((lote) => (
             <div
               key={lote.proveedorId}
               className="overflow-hidden rounded-xl border border-white/[0.07]"
@@ -141,15 +157,14 @@ export function PlanWhatsapp({ hayProveedores }: { hayProveedores: boolean }) {
                         {f.grade} · costo {f.cost} {f.currency} · {f.quantity} u.
                       </p>
                     </div>
-                    <span className="tnum shrink-0 text-sm text-white/70">
-                      {formatARS(
-                        Math.round(
-                          (f.currency === "USD" ? f.cost : f.cost / plan.dollarRate) *
-                            (1 + lote.marginPct / 100) *
-                            plan.dollarRate
-                        )
-                      )}
-                    </span>
+                    <div className="shrink-0 text-right">
+                      <p className="tnum text-sm text-white">
+                        {formatARS(lote.previa[i].precioArs)}
+                      </p>
+                      <p className="mt-0.5 text-[0.7rem] text-white/40">
+                        {textoCoincidencia(lote.previa[i].coincidencia)}
+                      </p>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -197,7 +212,7 @@ export function PlanWhatsapp({ hayProveedores }: { hayProveedores: boolean }) {
           <button
             type="button"
             onClick={publicar}
-            disabled={publicando || aPublicar === 0}
+            disabled={publicando || !plan.lotes.length}
             className="bg-primary text-primary-foreground hover:bg-primary/85 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold shadow-[0_10px_30px_-12px_#5e16eb] transition-all active:scale-[0.985] disabled:opacity-50 disabled:shadow-none"
           >
             {publicando ? (
@@ -205,7 +220,11 @@ export function PlanWhatsapp({ hayProveedores }: { hayProveedores: boolean }) {
             ) : (
               <Upload className="size-4" />
             )}
-            {publicando ? "Publicando…" : `Publicar ${aPublicar} equipos al catálogo`}
+            {publicando
+              ? "Publicando…"
+              : aPublicar > 0
+                ? `Publicar ${aPublicar} equipos al catálogo`
+                : "Guardar las listas"}
           </button>
         </div>
       )}

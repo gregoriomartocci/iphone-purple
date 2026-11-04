@@ -18,8 +18,12 @@ import {
 } from "@/lib/whatsapp/servidor";
 import { parseSupplierList } from "@/lib/whatsapp/parser";
 import {
+  coincidenciaEnCatalogo,
   listasParaImportar,
   planificarPublicacion,
+  listasAceptadas,
+  sumarListasVigentes,
+  type Coincidencia,
   type ListaInterpretada,
 } from "@/lib/whatsapp/plan";
 import {
@@ -30,6 +34,8 @@ import {
   skuDesdeClave,
   type ActionResult,
 } from "@/lib/admin/publicar";
+import { skuDe, ultimaPorEquipo } from "@/lib/whatsapp/sincronizar";
+import { slugify } from "@/utils/format";
 import type { ParsedRow } from "@/types";
 import type { PerfilContacto } from "@/lib/whatsapp/servidor";
 
@@ -54,6 +60,10 @@ export interface LoteProveedor {
   /** El mensaje original. Va a `supplier_imports` para poder auditar después. */
   rawText: string;
   filas: ParsedRow[];
+  /** Toda la lista, también lo que perdió contra otro proveedor. */
+  listaCompleta: ParsedRow[];
+  /** Para cada fila, en el mismo orden: su precio final y qué hace en el catálogo. */
+  previa: { precioArs: number; coincidencia: Coincidencia }[];
 }
 
 export interface PlanParaRevisar {
@@ -129,7 +139,21 @@ export async function planificarDesdeWhatsappAction(
     const textoDe = new Map<string, string>();
 
     for (const lista of listas) {
-      const { rows, warnings } = await parseSupplierList(lista.mensaje.texto);
+      // Si falla un proveedor, los demás siguen: ya se pagó por interpretarlos.
+      let leidas: ParsedRow[];
+      let warnings: string[];
+      try {
+        ({ rows: leidas, warnings } = await parseSupplierList(lista.mensaje.texto));
+      } catch (err) {
+        avisos.push({
+          proveedor: lista.proveedor.name,
+          textos: [
+            `No se pudo interpretar su lista: ${err instanceof Error ? err.message : String(err)}`,
+          ],
+        });
+        continue;
+      }
+      const rows = ultimaPorEquipo(leidas);
       if (rows.length === 0) {
         avisos.push({
           proveedor: lista.proveedor.name,
@@ -149,7 +173,10 @@ export async function planificarDesdeWhatsappAction(
       }
     }
 
-    const plan = planificarPublicacion(interpretadas, settings.dollarRate);
+    const plan = planificarPublicacion(
+      sumarListasVigentes(interpretadas, proveedores, (id) => ultima.get(id)?.filas),
+      settings.dollarRate
+    );
 
     /*
      * El plan viene por equipo y la escritura va por proveedor —cada uno con su
@@ -157,20 +184,50 @@ export async function planificarDesdeWhatsappAction(
      * que el cliente arme los lotes sería darle a la UI la decisión de qué
      * margen se aplica a qué fila.
      */
+    const [{ data: productos }, { data: variantes }] = await Promise.all([
+      supabase
+        .from("products")
+        .select("slug")
+        .in("slug", [...new Set(plan.publicar.map((p) => slugify(p.fila.model.trim())))]),
+      supabase
+        .from("product_variants")
+        .select("sku, price_ars")
+        .in(
+          "sku",
+          plan.publicar.map((p) => skuDe(p.fila))
+        ),
+    ]);
+    const slugs = new Set((productos ?? []).map((p) => p.slug as string));
+    const preciosActuales = new Map(
+      (variantes ?? []).map((v) => [v.sku as string, Number(v.price_ars)])
+    );
+
+    /*
+     * Un lote por cada lista aceptada, aunque no haya ganado en ningún equipo:
+     * lo que ofrece igual tiene que quedar guardado para compararlo y para verlo
+     * en Mercado.
+     */
     const porProveedor = new Map<string, LoteProveedor>();
-    for (const { fila, proveedor } of plan.publicar) {
-      let lote = porProveedor.get(proveedor.id);
-      if (!lote) {
-        lote = {
-          proveedorId: proveedor.id,
-          proveedorNombre: proveedor.name,
-          marginPct: proveedor.defaultMarginPct,
-          rawText: textoDe.get(proveedor.id) ?? "",
-          filas: [],
-        };
-        porProveedor.set(proveedor.id, lote);
-      }
+    for (const { proveedor, filas } of listasAceptadas(interpretadas, plan.frenadas)) {
+      porProveedor.set(proveedor.id, {
+        proveedorId: proveedor.id,
+        proveedorNombre: proveedor.name,
+        marginPct: proveedor.defaultMarginPct,
+        rawText: textoDe.get(proveedor.id) ?? "",
+        filas: [],
+        listaCompleta: filas,
+        previa: [],
+      });
+    }
+    for (const { fila, proveedor, precioArs } of plan.publicar) {
+      // Lo que ganó una lista anterior ya está publicado: no se reescribe.
+      const lote = porProveedor.get(proveedor.id);
+      if (!lote) continue;
       lote.filas.push(fila);
+      lote.previa.push({
+        precioArs,
+        coincidencia: coincidenciaEnCatalogo(fila, slugs, preciosActuales),
+      });
     }
 
     return {
@@ -184,7 +241,7 @@ export async function planificarDesdeWhatsappAction(
         sinStock: plan.sinStock,
         dollarRate: settings.dollarRate,
         avisos,
-        listasInterpretadas: interpretadas.length,
+        listasInterpretadas: textoDe.size,
       },
     };
   } catch (err) {
@@ -269,6 +326,7 @@ export async function arrancarLectorAction(): Promise<
          * chequee después.
          */
         WHATSAPP_NUMERO: (await getSettings()).whatsappNumber,
+        SITIO_URL: process.env.NEXT_PUBLIC_APP_URL,
         PORT: puerto,
         AUTH_DIR: sesion,
         DIAS: process.env.WHATSAPP_DIAS ?? "3",
@@ -371,7 +429,8 @@ const PublicarSchema = z.object({
         proveedorId: z.string().min(1),
         marginPct: z.number().min(0).max(300),
         rawText: z.string(),
-        filas: z.array(ParsedRowSchema).min(1),
+        filas: z.array(ParsedRowSchema),
+        listaCompleta: z.array(ParsedRowSchema),
       })
     )
     .min(1, "No hay nada para publicar."),
@@ -404,6 +463,7 @@ export async function publicarPlanAction(
         dollarRate,
         rows: lote.filas as ParsedRow[],
         rawText: lote.rawText,
+        listaCompleta: lote.listaCompleta as ParsedRow[],
       });
     }
 
@@ -425,10 +485,8 @@ export async function publicarPlanAction(
       enCero = data?.length ?? 0;
     }
 
-    revalidatePath("/catalogo");
-    revalidatePath("/admin/productos");
-    revalidatePath("/admin/whatsapp");
-    revalidatePath("/admin");
+    // También las fichas de cada producto, que muestran el precio.
+    revalidatePath("/", "layout");
 
     return { ok: true, data: { publicados, enCero } };
   } catch (err) {

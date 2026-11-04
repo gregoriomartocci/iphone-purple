@@ -147,6 +147,51 @@ export function pareceLista(texto: string): boolean {
  * media hora después, la que cuenta es la segunda. Por eso se recorre de atrás
  * para adelante y se devuelve la primera que sirve.
  */
+/** Más separados que esto, dos mensajes ya no son parte de la misma tanda. */
+const SEPARACION_DE_TANDA_MS = 3 * 3_600_000;
+
+/**
+ * Los mensajes que forman la lista más nueva de un proveedor.
+ *
+ * Muchos publican por partes: Fany manda ocho o nueve mensajes por categoría en
+ * el mismo minuto, e iCell tres en media hora. Tomar solo el último dejaba el
+ * catálogo con una categoría y el resto en stock cero.
+ */
+export function tandaPendiente(
+  mensajes: MensajeWhatsapp[],
+  ultimaImportacion: string | null
+): MensajeWhatsapp[] {
+  const corte = ultimaImportacion ? new Date(ultimaImportacion).getTime() : 0;
+  const candidatas = mensajes
+    .filter((m) => !m.mio && pareceLista(m.texto))
+    .filter((m) => new Date(m.fecha).getTime() > corte)
+    .sort((a, b) => a.fecha.localeCompare(b.fecha));
+
+  const tanda: MensajeWhatsapp[] = [];
+  for (const mensaje of candidatas.reverse()) {
+    const siguiente = tanda[0];
+    if (
+      siguiente &&
+      new Date(siguiente.fecha).getTime() - new Date(mensaje.fecha).getTime() >
+        SEPARACION_DE_TANDA_MS
+    ) {
+      break;
+    }
+    tanda.unshift(mensaje);
+  }
+  return tanda;
+}
+
+/**
+ * Un proveedor que repite un equipo en la misma tanda lo está corrigiendo, así
+ * que vale su última mención aunque el precio anterior fuera más bajo.
+ */
+export function ultimaPorEquipo(filas: ParsedRow[]): ParsedRow[] {
+  const porClave = new Map<string, ParsedRow>();
+  for (const fila of filas) porClave.set(`${claveEquipo(fila)}|${fila.currency}`, fila);
+  return [...porClave.values()];
+}
+
 export function listaPendiente(
   mensajes: MensajeWhatsapp[],
   ultimaImportacion: string | null
@@ -369,6 +414,8 @@ export interface AutorDetectado {
   ultimoTexto: string | null;
   /** El nombre que dice su propia lista, si lo dice. Para proponerlo al cargar. */
   nombreDeLaLista: string | null;
+  /** El nombre de su grupo, solo si es el único que publica listas ahí. */
+  nombreDelGrupo: string | null;
   /** En cuántos días distintos mandó listas. Un proveedor manda casi a diario. */
   diasConListas: number;
   /** Cuántos equipos se le contaron a la última lista. */
@@ -449,6 +496,11 @@ const PALABRAS_GENERICAS = new Set([
   "envio",
   "envios",
   "en",
+  "canal",
+  "difusion",
+  "comunidad",
+  "grupo",
+  "revendedoras",
 ]);
 
 /**
@@ -535,6 +587,50 @@ export function nombreSugerido(texto: string | null): string | null {
   }
 
   return null;
+}
+
+/**
+ * El nombre de un proveedor a partir del nombre de su grupo.
+ *
+ * Muchos publican en un grupo o canal propio: "Fany Lista", "DIFUSIÓN VIP
+ * -FRAN-", "Canal Mayorista | @provetech.ar". Un @usuario es lo más confiable
+ * que puede traer. Si no hay, se quitan las palabras que describen al grupo y
+ * no a su dueño. Sin nada propio, como en "REVENDEDORES IPHONE", no hay nombre.
+ */
+export function nombreDesdeGrupo(grupo: string | null): string | null {
+  if (!grupo) return null;
+  const texto = grupo.normalize("NFKC");
+
+  const usuario = texto.match(/@([\p{L}\d_-]+)/u);
+  if (usuario) return usuario[1].charAt(0).toUpperCase() + usuario[1].slice(1);
+
+  const propias = texto
+    .replace(
+      /[\p{Extended_Pictographic}\p{Emoji_Presentation}\u{1F1E6}-\u{1F1FF}]/gu,
+      " "
+    )
+    .split(/[\s|·]+/)
+    .map((w) => w.replace(/^[^\p{L}\d]+|[^\p{L}\d]+$/gu, ""))
+    .filter(Boolean)
+    .filter(
+      (w) =>
+        !PALABRAS_GENERICAS.has(
+          w
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+        )
+    );
+  if (propias.length === 0 || propias.join(" ").length < 3) return null;
+
+  // Solo se capitaliza lo que está todo en mayúsculas: "iCell" queda como está.
+  return propias
+    .map((w) =>
+      w === w.toUpperCase() && /\p{L}/u.test(w)
+        ? w.charAt(0) + w.slice(1).toLowerCase()
+        : w
+    )
+    .join(" ");
 }
 
 /**
@@ -637,6 +733,18 @@ export function autoresDetectados(
   chats: ChatWhatsapp[],
   proveedores: Supplier[]
 ): AutorDetectado[] {
+  const autoresDeListas = new Map<string, Set<string>>();
+  for (const chat of chats) {
+    if (!chat.grupo) continue;
+    const autores = new Set<string>();
+    for (const m of chat.mensajes) {
+      if (!m.mio && pareceLista(m.texto) && m.autor) {
+        autores.add(telefonoComparable(m.autor));
+      }
+    }
+    autoresDeListas.set(chat.jid, autores);
+  }
+
   /* Los días con lista se acumulan aparte porque hay que contarlos sin
      repetir: tres listas en una tarde son un día, no tres. */
   const dias = new Map<string, Set<string>>();
@@ -668,6 +776,7 @@ export function autoresDetectados(
           ),
           ultimoTexto: null,
           nombreDeLaLista: null,
+          nombreDelGrupo: null,
           diasConListas: 0,
           equiposEnUltima: 0,
           confianza: 0,
@@ -685,6 +794,9 @@ export function autoresDetectados(
       autor.mensajes += 1;
       if (pareceLista(mensaje.texto)) {
         autor.listas += 1;
+        if (!autor.nombreDelGrupo && autoresDeListas.get(chat.jid)?.size === 1) {
+          autor.nombreDelGrupo = nombreDesdeGrupo(chat.nombre);
+        }
         dias.get(comparable)?.add(mensaje.fecha.slice(0, 10));
         if (!autor.ultimaLista || mensaje.fecha > autor.ultimaLista) {
           autor.ultimaLista = mensaje.fecha;

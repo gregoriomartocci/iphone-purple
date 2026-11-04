@@ -26,6 +26,7 @@ const NAV = [
   { href: "/admin", label: "Resumen", icon: LayoutDashboard },
   { href: "/admin/whatsapp", label: "WhatsApp", icon: Smartphone },
   { href: "/admin/importar", label: "Importar lista", icon: MessageSquareText },
+  { href: "/admin/mercado", label: "Mercado", icon: Store },
   { href: "/admin/productos", label: "Productos", icon: Package },
   { href: "/admin/margenes", label: "Margen y precios", icon: Percent },
   { href: "/admin/ventas", label: "Ventas", icon: Receipt },

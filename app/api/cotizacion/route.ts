@@ -1,8 +1,14 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 import { getSettings, isSupabaseConfigured } from "@/lib/data";
-import { precioArsDesdeUsd, revisarCotizacion, traerCotizacion } from "@/lib/cotizacion";
+import {
+  cambioMenor,
+  precioArsDesdeUsd,
+  revisarCotizacion,
+  traerCotizacion,
+} from "@/lib/cotizacion";
 
 /**
  * Actualiza la cotización del dólar y, con ella, los precios en pesos del
@@ -16,7 +22,9 @@ import { precioArsDesdeUsd, revisarCotizacion, traerCotizacion } from "@/lib/cot
  * El costo en dólares no se toca: es lo que pagó el negocio, un hecho que ya
  * ocurrió.
  *
- * El cron está en `vercel.json`: días hábiles a las 13:00 UTC, las 10 de Argentina.
+ * La llama cada hora el lector de WhatsApp, que está siempre prendido. El cron de
+ * `vercel.json` queda como respaldo diario: el plan actual de Vercel no permite
+ * que corra más seguido.
  *
  * Entra por dos puertas: el cron manda el `CRON_SECRET`, y una persona del
  * panel entra con su sesión. Sin ninguna de las dos no se dispara algo que
@@ -65,6 +73,16 @@ export async function GET(req: Request) {
       );
     }
 
+    if (!forzar && cambioMenor(nueva.venta, anterior)) {
+      return NextResponse.json({
+        aplicada: false,
+        motivo: "cambio-menor",
+        anterior,
+        nueva: nueva.venta,
+        fuente: nueva.fuente,
+      });
+    }
+
     const supabase = createAdminClient();
     const cuando = new Date().toISOString();
 
@@ -100,6 +118,9 @@ export async function GET(req: Request) {
       if (errorUpdate) throw new Error(errorUpdate.message);
       recalculadas += 1;
     }
+
+    // Si no, las páginas guardadas seguirían mostrando el precio anterior.
+    revalidatePath("/", "layout");
 
     return NextResponse.json({
       aplicada: true,

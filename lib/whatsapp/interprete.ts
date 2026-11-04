@@ -217,7 +217,7 @@ export async function interpretarConSesion(
 
   let salida: string;
   try {
-    const { stdout } = await ejecutar(
+    const proceso = ejecutar(
       binario,
       [
         "-p",
@@ -234,12 +234,18 @@ export async function interpretarConSesion(
       ],
       { cwd: tmpdir(), env: entorno, timeout: ESPERA_MS, maxBuffer: 20 * 1024 * 1024 }
     );
+    // Sin esto el binario espera tres segundos una entrada que nunca llega.
+    proceso.child.stdin?.end();
+    const { stdout } = await proceso;
     salida = stdout;
   } catch (err) {
-    const mensaje = err instanceof Error ? err.message : String(err);
+    // `err.message` trae el comando completo, con la lista adentro: no se muestra.
+    const fallo = err as { killed?: boolean; code?: number | string };
+    const motivo = fallo.killed
+      ? `tardó más de ${ESPERA_MS / 60_000} minutos`
+      : `terminó con error (${fallo.code ?? "sin código"})`;
     throw new Error(
-      `La sesión de Claude Code no pudo interpretar la lista: ${mensaje}. ` +
-        "Si esto se repite, cargá ANTHROPIC_API_KEY y se usa la API."
+      `La sesión de Claude Code ${motivo}. Si se repite, cargá ANTHROPIC_API_KEY para usar la API.`
     );
   }
 

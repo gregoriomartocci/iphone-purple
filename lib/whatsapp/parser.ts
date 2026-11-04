@@ -76,7 +76,9 @@ const RowSchema = z.object({
   cost: z
     .number()
     .positive()
-    .describe("Costo unitario que cobra el proveedor, solo el número."),
+    .describe(
+      "Costo de comprar UNA sola unidad, solo el número. Si hay precios por cantidad (x1, x3, x5), es el de x1."
+    ),
   quantity: z
     .number()
     .int()
@@ -106,6 +108,7 @@ const SYSTEM_PROMPT = `Interpretás listas de precios que los proveedores mayori
 El texto viene desprolijo: abreviaturas ("ip13", "15 PM", "SE 3"), emojis, líneas de saludo, precios sin símbolo, capacidades pegadas al modelo, estados escritos de mil formas ("impecable", "9 de 10", "usado a nuevo").
 
 Reglas:
+- Si un equipo tiene precios por cantidad ("USD 850 (x1)", "USD 840 (x3)", "USD 830 (x5)"), el costo es SIEMPRE el de una unidad: el de x1. Nunca el de x3 ni el de x5, aunque sea el más barato. Se vende de a uno y el margen se calcula sobre lo que cuesta comprar uno. Si no figura el precio por unidad, usá el de menor cantidad y avisalo en warnings.
 - Una fila por equipo concreto ofrecido. Si una línea lista varias capacidades con distintos precios, generá una fila por cada una.
 - Normalizá los modelos al nombre comercial completo de Apple.
 - No inventes datos. Si un dato no está, usá null (o cadena vacía en storage).
@@ -147,6 +150,40 @@ async function porApi(text: string): Promise<Lista> {
   return response.parsed_output;
 }
 
+/**
+ * Valida fila por fila lo que devolvió la sesión.
+ *
+ * Una fila incompleta queda afuera y se informa como aviso, sin completarla:
+ * adivinar una marca o un precio es peor que no publicar ese equipo. Solo se
+ * rechaza todo si la respuesta no tiene forma de lista.
+ */
+export function validarLista(crudo: unknown): Lista {
+  const raiz = z
+    .object({ rows: z.array(z.unknown()), warnings: z.array(z.string()).default([]) })
+    .safeParse(crudo);
+  if (!raiz.success) {
+    throw new Error(
+      "La sesión devolvió una respuesta sin forma de lista. Probá de nuevo, o cargá ANTHROPIC_API_KEY para usar la API."
+    );
+  }
+
+  const rows: Lista["rows"] = [];
+  const warnings = [...raiz.data.warnings];
+  for (const fila of raiz.data.rows) {
+    const validada = RowSchema.safeParse(fila);
+    if (validada.success) {
+      rows.push(validada.data);
+      continue;
+    }
+    const modelo = (fila as { model?: unknown } | null)?.model;
+    const campo = validada.error.issues[0]?.path.join(".") ?? "?";
+    warnings.push(
+      `Fila descartada por datos incompletos (${campo}): ${typeof modelo === "string" ? modelo : "sin modelo"}`
+    );
+  }
+  return { rows, warnings };
+}
+
 /*
  * El esquema en JSON Schema, que es cómo se le explica la forma a la sesión.
  * `z.toJSONSchema` arrastra los `.describe()` de cada campo, así que las reglas
@@ -165,18 +202,33 @@ async function porSesion(binario: string, text: string): Promise<Lista> {
   esquemaJson ??= JSON.stringify(z.toJSONSchema(ListSchema), null, 1);
   const crudo = await interpretarConSesion(binario, SYSTEM_PROMPT, esquemaJson, text);
 
-  const validado = ListSchema.safeParse(crudo);
-  if (!validado.success) {
-    const donde = validado.error.issues
-      .slice(0, 3)
-      .map((i) => `${i.path.join(".") || "(raíz)"}: ${i.message}`)
-      .join("; ");
-    throw new Error(
-      `La sesión devolvió datos que no cumplen el formato esperado (${donde}). ` +
-        "Probá de nuevo, o cargá ANTHROPIC_API_KEY para usar la API, que garantiza la forma."
-    );
+  return validarLista(crudo);
+}
+
+/** Une los mensajes de una tanda. La lista se corta solo acá, nunca a mitad de uno. */
+export const SEPARADOR_DE_MENSAJES = "\n\n=== mensaje siguiente ===\n\n";
+
+const MAXIMO_POR_TROZO = 8_000;
+const TROZOS_EN_PARALELO = 3;
+
+/**
+ * Agrupa los mensajes en trozos de un tamaño que el intérprete resuelve a tiempo.
+ *
+ * Un mensaje nunca se parte: su encabezado, como "USADOS", define cómo leer sus
+ * renglones. Un mensaje enorme queda como un trozo propio.
+ */
+export function trozosDeLista(texto: string): string[] {
+  const trozos: string[] = [];
+  let actual = "";
+  for (const mensaje of texto.split(SEPARADOR_DE_MENSAJES)) {
+    if (actual && actual.length + mensaje.length > MAXIMO_POR_TROZO) {
+      trozos.push(actual);
+      actual = "";
+    }
+    actual = actual ? `${actual}\n\n${mensaje}` : mensaje;
   }
-  return validado.data;
+  if (actual) trozos.push(actual);
+  return trozos;
 }
 
 export async function parseSupplierList(rawText: string): Promise<ParsedList> {
@@ -186,12 +238,28 @@ export async function parseSupplierList(rawText: string): Promise<ParsedList> {
   const eleccion = elegirInterprete();
   if (eleccion.modo === null) throw new Error(eleccion.error);
 
-  const parsed =
-    eleccion.modo === "api"
-      ? await porApi(text)
-      : await porSesion(eleccion.binario, text);
+  const trozos = trozosDeLista(text);
+  const resultados: Lista[] = [];
+  /*
+   * Si falla un trozo falla toda la lista. Una lista parcial se leería como que
+   * el proveedor dejó de ofrecer lo demás, y eso pasaría a stock cero.
+   */
+  for (let i = 0; i < trozos.length; i += TROZOS_EN_PARALELO) {
+    resultados.push(
+      ...(await Promise.all(
+        trozos
+          .slice(i, i + TROZOS_EN_PARALELO)
+          .map((t) =>
+            eleccion.modo === "api" ? porApi(t) : porSesion(eleccion.binario, t)
+          )
+      ))
+    );
+  }
 
-  return { rows: parsed.rows as ParsedRow[], warnings: parsed.warnings };
+  return {
+    rows: resultados.flatMap((r) => r.rows) as ParsedRow[],
+    warnings: resultados.flatMap((r) => r.warnings),
+  };
 }
 
 /**
@@ -208,7 +276,9 @@ export function sellPrice(
   dollarRate: number
 ): { priceArs: number; priceUsd: number; costUsd: number } {
   const costUsd = currency === "USD" ? cost : cost / dollarRate;
-  const priceUsd = Math.round(costUsd * (1 + marginPct / 100));
+  // Hacia arriba: redondear para abajo dejaba el precio por debajo del margen.
+  // El descuento evita que el error de los decimales sume un dólar de más.
+  const priceUsd = Math.ceil(costUsd * (1 + marginPct / 100) - 1e-9);
 
   return {
     costUsd: Math.round(costUsd * 100) / 100,

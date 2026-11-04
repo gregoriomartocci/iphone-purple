@@ -101,13 +101,21 @@ export function isSupabaseConfigured(): boolean {
  */
 const OCULTAR_SIN_FOTO = false;
 
+/** Lo que reciben las páginas públicas termina en su HTML: el costo no puede viajar. */
+function sinCostos(products: Product[]): Product[] {
+  return products.map((p) => ({
+    ...p,
+    variants: p.variants.map((v) => ({ ...v, costUsd: null })),
+  }));
+}
+
 async function allProducts(): Promise<Product[]> {
-  if (!isSupabaseConfigured()) return seed.PRODUCTS;
+  if (!isSupabaseConfigured()) return sinCostos(seed.PRODUCTS);
   try {
     return await db.fetchProducts();
   } catch (err) {
     console.error("[data] Supabase falló, uso la semilla:", err);
-    return seed.PRODUCTS;
+    return sinCostos(seed.PRODUCTS);
   }
 }
 

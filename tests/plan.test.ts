@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { listasParaImportar, planificarPublicacion } from "@/lib/whatsapp/plan";
+import {
+  coincidenciaEnCatalogo,
+  listasParaImportar,
+  planificarPublicacion,
+  listasAceptadas,
+  sumarListasVigentes,
+} from "@/lib/whatsapp/plan";
+import { skuDe, ultimaPorEquipo } from "@/lib/whatsapp/sincronizar";
 import type { ChatWhatsapp, MensajeWhatsapp } from "@/lib/whatsapp/sincronizar";
 import type { ParsedRow, Supplier } from "@/types";
 
@@ -325,5 +332,94 @@ describe("planificarPublicacion", () => {
       frenadas: [],
       sinStock: [],
     });
+  });
+});
+
+describe("listas por partes", () => {
+  it("une los mensajes de una tanda, pero no los de otro día", () => {
+    const listas = listasParaImportar(
+      [
+        chat({
+          mensajes: [
+            mensaje({ fecha: "2026-11-03T13:09:00Z", texto: `AYER\n${LISTA}` }),
+            mensaje({ fecha: "2026-11-04T13:09:00Z", texto: `IPHONE\n${LISTA}` }),
+            mensaje({ fecha: "2026-11-04T13:10:00Z", texto: `SAMSUNG\n${LISTA}` }),
+          ],
+        }),
+      ],
+      [proveedor()],
+      () => null
+    );
+
+    expect(listas).toHaveLength(1);
+    expect(listas[0].mensaje.texto).toContain("IPHONE");
+    expect(listas[0].mensaje.texto).toContain("SAMSUNG");
+    expect(listas[0].mensaje.texto).not.toContain("AYER");
+  });
+});
+
+describe("coincidenciaEnCatalogo", () => {
+  const f = fila({ model: "iPhone 15", storage: "128GB", grade: "a" });
+
+  it("distingue producto nuevo, variante nueva y actualización", () => {
+    expect(coincidenciaEnCatalogo(f, new Set(), new Map())).toEqual({
+      tipo: "producto-nuevo",
+    });
+    expect(coincidenciaEnCatalogo(f, new Set(["iphone-15"]), new Map())).toEqual({
+      tipo: "variante-nueva",
+    });
+    expect(
+      coincidenciaEnCatalogo(f, new Set(["iphone-15"]), new Map([[skuDe(f), 1_000_000]]))
+    ).toEqual({ tipo: "actualiza", precioActual: 1_000_000 });
+  });
+});
+
+describe("ultimaPorEquipo", () => {
+  it("una corrección vale aunque el precio anterior fuera más bajo", () => {
+    const r = ultimaPorEquipo([fila({ cost: 700 }), fila({ cost: 720 })]);
+    expect(r).toHaveLength(1);
+    expect(r[0].cost).toBe(720);
+  });
+});
+
+describe("sumarListasVigentes", () => {
+  it("una lista nueva más cara no le gana a un precio ya publicado", () => {
+    const caro = proveedor({ id: "caro" });
+    const barato = proveedor({ id: "barato" });
+    const plan = planificarPublicacion(
+      sumarListasVigentes(
+        [{ proveedor: caro, filas: [fila({ cost: 900 })], filasAnteriores: [] }],
+        [caro, barato],
+        (id) => (id === "barato" ? [fila({ cost: 800 })] : undefined)
+      ),
+      DOLAR
+    );
+
+    expect(plan.publicar).toHaveLength(1);
+    expect(plan.publicar[0].proveedor.id).toBe("barato");
+  });
+
+  it("no suma a un proveedor desactivado", () => {
+    const r = sumarListasVigentes([], [proveedor({ isActive: false })], () => [fila()]);
+    expect(r).toEqual([]);
+  });
+});
+
+describe("listasAceptadas", () => {
+  it("deja afuera solo las listas frenadas", () => {
+    const buena = proveedor({ id: "buena" });
+    const frenada = proveedor({ id: "frenada" });
+    const lista = (p: typeof buena) => ({
+      proveedor: p,
+      filas: [fila()],
+      filasAnteriores: [],
+    });
+
+    const r = listasAceptadas(
+      [lista(buena), lista(frenada)],
+      [{ proveedor: frenada, revisiones: [] }]
+    );
+
+    expect(r.map((i) => i.proveedor.id)).toEqual(["buena"]);
   });
 });
