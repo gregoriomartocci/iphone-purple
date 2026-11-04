@@ -9,15 +9,13 @@ import {
   Truck,
   Wrench,
 } from "lucide-react";
-import { WhatsAppLink } from "./WhatsAppLink";
-import { AddToCart } from "@/components/cart/AddToCart";
+import { ConsultarDisponibilidad } from "./ConsultarDisponibilidad";
 import { Galeria } from "./Galeria";
 import { Precio } from "./Precio";
 import { antiguedadCotizacion } from "@/lib/moneda";
 import { ordenarPorColor, savingsVsNew } from "@/lib/catalog";
 import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
 import { IMITADOS } from "@/lib/data/replicas";
-import { productMessage } from "@/lib/whatsapp";
 import { formatARS } from "@/utils/format";
 import {
   AUTHENTICITY_LABELS,
@@ -310,10 +308,7 @@ export function ProductDetail({
               <>
                 <span className="inline-block size-2 rounded-full bg-emerald-500" />
                 <span className="text-foreground">
-                  {selected!.stock <= 2
-                    ? `Queda${selected!.stock === 1 ? "" : "n"} ${selected!.stock}`
-                    : "Disponible"}{" "}
-                  para entrega inmediata
+                  Lo conseguimos: consultá disponibilidad
                 </span>
               </>
             ) : (
@@ -321,20 +316,12 @@ export function ProductDetail({
             )}
           </p>
 
-          {/* Dos caminos, sin obligar a ninguno: quien quiere resolverlo solo
-              compra, y quien prefiere preguntar antes escribe. */}
-          <div className="mt-5 flex flex-col gap-2.5">
-            <AddToCart product={product} variant={selected} className="w-full" />
-            <WhatsAppLink
-              number={whatsappNumber}
-              message={productMessage(product.name, variantLabel)}
-              variant="outline"
-              className="w-full"
-            >
-              {(selected?.stock ?? 0) > 0
-                ? "Consultar por WhatsApp"
-                : "Avisame cuando entre"}
-            </WhatsAppLink>
+          <div className="mt-5">
+            <ConsultarDisponibilidad
+              whatsappNumber={whatsappNumber}
+              equipo={variantLabel ? `${product.name} (${variantLabel})` : product.name}
+              hayStock={(selected?.stock ?? 0) > 0}
+            />
           </div>
         </div>
 

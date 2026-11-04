@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
+import { Menu, Search, User, X } from "lucide-react";
 import { Logo } from "./Logo";
-import { useCart } from "@/components/cart/CartProvider";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
@@ -36,7 +35,6 @@ const UMBRAL_TRANSPARENTE = 24;
 export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const { count, setOpen: setCartOpen } = useCart();
   const [fondo, setFondo] = useState<Fondo>("transparente");
 
   useEffect(() => {
@@ -120,26 +118,6 @@ export function SiteHeader() {
           >
             <User className="size-5" />
           </Link>
-
-          <button
-            type="button"
-            onClick={() => setCartOpen(true)}
-            aria-label={count > 0 ? `Carrito, ${count} equipos` : "Carrito"}
-            className="relative rounded-full p-2.5 text-white/75 transition-colors hover:bg-white/10 hover:text-white"
-          >
-            <ShoppingBag className="size-5" />
-            {count > 0 && (
-              // La `key` es el propio contador: al cambiar, React remonta el
-              // globito y la animación de rebote vuelve a correr. Es el aviso
-              // de que el equipo entró al carrito.
-              <span
-                key={count}
-                className="bg-purple pop absolute top-1 right-1 flex size-4 items-center justify-center rounded-full text-[10px] font-semibold text-white"
-              >
-                {count > 9 ? "9+" : count}
-              </span>
-            )}
-          </button>
 
           <button
             type="button"
