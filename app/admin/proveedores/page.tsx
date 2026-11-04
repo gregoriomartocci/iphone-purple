@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import { SuppliersManager } from "@/components/admin/SuppliersManager";
-import { getSuppliers } from "@/lib/data/admin";
-import { isSupabaseConfigured } from "@/lib/data";
+import { RankingProveedores } from "@/components/admin/RankingProveedores";
+import { getRankingProveedores, getSuppliers } from "@/lib/data/admin";
+import { getSettings, isSupabaseConfigured } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Proveedores" };
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminSuppliersPage() {
-  const suppliers = await getSuppliers();
+  const [suppliers, settings] = await Promise.all([getSuppliers(), getSettings()]);
+  const ranking = await getRankingProveedores(settings.dollarRate);
 
   return (
     <div className="max-w-4xl">
@@ -18,6 +20,8 @@ export default async function AdminSuppliersPage() {
           El margen por defecto de cada uno se precarga al importar su lista.
         </p>
       </header>
+
+      {ranking.length > 0 && <RankingProveedores filas={ranking} />}
 
       <SuppliersManager suppliers={suppliers} supabaseReady={isSupabaseConfigured()} />
     </div>
