@@ -108,6 +108,9 @@ export async function planificarDesdeWhatsappAction(
     const { data: importaciones } = await supabase
       .from("supplier_imports")
       .select("supplier_id, created_at, parsed_json")
+      /* Un borrador se ve en Mercado, pero todavía no lo aprobó nadie: no cuenta
+         como importado ni compite con lo que se publica. */
+      .eq("status", "approved")
       .order("created_at", { ascending: false });
 
     const ultima = new Map<string, { fecha: string; filas: ParsedRow[] }>();
