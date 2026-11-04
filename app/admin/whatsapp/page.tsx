@@ -101,6 +101,7 @@ export default async function AdminWhatsappPage() {
           <VincularWhatsapp
             numero={settings.whatsappDisplay}
             enPausa={salud.ok && salud.datos.enPausa}
+            conexion={salud.ok ? salud.datos.conexion : undefined}
           />
         ) : (
           /*

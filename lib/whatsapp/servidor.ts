@@ -15,6 +15,12 @@ import type { ChatWhatsapp } from "./sincronizar";
 
 /** Lo que devuelve `/salud`, que no pide token. */
 export interface SaludServidor {
+  /**
+   * El estado crudo de la conexión con WhatsApp.
+   *
+   * `desvinculado` importa: el lector sigue vivo pero dejó de intentar, así
+   * que no va a aparecer ningún QR por más que se espere.
+   */
   conexion: string;
   vinculado: boolean;
   /** `true` cuando hay un QR esperando que alguien lo escanee. */

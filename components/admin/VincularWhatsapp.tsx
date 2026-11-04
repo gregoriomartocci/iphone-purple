@@ -21,9 +21,11 @@ const CADA_MS = 9_000;
 export function VincularWhatsapp({
   numero,
   enPausa = false,
+  conexion,
 }: {
   numero?: string;
   enPausa?: boolean;
+  conexion?: string;
 }) {
   const [svg, setSvg] = useState<string | null>(null);
   const [pidiendo, setPidiendo] = useState(false);
@@ -76,6 +78,51 @@ export function VincularWhatsapp({
    * a quedarse esperando a que aparezca algo, cuando lo que hay que hacer es
    * avisarle al lector que ahora sí hay alguien mirando.
    */
+  /*
+   * Detenido no es lo mismo que "todavía no generó el QR".
+   *
+   * Cuando WhatsApp rechaza con 401 el lector deja de intentar, a propósito:
+   * reconectar en bucle contra una negativa es lo que termina bloqueando una
+   * línea. Pero el panel mostraba el cartel de "todavía no generó ningún
+   * código", que invita a esperar algo que no va a llegar nunca.
+   */
+  if (conexion === "desvinculado") {
+    return (
+      <div className="vidrio-sutil rounded-2xl p-6">
+        <h2 className="font-medium text-white">El lector dejó de intentar</h2>
+        <p className="mt-1.5 max-w-xl text-sm text-white/45">
+          WhatsApp cerró la conexión y el lector se detuvo en vez de reintentar en bucle,
+          que es lo que termina bloqueando una línea. No va a aparecer ningún código hasta
+          que se lo pidas.
+        </p>
+        <p className="mt-2 max-w-xl text-sm text-white/45">
+          Si WhatsApp te viene diciendo que no se pueden vincular dispositivos, el bloqueo
+          sigue activo y volver a intentar lo estira. Conviene esperar.
+        </p>
+        <button
+          type="button"
+          onClick={async () => {
+            setPidiendo(true);
+            const r = await reanudarLectorAction();
+            setPidiendo(false);
+            if (!r.ok) setError(r.error);
+            else window.location.reload();
+          }}
+          disabled={pidiendo}
+          className="mt-5 inline-flex h-11 items-center gap-2 rounded-xl border border-white/[0.14] bg-white/[0.05] px-5 text-sm font-medium text-white transition-colors hover:border-white/25 hover:bg-white/[0.10] disabled:opacity-60"
+        >
+          {pidiendo ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <RefreshCw className="size-4" />
+          )}
+          Intentar de nuevo igual
+        </button>
+        {error && <p className="mt-3 text-sm text-amber-200/80">{error}</p>}
+      </div>
+    );
+  }
+
   if (enPausa) {
     return (
       <div className="vidrio-sutil rounded-2xl p-6">
