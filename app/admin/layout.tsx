@@ -16,6 +16,7 @@ import {
   Settings,
   Smartphone,
   Store,
+  History,
   Megaphone,
   Truck,
   Wrench,
@@ -26,6 +27,7 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { href: "/admin", label: "Resumen", icon: LayoutDashboard },
   { href: "/admin/whatsapp", label: "WhatsApp", icon: Smartphone },
+  { href: "/admin/sincronizacion", label: "Sincronización", icon: History },
   { href: "/admin/importar", label: "Importar lista", icon: MessageSquareText },
   { href: "/admin/mercado", label: "Mercado", icon: Store },
   { href: "/admin/productos", label: "Productos", icon: Package },

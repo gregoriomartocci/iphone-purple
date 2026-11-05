@@ -17,7 +17,12 @@ import {
 } from "@/lib/whatsapp/sincronizar";
 import { sellPrice } from "@/lib/whatsapp/parser";
 import { canonizarFila } from "@/lib/whatsapp/nombres";
-import { pedirGrupos, pedirHistorico } from "@/lib/whatsapp/servidor";
+import { pedirGrupos, pedirHistorico, pedirSalud } from "@/lib/whatsapp/servidor";
+import {
+  armarSincronizacion,
+  type FilaSincronizacion,
+  type ImportacionResumen,
+} from "@/lib/whatsapp/estado-sincronizacion";
 
 /**
  * Lecturas del panel.
@@ -355,4 +360,92 @@ export async function getOfertasPorVariante(
     };
   }
   return extras;
+}
+
+/** Lo que muestra la pantalla de sincronización. Sin lector, igual responde. */
+export async function getEstadoSincronizacion() {
+  const vacio = {
+    lector: { conectado: false, ultimoMensaje: null as string | null },
+    ultimaImportacion: null as string | null,
+    filas: [] as FilaSincronizacion[],
+    historial: [] as {
+      proveedor: string;
+      fecha: string;
+      estado: string;
+      publicados: number;
+    }[],
+  };
+  if (!isSupabaseConfigured()) return vacio;
+
+  const supabase = createAdminClient();
+  const desde = new Date(Date.now() - 30 * 86_400_000).toISOString();
+  const [proveedores, imports, variantes, salud, historico, grupos] = await Promise.all([
+    getSuppliers(),
+    supabase
+      .from("supplier_imports")
+      .select("supplier_id, created_at, status, rows_published")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("product_variants")
+      .select("supplier_id")
+      .eq("is_active", true)
+      .gt("stock", 0),
+    pedirSalud().catch(() => null),
+    pedirHistorico(desde).catch(() => null),
+    pedirGrupos().catch(() => null),
+  ]);
+  if (imports.error) throw new Error(imports.error.message);
+  if (variantes.error) throw new Error(variantes.error.message);
+
+  const importaciones: ImportacionResumen[] = (imports.data ?? []).map((i) => ({
+    proveedorId: i.supplier_id as string | null,
+    fecha: i.created_at as string,
+    estado: i.status as string,
+    publicados: Number(i.rows_published ?? 0),
+  }));
+
+  const lecturas = new Map<string, string>();
+  let ultimoMensaje: string | null = null;
+  if (historico?.ok) {
+    const chats = chatsDesdeHistorico(
+      historico.datos.mensajes,
+      grupos?.ok ? grupos.datos.grupos : []
+    );
+    for (const chat of chats) {
+      for (const m of chat.mensajes) {
+        if (!ultimoMensaje || m.fecha > ultimoMensaje) ultimoMensaje = m.fecha;
+        if (!pareceLista(m.texto)) continue;
+        const proveedor = proveedorDelMensaje(chat, m, proveedores);
+        if (!proveedor) continue;
+        const actual = lecturas.get(proveedor.id);
+        if (!actual || m.fecha > actual) lecturas.set(proveedor.id, m.fecha);
+      }
+    }
+  }
+
+  const publicados = new Map<string, number>();
+  for (const v of variantes.data ?? []) {
+    const id = v.supplier_id as string | null;
+    if (id) publicados.set(id, (publicados.get(id) ?? 0) + 1);
+  }
+
+  const nombre = new Map(proveedores.map((p) => [p.id, p.name]));
+  const aprobadas = importaciones.filter((i) => i.estado === "approved");
+
+  return {
+    lector: {
+      conectado: Boolean(
+        salud?.ok && salud.datos.conexion === "open" && salud.datos.vinculado
+      ),
+      ultimoMensaje,
+    },
+    ultimaImportacion: aprobadas[0]?.fecha ?? null,
+    filas: armarSincronizacion(proveedores, importaciones, lecturas, publicados),
+    historial: importaciones.slice(0, 15).map((i) => ({
+      proveedor: nombre.get(i.proveedorId ?? "") ?? "Sin proveedor",
+      fecha: i.fecha,
+      estado: i.estado,
+      publicados: i.publicados,
+    })),
+  };
 }
