@@ -1,5 +1,6 @@
 "use client";
 
+import { nombresDeColores } from "@/lib/colores";
 import { Fragment, useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Check, ChevronDown, Loader2, Search } from "lucide-react";
@@ -51,7 +52,7 @@ export function ProductsTable({
       .flatMap((product) => product.variants.map((variant) => ({ product, variant })))
       .filter(({ product, variant }) =>
         term
-          ? `${product.name} ${variant.storage} ${variant.color} ${variant.sku ?? ""}`
+          ? `${product.name} ${variant.storage} ${nombresDeColores(variant)} ${variant.sku ?? ""}`
               .toLowerCase()
               .includes(term)
           : true
@@ -144,7 +145,7 @@ export function ProductsTable({
                     <td className="p-3">
                       <p className="text-foreground font-medium">{product.name}</p>
                       <p className="text-muted-foreground text-xs">
-                        {variant.storage} · {variant.color}
+                        {variant.storage} · {nombresDeColores(variant)}
                       </p>
                       {extra?.proveedor && (
                         <p className="text-muted-foreground text-xs">

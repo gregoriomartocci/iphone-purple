@@ -156,6 +156,7 @@ const FAMILIAS: [RegExp, Entrada[]][] = [
       ["Alpine Green", "#576856", ["alpine green", "verde alpino", ...VERDE]],
     ],
   ],
+  [/^mac mini/i, [["Silver", "#e3e4e5", PLATA]]],
   [
     /^macbook air/i,
     [
@@ -271,4 +272,85 @@ export function colorOficial(
       hex: "#cccccc",
     }
   );
+}
+
+/** Parte "Silver/Burgundy" o "azul, plata y negro" en cada color. */
+function partes(texto: string): string[] {
+  return texto
+    .split(/[/,·|]|\s+y\s+/i)
+    .map((c) => c.trim())
+    .filter(Boolean);
+}
+
+function sinRepetir(colores: ColorOficial[]): ColorOficial[] {
+  const vistos = new Set<string>();
+  return colores.filter((c) => !vistos.has(c.nombre) && vistos.add(c.nombre));
+}
+
+/**
+ * Todos los colores que trae un texto. Una variante guarda los suyos juntos
+ * ("Starlight/Sky Blue") porque es un solo equipo a un solo precio: el color se
+ * elige, pero no cambia ni el SKU ni la oferta.
+ */
+export function coloresOficiales(
+  modelo: string,
+  texto: string | null | undefined
+): ColorOficial[] {
+  if (!texto) return [];
+  return sinRepetir(
+    partes(texto)
+      .map((c) => colorOficial(modelo, c))
+      .filter((c): c is ColorOficial => c !== null)
+  );
+}
+
+/**
+ * Los colores de una fila de lista: los del campo color y los que quedaron en
+ * las notas ("Colores disponibles: azul / medianoche"). De las notas solo se
+ * toma lo que es un color conocido: ahí también hay texto libre, y una palabra
+ * cualquiera no puede convertirse en una muestra.
+ */
+export function coloresDeFila(
+  modelo: string,
+  color: string | null | undefined,
+  notas: string | null | undefined
+): ColorOficial[] {
+  const nota = /colou?res?(?:\s+disponibles?)?\s*:\s*([^.;\n]+)/i.exec(notas ?? "")?.[1];
+  const familia = FAMILIAS.find(([patron]) => patron.test(modelo.trim()))?.[1];
+  const deNotas = partes(nota ?? "")
+    .map((c) => (familia && buscar(familia, c)) ?? buscar(GENERICOS, c))
+    .filter((c): c is ColorOficial => c !== null);
+  return sinRepetir([...coloresOficiales(modelo, color), ...deNotas]);
+}
+
+/** Lo que se guarda en la base: los nombres juntos, y la muestra del primero. */
+export function colorParaGuardar(colores: ColorOficial[]): {
+  color: string;
+  color_hex: string;
+} {
+  return {
+    color: colores.map((c) => c.nombre).join("/") || "Sin especificar",
+    color_hex: colores[0]?.hex ?? "#cccccc",
+  };
+}
+
+/** Los colores de una variante; la semilla trae uno solo y sin la lista. */
+export function coloresDe(variante: {
+  color: string;
+  colorHex: string;
+  colores?: ColorOficial[];
+}): ColorOficial[] {
+  if (variante.colores) return variante.colores;
+  return variante.color ? [{ nombre: variante.color, hex: variante.colorHex }] : [];
+}
+
+/** Para mostrar en una línea: "Starlight / Sky Blue". */
+export function nombresDeColores(variante: {
+  color: string;
+  colorHex: string;
+  colores?: ColorOficial[];
+}): string {
+  return coloresDe(variante)
+    .map((c) => c.nombre)
+    .join(" / ");
 }

@@ -1,3 +1,4 @@
+import { coloresDe } from "@/lib/colores";
 import {
   GRADES,
   stateOf,
@@ -119,7 +120,8 @@ export function matchesVariant(variant: Variant, filters: VariantFilters): boole
   if (filters.state && stateOf(variant.grade) !== filters.state) return false;
   if (filters.grade && variant.grade !== filters.grade) return false;
   if (filters.storage && variant.storage !== filters.storage) return false;
-  if (filters.color && variant.color !== filters.color) return false;
+  if (filters.color && !coloresDe(variant).some((c) => c.nombre === filters.color))
+    return false;
   if (filters.authenticity && variant.authenticity !== filters.authenticity) return false;
   if (filters.minPrice !== undefined && variant.priceArs < filters.minPrice) return false;
   if (filters.maxPrice !== undefined && variant.priceArs > filters.maxPrice) return false;

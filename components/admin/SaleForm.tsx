@@ -1,5 +1,6 @@
 "use client";
 
+import { nombresDeColores } from "@/lib/colores";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Loader2, Plus } from "lucide-react";
@@ -47,8 +48,8 @@ export function SaleForm({
     product.variants.map((variant) => ({
       id: variant.id,
       productName: product.name,
-      label: `${product.name} · ${variant.storage} · ${variant.color} · ${GRADE_LABELS[variant.grade]}`,
-      variantLabel: `${variant.storage} · ${variant.color} · ${GRADE_LABELS[variant.grade]}`,
+      label: `${product.name} · ${variant.storage} · ${nombresDeColores(variant)} · ${GRADE_LABELS[variant.grade]}`,
+      variantLabel: `${variant.storage} · ${nombresDeColores(variant)} · ${GRADE_LABELS[variant.grade]}`,
       priceArs: variant.priceArs,
       costArs: variant.costUsd === null ? null : Math.round(variant.costUsd * dollarRate),
       stock: variant.stock,
