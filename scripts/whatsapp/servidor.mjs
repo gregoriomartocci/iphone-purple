@@ -436,6 +436,13 @@ function guardar(m) {
     const tipo =
       Object.keys(normalizeMessageContent(m.message) ?? {})[0] ?? "sin-contenido";
     sinTexto[tipo] = (sinTexto[tipo] ?? 0) + 1;
+    /* Sin contenido del mensaje: solo qué tipo es y de dónde vino. Sirve para
+       distinguir un mensaje que no se pudo desencriptar de uno de control. */
+    console.log(
+      `Mensaje sin texto: tipo ${tipo}, stub ${m.messageStubType ?? "-"}, ` +
+        `detalle ${JSON.stringify(m.messageStubParameters ?? [])}, ` +
+        `grupo ${jid.endsWith("@g.us")}, mio ${Boolean(m.key?.fromMe)}`
+    );
   }
   if (!texto || texto.trim().length < 8) return;
 
