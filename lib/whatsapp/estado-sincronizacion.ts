@@ -20,6 +20,12 @@ export interface FilaSincronizacion {
   publicados: number;
 }
 
+/** Una lista más vieja que esto ya no es una novedad para importar. */
+const DIAS_VIGENCIA = 10;
+
+/** Como instante: el lector escribe "…00.000Z" y la base "…00+00:00". */
+const t = (iso: string) => Date.parse(iso);
+
 /**
  * Qué tan al día está cada proveedor.
  *
@@ -30,7 +36,8 @@ export function armarSincronizacion(
   proveedores: Supplier[],
   importaciones: ImportacionResumen[],
   lecturas: ReadonlyMap<string, string>,
-  publicados: ReadonlyMap<string, number>
+  publicados: ReadonlyMap<string, number>,
+  ahora: Date
 ): FilaSincronizacion[] {
   const orden: Record<EstadoProveedor, number> = {
     "lista-nueva": 0,
@@ -41,7 +48,7 @@ export function armarSincronizacion(
   const ultima = (id: string, aprobada: boolean) =>
     importaciones
       .filter((i) => i.proveedorId === id && (i.estado === "approved") === aprobada)
-      .reduce<string | null>((m, i) => (!m || i.fecha > m ? i.fecha : m), null);
+      .reduce<string | null>((m, i) => (!m || t(i.fecha) > t(m) ? i.fecha : m), null);
 
   return proveedores
     .filter((p) => p.isActive)
@@ -49,13 +56,17 @@ export function armarSincronizacion(
       const ultimaImportacion = ultima(proveedor.id, true);
       const borrador = ultima(proveedor.id, false);
       const ultimaLectura = lecturas.get(proveedor.id) ?? null;
-      const referencia =
-        [ultimaImportacion, borrador].filter(Boolean).sort().at(-1) ?? null;
+      const referencia = Math.max(
+        ultimaImportacion ? t(ultimaImportacion) : 0,
+        borrador ? t(borrador) : 0
+      );
+      const vigente =
+        ultimaLectura !== null &&
+        ahora.getTime() - t(ultimaLectura) <= DIAS_VIGENCIA * 86_400_000;
 
       let estado: EstadoProveedor;
-      if (ultimaLectura && (!referencia || ultimaLectura > referencia))
-        estado = "lista-nueva";
-      else if (borrador && (!ultimaImportacion || borrador > ultimaImportacion))
+      if (vigente && t(ultimaLectura) > referencia) estado = "lista-nueva";
+      else if (borrador && (!ultimaImportacion || t(borrador) > t(ultimaImportacion)))
         estado = "borrador";
       else estado = ultimaImportacion ? "al-dia" : "sin-listas";
 

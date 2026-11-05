@@ -94,7 +94,7 @@ function Verificacion({
   if (!vista) {
     return <p className="text-xs text-white/35">Sin mensajes recientes en sus chats.</p>;
   }
-  return vista.fecha > oferta.fecha ? (
+  return Date.parse(vista.fecha) > Date.parse(oferta.fecha) ? (
     <p className="text-xs text-amber-300">
       Hay una lista más nueva en {vista.chat} ({fechaCorta(vista.fecha)}): el precio puede
       haber cambiado.
