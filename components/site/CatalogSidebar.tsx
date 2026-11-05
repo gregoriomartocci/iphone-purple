@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useOptimistic, useState, useTransition } from "react";
 import { alternar, estaAbierta, type Plegadas } from "@/lib/plegables";
 import { Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import type { CatalogFacets } from "@/lib/data";
@@ -30,7 +30,7 @@ import { cn, esClaro } from "@/lib/utils";
  * despliega al elegir "Seminuevo", no antes.
  */
 export function CatalogSidebar({
-  filters,
+  filters: filtrosDelServidor,
   facets,
 }: {
   filters: CatalogFilters;
@@ -38,6 +38,9 @@ export function CatalogSidebar({
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  /* Lo tocado se marca en el acto; el servidor completa los resultados atrás.
+     Sin esto el tilde aparecía recién cuando llegaba la página nueva. */
+  const [filters, marcarYa] = useOptimistic(filtrosDelServidor);
   const [openOnMobile, setOpenOnMobile] = useState(false);
 
   /**
@@ -72,9 +75,10 @@ export function CatalogSidebar({
     const qs = params.toString();
     // `scroll: false` mantiene la posición: por defecto Next salta al tope
     // en cada navegación, y tocar un filtro te devolvía arriba de todo.
-    startTransition(() =>
-      router.push(qs ? `/catalogo?${qs}` : "/catalogo", { scroll: false })
-    );
+    startTransition(() => {
+      marcarYa(next);
+      router.push(qs ? `/catalogo?${qs}` : "/catalogo", { scroll: false });
+    });
   }
 
   /** Volver a tocar la opción activa la desmarca: sirve de atajo para limpiar. */
