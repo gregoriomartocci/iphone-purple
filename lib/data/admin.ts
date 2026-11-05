@@ -1,3 +1,4 @@
+import { nombresDeColores, type ColorOficial } from "@/lib/colores";
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "./index";
@@ -171,7 +172,7 @@ export async function getDashboardStats(dollarRate: number): Promise<DashboardSt
       if (variant.stock > 0 && variant.stock <= 2) {
         lowStock.push({
           name: product.name,
-          variant: `${variant.storage} · ${variant.color}`,
+          variant: `${variant.storage} · ${nombresDeColores(variant)}`,
           stock: variant.stock,
         });
       }
@@ -293,6 +294,7 @@ export interface OfertaProducto {
   precioArs: number;
   fecha: string;
   ingresando: boolean;
+  colores: ColorOficial[];
 }
 
 export interface ExtraVariante {
@@ -345,6 +347,7 @@ export async function getOfertasPorVariante(
           precioArs: precio.priceArs,
           fecha: o.fecha,
           ingresando: o.ingresando,
+          colores: o.colores,
         };
       })
     );

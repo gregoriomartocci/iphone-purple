@@ -1,3 +1,4 @@
+import { nombresDeColores } from "@/lib/colores";
 import {
   BadgeCheck,
   Banknote,
@@ -32,7 +33,7 @@ export function FichaTecnica({
   const deEstaUnidad: [string, string][] = [];
   if (variante) {
     deEstaUnidad.push(["Capacidad", variante.storage]);
-    deEstaUnidad.push(["Color", variante.color]);
+    deEstaUnidad.push(["Color", nombresDeColores(variante)]);
     deEstaUnidad.push(["Condición", GRADE_LABELS[variante.grade]]);
     deEstaUnidad.push(["Estado cosmético", GRADE_SPECS[variante.grade].cosmetic]);
     if (variante.batteryHealth !== null) {

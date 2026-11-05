@@ -1,5 +1,5 @@
 import "server-only";
-import { colorOficial } from "@/lib/colores";
+import { coloresDeFila, colorParaGuardar } from "@/lib/colores";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { sellPrice } from "@/lib/whatsapp/parser";
 import { skuDe } from "@/lib/whatsapp/sincronizar";
@@ -81,8 +81,7 @@ export async function publicarFilas({
     const payload = {
       product_id: productId,
       storage: row.storage || "—",
-      color: colorOficial(row.model, row.color)?.nombre ?? "Sin especificar",
-      color_hex: colorOficial(row.model, row.color)?.hex ?? "#cccccc",
+      ...colorParaGuardar(coloresDeFila(row.model, row.color, row.notes)),
       grade: row.grade,
       authenticity: row.authenticity,
       battery_health: row.batteryHealth,

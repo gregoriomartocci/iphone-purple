@@ -1,3 +1,4 @@
+import { coloresDeFila, type ColorOficial } from "@/lib/colores";
 import type { ParsedRow, Supplier } from "@/types";
 import { sellPrice } from "./parser";
 import { claveEquipo } from "./sincronizar";
@@ -12,6 +13,8 @@ export interface OfertaMercado {
   fecha: string;
   /** La lista dice que todavía no llegó. */
   ingresando: boolean;
+  /** Los colores que ofrece este proveedor, que pueden no ser los de otro. */
+  colores: ColorOficial[];
 }
 
 export interface EquipoMercado {
@@ -62,6 +65,7 @@ export function armarMercado(listas: ListaDeProveedor[], dolar: number): EquipoM
         costoUsd: fila.currency === "USD" ? fila.cost : fila.cost / dolar,
         fecha,
         ingresando: fila.quantity === 0,
+        colores: coloresDeFila(fila.model, fila.color, fila.notes),
       });
     }
   }

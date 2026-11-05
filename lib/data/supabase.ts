@@ -1,4 +1,4 @@
-import { colorOficial } from "@/lib/colores";
+import { coloresOficiales } from "@/lib/colores";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
 import { parseModel } from "@/lib/catalog";
 import type {
@@ -81,13 +81,15 @@ const toCategory = (value: string | null): Category =>
   VALID_CATEGORIES.includes(value as Category) ? (value as Category) : "celular";
 
 function mapVariant(row: VariantRow, modelo: string): Variant {
-  const color = colorOficial(modelo, row.color);
+  const colores = coloresOficiales(modelo, row.color);
+  const color = colores[0];
   return {
     id: row.id,
     productId: row.product_id,
     storage: row.storage ?? "",
     color: color?.nombre ?? "",
     colorHex: color?.hex ?? "#cccccc",
+    colores,
     grade: toGrade(row.grade),
     authenticity: row.authenticity === "replica" ? "replica" : "original",
     batteryHealth: row.battery_health,

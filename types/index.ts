@@ -198,8 +198,11 @@ export interface Variant {
   id: string;
   productId: string;
   storage: string;
+  /** El primero de sus colores; "" si no se sabe. */
   color: string;
   colorHex: string;
+  /** Todos los colores en que se ofrece, al mismo precio. */
+  colores?: { nombre: string; hex: string }[];
   grade: Grade;
   authenticity: Authenticity;
   /** Salud de batería en %, null cuando no aplica (sellados, accesorios). */

@@ -12,6 +12,7 @@ import {
 import { ConsultarDisponibilidad } from "./ConsultarDisponibilidad";
 import { Galeria } from "./Galeria";
 import { Precio } from "./Precio";
+import { coloresDe } from "@/lib/colores";
 import { antiguedadCotizacion } from "@/lib/moneda";
 import { ordenarPorColor, savingsVsNew } from "@/lib/catalog";
 import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
@@ -98,6 +99,11 @@ export function ProductDetail({
   }, [product.variants]);
 
   const [selected, setSelected] = useState<Variant | undefined>(initial);
+  /** Una variante puede venir en varios colores al mismo precio: se elige aparte. */
+  const [colorElegido, setColorElegido] = useState<string | null>(null);
+  const coloresDelElegido = selected ? coloresDe(selected) : [];
+  const colorActual =
+    coloresDelElegido.find((c) => c.nombre === colorElegido) ?? coloresDelElegido[0];
 
   /**
    * Batería de ESTA unidad. Un seminuevo es un teléfono concreto, y el blanco
@@ -118,9 +124,10 @@ export function ProductDetail({
    */
   const colores = useMemo(() => {
     const vistos = new Map<string, string>();
+    // Sin color conocido no hay muestra: un gris de "sin especificar" parece un color.
     for (const v of product.variants)
-      // Sin color conocido no hay muestra: un gris de "sin especificar" parece un color.
-      if (v.color && !vistos.has(v.color)) vistos.set(v.color, v.colorHex);
+      for (const c of coloresDe(v))
+        if (!vistos.has(c.nombre)) vistos.set(c.nombre, c.hex);
     return [...vistos].map(([color, hex]) => ({ color, hex }));
   }, [product.variants]);
 
@@ -131,7 +138,10 @@ export function ProductDetail({
    * botón de comprar siguen apuntando a algo real.
    */
   function elegirColor(color: string) {
-    const del = product.variants.filter((v) => v.color === color);
+    const del = product.variants.filter((v) =>
+      coloresDe(v).some((c) => c.nombre === color)
+    );
+    setColorElegido(color);
     const next =
       del.find(
         (v) =>
@@ -171,7 +181,7 @@ export function ProductDetail({
       video: propias?.[i]?.video ?? false,
       colores: img.colores,
     })),
-    selected?.color
+    colorActual?.nombre
   );
 
   /** Variantes de la capacidad elegida: definen los grados y colores ofrecidos. */
@@ -181,7 +191,7 @@ export function ProductDetail({
   const fullPrice = savings !== null && selected ? selected.priceArs + savings : null;
 
   const variantLabel = selected
-    ? [selected.storage, selected.color, GRADE_LABELS[selected.grade]]
+    ? [selected.storage, colorActual?.nombre, GRADE_LABELS[selected.grade]]
         .filter(Boolean)
         .join(" · ")
     : undefined;
@@ -192,7 +202,11 @@ export function ProductDetail({
         <div className="relative">
           {/* La `key` remonta la galería al cambiar de color: vuelve a la
               primera foto, que ahora es la del color elegido. */}
-          <Galeria key={selected?.color ?? ""} piezas={piezas} nombre={product.name} />
+          <Galeria
+            key={colorActual?.nombre ?? ""}
+            piezas={piezas}
+            nombre={product.name}
+          />
 
           {selected && (
             <div className="pointer-events-none absolute top-5 left-5 z-10 flex items-center gap-2">
@@ -328,21 +342,35 @@ export function ProductDetail({
           </div>
         </div>
 
+        {colores.length === 1 && (
+          <div className="mt-8">
+            <h2 className="text-foreground text-sm font-medium">Color disponible</h2>
+            <p className="text-foreground mt-3 flex items-center gap-2.5 text-sm">
+              <span
+                className="size-6 shrink-0 rounded-full border border-black/15"
+                style={{ background: colores[0].hex }}
+                aria-hidden
+              />
+              {colores[0].color}
+            </p>
+          </div>
+        )}
+
         {colores.length > 1 && (
           <div className="mt-8">
             <h2 className="text-foreground text-sm font-medium">
               Color
-              {selected && (
+              {colorActual && (
                 <span className="text-muted-foreground ml-2 font-normal">
-                  {selected.color}
+                  {colorActual.nombre}
                 </span>
               )}
             </h2>
             <div className="mt-3 flex flex-wrap gap-2.5">
               {colores.map(({ color, hex }) => {
-                const active = selected?.color === color;
+                const active = colorActual?.nombre === color;
                 const hayStock = product.variants.some(
-                  (v) => v.color === color && v.stock > 0
+                  (v) => v.stock > 0 && coloresDe(v).some((c) => c.nombre === color)
                 );
                 return (
                   <button
@@ -412,6 +440,7 @@ export function ProductDetail({
             <div className="mt-3 space-y-2">
               {sameStorage.map((variant) => {
                 const active = selected?.id === variant.id;
+                const propios = coloresDe(variant);
                 return (
                   <button
                     key={variant.id}
@@ -426,16 +455,19 @@ export function ProductDetail({
                       variant.stock === 0 && "cursor-not-allowed opacity-45"
                     )}
                   >
-                    {variant.color && (
+                    {propios.length === 1 && (
                       <span
                         className="size-7 shrink-0 rounded-full border border-black/10"
-                        style={{ background: variant.colorHex }}
+                        style={{ background: propios[0].hex }}
                         aria-hidden
                       />
                     )}
                     <span className="min-w-0 flex-1">
                       <span className="text-foreground block truncate text-sm font-medium">
-                        {[variant.color, GRADE_LABELS[variant.grade]]
+                        {[
+                          propios.map((c) => c.nombre).join(" / "),
+                          GRADE_LABELS[variant.grade],
+                        ]
                           .filter(Boolean)
                           .join(" · ")}
                       </span>
