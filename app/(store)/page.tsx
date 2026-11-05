@@ -223,8 +223,8 @@ export default async function HomePage() {
               <h3 className="text-lg font-medium">Cómo comprar</h3>
               <p className="text-muted-foreground mt-3 leading-relaxed">
                 Los precios y el stock del catálogo son los reales y se actualizan a
-                medida que entran y salen equipos. Podés reservar por el carrito sin crear
-                una cuenta, o escribirnos por WhatsApp con el modelo que te interesa.
+                medida que entran y salen equipos. Tocás Consultar disponibilidad en el
+                equipo que te interesa y seguimos por WhatsApp, sin crear una cuenta.
                 Retirás en La Plata o te lo enviamos a todo el país.
               </p>
             </div>
