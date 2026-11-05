@@ -440,7 +440,13 @@ export async function getEstadoSincronizacion() {
       ultimoMensaje,
     },
     ultimaImportacion: aprobadas[0]?.fecha ?? null,
-    filas: armarSincronizacion(proveedores, importaciones, lecturas, publicados),
+    filas: armarSincronizacion(
+      proveedores,
+      importaciones,
+      lecturas,
+      publicados,
+      new Date()
+    ),
     historial: importaciones.slice(0, 15).map((i) => ({
       proveedor: nombre.get(i.proveedorId ?? "") ?? "Sin proveedor",
       fecha: i.fecha,
