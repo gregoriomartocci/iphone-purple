@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { CATEGORIES, GRADES, LINES, STATES, stateOf } from "@/types";
 import type {
   CatalogFilters,
@@ -109,7 +110,12 @@ function sinCostos(products: Product[]): Product[] {
   }));
 }
 
-async function allProducts(): Promise<Product[]> {
+/**
+ * Una sola consulta por pedido. Los contadores del filtro llaman a esto una vez
+ * por opción —cada marca, cada categoría, cada capacidad—, y sin memoria eran
+ * unas sesenta consultas a la base por cada clic en un filtro.
+ */
+const allProducts = cache(async (): Promise<Product[]> => {
   if (!isSupabaseConfigured()) return sinCostos(seed.PRODUCTS);
   try {
     return await db.fetchProducts();
@@ -117,7 +123,7 @@ async function allProducts(): Promise<Product[]> {
     console.error("[data] Supabase falló, uso la semilla:", err);
     return sinCostos(seed.PRODUCTS);
   }
-}
+});
 
 /** Texto plano sobre el que corre la búsqueda libre. */
 function haystack(product: Product): string {
@@ -399,9 +405,11 @@ export async function getCatalogFacets(
   );
   const visibleVariants = visible.flatMap((p) => p.variants);
 
-  const brands = [...new Set(visible.map((p) => p.brand))].sort((a, b) =>
-    // Apple primero: es la especialidad del negocio.
-    a === "Apple" ? -1 : b === "Apple" ? 1 : a.localeCompare(b)
+  // Una marca vacía no se puede elegir: filtrar por "" es no filtrar.
+  const brands = [...new Set(visible.map((p) => p.brand.trim()).filter(Boolean))].sort(
+    (a, b) =>
+      // Apple primero: es la especialidad del negocio.
+      a === "Apple" ? -1 : b === "Apple" ? 1 : a.localeCompare(b)
   );
   const categories = CATEGORIES.filter((c) => visible.some((p) => p.category === c));
   // De la generación más nueva a la más vieja, que es como se busca.
