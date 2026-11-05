@@ -136,31 +136,38 @@ export function matchesVariant(variant: Variant, filters: VariantFilters): boole
 }
 
 /**
- * Ordena la galería según el color elegido.
+ * La galería del color elegido.
  *
- * No esconde nada: quien está por comprar quiere ver su color primero, pero
- * también las demás tomas del equipo. Primero las fotos donde aparece el
- * color, después las que no se etiquetaron —no se sabe, no se castigan—, y al
- * final las de los otros colores. Los videos siguen yendo últimos, sea cual
- * sea el color: primero se quiere ver el equipo quieto.
+ * Elegir un color es querer ver el equipo en ese color, y lo que se ve es lo
+ * que la persona espera recibir: si el color tiene fotos, las de otros colores
+ * se van. Quedan las suyas, después las que no se etiquetaron y al final los
+ * videos: primero se quiere ver el equipo quieto.
+ *
+ * Si el color no tiene ninguna foto no se esconde nada, porque una ficha vacía
+ * no ayuda, pero `delColor` en false permite avisar que lo que se ve es otro.
  *
  * Es estable: dentro de cada grupo se respeta el orden que ya traía la
  * galería, que es el que pone los renders de estudio adelante.
  */
-export function ordenarPorColor<T extends { colores?: string[]; video?: boolean }>(
+export function galeriaDelColor<T extends { colores?: string[]; video?: boolean }>(
   piezas: T[],
   color: string | undefined
-): T[] {
-  if (!color) return piezas;
+): { piezas: T[]; delColor: boolean } {
+  if (!color) return { piezas, delColor: false };
+  const delColor = piezas.some((p) => p.colores?.includes(color));
   const grupo = (p: T) => {
     if (p.video) return 3;
     if (!p.colores?.length) return 1;
     return p.colores.includes(color) ? 0 : 2;
   };
-  return piezas
-    .map((p, i) => ({ p, i, g: grupo(p) }))
-    .sort((a, b) => a.g - b.g || a.i - b.i)
-    .map(({ p }) => p);
+  return {
+    delColor,
+    piezas: piezas
+      .filter((p) => !delColor || !p.colores?.length || p.colores.includes(color))
+      .map((p, i) => ({ p, i, g: grupo(p) }))
+      .sort((a, b) => a.g - b.g || a.i - b.i)
+      .map(({ p }) => p),
+  };
 }
 
 export function totalStock(product: Product): number {

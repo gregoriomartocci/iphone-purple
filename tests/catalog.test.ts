@@ -4,7 +4,7 @@ import {
   capacityInGb,
   isCapacity,
   leadVariant,
-  ordenarPorColor,
+  galeriaDelColor,
   priceFrom,
   savingsVsNew,
   totalStock,
@@ -389,7 +389,7 @@ describe("filtro de precio", () => {
   });
 });
 
-describe("ordenarPorColor", () => {
+describe("galeriaDelColor", () => {
   const galeria = [
     { url: "a", colores: ["Negro"] },
     { url: "b", colores: [] },
@@ -397,28 +397,35 @@ describe("ordenarPorColor", () => {
     { url: "d", colores: ["Blanco"], video: true },
     { url: "e", colores: ["Blanco"] },
   ];
-  const urls = (p: { url: string }[]) => p.map((x) => x.url);
+  const urls = (color: string) =>
+    galeriaDelColor(galeria, color).piezas.map((x) => x.url);
 
-  it("pone primero el color elegido, después lo sin etiquetar, después el resto", () => {
-    expect(urls(ordenarPorColor(galeria, "Blanco"))).toEqual(["c", "e", "b", "a", "d"]);
+  it("muestra el color elegido, después lo sin etiquetar, y saca los otros colores", () => {
+    expect(urls("Blanco")).toEqual(["c", "e", "b", "d"]);
+    expect(galeriaDelColor(galeria, "Blanco").delColor).toBe(true);
   });
 
-  it("no esconde ninguna foto", () => {
-    expect(ordenarPorColor(galeria, "Naranja")).toHaveLength(galeria.length);
+  it("una foto con varios colores aparece en cada uno de ellos", () => {
+    expect(urls("Naranja")).toContain("c");
+    expect(urls("Blanco")).toContain("c");
+  });
+
+  it("un color sin fotos no vacía la galería y lo dice", () => {
+    const { piezas, delColor } = galeriaDelColor(galeria, "Verde");
+    expect(piezas).toHaveLength(galeria.length);
+    expect(delColor).toBe(false);
   });
 
   it("es estable dentro de cada grupo", () => {
-    // "c" y "e" son las dos blancas; "c" venía antes y sigue antes.
-    const [primera, segunda] = urls(ordenarPorColor(galeria, "Blanco"));
-    expect([primera, segunda]).toEqual(["c", "e"]);
+    expect(urls("Blanco").slice(0, 2)).toEqual(["c", "e"]);
   });
 
   it("el video queda último aunque sea del color elegido", () => {
-    expect(urls(ordenarPorColor(galeria, "Blanco")).at(-1)).toBe("d");
+    expect(urls("Blanco").at(-1)).toBe("d");
   });
 
   it("sin color devuelve la galería tal cual", () => {
-    expect(ordenarPorColor(galeria, undefined)).toBe(galeria);
+    expect(galeriaDelColor(galeria, undefined).piezas).toBe(galeria);
   });
 });
 

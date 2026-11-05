@@ -14,8 +14,8 @@ import { Galeria } from "./Galeria";
 import { Precio } from "./Precio";
 import { coloresDe } from "@/lib/colores";
 import { antiguedadCotizacion } from "@/lib/moneda";
-import { ordenarPorColor, savingsVsNew } from "@/lib/catalog";
-import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
+import { galeriaDelColor, savingsVsNew } from "@/lib/catalog";
+import { fotoDe } from "@/lib/data/fotos";
 import { IMITADOS } from "@/lib/data/replicas";
 import { formatARS } from "@/utils/format";
 import {
@@ -158,12 +158,13 @@ export function ProductDetail({
    * crédito; cuando no, lo que hay es una foto ambiental de la familia y no
    * corresponde acreditar a nadie.
    */
-  const propias = FOTOS_PRODUCTO[product.slug];
+  const propias = product.images.map((img) => fotoDe(img.url));
   // Solo se acredita lo que tiene autor. Una foto propia, comprada o bajada
   // de la sala de prensa del fabricante no tiene a quién acreditar, y la
   // línea de crédito vacía quedaba colgada abajo de la galería.
-  const credito = propias?.find(
-    (f): f is typeof f & { autor: string; origen: string } => !!f.autor && !!f.origen
+  const credito = propias.find(
+    (f): f is NonNullable<typeof f> & { autor: string; origen: string } =>
+      !!f?.autor && !!f.origen
   );
 
   /**
@@ -172,17 +173,24 @@ export function ProductDetail({
    * El video va último a propósito: primero se quiere ver el equipo quieto y
    * desde todos los ángulos, y recién después cómo se ve andando.
    */
-  const piezas = ordenarPorColor(
+  const { piezas, delColor } = galeriaDelColor(
     product.images.map((img, i) => ({
       url: img.url,
       alt: img.alt,
-      render: propias?.[i]?.recorte === "render",
-      fondo: propias?.[i]?.fondo ?? null,
-      video: propias?.[i]?.video ?? false,
+      render: propias[i]?.recorte === "render",
+      fondo: propias[i]?.fondo ?? null,
+      video: propias[i]?.video ?? false,
       colores: img.colores,
     })),
     colorActual?.nombre
   );
+  /**
+   * Avisa cuando se sabe que las fotos son de otro color. Con todas sin
+   * etiquetar no se sabe: podrían ser del color elegido, y un aviso en cada
+   * ficha no diría nada.
+   */
+  const sinFotoDelColor =
+    colorActual !== undefined && !delColor && piezas.some((p) => p.colores?.length);
 
   /** Variantes de la capacidad elegida: definen los grados y colores ofrecidos. */
   const sameStorage = product.variants.filter((v) => v.storage === selected?.storage);
@@ -229,6 +237,13 @@ export function ProductDetail({
             </div>
           )}
         </div>
+
+        {sinFotoDelColor && (
+          <p className="text-muted-foreground mt-3 text-sm">
+            Todavía no tenemos foto en {colorActual.nombre}: la imagen puede mostrar otro
+            color.
+          </p>
+        )}
 
         {credito && (
           // Las licencias Creative Commons obligan a dar crédito. Va discreto

@@ -12,6 +12,7 @@ import type {
   Variant,
 } from "@/types";
 import { SETTINGS as DEFAULT_SETTINGS } from "./seed";
+import { fotoDe } from "./fotos";
 
 /**
  * Lectura desde Supabase.
@@ -116,7 +117,14 @@ function mapProduct(row: ProductRow): Product {
     category: toCategory(row.category),
     description: row.description ?? "",
     specs: row.specs ?? {},
-    images: images.map((i) => ({ url: i.url, alt: i.alt ?? row.name })),
+    images: images.map((i) => ({
+      url: i.url,
+      alt: i.alt ?? row.name,
+      // Con el mismo nombre que las variantes: si no, nunca coincidirían.
+      colores: (fotoDe(i.url)?.colores ?? []).flatMap((color) =>
+        coloresOficiales(row.model ?? row.name, color).map((c) => c.nombre)
+      ),
+    })),
     /* Una variante desactivada —por ejemplo, la más cara de dos equipos que
        se unificaron— no se vende: no se muestra ni en el sitio ni en el panel. */
     variants: (row.variants ?? [])
