@@ -20,7 +20,7 @@ const variante = (id: string, storage: string, colores: [string, string][]): Var
   sku: id,
 });
 
-const producto = (variants: Variant[]) =>
+const producto = (variants: Variant[], images: Product["images"] = []) =>
   ({
     id: "p",
     name: "MacBook Prueba",
@@ -32,14 +32,14 @@ const producto = (variants: Variant[]) =>
     specs: {},
     isFeatured: false,
     createdAt: "2026-11-05T00:00:00Z",
-    images: [],
+    images,
     variants,
   }) as unknown as Product;
 
-const ficha = (variants: Variant[]) =>
+const ficha = (variants: Variant[], images: Product["images"] = []) =>
   render(
     <ProductDetail
-      product={producto(variants)}
+      product={producto(variants, images)}
       whatsappNumber="5492210000000"
       dollarRate={1700}
       dollarRateUpdatedAt="2026-11-05T00:00:00Z"
@@ -95,5 +95,47 @@ describe("colores en la ficha", () => {
     ficha([variante("a", "512GB", [])]);
     expect(screen.queryByText(/^Color/)).toBeNull();
     expect(mensaje()).toContain("512GB");
+  });
+
+  describe("fotos del color elegido", () => {
+    const dosColores = () =>
+      variante("a", "512GB", [
+        ["Starlight", "#ede6db"],
+        ["Sky Blue", "#c7d5e3"],
+      ]);
+    const foto = (nombre: string, colores: string[]) => ({
+      url: `/productos/prueba/${nombre}.jpg`,
+      alt: nombre,
+      colores,
+    });
+    const vistas = () =>
+      new Set(screen.queryAllByRole("img").map((i) => i.getAttribute("alt")));
+    const eleg = (color: string) =>
+      fireEvent.click(screen.getByRole("button", { name: color }));
+
+    it("cambia de foto al elegir otro color y no mezcla colores", () => {
+      ficha(
+        [dosColores()],
+        [foto("clara", ["Starlight"]), foto("azul", ["Sky Blue"]), foto("sin", [])]
+      );
+      expect(vistas().has("clara")).toBe(true);
+      expect(vistas().has("azul")).toBe(false);
+
+      eleg("Sky Blue");
+      expect(vistas().has("azul")).toBe(true);
+      expect(vistas().has("clara")).toBe(false);
+      expect(vistas().has("sin")).toBe(true);
+    });
+
+    it("avisa si el color elegido no tiene foto", () => {
+      ficha([dosColores()], [foto("clara", ["Starlight"])]);
+      expect(screen.queryByText(/todavía no tenemos foto/i)).toBeNull();
+
+      eleg("Sky Blue");
+      expect(
+        screen.getByText(/todavía no tenemos foto en sky blue/i)
+      ).toBeInTheDocument();
+      expect(vistas().has("clara")).toBe(true);
+    });
   });
 });
