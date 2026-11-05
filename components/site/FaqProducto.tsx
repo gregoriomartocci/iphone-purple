@@ -20,11 +20,11 @@ function preguntas(product: Product, esSellado: boolean): { q: string; a: string
     },
     {
       q: "¿Cómo se paga?",
-      a: "Efectivo, transferencia o tarjeta, y lo coordinamos al confirmar el pedido. El precio publicado es el final: no hay cargos que aparezcan después.",
+      a: "Efectivo, transferencia o tarjeta, y lo coordinamos por WhatsApp. El precio publicado es el final: no hay cargos que aparezcan después.",
     },
     {
       q: "¿Hace falta crear una cuenta para comprar?",
-      a: "No. Agregás el equipo al carrito y confirmás con tu nombre y un contacto. La cuenta es opcional.",
+      a: "No. Tocás Consultar disponibilidad y seguimos por WhatsApp. La cuenta es opcional.",
     },
     {
       q: "¿Hacen envíos?",
