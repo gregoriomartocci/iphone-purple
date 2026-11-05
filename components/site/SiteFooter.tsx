@@ -19,7 +19,6 @@ const COLUMNS = [
     links: [
       { href: "/plan-canje", label: "Plan Canje" },
       { href: "/reparaciones", label: "Reparaciones" },
-      { href: "/blog", label: "Blog" },
     ],
   },
   {
