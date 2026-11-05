@@ -117,12 +117,14 @@ function textoDe(m) {
   // Abre los envoltorios: mensajes temporales, de una sola vista, documentos.
   const c = normalizeMessageContent(m.message);
   if (!c) return null;
+  /* Con `||` y no `??`: un campo que llega vacío no tiene que tapar al siguiente,
+     que es donde puede estar el texto de verdad. */
   return (
-    c.conversation ??
-    c.extendedTextMessage?.text ??
-    c.imageMessage?.caption ??
-    c.videoMessage?.caption ??
-    c.documentMessage?.caption ??
+    c.conversation ||
+    c.extendedTextMessage?.text ||
+    c.imageMessage?.caption ||
+    c.videoMessage?.caption ||
+    c.documentMessage?.caption ||
     null
   );
 }
