@@ -5,7 +5,6 @@ import { useState, useTransition } from "react";
 import { alternar, estaAbierta, type Plegadas } from "@/lib/plegables";
 import { Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import type { CatalogFacets } from "@/lib/data";
-import { formatARS } from "@/utils/format";
 import {
   AUTHENTICITY_LABELS,
   etiquetaCategoria,
@@ -171,7 +170,8 @@ export function CatalogSidebar({
         </Section>
       )}
 
-      {facets.states.length > 0 && (
+      {/* Si todo lo que se ve tiene la misma condición, elegirla no filtra nada. */}
+      {(facets.states.length > 1 || Boolean(filters.state)) && (
         <Section
           title="Condición"
           summary={filters.state && STATE_LABELS[filters.state]}
@@ -316,26 +316,6 @@ export function CatalogSidebar({
           </li>
         </Section>
       )}
-
-      <Section
-        title="Precio"
-        summary={resumenPrecio(filters.minPrice, filters.maxPrice)}
-        open={isOpen("price", Boolean(filters.minPrice || filters.maxPrice))}
-        onToggle={() =>
-          toggleSection("price", Boolean(filters.minPrice || filters.maxPrice))
-        }
-      >
-        <RangoPrecio
-          key={`${filters.minPrice ?? ""}-${filters.maxPrice ?? ""}`}
-          min={filters.minPrice}
-          max={filters.maxPrice}
-          rango={facets.priceRange}
-          onApply={(minPrice, maxPrice) => {
-            afterPick("price", Boolean(minPrice || maxPrice));
-            navigate({ ...filters, minPrice, maxPrice });
-          }}
-        />
-      </Section>
 
       {/* Las réplicas viven aparte y se entra a propósito: no son una opción
           más dentro de la lista de originales. */}
@@ -533,107 +513,4 @@ function FilterRow({
       </label>
     </li>
   );
-}
-
-/**
- * Mínimo y máximo de precio, en pesos.
- *
- * No navega con cada tecla como hacen las casillas: escribir "1500000" son
- * siete navegaciones y siete listas distintas pasando por la pantalla. Se
- * aplica al apretar Enter, al salir del campo o con el botón, que es cuando
- * el número ya está entero.
- *
- * Lo que se escribe vive acá hasta que se aplica; lo aplicado vive en la URL
- * y vuelve por props. Si la URL cambia por otro lado —el chip de la barra que
- * saca el filtro— el padre lo remonta con otra `key` y los campos arrancan
- * de nuevo con lo aplicado, sin tener que sincronizar estado a mano.
- */
-function RangoPrecio({
-  min,
-  max,
-  rango,
-  onApply,
-}: {
-  min?: number;
-  max?: number;
-  /** Lo más barato y lo más caro del catálogo, para insinuar el rango. */
-  rango: { min: number; max: number };
-  onApply: (min?: number, max?: number) => void;
-}) {
-  const [desde, setDesde] = useState(min ? String(min) : "");
-  const [hasta, setHasta] = useState(max ? String(max) : "");
-
-  const aNumero = (texto: string) => {
-    const n = Number(texto.replace(/\D/g, ""));
-    return Number.isInteger(n) && n > 0 ? n : undefined;
-  };
-
-  function aplicar() {
-    const a = aNumero(desde);
-    const b = aNumero(hasta);
-    // Nada que hacer si es lo mismo que ya está aplicado.
-    if (a === min && b === max) return;
-    onApply(a, b);
-  }
-
-  const campo =
-    "border-line bg-white text-foreground placeholder:text-muted-foreground/70 focus-visible:border-ink tnum h-11 w-full min-w-0 rounded-xl border px-3 text-[15px] transition-colors outline-none";
-
-  return (
-    <li className="px-1.5 py-1">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          aplicar();
-        }}
-        className="space-y-2"
-      >
-        <div className="grid grid-cols-2 gap-2">
-          <label className="block">
-            <span className="text-muted-foreground mb-1 block text-xs">Desde</span>
-            <input
-              type="text"
-              inputMode="numeric"
-              value={desde}
-              onChange={(e) => setDesde(e.target.value)}
-              onBlur={aplicar}
-              placeholder={rango.min > 0 ? formatARS(rango.min) : "$ mínimo"}
-              aria-label="Precio mínimo en pesos"
-              className={campo}
-            />
-          </label>
-          <label className="block">
-            <span className="text-muted-foreground mb-1 block text-xs">Hasta</span>
-            <input
-              type="text"
-              inputMode="numeric"
-              value={hasta}
-              onChange={(e) => setHasta(e.target.value)}
-              onBlur={aplicar}
-              placeholder={rango.max > 0 ? formatARS(rango.max) : "$ máximo"}
-              aria-label="Precio máximo en pesos"
-              className={campo}
-            />
-          </label>
-        </div>
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-muted-foreground text-xs">En pesos</span>
-          <button
-            type="submit"
-            className="bg-ink hover:bg-ink/85 h-9 rounded-full px-4 text-sm font-medium text-white transition-colors"
-          >
-            Aplicar
-          </button>
-        </div>
-      </form>
-    </li>
-  );
-}
-
-/** Lo que muestra la sección de precio cerrada. */
-function resumenPrecio(min?: number, max?: number): string | undefined {
-  if (min && max) return `${formatARS(min)} – ${formatARS(max)}`;
-  if (min) return `Desde ${formatARS(min)}`;
-  if (max) return `Hasta ${formatARS(max)}`;
-  return undefined;
 }
