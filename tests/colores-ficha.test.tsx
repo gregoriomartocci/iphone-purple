@@ -137,5 +137,12 @@ describe("colores en la ficha", () => {
       ).toBeInTheDocument();
       expect(vistas().has("clara")).toBe(true);
     });
+
+    it("con todas las fotos sin etiquetar no avisa: no se sabe de qué color son", () => {
+      ficha([dosColores()], [foto("sin", [])]);
+      eleg("Sky Blue");
+      expect(screen.queryByText(/todavía no tenemos foto/i)).toBeNull();
+      expect(vistas().has("sin")).toBe(true);
+    });
   });
 });

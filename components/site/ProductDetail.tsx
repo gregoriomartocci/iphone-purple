@@ -185,14 +185,12 @@ export function ProductDetail({
     colorActual?.nombre
   );
   /**
-   * Avisa cuando la foto puede no ser del color. Con un solo color y fotos sin
-   * etiquetar no se sabe si difiere, y un aviso en cada ficha no diría nada.
+   * Avisa cuando se sabe que las fotos son de otro color. Con todas sin
+   * etiquetar no se sabe: podrían ser del color elegido, y un aviso en cada
+   * ficha no diría nada.
    */
   const sinFotoDelColor =
-    colorActual !== undefined &&
-    piezas.length > 0 &&
-    !delColor &&
-    (colores.length > 1 || piezas.some((p) => p.colores?.length));
+    colorActual !== undefined && !delColor && piezas.some((p) => p.colores?.length);
 
   /** Variantes de la capacidad elegida: definen los grados y colores ofrecidos. */
   const sameStorage = product.variants.filter((v) => v.storage === selected?.storage);
