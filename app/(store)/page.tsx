@@ -6,7 +6,7 @@ import { ArrowRight, RefreshCcw, ShieldCheck, Smartphone, Wrench } from "lucide-
 import { Hero } from "@/components/site/Hero";
 import { ProductRail } from "@/components/site/ProductRail";
 import { Faq, faqJsonLd } from "@/components/site/Faq";
-import { getBestsellers, getNewArrivals, getPosts } from "@/lib/data";
+import { getBestsellers, getNewArrivals } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -71,12 +71,10 @@ const TRUST = [
 ];
 
 export default async function HomePage() {
-  const [masVendidos, nuevosIngresos, posts] = await Promise.all([
+  const [masVendidos, nuevosIngresos] = await Promise.all([
     getBestsellers(6),
     getNewArrivals(8),
-    getPosts(),
   ]);
-  const latestPosts = posts.slice(0, 3);
 
   return (
     <>
@@ -195,44 +193,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {latestPosts.length > 0 && (
-        <section className="shell band">
-          <div className="aparece flex items-end justify-between gap-4">
-            <h2 className="text-3xl font-semibold sm:text-4xl">Blog</h2>
-            <Link
-              href="/blog"
-              className="text-foreground subraya inline-flex shrink-0 items-center gap-1.5 text-sm"
-            >
-              Ver todas
-              <ArrowRight className="size-3.5" />
-            </Link>
-          </div>
-
-          <div className="aparece-escalonado mt-10 grid gap-6 sm:grid-cols-3">
-            {latestPosts.map((post) => (
-              <Link key={post.id} href={`/blog/${post.slug}`} className="group">
-                <div className="bg-surface relative aspect-16/10 overflow-hidden rounded-xl">
-                  {post.coverUrl && (
-                    <Image
-                      src={post.coverUrl}
-                      alt={post.title}
-                      fill
-                      sizes="(max-width: 640px) 100vw, 350px"
-                      className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                    />
-                  )}
-                </div>
-                <h3 className="text-foreground mt-4 leading-snug font-medium">
-                  {post.title}
-                </h3>
-                <p className="text-muted-foreground mt-1.5 line-clamp-2 text-sm leading-relaxed">
-                  {post.excerpt}
-                </p>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* El blog existe para compartir notas sueltas, pero no se promociona en el sitio. */}
 
       {/*
         Cierre con el detalle de qué se vende y dónde.
