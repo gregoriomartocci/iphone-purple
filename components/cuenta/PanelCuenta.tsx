@@ -363,7 +363,7 @@ function Perfil() {
   return (
     <div className="border-line bg-surface space-y-4 rounded-2xl border p-6 shadow-sm">
       <p className="text-muted-foreground text-sm leading-relaxed">
-        Con esto cargado, el checkout se completa solo y no tenés que escribirlo cada vez.
+        Con esto cargado, no tenés que escribirlo cada vez.
       </p>
       <label className="block">
         <span className="text-muted-foreground mb-1.5 block text-sm">Nombre</span>
