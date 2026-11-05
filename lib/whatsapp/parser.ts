@@ -35,7 +35,9 @@ const RowSchema = z.object({
   color: z
     .string()
     .nullable()
-    .describe("Color en español si aparece; null si no se menciona."),
+    .describe(
+      "Todos los colores en que se ofrece, separados por '/', como 'Silver/Burgundy'; null si no se menciona."
+    ),
   category: z
     .enum([
       "celular",
@@ -110,6 +112,7 @@ El texto viene desprolijo: abreviaturas ("ip13", "15 PM", "SE 3"), emojis, líne
 
 Reglas:
 - Si un equipo tiene precios por cantidad ("USD 850 (x1)", "USD 840 (x3)", "USD 830 (x5)"), el costo es SIEMPRE el de una unidad: el de x1. Nunca el de x3 ni el de x5, aunque sea el más barato. Se vende de a uno y el margen se calcula sobre lo que cuesta comprar uno. Si no figura el precio por unidad, usá el de menor cantidad y avisalo en warnings.
+- Si un equipo se ofrece en varios colores, poné todos en color, aunque estén en el renglón de abajo ("eSIM · Silver/Burgundy" da "Silver/Burgundy").
 - "INGRESANDO" o "por ingresar" significa que todavía no llegó: si tiene precio, generá la fila con quantity 0 y notes "Ingresando". Si no tiene precio, no generes fila.
 - Una fila por equipo concreto ofrecido. Si una línea lista varias capacidades con distintos precios, generá una fila por cada una.
 - Normalizá los modelos al nombre comercial completo de Apple.

@@ -1,5 +1,6 @@
 "use server";
 
+import { colorParaGuardar } from "@/lib/colores";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/server";
@@ -173,6 +174,8 @@ export async function elegirOfertaAction(
         cost_usd: Math.round(oferta.costoUsd * 100) / 100,
         price_usd: oferta.precioUsd,
         price_ars: oferta.precioArs,
+        // Otro proveedor puede tener otros colores: se ofrecen los de quien vende.
+        ...colorParaGuardar(oferta.colores),
       })
       .eq("id", parsed.data.variantId);
     if (error) throw new Error(error.message);

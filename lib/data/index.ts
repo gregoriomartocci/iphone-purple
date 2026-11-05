@@ -1,3 +1,4 @@
+import { coloresDe, nombresDeColores } from "@/lib/colores";
 import { cache } from "react";
 import { CATEGORIES, GRADES, LINES, STATES, stateOf } from "@/types";
 import type {
@@ -128,7 +129,7 @@ const allProducts = cache(async (): Promise<Product[]> => {
 /** Texto plano sobre el que corre la búsqueda libre. */
 function haystack(product: Product): string {
   const variantText = product.variants
-    .map((v) => `${v.storage} ${v.color} ${v.grade} ${v.authenticity}`)
+    .map((v) => `${v.storage} ${nombresDeColores(v)} ${v.grade} ${v.authenticity}`)
     .join(" ");
   return `${product.name} ${product.brand} ${product.model} ${product.category} ${variantText}`
     .toLowerCase()
@@ -456,9 +457,10 @@ export async function getCatalogFacets(
     ),
   ].sort((a, b) => b - a);
 
-  const colors = [...new Set(visibleVariants.map((v) => v.color))].filter(Boolean).sort();
+  const muestras = visibleVariants.flatMap((v) => coloresDe(v));
+  const colors = [...new Set(muestras.map((c) => c.nombre))].filter(Boolean).sort();
   // El hex de cada color, para poder mostrarlo como muestra en el filtro.
-  const colorHex = new Map(visibleVariants.map((v) => [v.color, v.colorHex]));
+  const colorHex = new Map(muestras.map((c) => [c.nombre, c.hex]));
   const states = STATES.filter((st) =>
     visibleVariants.some((v) => stateOf(v.grade) === st)
   );

@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { colorOficial } from "@/lib/colores";
+import {
+  colorOficial,
+  coloresDe,
+  coloresDeFila,
+  coloresOficiales,
+  colorParaGuardar,
+} from "@/lib/colores";
 
 describe("colorOficial", () => {
   it("usa el nombre oficial de Apple según el modelo", () => {
@@ -41,5 +47,59 @@ describe("colorOficial", () => {
   it("fuera de Apple usa nombres en español", () => {
     expect(colorOficial("Samsung Galaxy S25 Ultra", "black")?.nombre).toBe("Negro");
     expect(colorOficial("Google Pixel 10 Pro", "Obsidiana")?.nombre).toBe("Obsidiana");
+  });
+});
+
+describe("varios colores en un mismo equipo", () => {
+  const nombres = (c: { nombre: string }[]) => c.map((x) => x.nombre);
+
+  it("separa los colores y usa los nombres oficiales", () => {
+    expect(
+      nombres(coloresOficiales('MacBook Air 15" M5', "Blue/Mid/Silver/Star"))
+    ).toEqual(["Sky Blue", "Midnight", "Silver", "Starlight"]);
+    expect(nombres(coloresOficiales("iPhone 18 Pro", "Silver/Burgundy"))).toEqual([
+      "Silver",
+      "Burgundy",
+    ]);
+  });
+
+  it("lee lo que guardó sin perder ni duplicar", () => {
+    const guardado = colorParaGuardar(
+      coloresOficiales('MacBook Air 13" M5', "azul / medianoche / azul")
+    );
+    expect(guardado.color).toBe("Sky Blue/Midnight");
+    expect(nombres(coloresOficiales('MacBook Air 13" M5', guardado.color))).toEqual([
+      "Sky Blue",
+      "Midnight",
+    ]);
+  });
+
+  it("sin color conocido no inventa uno", () => {
+    expect(coloresOficiales('MacBook Air 13" M5', "Sin especificar")).toEqual([]);
+    expect(colorParaGuardar([]).color).toBe("Sin especificar");
+  });
+
+  it("saca los colores de las notas, pero solo si son colores", () => {
+    expect(
+      nombres(
+        coloresDeFila(
+          'MacBook Air 13" M5',
+          null,
+          "Sellado, garantía oficial. Colores disponibles: Starlight, Sky Blue. Escala por volumen"
+        )
+      )
+    ).toEqual(["Starlight", "Sky Blue"]);
+    expect(
+      nombres(coloresDeFila('MacBook Pro 16" M5 Pro', "negro", "Colores: negro / plata"))
+    ).toEqual(["Space Black", "Silver"]);
+    expect(coloresDeFila('MacBook Air 13" M5', null, "Colores: a confirmar")).toEqual([]);
+    expect(coloresDeFila('MacBook Air 13" M5', null, "Teclado inglés")).toEqual([]);
+  });
+
+  it("una variante de la semilla tiene su único color", () => {
+    expect(coloresDe({ color: "Negro", colorHex: "#000" })).toEqual([
+      { nombre: "Negro", hex: "#000" },
+    ]);
+    expect(coloresDe({ color: "", colorHex: "#ccc" })).toEqual([]);
   });
 });

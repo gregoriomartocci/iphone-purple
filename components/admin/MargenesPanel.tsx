@@ -1,5 +1,6 @@
 "use client";
 
+import { nombresDeColores } from "@/lib/colores";
 import { useMemo, useState } from "react";
 import { AlertTriangle, Check } from "lucide-react";
 import {
@@ -66,7 +67,7 @@ export function MargenesPanel({
           slug: p.slug,
           nombre: p.name,
           categoria: p.category,
-          variante: `${v.storage} · ${v.color}`,
+          variante: `${v.storage} · ${nombresDeColores(v)}`,
           proveedor: null,
           costoUsd: v.costUsd ?? 0,
           precioPublicadoUsd: v.priceUsd,
