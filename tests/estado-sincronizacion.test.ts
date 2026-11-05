@@ -41,7 +41,8 @@ describe("armarSincronizacion", () => {
       ["nueva", "2026-11-04T09:00:00Z"],
       ["viejo", "2026-11-05T09:00:00Z"],
     ]),
-    new Map([["aldia", 12]])
+    new Map([["aldia", 12]]),
+    new Date("2026-11-05T12:00:00Z")
   );
   const de = (id: string) => filas.find((f) => f.proveedor.id === id)!;
 
@@ -54,6 +55,28 @@ describe("armarSincronizacion", () => {
 
   it("una lista vista después de un borrador pide leer de nuevo", () => {
     expect(de("viejo").estado).toBe("lista-nueva");
+  });
+
+  it("compara instantes aunque el formato de la fecha sea distinto", () => {
+    const [f] = armarSincronizacion(
+      [prov("a")],
+      [imp("a", "2026-11-04T11:39:00+00:00", "draft")],
+      new Map([["a", "2026-11-04T11:39:00.000Z"]]),
+      new Map(),
+      new Date("2026-11-05T12:00:00Z")
+    );
+    expect(f.estado).toBe("borrador");
+  });
+
+  it("una lista vieja no figura como novedad", () => {
+    const [f] = armarSincronizacion(
+      [prov("a")],
+      [],
+      new Map([["a", "2026-10-10T10:00:00Z"]]),
+      new Map(),
+      new Date("2026-11-05T12:00:00Z")
+    );
+    expect(f.estado).toBe("sin-listas");
   });
 
   it("pone primero lo que requiere atención y saca a los inactivos", () => {
