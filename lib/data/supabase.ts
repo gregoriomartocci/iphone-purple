@@ -1,3 +1,4 @@
+import { colorOficial } from "@/lib/colores";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
 import { parseModel } from "@/lib/catalog";
 import type {
@@ -79,13 +80,14 @@ const VALID_CATEGORIES: Category[] = [
 const toCategory = (value: string | null): Category =>
   VALID_CATEGORIES.includes(value as Category) ? (value as Category) : "celular";
 
-function mapVariant(row: VariantRow): Variant {
+function mapVariant(row: VariantRow, modelo: string): Variant {
+  const color = colorOficial(modelo, row.color);
   return {
     id: row.id,
     productId: row.product_id,
     storage: row.storage ?? "",
-    color: row.color ?? "",
-    colorHex: row.color_hex ?? "#cccccc",
+    color: color?.nombre ?? "",
+    colorHex: color?.hex ?? "#cccccc",
     grade: toGrade(row.grade),
     authenticity: row.authenticity === "replica" ? "replica" : "original",
     batteryHealth: row.battery_health,
@@ -115,7 +117,9 @@ function mapProduct(row: ProductRow): Product {
     images: images.map((i) => ({ url: i.url, alt: i.alt ?? row.name })),
     /* Una variante desactivada —por ejemplo, la más cara de dos equipos que
        se unificaron— no se vende: no se muestra ni en el sitio ni en el panel. */
-    variants: (row.variants ?? []).filter((v) => v.is_active !== false).map(mapVariant),
+    variants: (row.variants ?? [])
+      .filter((v) => v.is_active !== false)
+      .map((v) => mapVariant(v, row.model ?? row.name)),
     isFeatured: row.is_featured ?? false,
     createdAt: row.created_at,
   };
