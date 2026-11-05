@@ -44,6 +44,16 @@ import { toString as qrSvg } from "qrcode";
 
 const PUERTO = Number(process.env.PORT ?? 8080);
 const DIAS = Number(process.env.DIAS ?? 3);
+/*
+ * Baileys deja promesas sin capturar cuando se corta la conexión en medio de un
+ * pedido, y en Node eso mata el proceso: el lector quedaba apagado sin que nadie
+ * se enterara. La reconexión ya la maneja connection.update, así que acá alcanza
+ * con registrarlo y seguir.
+ */
+process.on("unhandledRejection", (motivo) => {
+  console.error("Error sin capturar, el lector sigue:", motivo?.message ?? motivo);
+});
+
 const TOKEN = process.env.TOKEN_WHATSAPP;
 
 if (!TOKEN) {
