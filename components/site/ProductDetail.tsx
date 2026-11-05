@@ -119,7 +119,8 @@ export function ProductDetail({
   const colores = useMemo(() => {
     const vistos = new Map<string, string>();
     for (const v of product.variants)
-      if (!vistos.has(v.color)) vistos.set(v.color, v.colorHex);
+      // Sin color conocido no hay muestra: un gris de "sin especificar" parece un color.
+      if (v.color && !vistos.has(v.color)) vistos.set(v.color, v.colorHex);
     return [...vistos].map(([color, hex]) => ({ color, hex }));
   }, [product.variants]);
 
@@ -180,7 +181,9 @@ export function ProductDetail({
   const fullPrice = savings !== null && selected ? selected.priceArs + savings : null;
 
   const variantLabel = selected
-    ? `${selected.storage} · ${selected.color} · ${GRADE_LABELS[selected.grade]}`
+    ? [selected.storage, selected.color, GRADE_LABELS[selected.grade]]
+        .filter(Boolean)
+        .join(" · ")
     : undefined;
 
   return (
@@ -423,14 +426,18 @@ export function ProductDetail({
                       variant.stock === 0 && "cursor-not-allowed opacity-45"
                     )}
                   >
-                    <span
-                      className="size-7 shrink-0 rounded-full border border-black/10"
-                      style={{ background: variant.colorHex }}
-                      aria-hidden
-                    />
+                    {variant.color && (
+                      <span
+                        className="size-7 shrink-0 rounded-full border border-black/10"
+                        style={{ background: variant.colorHex }}
+                        aria-hidden
+                      />
+                    )}
                     <span className="min-w-0 flex-1">
                       <span className="text-foreground block truncate text-sm font-medium">
-                        {variant.color} · {GRADE_LABELS[variant.grade]}
+                        {[variant.color, GRADE_LABELS[variant.grade]]
+                          .filter(Boolean)
+                          .join(" · ")}
                       </span>
                       <span className="text-muted-foreground block text-xs">
                         {/*
