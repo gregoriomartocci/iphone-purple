@@ -24,7 +24,7 @@
  *   SITIO_URL y CRON_SECRET  para refrescar el dólar cada hora.
  */
 import { createServer } from "node:http";
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { appendFile, cp, rename, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { createReadStream } from "node:fs";
 import { createInterface } from "node:readline";
@@ -63,6 +63,17 @@ if (!TOKEN) {
   );
   process.exit(1);
 }
+
+/*
+ * El token se compara por su hash y en tiempo constante. Comparar el texto con
+ * `!==` corta en el primer carácter distinto, y el tiempo de respuesta dice
+ * cuántos acertó quien prueba. Con el hash los dos lados miden lo mismo, que
+ * es lo que pide timingSafeEqual.
+ */
+const huella = (texto) => createHash("sha256").update(texto).digest();
+const HUELLA_TOKEN = huella(`Bearer ${TOKEN}`);
+const autorizado = (req) =>
+  timingSafeEqual(huella(req.headers.authorization ?? ""), HUELLA_TOKEN);
 
 const AUTH = process.env.AUTH_DIR ?? "/datos/whatsapp-auth";
 
@@ -831,8 +842,21 @@ createServer((req, res) => {
     res.end(JSON.stringify(cuerpo));
   };
 
-  // Sin token: sirve para que la plataforma sepa si el proceso está vivo, y
-  // para ver desde el navegador si falta vincular la línea.
+  /*
+   * Sin token, /salud dice solo si el proceso está vivo y vinculado: es lo que
+   * necesita el chequeo de la plataforma. El resto —eventos, cantidad de chats,
+   * la hora del último mensaje— cuenta cuándo y cuánto trabaja el negocio con
+   * sus proveedores, y la URL del servicio es pública. Eso queda para el panel,
+   * que pide con token.
+   */
+  if (url.pathname === "/salud" && !autorizado(req)) {
+    return responder(200, {
+      conexion: estado.conexion,
+      vinculado: estado.vinculado,
+      faltaVincular: Boolean(estado.qr),
+    });
+  }
+
   if (url.pathname === "/salud") {
     return responder(200, {
       conexion: estado.conexion,
@@ -865,7 +889,7 @@ createServer((req, res) => {
     });
   }
 
-  if (req.headers.authorization !== `Bearer ${TOKEN}`) {
+  if (!autorizado(req)) {
     return responder(401, { error: "No autorizado" });
   }
 
