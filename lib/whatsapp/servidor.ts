@@ -13,7 +13,7 @@ import type { ChatWhatsapp } from "./sincronizar";
  * línea que WhatsApp puede bloquear, y es la del negocio.
  */
 
-/** Lo que devuelve `/salud`, que no pide token. */
+/** Lo que devuelve `/salud` con token. Sin token solo dice si está vivo y vinculado. */
 /** Algo que le pasó a la conexión, para poder contarlo en orden. */
 export interface EventoConexion {
   cuando: string;
@@ -247,7 +247,7 @@ function completarSalud(datos: Partial<SaludServidor>): SaludServidor {
 }
 
 export async function pedirSalud(): Promise<Resultado<SaludServidor>> {
-  const r = await pedir<Partial<SaludServidor>>("/salud", false);
+  const r = await pedir<Partial<SaludServidor>>("/salud", true);
   return r.ok ? { ok: true, datos: completarSalud(r.datos) } : r;
 }
 

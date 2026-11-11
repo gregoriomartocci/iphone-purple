@@ -95,7 +95,7 @@ describe("cliente del servidor de WhatsApp", () => {
     expect(url).toBe("/mensajes?dias=7");
   });
 
-  it("no manda token a /salud, que es el endpoint abierto", async () => {
+  it("pide /salud con token: sin él, el lector solo dice si está vivo", async () => {
     let recibido: string | undefined = "todavía no";
     const base = await levantar((req, res) => {
       recibido = req.headers.authorization;
@@ -107,7 +107,7 @@ describe("cliente del servidor de WhatsApp", () => {
 
     const r = await pedirSalud();
 
-    expect(recibido).toBeUndefined();
+    expect(recibido).toBe("Bearer secreto");
     expect(r.ok && r.datos.chats).toBe(11);
   });
 
@@ -170,6 +170,7 @@ describe("cliente del servidor de WhatsApp", () => {
       res.end(JSON.stringify({ conexion: "open", vinculado: true, chats: 2 }));
     });
     vi.stubEnv("WHATSAPP_SERVIDOR_URL", base);
+    vi.stubEnv("WHATSAPP_SERVIDOR_TOKEN", "secreto");
 
     const r = await pedirSalud();
 
