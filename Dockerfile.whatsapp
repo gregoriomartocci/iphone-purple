@@ -14,9 +14,9 @@ RUN cd scripts/whatsapp && npm install --omit=dev --no-audit --no-fund
 
 COPY scripts/whatsapp/servidor.mjs scripts/whatsapp/telefono.mjs scripts/whatsapp/contactos.mjs ./scripts/whatsapp/
 
-# Ahí vive la sesión vinculada. Un volumen montado en este punto es lo que
-# hace que no haya que volver a escanear el QR en cada reinicio.
-VOLUME /datos
+# Ahí vive la sesión vinculada. Un volumen montado en /datos es lo que hace
+# que no haya que volver a escanear el QR en cada reinicio. Se crea desde el
+# panel de Railway: Railway no acepta la instrucción VOLUME en el Dockerfile.
 ENV AUTH_DIR=/datos/whatsapp-auth
 
 EXPOSE 8080
