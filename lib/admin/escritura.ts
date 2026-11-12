@@ -81,8 +81,10 @@ export async function publicarFilas({
     const payload = {
       product_id: productId,
       storage: row.storage || "—",
-      memoria: memoriaDe(row) || null,
-      configuracion: row.config?.trim() || null,
+      /* Solo si la lista los trae: un proveedor que no informa la memoria no
+         tiene que borrar la que ya se sabía de ese equipo. */
+      ...(memoriaDe(row) ? { memoria: memoriaDe(row) } : {}),
+      ...(row.config?.trim() ? { configuracion: row.config.trim() } : {}),
       ...colorParaGuardar(coloresDeFila(row.model, row.color, row.notes)),
       grade: row.grade,
       authenticity: row.authenticity,
