@@ -1,4 +1,5 @@
 import type { Line, Product } from "@/types";
+import { DESCRIPCIONES } from "./descripciones";
 
 /**
  * Descripción de venta de un equipo.
@@ -171,17 +172,22 @@ function esIphone(product: Product): boolean {
 }
 
 /**
- * Descripción del producto. Devuelve `null` para lo que no sea un iPhone
- * conocido: es preferible mostrar la descripción corta del catálogo antes que
- * un texto genérico que podría estar hablando de otro equipo.
+ * Descripción del producto.
+ *
+ * Los iPhone la arman por generación y línea. El resto la toma de
+ * `descripciones.ts`, escrita producto por producto desde la página oficial
+ * de cada modelo. Sin ninguna de las dos devuelve `null`: es preferible
+ * mostrar la descripción corta del catálogo antes que un texto genérico que
+ * podría estar hablando de otro equipo.
  */
 export function descripcionDe(product: Product): Descripcion | null {
   /* Solo iPhone. El número de modelo no alcanza para saber qué es: una
      "MacBook Air 13" o un "iPad Air 11" tienen generación 13 y 11, y mostraban
      el texto del iPhone 13 y del 11. */
-  if (!esIphone(product) || product.generation === null) return null;
+  const propia = DESCRIPCIONES[product.slug];
+  if (!esIphone(product) || product.generation === null) return propia ?? null;
   const datos = GENERACION[product.generation];
-  if (!datos) return null;
+  if (!datos) return propia ?? null;
 
   const linea = lineaDe(product.line);
   const base = linea === "base" ? datos.base : datos.pro;
