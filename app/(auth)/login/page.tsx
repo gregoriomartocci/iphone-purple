@@ -39,7 +39,9 @@ function LoginContent() {
     setLoading(true);
     setError("");
     const res = await signIn("credentials", {
-      email: data.email,
+      // El teclado del teléfono suele poner la primera letra en mayúscula o
+      // dejar un espacio al final, y eso se veía como "contraseña incorrecta".
+      email: data.email.trim().toLowerCase(),
       password: data.password,
       redirect: false,
     });
@@ -139,7 +141,13 @@ function LoginContent() {
                 id="email"
                 {...register("email")}
                 type="email"
-                autoComplete="email"
+                // "username" y no "email": es lo que los gestores de
+                // contraseñas usan para emparejar el usuario con la clave y
+                // ofrecer guardarla y completarla sola la próxima vez.
+                autoComplete="username"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 placeholder="vos@email.com"
                 className={fieldClass}
               />
