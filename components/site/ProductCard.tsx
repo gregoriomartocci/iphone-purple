@@ -3,7 +3,12 @@ import Link from "next/link";
 import { BatteryMedium, Camera } from "lucide-react";
 import { Precio } from "./Precio";
 import { FotosTarjeta } from "./FotosTarjeta";
-import { fotosDeTarjeta, leadVariant, totalStock } from "@/lib/catalog";
+import {
+  descriptorVisible,
+  fotosDeTarjeta,
+  leadVariant,
+  totalStock,
+} from "@/lib/catalog";
 import { coloresDe } from "@/lib/colores";
 import { fotoDe } from "@/lib/data/fotos";
 import { IMITADOS } from "@/lib/data/replicas";
@@ -82,7 +87,10 @@ export function ProductCard({
     "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw";
   const multiplePrices = new Set(product.variants.map((v) => v.priceArs)).size > 1;
 
-  const detalle = [lead?.storage, lead && GRADE_LABELS[lead.grade]].filter(Boolean);
+  const detalle = [
+    descriptorVisible(lead?.storage),
+    lead && GRADE_LABELS[lead.grade],
+  ].filter(Boolean);
   // Un sellado no informa batería: siempre es nueva. Se muestra solo cuando
   // hay un número real que decir.
   const bateria =

@@ -16,7 +16,7 @@ import {
   getRelatedProducts,
   getSettings,
 } from "@/lib/data";
-import { leadVariant, totalStock } from "@/lib/catalog";
+import { leadVariant, totalStock, descriptorVisible } from "@/lib/catalog";
 import { CATEGORY_LABELS, GRADE_LABELS } from "@/types";
 
 export const revalidate = 600;
@@ -40,7 +40,7 @@ export async function generateMetadata({
   // El título de la ficha es lo que compite en el buscador contra el mismo
   // modelo en otros comercios: lleva capacidad, condición y ciudad, que es
   // como la gente busca de verdad ("iphone 15 128gb la plata").
-  const detalle = [lead?.storage, lead && GRADE_LABELS[lead.grade]]
+  const detalle = [descriptorVisible(lead?.storage), lead && GRADE_LABELS[lead.grade]]
     .filter(Boolean)
     .join(" ");
   const title = `${product.name}${detalle ? ` ${detalle}` : ""} en La Plata`;
