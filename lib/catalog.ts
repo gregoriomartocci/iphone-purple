@@ -100,6 +100,14 @@ export function descriptorVisible(storage: string | null | undefined): string | 
   return /^[\s—–\-]*$/.test(limpio) || /^n\/?a$/i.test(limpio) ? null : limpio;
 }
 
+/** Memoria o capacidad en GB ("24GB" → 24, "1TB" → 1024), para ordenar. */
+export function gb(valor: string): number {
+  const m = valor.trim().match(/^(\d+(?:[.,]\d+)?)\s*(GB|TB)?$/i);
+  if (!m) return Number.MAX_SAFE_INTEGER;
+  const n = Number(m[1].replace(",", "."));
+  return m[2]?.toUpperCase() === "TB" ? n * 1024 : n;
+}
+
 /** Capacidad en GB, para poder ordenar 64 · 128 · 256 · 512 · 1TB. */
 export function capacityInGb(storage: string): number {
   const match = storage.trim().match(/^(\d+)\s*(GB|TB)$/i);

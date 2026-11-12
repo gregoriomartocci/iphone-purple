@@ -38,6 +38,8 @@ type VariantRow = {
   stock: number | null;
   sku: string | null;
   is_active?: boolean | null;
+  memoria?: string | null;
+  configuracion?: string | null;
 };
 
 type ImageRow = { url: string; alt: string | null; sort_order: number | null };
@@ -99,6 +101,8 @@ function mapVariant(row: VariantRow, modelo: string): Variant {
     costUsd: row.cost_usd == null ? null : num(row.cost_usd),
     stock: row.stock ?? 0,
     sku: row.sku,
+    memoria: row.memoria?.trim() || null,
+    configuracion: row.configuracion?.trim() || null,
   };
 }
 
@@ -152,7 +156,8 @@ export async function fetchProducts({ conCosto = false } = {}): Promise<Product[
     .select(
       `id, name, slug, brand, model, category, description, specs, is_featured, created_at,
        variants:product_variants(id, product_id, storage, color, color_hex, grade,
-         battery_health, price_ars, price_usd, ${conCosto ? "cost_usd," : ""} stock, sku, authenticity, is_active),
+         battery_health, price_ars, price_usd, ${conCosto ? "cost_usd," : ""} stock, sku, authenticity, is_active,
+         memoria, configuracion),
        images:product_images(url, alt, sort_order)`
     )
     .eq("status", "active");

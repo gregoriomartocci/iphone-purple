@@ -327,3 +327,12 @@ GRANT SELECT (id, product_id, storage, color, color_hex, grade, authenticity,
   battery_health, price_ars, price_usd, stock, sku, is_active)
   ON product_variants TO anon, authenticated;
 
+-- ---------------------------------------------------------------- memoria
+-- Computadoras y tablets: la RAM ("24GB") y el resto de la configuración
+-- (núcleos, teclado) que traen las listas. Son públicas, así que van al GRANT:
+-- una columna nueva no se puede leer con la clave pública hasta que se agrega.
+ALTER TABLE product_variants
+  ADD COLUMN IF NOT EXISTS memoria text,
+  ADD COLUMN IF NOT EXISTS configuracion text;
+GRANT SELECT (memoria, configuracion) ON product_variants TO anon, authenticated;
+

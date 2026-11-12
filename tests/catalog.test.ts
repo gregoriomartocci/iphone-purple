@@ -794,3 +794,48 @@ describe("descripcionDe", () => {
     }
   });
 });
+
+describe("memoria RAM en la clave del equipo", () => {
+  it("dos MacBook iguales con distinta RAM no comparten SKU", async () => {
+    const { skuDe, claveEquipo, skuDesdeClave } =
+      await import("@/lib/whatsapp/sincronizar");
+    const base = {
+      brand: "Apple",
+      model: 'MacBook Pro 16" M5 Pro',
+      storage: "1TB",
+      color: null,
+      category: "notebook",
+      grade: "sellado",
+      authenticity: "original",
+      batteryHealth: null,
+      currency: "USD",
+      cost: 3000,
+      quantity: 1,
+      notes: null,
+    } as const;
+    const con16 = { ...base, memory: "16GB" };
+    const con24 = { ...base, memory: "24" };
+    expect(skuDe(con16)).not.toBe(skuDe(con24));
+    expect(skuDe(con24)).toContain("-24GB-1TB-");
+    expect(skuDesdeClave(claveEquipo(con24))).toBe(skuDe(con24));
+  });
+
+  it("sin memoria, el SKU de siempre no cambia", async () => {
+    const { skuDe } = await import("@/lib/whatsapp/sincronizar");
+    const iphone = {
+      brand: "Apple",
+      model: "iPhone 15",
+      storage: "128GB",
+      color: null,
+      category: "celular",
+      grade: "a",
+      authenticity: "original",
+      batteryHealth: 90,
+      currency: "USD",
+      cost: 500,
+      quantity: 1,
+      notes: null,
+    } as const;
+    expect(skuDe(iphone)).toBe("IPHONE-15-128GB-a");
+  });
+});

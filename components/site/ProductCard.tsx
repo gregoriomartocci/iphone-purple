@@ -88,6 +88,7 @@ export function ProductCard({
   const multiplePrices = new Set(product.variants.map((v) => v.priceArs)).size > 1;
 
   const detalle = [
+    lead?.memoria && `${lead.memoria.replace(/GB$/i, " GB")} RAM`,
     descriptorVisible(lead?.storage),
     lead && GRADE_LABELS[lead.grade],
   ].filter(Boolean);

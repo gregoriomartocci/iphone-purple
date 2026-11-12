@@ -311,12 +311,24 @@ export function listaPendiente(
  * equipo se contaría tres veces y competiría consigo mismo por el precio.
  */
 export function claveEquipo(fila: ParsedRow): string {
-  return [
+  const clave = [
     fila.model.trim().toLowerCase(),
     fila.storage.trim().toLowerCase(),
     fila.grade,
     fila.authenticity,
-  ].join("|");
+  ];
+  /* La memoria distingue equipos: una MacBook con 16 GB y otra con 24 GB no
+     son el mismo. Va al final y solo si está, para que la clave de todo lo
+     demás —celulares, relojes— siga siendo la de siempre. */
+  const memoria = memoriaDe(fila);
+  return (memoria ? [...clave, memoria.toLowerCase()] : clave).join("|");
+}
+
+/** La RAM normalizada ("24GB"), o "" si la fila no la trae. */
+export function memoriaDe(fila: { memory?: string | null }): string {
+  const m = (fila.memory ?? "").replace(/\s+/g, "").toUpperCase();
+  if (!m) return "";
+  return /^\d+$/.test(m) ? `${m}GB` : m;
 }
 
 /**
@@ -339,7 +351,8 @@ export function skuDe(row: ParsedRow): string {
      cero el stock apuntaba a una variante que no existía: no fallaba, no
      actualizaba nada. */
   const capacidad = (row.storage || "NA").trim().toUpperCase();
-  const base = `${slugify(row.model).toUpperCase()}-${capacidad}-${row.grade}`;
+  const memoria = memoriaDe(row);
+  const base = `${slugify(row.model).toUpperCase()}-${memoria ? `${memoria}-` : ""}${capacidad}-${row.grade}`;
   return row.authenticity === "replica" ? `${base}-REPLICA` : base;
 }
 
@@ -350,12 +363,13 @@ export function skuDe(row: ParsedRow): string {
  * ahí no hay una fila, hay una clave de algo que ya no está.
  */
 export function skuDesdeClave(clave: string): string {
-  const [model, storage, grade, authenticity] = clave.split("|");
+  const [model, storage, grade, authenticity, memory] = clave.split("|");
   return skuDe({
     model,
     storage,
     grade,
     authenticity,
+    memory: memory ?? "",
   } as unknown as ParsedRow);
 }
 

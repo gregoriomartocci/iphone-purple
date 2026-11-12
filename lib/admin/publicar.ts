@@ -50,6 +50,9 @@ export const ParsedRowSchema = z.object({
   cost: z.number().positive(),
   quantity: z.number().int().min(0),
   notes: z.string().nullable(),
+  // Las listas importadas antes no los traen: quedan vacíos, no inválidos.
+  memory: z.string().default(""),
+  config: z.string().nullable().default(null),
 });
 
 export { publicarFilas } from "./escritura";
