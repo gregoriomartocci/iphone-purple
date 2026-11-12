@@ -170,6 +170,28 @@ export function galeriaDelColor<T extends { colores?: string[]; video?: boolean 
   };
 }
 
+/**
+ * Las fotos de colores que no se venden, al final.
+ *
+ * La primera foto es la portada del catálogo. Si es de un color que el local
+ * no tiene —una MacBook Silver cuando solo hay Starlight y Sky Blue—, la
+ * tarjeta promete algo que no se puede comprar. No se esconden: en la ficha,
+ * elegir un color ya las deja afuera cuando ese color tiene fotos propias.
+ *
+ * Las que no tienen color etiquetado no se mueven: no se sabe de qué color
+ * son. Es estable: dentro de cada grupo se respeta el orden.
+ */
+export function fotosDeColoresVendidosPrimero<T extends { colores?: string[] }>(
+  fotos: T[],
+  vendidos: Iterable<string>
+): T[] {
+  const enVenta = new Set(vendidos);
+  if (enVenta.size === 0) return fotos;
+  const ajena = (f: T) =>
+    Boolean(f.colores?.length) && !f.colores!.some((c) => enVenta.has(c));
+  return [...fotos.filter((f) => !ajena(f)), ...fotos.filter(ajena)];
+}
+
 export function totalStock(product: Product): number {
   return product.variants.reduce((sum, v) => sum + v.stock, 0);
 }

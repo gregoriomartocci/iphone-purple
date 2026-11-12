@@ -1,6 +1,6 @@
-import { coloresOficiales } from "@/lib/colores";
+import { coloresDe, coloresOficiales } from "@/lib/colores";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
-import { parseModel } from "@/lib/catalog";
+import { fotosDeColoresVendidosPrimero, parseModel } from "@/lib/catalog";
 import type {
   Category,
   Grade,
@@ -106,6 +106,11 @@ function mapProduct(row: ProductRow): Product {
   const images = [...(row.images ?? [])].sort(
     (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)
   );
+  /* Una variante desactivada —por ejemplo, la más cara de dos equipos que
+     se unificaron— no se vende: no se muestra ni en el sitio ni en el panel. */
+  const variants = (row.variants ?? [])
+    .filter((v) => v.is_active !== false)
+    .map((v) => mapVariant(v, row.model ?? row.name));
 
   return {
     id: row.id,
@@ -117,19 +122,18 @@ function mapProduct(row: ProductRow): Product {
     category: toCategory(row.category),
     description: row.description ?? "",
     specs: row.specs ?? {},
-    images: images.map((i) => ({
-      url: i.url,
-      alt: i.alt ?? row.name,
-      // Con el mismo nombre que las variantes: si no, nunca coincidirían.
-      colores: (fotoDe(i.url)?.colores ?? []).flatMap((color) =>
-        coloresOficiales(row.model ?? row.name, color).map((c) => c.nombre)
-      ),
-    })),
-    /* Una variante desactivada —por ejemplo, la más cara de dos equipos que
-       se unificaron— no se vende: no se muestra ni en el sitio ni en el panel. */
-    variants: (row.variants ?? [])
-      .filter((v) => v.is_active !== false)
-      .map((v) => mapVariant(v, row.model ?? row.name)),
+    images: fotosDeColoresVendidosPrimero(
+      images.map((i) => ({
+        url: i.url,
+        alt: i.alt ?? row.name,
+        // Con el mismo nombre que las variantes: si no, nunca coincidirían.
+        colores: (fotoDe(i.url)?.colores ?? []).flatMap((color) =>
+          coloresOficiales(row.model ?? row.name, color).map((c) => c.nombre)
+        ),
+      })),
+      variants.flatMap((v) => coloresDe(v).map((c) => c.nombre))
+    ),
+    variants,
     isFeatured: row.is_featured ?? false,
     createdAt: row.created_at,
   };
