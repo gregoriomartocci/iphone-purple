@@ -4,10 +4,8 @@ import { cn } from "@/lib/utils";
 /**
  * Precio de un equipo en las dos monedas.
  *
- * Los dos números salen siempre. El que elige la persona va grande y el otro
- * queda abajo en chico; eso lo decide el CSS a partir de un atributo en
- * <html>, no este componente, así que puede seguir siendo de servidor y
- * renderizarse dentro del catálogo sin arrastrar JavaScript.
+ * Los dos números salen siempre: los pesos grandes y los dólares abajo, en
+ * chico. Es componente de servidor y no arrastra JavaScript.
  *
  * No hay un solo precio convertido al vuelo: cada variante guarda `priceArs` y
  * `priceUsd` por separado. Dividir uno para obtener el otro dejaba precios con
@@ -20,7 +18,6 @@ export function Precio({
   fuerte = "1.25rem",
   suave = "0.8125rem",
   desde = false,
-  anclado = false,
   className,
 }: {
   ars: number;
@@ -32,19 +29,11 @@ export function Precio({
   suave?: string;
   /** Antepone "Desde" cuando el producto tiene variantes de distinto precio. */
   desde?: boolean;
-  /**
-   * No sigue la moneda elegida: los pesos van siempre grandes.
-   *
-   * Es para el checkout y el carrito, donde el número no es una referencia sino
-   * el importe que Mercado Pago va a cobrar. Mostrar dólares grandes ahí sería
-   * decirle a alguien que va a pagar en una moneda en la que no va a pagar.
-   */
-  anclado?: boolean;
   className?: string;
 }) {
   return (
     <div
-      className={cn("precio tnum", anclado && "precio-anclado", className)}
+      className={cn("precio tnum", className)}
       style={
         {
           "--precio-fuerte": fuerte,

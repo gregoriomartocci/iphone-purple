@@ -3,8 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Search, X } from "lucide-react";
-import { SelectorMoneda } from "./SelectorMoneda";
-import { PARAM_MONEDA, esMoneda } from "@/lib/moneda";
 import { formatARS } from "@/utils/format";
 import {
   etiquetaCategoria,
@@ -90,12 +88,6 @@ export function CatalogToolbar({
     if (next.minPrice) params.set("precio_min", String(next.minPrice));
     if (next.maxPrice) params.set("precio_max", String(next.maxPrice));
     if (next.sort && next.sort !== "relevancia") params.set("sort", next.sort);
-
-    // La moneda no es un filtro, pero si estaba en la dirección se queda: sin
-    // esto, tocar cualquier filtro dejaba el enlace sin la moneda y quien lo
-    // recibía lo abría en pesos aunque se hubiera compartido en dólares.
-    const moneda = new URLSearchParams(window.location.search).get(PARAM_MONEDA);
-    if (esMoneda(moneda)) params.set(PARAM_MONEDA, moneda);
 
     const qs = params.toString();
     // `scroll: false` mantiene la posición: por defecto Next salta al tope
@@ -190,10 +182,6 @@ export function CatalogToolbar({
             juntos, a la misma altura y con el mismo radio. Antes la moneda era
             más baja que el desplegable y la fila quedaba escalonada. */}
         <div className="flex items-center gap-2.5">
-          <SelectorMoneda />
-
-          <span className="bg-line hidden h-6 w-px sm:block" aria-hidden />
-
           <label className="flex items-center gap-2 text-sm">
             <span className="text-muted-foreground hidden sm:inline">Ordenar por</span>
             <select
