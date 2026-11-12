@@ -1,5 +1,13 @@
 {
-  "1.jpg": ["Titanio Azul", "Titanio Natural"],
-  "2.jpg": ["Titanio Azul"],
-  "3.jpg": ["Titanio Azul"]
+  "1.jpg": ["Blue Titanium", "Natural Titanium", "White Titanium"],
+  "2.jpg": ["Blue Titanium"],
+  "3.jpg": ["Blue Titanium"],
+  "4.jpg": ["Black Titanium"],
+  "5.jpg": ["Black Titanium"],
+  "6.jpg": ["White Titanium"],
+  "7.jpg": ["White Titanium"],
+  "8.jpg": ["Blue Titanium"],
+  "9.jpg": ["Blue Titanium"],
+  "10.jpg": ["Natural Titanium"],
+  "11.jpg": ["Natural Titanium"]
 }

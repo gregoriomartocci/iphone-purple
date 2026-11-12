@@ -536,6 +536,23 @@ export async function getCatalogFacets(
 }
 
 /**
+ * A qué familia pertenece un producto: marca, categoría, línea y el nombre del
+ * modelo sin el número de generación. "iPhone 18 Pro" y "iPhone 17 Pro" son la
+ * misma familia; "DJI Osmo Action 6" y "Joystick PlayStation 5" no, aunque los
+ * dos sean accesorios con un número en el nombre. Comparar solo por categoría
+ * y número los ponía lado a lado.
+ */
+function familiaDe(p: Product): string {
+  const modelo = p.model
+    .toLowerCase()
+    .replace(/\([^)]*\)/g, " ")
+    .replace(/\b\d{1,2}\b/, "#")
+    .replace(/\s+/g, " ")
+    .trim();
+  return [p.brand, p.category, p.line, modelo].join("|");
+}
+
+/**
  * El mismo modelo en la generación anterior y en la siguiente.
  *
  * Sirve para responder la pregunta que todo el mundo se hace antes de
@@ -546,14 +563,10 @@ export async function getCatalogFacets(
 export async function getGenerationComparison(product: Product): Promise<Product[]> {
   if (product.generation === null) return [];
   const items = await allProducts();
+  const suya = familiaDe(product);
 
   const enLinea = (generation: number) =>
-    items.find(
-      (p) =>
-        p.category === product.category &&
-        p.line === product.line &&
-        p.generation === generation
-    );
+    items.find((p) => p.generation === generation && familiaDe(p) === suya);
 
   return [
     enLinea(product.generation - 1),

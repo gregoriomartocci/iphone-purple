@@ -1,9 +1,17 @@
 {
-  "2.jpg": ["Naranja Cósmico"],
-  "3.jpg": ["Naranja Cósmico"],
-  "7.jpg": ["Naranja Cósmico"],
-  "10.jpg": ["Naranja Cósmico"],
-  "12.jpg": ["Naranja Cósmico"],
-  "11.jpg": ["Blanco Nube", "Naranja Cósmico"],
-  "14.jpg": ["Blanco Nube"]
+  "1.jpg": ["Deep Blue"],
+  "2.jpg": ["Cosmic Orange"],
+  "3.jpg": ["Cosmic Orange"],
+  "7.jpg": ["Cosmic Orange"],
+  "10.jpg": ["Cosmic Orange"],
+  "11.jpg": ["Silver", "Cosmic Orange"],
+  "12.jpg": ["Cosmic Orange"],
+  "13.jpg": ["Deep Blue"],
+  "14.jpg": ["Silver"],
+  "15.jpg": ["Cosmic Orange"],
+  "16.jpg": ["Cosmic Orange"],
+  "17.jpg": ["Deep Blue"],
+  "18.jpg": ["Deep Blue"],
+  "19.jpg": ["Silver"],
+  "20.jpg": ["Silver"]
 }

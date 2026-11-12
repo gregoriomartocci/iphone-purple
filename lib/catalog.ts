@@ -170,6 +170,81 @@ export function galeriaDelColor<T extends { colores?: string[]; video?: boolean 
   };
 }
 
+/**
+ * El orden de las fotos de un producto.
+ *
+ * La primera es la portada del catálogo, la de la comparación y la que abre la
+ * ficha, así que manda lo que la persona espera ver primero:
+ *
+ * 1. Las de estudio, del equipo solo sobre fondo parejo. Es lo que se ve
+ *    profesional, y una foto con mano y ventana no puede tapar a una así.
+ * 2. Las demás tomas reales del equipo.
+ * 3. Las de colores que no se venden. Si la portada fuera una MacBook Silver
+ *    cuando solo hay Starlight y Sky Blue, la tarjeta prometería algo que no
+ *    se puede comprar. No se esconden: en la ficha, elegir un color ya las
+ *    deja afuera cuando ese color tiene fotos propias.
+ *
+ * Una foto sin color etiquetado no se castiga: no se sabe de qué color es. Es
+ * estable: dentro de cada grupo se respeta el orden que ya traía.
+ */
+export function ordenarFotosDelProducto<
+  T extends { colores?: string[]; render?: boolean },
+>(fotos: T[], vendidos: Iterable<string>): T[] {
+  const enVenta = new Set(vendidos);
+  const ajena = (f: T) =>
+    enVenta.size > 0 &&
+    Boolean(f.colores?.length) &&
+    !f.colores!.some((c) => enVenta.has(c));
+  const grupo = (f: T) => (ajena(f) ? 2 : f.render ? 0 : 1);
+  return fotos
+    .map((f, i) => ({ f, i, g: grupo(f) }))
+    .sort((x, y) => x.g - y.g || x.i - y.i)
+    .map(({ f }) => f);
+}
+
+/**
+ * Las fotos que se pueden deslizar en la tarjeta del catálogo.
+ *
+ * Primero una por cada color que se vende, en el orden de las variantes, así
+ * deslizar es recorrer los colores sin entrar a la ficha. Si el catálogo está
+ * filtrado por un color, ese va primero. Después se completa con otras tomas
+ * del equipo, sin videos ni fotos de colores que no se venden, hasta `maximo`.
+ */
+export function fotosDeTarjeta<
+  T extends { url: string; colores?: string[]; video?: boolean; render?: boolean },
+>(
+  fotos: T[],
+  coloresEnVenta: string[],
+  { maximo = 5, primero }: { maximo?: number; primero?: string } = {}
+): (T & { color?: string })[] {
+  const vendidos = [...new Set(coloresEnVenta)];
+  const orden =
+    primero && vendidos.includes(primero)
+      ? [primero, ...vendidos.filter((c) => c !== primero)]
+      : vendidos;
+  const usables = fotos.filter(
+    (f) => !f.video && (!f.colores?.length || f.colores.some((c) => vendidos.includes(c)))
+  );
+
+  const elegidas: (T & { color?: string })[] = [];
+  const usadas = new Set<string>();
+  for (const color of orden) {
+    // De cada color, la de estudio si la hay.
+    const delColor = usables.filter(
+      (f) => f.colores?.includes(color) && !usadas.has(f.url)
+    );
+    const foto = delColor.find((f) => f.render) ?? delColor[0];
+    if (!foto) continue;
+    elegidas.push({ ...foto, color });
+    usadas.add(foto.url);
+  }
+  for (const f of usables) {
+    if (!usadas.has(f.url)) elegidas.push(f);
+    usadas.add(f.url);
+  }
+  return elegidas.slice(0, maximo);
+}
+
 export function totalStock(product: Product): number {
   return product.variants.reduce((sum, v) => sum + v.stock, 0);
 }
