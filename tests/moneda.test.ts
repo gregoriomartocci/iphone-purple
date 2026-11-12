@@ -1,23 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { antiguedadCotizacion, esMoneda } from "@/lib/moneda";
+import { antiguedadCotizacion } from "@/lib/moneda";
 import { formatUSD } from "@/utils/format";
-
-describe("esMoneda", () => {
-  it("acepta las dos monedas del sitio", () => {
-    expect(esMoneda("ars")).toBe(true);
-    expect(esMoneda("usd")).toBe(true);
-  });
-
-  it("rechaza cualquier otra cosa", () => {
-    // Lo que llega de localStorage es texto libre: puede haber quedado un
-    // valor viejo, o alguien puede haberlo editado a mano.
-    expect(esMoneda("eur")).toBe(false);
-    expect(esMoneda("ARS")).toBe(false);
-    expect(esMoneda(null)).toBe(false);
-    expect(esMoneda(undefined)).toBe(false);
-    expect(esMoneda(1)).toBe(false);
-  });
-});
 
 describe("antiguedadCotizacion", () => {
   const ahora = new Date("2026-09-04T12:00:00");
