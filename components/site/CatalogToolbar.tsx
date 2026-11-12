@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { Search, X } from "lucide-react";
+import { ChevronDown, Search, X } from "lucide-react";
 import { formatARS } from "@/utils/format";
 import {
   etiquetaCategoria,
@@ -178,18 +178,18 @@ export function CatalogToolbar({
           de {totalCount} equipos
         </p>
 
-        {/* Los dos controles son maneras de mirar la misma lista, así que van
-            juntos, a la misma altura y con el mismo radio. Antes la moneda era
-            más baja que el desplegable y la fila quedaba escalonada. */}
         <div className="flex items-center gap-2.5">
-          <label className="flex items-center gap-2 text-sm">
+          <label className="relative flex items-center gap-2 text-sm">
             <span className="text-muted-foreground hidden sm:inline">Ordenar por</span>
             <select
               value={filters.sort ?? "relevancia"}
               onChange={(e) =>
                 navigate({ ...filters, sort: e.target.value as CatalogFilters["sort"] })
               }
-              className="border-line bg-surface text-foreground focus-visible:border-ink h-11 rounded-xl border px-3.5 text-[15px] shadow-sm transition-colors outline-none"
+              // La flecha nativa queda pegada al borde y cambia en cada
+              // navegador: se oculta y se dibuja una propia, con el mismo aire
+              // a los dos lados del texto.
+              className="border-line bg-surface text-foreground focus-visible:border-ink h-11 appearance-none rounded-xl border pr-10 pl-3.5 text-[15px] shadow-sm transition-colors outline-none"
             >
               {SORTS.map((s) => (
                 <option key={s.value} value={s.value}>
@@ -197,6 +197,10 @@ export function CatalogToolbar({
                 </option>
               ))}
             </select>
+            <ChevronDown
+              aria-hidden
+              className="text-muted-foreground pointer-events-none absolute right-3.5 size-4"
+            />
           </label>
         </div>
       </div>
