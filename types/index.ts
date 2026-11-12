@@ -192,6 +192,8 @@ export interface ProductImage {
    * equipos en abanico lleva los tres.
    */
   colores?: string[];
+  /** Si es una foto de estudio: el equipo solo, sobre un fondo parejo. */
+  render?: boolean;
 }
 
 export interface Variant {

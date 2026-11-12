@@ -150,6 +150,7 @@ export default async function CatalogPage({
                     product={product}
                     filters={filters}
                     index={i}
+                    deslizable
                   />
                 ))}
               </div>
