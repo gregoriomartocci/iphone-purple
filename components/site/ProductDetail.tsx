@@ -14,7 +14,7 @@ import { Galeria } from "./Galeria";
 import { Precio } from "./Precio";
 import { coloresDe } from "@/lib/colores";
 import { antiguedadCotizacion } from "@/lib/moneda";
-import { descriptorVisible, galeriaDelColor, savingsVsNew } from "@/lib/catalog";
+import { descriptorVisible, galeriaDelColor, gb, savingsVsNew } from "@/lib/catalog";
 import { fotoDe } from "@/lib/data/fotos";
 import { IMITADOS } from "@/lib/data/replicas";
 import { formatARS } from "@/utils/format";
@@ -118,6 +118,32 @@ export function ProductDetail({
   const storages = [...new Set(product.variants.map((v) => v.storage))];
 
   /**
+   * Memorias en que se ofrece el equipo, de menor a mayor. En una computadora
+   * es lo primero que se pregunta, así que se muestra siempre que se sepa,
+   * aunque haya una sola: elegida y a la vista. Las que no tienen stock se ven
+   * pero no se pueden elegir.
+   */
+  const memorias = [
+    ...new Set(product.variants.map((v) => v.memoria).filter((m): m is string => !!m)),
+  ].sort((a, b) => gb(a) - gb(b));
+  const conStock = (m: string) =>
+    product.variants.some((v) => v.memoria === m && v.stock > 0);
+
+  /** Elegir una memoria es elegir la variante más parecida a la que ya estaba. */
+  function elegirMemoria(memoria: string) {
+    const de = product.variants.filter((v) => v.memoria === memoria);
+    const next =
+      de.find(
+        (v) =>
+          v.storage === selected?.storage && v.grade === selected?.grade && v.stock > 0
+      ) ??
+      de.find((v) => v.storage === selected?.storage && v.stock > 0) ??
+      de.find((v) => v.stock > 0) ??
+      de[0];
+    if (next) setSelected(next);
+  }
+
+  /**
    * Colores en que se vende el equipo, con la muestra de la primera variante
    * que lo tiene. Es lo que va arriba de todo: antes de capacidad y estado,
    * porque es lo primero que alguien decide y lo que cambia lo que ve.
@@ -193,13 +219,18 @@ export function ProductDetail({
     colorActual !== undefined && !delColor && piezas.some((p) => p.colores?.length);
 
   /** Variantes de la capacidad elegida: definen los grados y colores ofrecidos. */
-  const sameStorage = product.variants.filter((v) => v.storage === selected?.storage);
+  const sameStorage = product.variants.filter(
+    (v) =>
+      v.storage === selected?.storage &&
+      (v.memoria ?? null) === (selected?.memoria ?? null)
+  );
 
   const savings = selected ? savingsVsNew(product, selected) : null;
   const fullPrice = savings !== null && selected ? selected.priceArs + savings : null;
 
   const variantLabel = selected
     ? [
+        selected.memoria && `${selected.memoria.replace(/GB$/i, " GB")} RAM`,
         descriptorVisible(selected.storage),
         colorActual?.nombre,
         GRADE_LABELS[selected.grade],
@@ -423,6 +454,37 @@ export function ProductDetail({
           </div>
         )}
 
+        {memorias.length > 0 && (
+          <div className="mt-8">
+            <h2 className="text-foreground text-sm font-medium">Memoria RAM</h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {memorias.map((memoria) => {
+                const active = selected?.memoria === memoria;
+                const disponible = conStock(memoria);
+                return (
+                  <button
+                    key={memoria}
+                    type="button"
+                    onClick={() => elegirMemoria(memoria)}
+                    disabled={!disponible && !active}
+                    aria-pressed={active}
+                    title={disponible ? undefined : "Sin stock en este momento"}
+                    className={cn(
+                      "h-11 rounded-xl border px-5 text-sm font-medium transition-all duration-200",
+                      active
+                        ? "border-foreground bg-foreground text-background"
+                        : "border-line bg-surface hover:border-foreground/40",
+                      !disponible && "cursor-not-allowed line-through opacity-45"
+                    )}
+                  >
+                    {memoria.replace(/GB$/i, " GB")}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {storages.length > 1 && (
           <div className="mt-8">
             <h2 className="text-foreground text-sm font-medium">Capacidad</h2>
@@ -434,11 +496,14 @@ export function ProductDetail({
                     key={storage}
                     type="button"
                     onClick={() => {
-                      // Al cambiar capacidad saltamos a la más barata de esa capacidad.
-                      const next = product.variants
+                      // Al cambiar capacidad saltamos a la más barata de esa
+                      // capacidad, con la misma memoria si la hay.
+                      const deEsa = product.variants
                         .filter((v) => v.storage === storage)
-                        .sort((a, b) => a.priceArs - b.priceArs)[0];
-                      setSelected(next);
+                        .sort((a, b) => a.priceArs - b.priceArs);
+                      setSelected(
+                        deEsa.find((v) => v.memoria === selected?.memoria) ?? deEsa[0]
+                      );
                     }}
                     className={cn(
                       "h-11 rounded-xl border px-5 text-sm font-medium transition-all duration-200",

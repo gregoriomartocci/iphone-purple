@@ -2,7 +2,7 @@ import "server-only";
 import { coloresDeFila, colorParaGuardar } from "@/lib/colores";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { sellPrice } from "@/lib/whatsapp/parser";
-import { skuDe } from "@/lib/whatsapp/sincronizar";
+import { skuDe, memoriaDe } from "@/lib/whatsapp/sincronizar";
 import type { ParsedRow } from "@/types";
 import { slugify } from "@/utils/format";
 
@@ -81,6 +81,8 @@ export async function publicarFilas({
     const payload = {
       product_id: productId,
       storage: row.storage || "—",
+      memoria: memoriaDe(row) || null,
+      configuracion: row.config?.trim() || null,
       ...colorParaGuardar(coloresDeFila(row.model, row.color, row.notes)),
       grade: row.grade,
       authenticity: row.authenticity,
