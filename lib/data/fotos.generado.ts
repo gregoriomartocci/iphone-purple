@@ -4294,6 +4294,18 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       colores: [],
     },
   ],
+  "msi-pro-mp22v-monitor-22-100hz": [
+    {
+      url: "/productos/msi-pro-mp22v-monitor-22-100hz/1.jpg?v=e9ca70d1",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#fefefe",
+      video: false,
+      colores: [],
+    },
+  ],
   "nintendo-switch-2-mario-kart": [
     {
       url: "/productos/nintendo-switch-2-mario-kart/1.jpg?v=ea93c66b",
@@ -4509,6 +4521,38 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
   "redmi-pad-2-11": [
     {
       url: "/productos/redmi-pad-2-11/1.jpg?v=1592a65d",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#fefefe",
+      video: false,
+      colores: [],
+    },
+  ],
+  "samsung-essential-monitor-24-100hz": [
+    {
+      url: "/productos/samsung-essential-monitor-24-100hz/1.jpg?v=ce28c92a",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#fefefe",
+      video: false,
+      colores: [],
+    },
+    {
+      url: "/productos/samsung-essential-monitor-24-100hz/2.jpg?v=535ec6f4",
+      autor: null,
+      licencia: null,
+      origen: null,
+      recorte: "render",
+      fondo: "#fefefe",
+      video: false,
+      colores: [],
+    },
+    {
+      url: "/productos/samsung-essential-monitor-24-100hz/3.jpg?v=ecfa39a3",
       autor: null,
       licencia: null,
       origen: null,
