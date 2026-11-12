@@ -10,6 +10,7 @@ import {
 import { fichaTecnica } from "@/lib/data/ficha-tecnica";
 import type { Product, Variant } from "@/types";
 import { GRADE_LABELS, GRADE_SPECS } from "@/types";
+import { descriptorVisible } from "@/lib/catalog";
 
 /**
  * Ficha técnica completa del equipo.
@@ -32,7 +33,8 @@ export function FichaTecnica({
   // Lo de esta unidad concreta, que no está en la ficha del modelo.
   const deEstaUnidad: [string, string][] = [];
   if (variante) {
-    deEstaUnidad.push(["Capacidad", variante.storage]);
+    const capacidad = descriptorVisible(variante.storage);
+    if (capacidad) deEstaUnidad.push(["Capacidad", capacidad]);
     deEstaUnidad.push(["Color", nombresDeColores(variante)]);
     deEstaUnidad.push(["Condición", GRADE_LABELS[variante.grade]]);
     deEstaUnidad.push(["Estado cosmético", GRADE_SPECS[variante.grade].cosmetic]);
