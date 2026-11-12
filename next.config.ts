@@ -48,6 +48,17 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   images: {
     /*
+     * Las fotos se sirven tal cual, sin el optimizador de Vercel.
+     *
+     * El plan Hobby tiene un tope mensual de imágenes optimizadas, y al
+     * pasarlo cada tamaño nuevo que pedía un teléfono respondía 402: la foto
+     * se veía en la tarjeta (ese tamaño ya estaba en caché) y en la ficha
+     * aparecía rota. Nuestras fotos ya salen preparadas para la web —JPEG de
+     * 1600 px como máximo, unos 100 KB la mitad de ellas—, así que el
+     * optimizador ahorraba poco y fallaba justo donde más importa.
+     */
+    unoptimized: true,
+    /*
      * Las fotos del catálogo llevan ?v=<hash> del contenido, para que un
      * reemplazo bajo el mismo nombre no quede cacheado en el navegador ni en
      * el CDN. next/image rechaza un src local con query salvo que se lo
