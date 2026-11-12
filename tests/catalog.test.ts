@@ -4,6 +4,7 @@ import {
   capacityInGb,
   isCapacity,
   leadVariant,
+  fotosDeColoresVendidosPrimero,
   galeriaDelColor,
   priceFrom,
   savingsVsNew,
@@ -426,6 +427,30 @@ describe("galeriaDelColor", () => {
 
   it("sin color devuelve la galería tal cual", () => {
     expect(galeriaDelColor(galeria, undefined).piezas).toBe(galeria);
+  });
+});
+
+describe("fotosDeColoresVendidosPrimero", () => {
+  const fotos = [
+    { url: "silver", colores: ["Silver"] },
+    { url: "sin", colores: [] },
+    { url: "azul", colores: ["Sky Blue"] },
+    { url: "grupo", colores: ["Silver", "Starlight"] },
+  ];
+  const urls = (f: { url: string }[]) => f.map((x) => x.url);
+
+  it("la portada nunca es de un color que no se vende", () => {
+    expect(urls(fotosDeColoresVendidosPrimero(fotos, ["Sky Blue", "Starlight"]))).toEqual(
+      ["sin", "azul", "grupo", "silver"]
+    );
+  });
+
+  it("no saca ninguna foto", () => {
+    expect(fotosDeColoresVendidosPrimero(fotos, ["Sky Blue"])).toHaveLength(fotos.length);
+  });
+
+  it("sin colores a la venta deja el orden como está", () => {
+    expect(fotosDeColoresVendidosPrimero(fotos, [])).toBe(fotos);
   });
 });
 
