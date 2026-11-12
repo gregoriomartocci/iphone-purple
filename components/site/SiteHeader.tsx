@@ -102,13 +102,18 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-1">
-          <Link
-            href="/catalogo"
-            aria-label="Buscar en el catálogo"
-            className="rounded-full p-2.5 text-white/75 transition-colors hover:text-white md:hidden"
-          >
-            <Search className="size-5" />
-          </Link>
+          {/* En el catálogo no va: ahí está el buscador de la página, y una
+              segunda lupa que lleva al mismo lugar parecía rota. En el resto
+              del sitio lleva al catálogo con el buscador listo para escribir. */}
+          {pathname !== "/catalogo" && (
+            <Link
+              href="/catalogo#buscar"
+              aria-label="Buscar en el catálogo"
+              className="rounded-full p-2.5 text-white/75 transition-colors hover:text-white md:hidden"
+            >
+              <Search className="size-5" />
+            </Link>
+          )}
 
           <Link
             href="/cuenta"

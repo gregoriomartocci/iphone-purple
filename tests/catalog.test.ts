@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { getCatalogFacets, getProducts, getProduct } from "@/lib/data";
+import {
+  getCatalogFacets,
+  getGenerationComparison,
+  getProducts,
+  getProduct,
+} from "@/lib/data";
 import {
   capacityInGb,
   isCapacity,
   leadVariant,
-  fotosDeColoresVendidosPrimero,
+  fotosDeTarjeta,
   galeriaDelColor,
+  ordenarFotosDelProducto,
   priceFrom,
   savingsVsNew,
   totalStock,
@@ -430,27 +436,101 @@ describe("galeriaDelColor", () => {
   });
 });
 
-describe("fotosDeColoresVendidosPrimero", () => {
+describe("ordenarFotosDelProducto", () => {
   const fotos = [
-    { url: "silver", colores: ["Silver"] },
+    { url: "silver", colores: ["Silver"], render: true },
+    { url: "mano", colores: ["Sky Blue"] },
     { url: "sin", colores: [] },
-    { url: "azul", colores: ["Sky Blue"] },
+    { url: "azul", colores: ["Sky Blue"], render: true },
     { url: "grupo", colores: ["Silver", "Starlight"] },
   ];
   const urls = (f: { url: string }[]) => f.map((x) => x.url);
 
-  it("la portada nunca es de un color que no se vende", () => {
-    expect(urls(fotosDeColoresVendidosPrimero(fotos, ["Sky Blue", "Starlight"]))).toEqual(
-      ["sin", "azul", "grupo", "silver"]
-    );
+  it("estudio primero, después tomas reales, y al final colores que no se venden", () => {
+    expect(urls(ordenarFotosDelProducto(fotos, ["Sky Blue", "Starlight"]))).toEqual([
+      "azul",
+      "mano",
+      "sin",
+      "grupo",
+      "silver",
+    ]);
   });
 
   it("no saca ninguna foto", () => {
-    expect(fotosDeColoresVendidosPrimero(fotos, ["Sky Blue"])).toHaveLength(fotos.length);
+    expect(ordenarFotosDelProducto(fotos, ["Sky Blue"])).toHaveLength(fotos.length);
   });
 
-  it("sin colores a la venta deja el orden como está", () => {
-    expect(fotosDeColoresVendidosPrimero(fotos, [])).toBe(fotos);
+  it("sin colores a la venta igual pone el estudio primero", () => {
+    expect(urls(ordenarFotosDelProducto(fotos, [])).slice(0, 2)).toEqual([
+      "silver",
+      "azul",
+    ]);
+  });
+});
+
+describe("fotosDeTarjeta", () => {
+  const fotos = [
+    { url: "a", colores: ["Silver"] },
+    { url: "b", colores: [] },
+    { url: "c", colores: ["Starlight"] },
+    { url: "d", colores: ["Sky Blue"] },
+    { url: "e", colores: ["Sky Blue"], video: true },
+    { url: "f", colores: ["Starlight"] },
+  ];
+  const urls = (f: { url: string }[]) => f.map((x) => x.url);
+
+  it("una por cada color en venta primero, en orden, y después el resto", () => {
+    expect(urls(fotosDeTarjeta(fotos, ["Sky Blue", "Starlight"]))).toEqual([
+      "d",
+      "c",
+      "b",
+      "f",
+    ]);
+  });
+
+  it("dice de qué color es cada una de las primeras", () => {
+    const [primera, segunda, tercera] = fotosDeTarjeta(fotos, ["Sky Blue", "Starlight"]);
+    expect([primera.color, segunda.color, tercera.color]).toEqual([
+      "Sky Blue",
+      "Starlight",
+      undefined,
+    ]);
+  });
+
+  it("con un color filtrado, ese va primero", () => {
+    expect(
+      fotosDeTarjeta(fotos, ["Sky Blue", "Starlight"], { primero: "Starlight" })[0].url
+    ).toBe("c");
+  });
+
+  it("no muestra videos ni colores que no se venden, y respeta el máximo", () => {
+    const r = urls(fotosDeTarjeta(fotos, ["Sky Blue", "Starlight"], { maximo: 3 }));
+    expect(r).toHaveLength(3);
+    expect(r).not.toContain("a");
+    expect(r).not.toContain("e");
+  });
+});
+
+describe("getGenerationComparison", () => {
+  const sinNumero = (m: string) => m.toLowerCase().replace(/\b\d{1,2}\b/, "#");
+
+  it("compara solo dentro de la misma familia y marca", async () => {
+    for (const product of PRODUCTS) {
+      const comparados = await getGenerationComparison(product);
+      for (const otro of comparados) {
+        expect(otro.brand).toBe(product.brand);
+        expect(otro.line).toBe(product.line);
+        expect(sinNumero(otro.model)).toBe(sinNumero(product.model));
+      }
+    }
+  });
+
+  it("un iPhone Pro se compara con el Pro de al lado", async () => {
+    const pro = PRODUCTS.find((p) => /^iphone \d+ pro$/i.test(p.model));
+    expect(pro).toBeDefined();
+    const nombres = (await getGenerationComparison(pro!)).map((p) => p.model);
+    expect(nombres).toContain(pro!.model);
+    expect(nombres.every((m) => /^iphone \d+ pro$/i.test(m))).toBe(true);
   });
 });
 

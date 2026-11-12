@@ -2,8 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { BatteryMedium, Camera } from "lucide-react";
 import { Precio } from "./Precio";
-import { leadVariant, totalStock } from "@/lib/catalog";
-import { FOTOS_PRODUCTO } from "@/lib/data/fotos.generado";
+import { FotosTarjeta } from "./FotosTarjeta";
+import { fotosDeTarjeta, leadVariant, totalStock } from "@/lib/catalog";
+import { coloresDe } from "@/lib/colores";
+import { fotoDe } from "@/lib/data/fotos";
 import { IMITADOS } from "@/lib/data/replicas";
 import type { VariantFilters } from "@/lib/catalog";
 import { AUTHENTICITY_LABELS, GRADE_LABELS, type Product } from "@/types";
@@ -50,20 +52,34 @@ export function ProductCard({
   product,
   filters,
   index = 0,
+  deslizable = false,
 }: {
   product: Product;
   /** Filtros activos del catálogo, para que la tarjeta muestre lo que se pidió. */
   filters?: VariantFilters;
   /** Posición en la grilla, para escalonar la animación de entrada. */
   index?: number;
+  /**
+   * Si las fotos se pueden deslizar. Solo en la grilla del catálogo: en las
+   * tiras de productos relacionados el gesto lateral ya mueve la tira.
+   */
+  deslizable?: boolean;
 }) {
   const lead = leadVariant(product, filters);
   const stock = totalStock(product);
-  const image = product.images[0];
-  // Recorte de estudio: se muestra entero, sobre su propio fondo. La grilla
-  // siempre muestra la primera foto, que es el recorte cuando lo hay.
-  const primera = FOTOS_PRODUCTO[product.slug]?.[0];
+  /* Una foto por color a la venta, y si el catálogo está filtrado por un
+     color, esa primero: quien pidió "Sky Blue" tiene que ver la Sky Blue. */
+  const fotos = fotosDeTarjeta(
+    product.images.map((img) => ({ ...img, video: fotoDe(img.url)?.video ?? false })),
+    product.variants.flatMap((v) => coloresDe(v).map((c) => c.nombre)),
+    { maximo: deslizable ? 5 : 1, primero: filters?.color }
+  );
+  const image = fotos[0] ?? product.images[0];
+  // Recorte de estudio: se muestra entero, sobre su propio fondo.
+  const primera = image ? fotoDe(image.url) : undefined;
   const propia = primera?.recorte === "render";
+  const sizes =
+    "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw";
   const multiplePrices = new Set(product.variants.map((v) => v.priceArs)).size > 1;
 
   const detalle = [lead?.storage, lead && GRADE_LABELS[lead.grade]].filter(Boolean);
@@ -99,10 +115,17 @@ export function ProductCard({
           una foto de catálogo y todas las tarjetas quedan parejas. Las fotos
           ambientales van sobre el gris, que las contiene mejor. */}
       <div
-        className={cn("relative aspect-square overflow-hidden", !propia && "bg-elevated")}
+        className={cn(
+          "relative aspect-square overflow-hidden",
+          (!propia || fotos.length > 1) && "bg-elevated"
+        )}
         // El color sale de medir el borde de la propia imagen. Con un blanco
         // fijo, un recorte sobre negro quedaba con un marco oscuro alrededor.
-        style={propia ? { background: primera?.fondo ?? "#ffffff" } : undefined}
+        style={
+          propia && fotos.length <= 1
+            ? { background: primera?.fondo ?? "#ffffff" }
+            : undefined
+        }
       >
         {etiqueta && (
           <span
@@ -117,7 +140,22 @@ export function ProductCard({
           </span>
         )}
 
-        {image ? (
+        {fotos.length > 1 ? (
+          <FotosTarjeta
+            fotos={fotos.map((f) => {
+              const datos = fotoDe(f.url);
+              return {
+                url: f.url,
+                alt: f.alt,
+                color: f.color,
+                render: datos?.recorte === "render",
+                fondo: datos?.fondo ?? null,
+              };
+            })}
+            sizes={sizes}
+            mostrarColor={new Set(fotos.map((f) => f.color).filter(Boolean)).size > 1}
+          />
+        ) : image ? (
           <Image
             src={image.url}
             alt={image.alt}
@@ -129,7 +167,7 @@ export function ProductCard({
             // sigue nunca aparece porque el navegador ya está en modo drag de
             // imagen.
             draggable={false}
-            sizes="(max-width: 640px) 50vw, (max-width: 1280px) 33vw, (max-width: 1536px) 25vw, 20vw"
+            sizes={sizes}
             className={cn(
               "transition-transform duration-[600ms] ease-out group-hover:scale-[1.06]",
               // Igual que en la ficha: la foto del producto entra completa,

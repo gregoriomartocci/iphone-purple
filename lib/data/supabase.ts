@@ -1,6 +1,6 @@
 import { coloresDe, coloresOficiales } from "@/lib/colores";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
-import { fotosDeColoresVendidosPrimero, parseModel } from "@/lib/catalog";
+import { ordenarFotosDelProducto, parseModel } from "@/lib/catalog";
 import type {
   Category,
   Grade,
@@ -122,10 +122,11 @@ function mapProduct(row: ProductRow): Product {
     category: toCategory(row.category),
     description: row.description ?? "",
     specs: row.specs ?? {},
-    images: fotosDeColoresVendidosPrimero(
+    images: ordenarFotosDelProducto(
       images.map((i) => ({
         url: i.url,
         alt: i.alt ?? row.name,
+        render: fotoDe(i.url)?.recorte === "render",
         // Con el mismo nombre que las variantes: si no, nunca coincidirían.
         colores: (fotoDe(i.url)?.colores ?? []).flatMap((color) =>
           coloresOficiales(row.model ?? row.name, color).map((c) => c.nombre)

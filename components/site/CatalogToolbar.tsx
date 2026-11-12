@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { Search, X } from "lucide-react";
 import { SelectorMoneda } from "./SelectorMoneda";
 import { PARAM_MONEDA, esMoneda } from "@/lib/moneda";
@@ -44,6 +44,13 @@ export function CatalogToolbar({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [query, setQuery] = useState(filters.q ?? "");
+  const campo = useRef<HTMLInputElement>(null);
+
+  /* La lupa del encabezado llega con #buscar: el buscador ya queda con el
+     cursor puesto, que es lo que espera quien tocó una lupa. */
+  useEffect(() => {
+    if (window.location.hash === "#buscar") campo.current?.focus();
+  }, []);
 
   /**
    * Busca mientras se escribe, sin apretar Enter.
@@ -159,6 +166,10 @@ export function CatalogToolbar({
       >
         <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2" />
         <input
+          ref={campo}
+          id="buscar"
+          // Que el encabezado fijo no lo tape al llegar desde la lupa.
+          style={{ scrollMarginTop: "7rem" }}
           type="search"
           name="q"
           value={query}
