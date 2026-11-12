@@ -209,8 +209,10 @@ export function ProductDetail({
     : undefined;
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_460px] lg:gap-14">
-      <div className="lg:sticky lg:top-24 lg:self-start">
+    <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_460px] lg:gap-14">
+      {/* min-w-0: sin esto, una galería con muchas miniaturas estiraba la
+          columna al ancho de toda la tira y la ficha se salía de la pantalla. */}
+      <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
         <div className="relative">
           {/* La `key` remonta la galería al cambiar de color: vuelve a la
               primera foto, que ahora es la del color elegido. */}

@@ -152,7 +152,8 @@ export function matchesVariant(variant: Variant, filters: VariantFilters): boole
  *
  * Elegir un color es querer ver el equipo en ese color, y lo que se ve es lo
  * que la persona espera recibir: si el color tiene fotos, las de otros colores
- * se van. Quedan las suyas, después las que no se etiquetaron y al final los
+ * se van. Quedan las suyas —primero las del color solo y después las grupales
+ * donde también aparece—, después las que no se etiquetaron y al final los
  * videos: primero se quiere ver el equipo quieto.
  *
  * Si el color no tiene ninguna foto no se esconde nada, porque una ficha vacía
@@ -167,10 +168,12 @@ export function galeriaDelColor<T extends { colores?: string[]; video?: boolean 
 ): { piezas: T[]; delColor: boolean } {
   if (!color) return { piezas, delColor: false };
   const delColor = piezas.some((p) => p.colores?.includes(color));
+  // Primero las del color solo; la grupal, donde también aparece, después.
   const grupo = (p: T) => {
-    if (p.video) return 3;
-    if (!p.colores?.length) return 1;
-    return p.colores.includes(color) ? 0 : 2;
+    if (p.video) return 4;
+    if (!p.colores?.length) return 2;
+    if (!p.colores.includes(color)) return 3;
+    return p.colores.length === 1 ? 0 : 1;
   };
   return {
     delColor,
@@ -241,11 +244,16 @@ export function fotosDeTarjeta<
   const elegidas: (T & { color?: string })[] = [];
   const usadas = new Set<string>();
   for (const color of orden) {
-    // De cada color, la de estudio si la hay.
+    // De cada color, la del color solo y de estudio si la hay; la grupal, al final.
     const delColor = usables.filter(
       (f) => f.colores?.includes(color) && !usadas.has(f.url)
     );
-    const foto = delColor.find((f) => f.render) ?? delColor[0];
+    const sola = (f: T) => f.colores?.length === 1;
+    const foto =
+      delColor.find((f) => sola(f) && f.render) ??
+      delColor.find(sola) ??
+      delColor.find((f) => f.render) ??
+      delColor[0];
     if (!foto) continue;
     elegidas.push({ ...foto, color });
     usadas.add(foto.url);

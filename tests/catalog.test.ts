@@ -409,7 +409,8 @@ describe("galeriaDelColor", () => {
     galeriaDelColor(galeria, color).piezas.map((x) => x.url);
 
   it("muestra el color elegido, después lo sin etiquetar, y saca los otros colores", () => {
-    expect(urls("Blanco")).toEqual(["c", "e", "b", "d"]);
+    // "e" es solo blanca y va antes que "c", la grupal donde también aparece.
+    expect(urls("Blanco")).toEqual(["e", "c", "b", "d"]);
     expect(galeriaDelColor(galeria, "Blanco").delColor).toBe(true);
   });
 
@@ -424,8 +425,9 @@ describe("galeriaDelColor", () => {
     expect(delColor).toBe(false);
   });
 
-  it("es estable dentro de cada grupo", () => {
-    expect(urls("Blanco").slice(0, 2)).toEqual(["c", "e"]);
+  it("la del color solo va antes que la grupal", () => {
+    expect(urls("Naranja")[0]).toBe("c");
+    expect(urls("Blanco")[0]).toBe("e");
   });
 
   it("el video queda último aunque sea del color elegido", () => {
@@ -466,6 +468,16 @@ describe("ordenarFotosDelProducto", () => {
       "silver",
       "azul",
     ]);
+  });
+});
+
+describe("fotosDeTarjeta con fotos grupales", () => {
+  it("de cada color elige la del color solo antes que la grupal", () => {
+    const fotos = [
+      { url: "grupo", colores: ["Glacier", "Black"], render: true },
+      { url: "glacier", colores: ["Glacier"], render: true },
+    ];
+    expect(fotosDeTarjeta(fotos, ["Glacier"])[0].url).toBe("glacier");
   });
 });
 
