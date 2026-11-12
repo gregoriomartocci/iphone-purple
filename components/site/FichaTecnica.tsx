@@ -33,8 +33,12 @@ export function FichaTecnica({
   // Lo de esta unidad concreta, que no está en la ficha del modelo.
   const deEstaUnidad: [string, string][] = [];
   if (variante) {
+    if (variante.memoria)
+      deEstaUnidad.push(["Memoria RAM", variante.memoria.replace(/GB$/i, " GB")]);
     const capacidad = descriptorVisible(variante.storage);
     if (capacidad) deEstaUnidad.push(["Capacidad", capacidad]);
+    if (variante.configuracion)
+      deEstaUnidad.push(["Configuración", variante.configuracion]);
     deEstaUnidad.push(["Color", nombresDeColores(variante)]);
     deEstaUnidad.push(["Condición", GRADE_LABELS[variante.grade]]);
     deEstaUnidad.push(["Estado cosmético", GRADE_SPECS[variante.grade].cosmetic]);

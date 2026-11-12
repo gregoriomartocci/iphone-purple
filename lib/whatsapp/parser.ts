@@ -32,6 +32,17 @@ const RowSchema = z.object({
     .describe(
       "Capacidad con unidad, formato '128GB' / '1TB'. Si no figura, poné cadena vacía."
     ),
+  memory: z
+    .string()
+    .describe(
+      "Memoria RAM con unidad, formato '16GB' / '24GB', solo en computadoras (MacBook, Mac mini, iMac, notebooks) y tablets. En la notación '24/1TB' o '16/512' el primer número es la RAM y el segundo la capacidad. Cadena vacía si no figura o no aplica."
+    ),
+  config: z
+    .string()
+    .nullable()
+    .describe(
+      "Solo computadoras: núcleos y teclado en una línea, como 'CPU de 18 núcleos · GPU de 20 núcleos · Teclado en inglés'. '18C 20G' son núcleos de CPU y GPU; 'ENG' o 'US' es teclado en inglés, 'ESP' en español. null si no figura."
+    ),
   color: z
     .string()
     .nullable()
@@ -114,6 +125,7 @@ Reglas:
 - Si un equipo tiene precios por cantidad ("USD 850 (x1)", "USD 840 (x3)", "USD 830 (x5)"), el costo es SIEMPRE el de una unidad: el de x1. Nunca el de x3 ni el de x5, aunque sea el más barato. Se vende de a uno y el margen se calcula sobre lo que cuesta comprar uno. Si no figura el precio por unidad, usá el de menor cantidad y avisalo en warnings.
 - Si un equipo se ofrece en varios colores, poné todos en color, aunque estén en el renglón de abajo ("eSIM · Silver/Burgundy" da "Silver/Burgundy").
 - "INGRESANDO" o "por ingresar" significa que todavía no llegó: si tiene precio, generá la fila con quantity 0 y notes "Ingresando". Si no tiene precio, no generes fila.
+- En computadoras y tablets, "24/1TB" o "16/512" es RAM/almacenamiento: la RAM va en memory ('24GB') y la capacidad en storage ('1TB', '512GB'). Los núcleos ("18C 20G") y el teclado ("ENG") van en config.
 - Una fila por equipo concreto ofrecido. Si una línea lista varias capacidades con distintos precios, generá una fila por cada una.
 - Normalizá los modelos al nombre comercial completo de Apple.
 - No inventes datos. Si un dato no está, usá null (o cadena vacía en storage).
@@ -175,7 +187,11 @@ export function validarLista(crudo: unknown): Lista {
   const rows: Lista["rows"] = [];
   const warnings = [...raiz.data.warnings];
   for (const fila of raiz.data.rows) {
-    const validada = RowSchema.safeParse(fila);
+    // Memoria y configuración son nuevas: una respuesta que no las trae no es
+    // una fila incompleta, es un equipo que no las informa.
+    const validada = RowSchema.safeParse(
+      fila && typeof fila === "object" ? { memory: "", config: null, ...fila } : fila
+    );
     if (validada.success) {
       rows.push(validada.data);
       continue;

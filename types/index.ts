@@ -215,6 +215,10 @@ export interface Variant {
   costUsd: number | null;
   stock: number;
   sku: string | null;
+  /** Memoria RAM en computadoras y tablets ("24GB"); null si no aplica o no se sabe. */
+  memoria?: string | null;
+  /** Núcleos, teclado y demás, tal como se informan ("CPU de 18 núcleos · …"). */
+  configuracion?: string | null;
 }
 
 export interface Product {
@@ -318,6 +322,10 @@ export interface ParsedRow {
   cost: number;
   quantity: number;
   notes: string | null;
+  /** Memoria RAM en computadoras y tablets ("24GB"); vacía si no aplica. */
+  memory?: string;
+  /** Núcleos, teclado y lo demás de la configuración, en una línea legible. */
+  config?: string | null;
 }
 
 export interface Sale {
