@@ -764,3 +764,33 @@ describe("productos sin foto", () => {
     }
   });
 });
+
+describe("descripcionDe", () => {
+  it("solo describe iPhone: una MacBook o un iPad con el mismo número no toman su texto", async () => {
+    const { descripcionDe } = await import("@/lib/data/descripcion");
+    const iphone13 = PRODUCTS.find((p) => /^iphone 13$/i.test(p.model));
+    expect(iphone13 && descripcionDe(iphone13)).toBeTruthy();
+    for (const otro of [
+      {
+        ...iphone13!,
+        name: 'MacBook Air 13" M5',
+        model: "MacBook Air 13 M5",
+        category: "notebook",
+      },
+      {
+        ...iphone13!,
+        name: 'iPad Air 11" M4',
+        model: "iPad Air 11 M4",
+        category: "tablet",
+      },
+      {
+        ...iphone13!,
+        name: "Apple Watch Series 11",
+        model: "Apple Watch Series 11",
+        category: "reloj",
+      },
+    ] as Product[]) {
+      expect(descripcionDe(otro)).toBeNull();
+    }
+  });
+});
