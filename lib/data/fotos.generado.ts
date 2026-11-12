@@ -1339,7 +1339,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "foto",
       fondo: null,
       video: false,
-      colores: [],
+      colores: ["Starlight"],
     },
     {
       url: "/productos/iphone-13/3.jpg?v=79de4447",
@@ -1389,7 +1389,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "foto",
       fondo: null,
       video: false,
-      colores: [],
+      colores: ["Pink"],
     },
     {
       url: "/productos/iphone-13/9.jpg?v=bd5baf7c",
@@ -1399,7 +1399,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "foto",
       fondo: null,
       video: false,
-      colores: [],
+      colores: ["Pink", "Starlight"],
     },
     {
       url: "/productos/iphone-13/13.jpg?v=4c7b5d87",
@@ -1439,7 +1439,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "foto",
       fondo: null,
       video: false,
-      colores: ["Blue"],
+      colores: ["(PRODUCT)RED", "Starlight"],
     },
     {
       url: "/productos/iphone-13/17.jpg?v=7371e90a",
@@ -1469,7 +1469,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "foto",
       fondo: null,
       video: false,
-      colores: [],
+      colores: ["Midnight"],
     },
     {
       url: "/productos/iphone-13/3.mp4?v=f7f21c69",
@@ -1675,7 +1675,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "render",
       fondo: "#f5f5f7",
       video: false,
-      colores: [],
+      colores: ["Purple"],
     },
     {
       url: "/productos/iphone-14/2.jpg?v=eb14ba70",
@@ -1685,7 +1685,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "render",
       fondo: "#f5f4f7",
       video: false,
-      colores: [],
+      colores: ["Purple"],
     },
     {
       url: "/productos/iphone-14/3.jpg?v=31225fb1",
@@ -1695,7 +1695,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "render",
       fondo: "#f5f5f7",
       video: false,
-      colores: [],
+      colores: ["Purple"],
     },
     {
       url: "/productos/iphone-14/4.jpg?v=56d06c3a",
@@ -2016,7 +2016,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "render",
       fondo: "#fefefe",
       video: false,
-      colores: [],
+      colores: ["Natural Titanium"],
     },
     {
       url: "/productos/iphone-15-pro-max/3.jpg?v=db66cc89",
@@ -2514,7 +2514,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "render",
       fondo: "#ffffff",
       video: false,
-      colores: [],
+      colores: ["Natural Titanium"],
     },
     {
       url: "/productos/iphone-16-pro-max/3.jpg?v=f853a944",
@@ -3454,7 +3454,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "render",
       fondo: "#ffffff",
       video: false,
-      colores: [],
+      colores: ["Silver"],
     },
     {
       url: "/productos/macbook-air-15-m5/2.jpg?v=86f58e48",
@@ -3464,7 +3464,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "render",
       fondo: "#f5f5f7",
       video: false,
-      colores: [],
+      colores: ["Silver"],
     },
     {
       url: "/productos/macbook-air-15-m5/3.jpg?v=20a8a963",
@@ -3474,7 +3474,7 @@ export const FOTOS_PRODUCTO: Record<string, CreditoFoto[]> = {
       recorte: "render",
       fondo: "#f5f5f7",
       video: false,
-      colores: [],
+      colores: ["Silver"],
     },
     {
       url: "/productos/macbook-air-15-m5/4.jpg?v=a3036531",
