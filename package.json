@@ -30,7 +30,8 @@
     "fotos:pedido": "tsx scripts/pedido-fotos.mjs",
     "fotos:pedido-galeria": "tsx scripts/pedido-galeria.mjs",
     "whatsapp": "node scripts/whatsapp/leer.mjs",
-    "whatsapp:servidor": "node scripts/whatsapp/servidor.mjs"
+    "whatsapp:servidor": "node scripts/whatsapp/servidor.mjs",
+    "auditar:mobile": "node scripts/auditar-mobile.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",
