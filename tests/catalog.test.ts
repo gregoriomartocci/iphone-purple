@@ -10,6 +10,7 @@ import {
   isCapacity,
   leadVariant,
   fotosDeTarjeta,
+  descriptorVisible,
   galeriaDelColor,
   ordenarFotosDelProducto,
   priceFrom,
@@ -531,6 +532,21 @@ describe("getGenerationComparison", () => {
     const nombres = (await getGenerationComparison(pro!)).map((p) => p.model);
     expect(nombres).toContain(pro!.model);
     expect(nombres.every((m) => /^iphone \d+ pro$/i.test(m))).toBe(true);
+  });
+});
+
+describe("descriptorVisible", () => {
+  it("la raya de un producto sin capacidad no se muestra", () => {
+    expect(descriptorVisible("—")).toBeNull();
+    expect(descriptorVisible(" - ")).toBeNull();
+    expect(descriptorVisible("")).toBeNull();
+    expect(descriptorVisible(null)).toBeNull();
+  });
+
+  it("lo que sí dice algo se muestra tal cual", () => {
+    expect(descriptorVisible("256GB")).toBe("256GB");
+    expect(descriptorVisible("46mm GPS")).toBe("46mm GPS");
+    expect(descriptorVisible("USB-C")).toBe("USB-C");
   });
 });
 

@@ -14,7 +14,7 @@ import { Galeria } from "./Galeria";
 import { Precio } from "./Precio";
 import { coloresDe } from "@/lib/colores";
 import { antiguedadCotizacion } from "@/lib/moneda";
-import { galeriaDelColor, savingsVsNew } from "@/lib/catalog";
+import { descriptorVisible, galeriaDelColor, savingsVsNew } from "@/lib/catalog";
 import { fotoDe } from "@/lib/data/fotos";
 import { IMITADOS } from "@/lib/data/replicas";
 import { formatARS } from "@/utils/format";
@@ -199,7 +199,11 @@ export function ProductDetail({
   const fullPrice = savings !== null && selected ? selected.priceArs + savings : null;
 
   const variantLabel = selected
-    ? [selected.storage, colorActual?.nombre, GRADE_LABELS[selected.grade]]
+    ? [
+        descriptorVisible(selected.storage),
+        colorActual?.nombre,
+        GRADE_LABELS[selected.grade],
+      ]
         .filter(Boolean)
         .join(" · ")
     : undefined;

@@ -88,6 +88,18 @@ export function isCapacity(storage: string): boolean {
   return /^\d+\s*(GB|TB)$/i.test(storage.trim());
 }
 
+/**
+ * El descriptor de la variante para mostrar, o `null` si no dice nada.
+ *
+ * Un producto sin capacidad —un monitor, una bicicleta— se carga con "—" en
+ * ese campo, y la tarjeta mostraba "— · Sellado": una raya suelta que parece
+ * un dato que falta.
+ */
+export function descriptorVisible(storage: string | null | undefined): string | null {
+  const limpio = storage?.trim() ?? "";
+  return /^[\s—–\-]*$/.test(limpio) || /^n\/?a$/i.test(limpio) ? null : limpio;
+}
+
 /** Capacidad en GB, para poder ordenar 64 · 128 · 256 · 512 · 1TB. */
 export function capacityInGb(storage: string): number {
   const match = storage.trim().match(/^(\d+)\s*(GB|TB)$/i);

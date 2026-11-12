@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { TradeInQuoter } from "@/components/site/TradeInQuoter";
 import { PageHero, PAGE_PHOTOS } from "@/components/site/PageHero";
 import { getProducts, getSettings, getTradeInPrices } from "@/lib/data";
-import { GRADE_MULTIPLIER, leadVariant } from "@/lib/catalog";
+import { GRADE_MULTIPLIER, leadVariant, descriptorVisible } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "Plan Canje: entregá tu iPhone usado",
@@ -42,7 +42,7 @@ export default async function TradeInPage() {
     return [
       {
         id: product.id,
-        label: `${product.name} ${lead.storage}`,
+        label: [product.name, descriptorVisible(lead.storage)].filter(Boolean).join(" "),
         priceArs: lead.priceArs,
       },
     ];
